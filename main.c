@@ -8,7 +8,7 @@
  *
  * @note
  * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
- *
+ *git first commit 20200310
  ******************************************************************************/
 #include "stdio.h"
 #include "NUC029xGE.h"
