@@ -9,7 +9,7 @@ N *           Transmit and receive data from PC terminal through RS232 interface
 N *
 N * @note
 N * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
-N *
+N *git first commit 20200310
 N ******************************************************************************/
 N#include "stdio.h"
 L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h" 1
