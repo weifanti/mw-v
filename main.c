@@ -40,8 +40,6 @@ volatile sys_err_e sys_err = SYS_ERR_NONE;
 #define PLLCTL_SETTING  CLK_PLLCTL_72MHz_HXT
 #define PLL_CLOCK       72000000
 
-uint8_t volume=5;
-
 
 void SYS_Clock_init(void)
 {
@@ -178,8 +176,6 @@ void SysIdle(void)
 {
 	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 	Global_datas.g_4g_initing = 0;
-	//TYM_drv_powerkeepon(0);
-	//Drv_4GMoudle_PowerUp(0);
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
 
@@ -189,14 +185,16 @@ void SYS_Status(void)
 {
 	Global_datas.g_mode_status = POWER_ON_MODE;	
 	Global_datas.g_4g_initing = 1;
+	Global_datas.eq_mode = EQ_MODE_INDOOR;
+	Global_datas.volume = VOLUME_DEFAULT;
 	TYM_drv_powerkeepon(1);
 	Drv_4GMoudle_PowerUp(1);
 	drv_FourGmodel_power_key_SetHi();
 	TimeOutSet(&ModulePowerUpPinTimer,3000);
 	TimeOutSet(&PoweroffLedTimer, 100);
 	Drv_audio_init();
-	volume=5;
 	Global_datas.led_poweroff = 0;
+	
 
 	
 	drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
@@ -562,19 +560,20 @@ int32_t main(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0x03))
 					{
-						if (volume > 0x00)
+						if (Global_datas.volume > VOLUME_MIN)
 						{
-							volume--;
-							Drv_Dap_vol_set(volume);
+							Global_datas.volume--;
+							Drv_Dap_vol_set(Global_datas.volume);
 							printf("Hal_Dap_Load_vol_add\n");
 						}
 					}
+					
 					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 					{
-						if (volume < 15)
+						if (Global_datas.volume < VOLUME_MAX)
 						{
-							volume++;
-							Drv_Dap_vol_set(volume);
+							Global_datas.volume++;
+							Drv_Dap_vol_set(Global_datas.volume);
 							printf("Hal_Dap_Load_vol_reduce\n");
 						}
 					}

@@ -5,29 +5,29 @@
                           AREA ||i.Drv_Dap_init||, CODE, READONLY, ALIGN=2
 
                   Drv_Dap_init PROC
-;;;25      */
-;;;26     void Drv_Dap_init(void)
+;;;26      */
+;;;27     void Drv_Dap_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;27     {
-;;;28     
-;;;29         drv_5825_mute_pin_init();
+;;;28     {
+;;;29     
+;;;30         drv_5825_mute_pin_init();
 000002  f7fffffe          BL       drv_5825_mute_pin_init
-;;;30     	
-;;;31     	drv_dap_3251_Init();
+;;;31     	
+;;;32     	drv_dap_3251_Init();
 000006  f7fffffe          BL       drv_dap_3251_Init
-;;;32     	TIMER_Delay(TIMER0,5000);
+;;;33     	TIMER_Delay(TIMER0,5000);
 00000a  4905              LDR      r1,|L1.32|
 00000c  4805              LDR      r0,|L1.36|
 00000e  f7fffffe          BL       TIMER_Delay
-;;;33     	drv_5825_Init();
+;;;34     	drv_5825_Init();
 000012  f7fffffe          BL       drv_5825_Init
-;;;34     	
-;;;35     	drv_5825_mute_pin_set(1);  // unmute
+;;;35     	
+;;;36     	drv_5825_mute_pin_set(1);  // unmute
 000016  2001              MOVS     r0,#1
 000018  f7fffffe          BL       drv_5825_mute_pin_set
-;;;36     }
+;;;37     }
 00001c  bd10              POP      {r4,pc}
-;;;37     
+;;;38     
                           ENDP
 
 00001e  0000              DCW      0x0000
@@ -39,150 +39,247 @@
                           AREA ||i.Drv_Dap_vol_mute||, CODE, READONLY, ALIGN=1
 
                   Drv_Dap_vol_mute PROC
-;;;71      */
-;;;72     void Drv_Dap_vol_mute(uint8_t value)
+;;;59      */
+;;;60     void Drv_Dap_vol_mute(uint8_t value)
 000000  4770              BX       lr
-;;;73     {
-;;;74     	
-;;;75     //	PD10 = value; //reset high = on
-;;;76     }
-;;;77     
+;;;61     {
+;;;62     	
+;;;63     //	PD10 = value; //reset high = on
+;;;64     }
+;;;65     
                           ENDP
 
 
                           AREA ||i.Drv_Dap_vol_set||, CODE, READONLY, ALIGN=1
 
                   Drv_Dap_vol_set PROC
-;;;56      */
-;;;57     void Drv_Dap_vol_set(uint8_t value)
+;;;46      */
+;;;47     void Drv_Dap_vol_set(uint8_t value)
 000000  b510              PUSH     {r4,lr}
-;;;58     {
+;;;48     {
 000002  4604              MOV      r4,r0
-;;;59     	//drv_pcm1862_PGA_VAL_CH1_L(value);
-;;;60     	//drv_pcm1862_PGA_VAL_CH1_R(value);
-;;;61     	drv_5825_vol_set(value);
+;;;49     	drv_5825_vol_set(value);
 000004  f7fffffe          BL       drv_5825_vol_set
-;;;62     	drv_dap_3251_vol_set(value);
+;;;50     	drv_dap_3251_vol_set(value);
 000008  4620              MOV      r0,r4
 00000a  f7fffffe          BL       drv_dap_3251_vol_set
-;;;63     }
+;;;51     }
 00000e  bd10              POP      {r4,pc}
-;;;64     
+;;;52     
                           ENDP
 
 
-                          AREA ||i.Drv_Dsp_init||, CODE, READONLY, ALIGN=1
+                          AREA ||i.Drv_audio_channel_switch||, CODE, READONLY, ALIGN=2
 
-                  Drv_Dsp_init PROC
-;;;44      */
-;;;45     void Drv_Dsp_init(void)
-000000  4770              BX       lr
-;;;46     {
-;;;47     	return;
-;;;48     }
-;;;49     
+                  Drv_audio_channel_switch PROC
+;;;145    
+;;;146    void Drv_audio_channel_switch(void)
+000000  b570              PUSH     {r4-r6,lr}
+000002  2008              MOVS     r0,#8
+000004  f7fffffe          BL       drv_pcm1862_input_channel
+;;;147    {
+;;;148    	
+;;;149      	drv_audio_Null_Channel();
+;;;150    	TIMER_Delay(TIMER0,100000);
+000008  4c0c              LDR      r4,|L4.60|
+00000a  4d0d              LDR      r5,|L4.64|
+00000c  4621              MOV      r1,r4
+00000e  4628              MOV      r0,r5
+000010  f7fffffe          BL       TIMER_Delay
+;;;151    	Drv_Dap_init();
+000014  f7fffffe          BL       Drv_Dap_init
+;;;152    	TIMER_Delay(TIMER0,100000);
+000018  4621              MOV      r1,r4
+00001a  4628              MOV      r0,r5
+00001c  f7fffffe          BL       TIMER_Delay
+;;;153    
+;;;154    	if(Global_datas.g_mode_status == FM_MODE)
+000020  4808              LDR      r0,|L4.68|
+000022  7940              LDRB     r0,[r0,#5]  ; Global_datas
+000024  280a              CMP      r0,#0xa
+000026  d005              BEQ      |L4.52|
+;;;155    	{
+;;;156    		drv_audio_FM_Channel();
+;;;157    	}
+;;;158    	else if(Global_datas.g_mode_status == AUX_MODE)
+000028  2808              CMP      r0,#8
+00002a  d005              BEQ      |L4.56|
+00002c  2004              MOVS     r0,#4
+                  |L4.46|
+00002e  f7fffffe          BL       drv_pcm1862_input_channel
+;;;159    	{
+;;;160    		drv_audio_AuxIn_Channel();
+;;;161    	}
+;;;162    	else
+;;;163    	{
+;;;164    		drv_audio_4G_Channel();
+;;;165    	}	
+;;;166    }
+000032  bd70              POP      {r4-r6,pc}
+                  |L4.52|
+000034  2002              MOVS     r0,#2
+000036  e7fa              B        |L4.46|
+                  |L4.56|
+000038  2001              MOVS     r0,#1                 ;156
+00003a  e7f8              B        |L4.46|
+;;;167    
                           ENDP
 
+                  |L4.60|
+                          DCD      0x000186a0
+                  |L4.64|
+                          DCD      0x40010000
+                  |L4.68|
+                          DCD      Global_datas+0x20
 
                           AREA ||i.Drv_audio_init||, CODE, READONLY, ALIGN=2
 
                   Drv_audio_init PROC
-;;;127    
-;;;128    void Drv_audio_init(void)
+;;;123    
+;;;124    void Drv_audio_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;129    {
-;;;130    
-;;;131    	drv_5825_powerdown_pin_init(); // 5825 powerdown pin set hi befor i2s is ready
-000002  f7fffffe          BL       drv_5825_powerdown_pin_init
-;;;132    	drv_Adc_pcm1862_Init();
-000006  f7fffffe          BL       drv_Adc_pcm1862_Init
-;;;133    	TIMER_Delay(TIMER0,5);
-00000a  2105              MOVS     r1,#5
-00000c  4802              LDR      r0,|L5.24|
-00000e  f7fffffe          BL       TIMER_Delay
-;;;134    	Drv_Dap_init();
-000012  f7fffffe          BL       Drv_Dap_init
-;;;135    	Drv_Dsp_init();
-;;;136    }
-000016  bd10              POP      {r4,pc}
-;;;137    
+000002  2008              MOVS     r0,#8
+000004  f7fffffe          BL       drv_pcm1862_input_channel
+;;;125    {
+;;;126      	drv_audio_Null_Channel();
+;;;127    	drv_5825_powerdown_pin_init(); // 5825 powerdown pin set hi befor i2s is ready
+000008  f7fffffe          BL       drv_5825_powerdown_pin_init
+;;;128    	drv_Adc_pcm1862_Init();
+00000c  f7fffffe          BL       drv_Adc_pcm1862_Init
+;;;129    	TIMER_Delay(TIMER0,5);
+000010  2105              MOVS     r1,#5
+000012  4809              LDR      r0,|L5.56|
+000014  f7fffffe          BL       TIMER_Delay
+;;;130    	Drv_Dap_init();
+000018  f7fffffe          BL       Drv_Dap_init
+;;;131    
+;;;132    	if(Global_datas.g_mode_status == FM_MODE)
+00001c  4807              LDR      r0,|L5.60|
+00001e  7940              LDRB     r0,[r0,#5]  ; Global_datas
+000020  280a              CMP      r0,#0xa
+000022  d005              BEQ      |L5.48|
+;;;133    	{
+;;;134    		drv_audio_FM_Channel();
+;;;135    	}
+;;;136    	else if(Global_datas.g_mode_status == AUX_MODE)
+000024  2808              CMP      r0,#8
+000026  d005              BEQ      |L5.52|
+000028  2004              MOVS     r0,#4
+                  |L5.42|
+00002a  f7fffffe          BL       drv_pcm1862_input_channel
+;;;137    	{
+;;;138    		drv_audio_AuxIn_Channel();
+;;;139    	}
+;;;140    	else
+;;;141    	{
+;;;142    		drv_audio_4G_Channel();
+;;;143    	}
+;;;144    }
+00002e  bd10              POP      {r4,pc}
+                  |L5.48|
+000030  2002              MOVS     r0,#2
+000032  e7fa              B        |L5.42|
+                  |L5.52|
+000034  2001              MOVS     r0,#1                 ;134
+000036  e7f8              B        |L5.42|
+;;;145    
                           ENDP
 
-                  |L5.24|
+                  |L5.56|
                           DCD      0x40010000
+                  |L5.60|
+                          DCD      Global_datas+0x20
 
                           AREA ||i.Drv_audio_powerdown||, CODE, READONLY, ALIGN=1
 
                   Drv_audio_powerdown PROC
-;;;138    
-;;;139    void Drv_audio_powerdown(void)
+;;;168    
+;;;169    void Drv_audio_powerdown(void)
 000000  b510              PUSH     {r4,lr}
-;;;140    {
-;;;141    
-;;;142    	drv_5825_powerdown_pin_set(0);//power down
+;;;170    {
+;;;171    
+;;;172    	drv_5825_powerdown_pin_set(0);//power down
 000002  2000              MOVS     r0,#0
 000004  f7fffffe          BL       drv_5825_powerdown_pin_set
-;;;143    	drv_Adc_pcm1862_Init();
+;;;173    	drv_Adc_pcm1862_Init();
 000008  f7fffffe          BL       drv_Adc_pcm1862_Init
-;;;144    	drv_dap_3251_rest();
+;;;174    	drv_dap_3251_rest();
 00000c  f7fffffe          BL       drv_dap_3251_rest
-;;;145    }
+;;;175    }
 000010  bd10              POP      {r4,pc}
-;;;146    
+;;;176    
                           ENDP
 
 
                           AREA ||i.drv_audio_4G_Channel||, CODE, READONLY, ALIGN=1
 
                   drv_audio_4G_Channel PROC
-;;;84     
-;;;85     void drv_audio_4G_Channel(void)
+;;;72     
+;;;73     void drv_audio_4G_Channel(void)
 000000  b510              PUSH     {r4,lr}
-;;;86     {
-;;;87     
-;;;88     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3));
+;;;74     {
+;;;75     
+;;;76     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3));
 000002  2004              MOVS     r0,#4
 000004  f7fffffe          BL       drv_pcm1862_input_channel
-;;;89     
-;;;90     }
+;;;77     
+;;;78     }
 000008  bd10              POP      {r4,pc}
-;;;91     
+;;;79     
                           ENDP
 
 
                           AREA ||i.drv_audio_AuxIn_Channel||, CODE, READONLY, ALIGN=1
 
                   drv_audio_AuxIn_Channel PROC
-;;;77     
-;;;78     void drv_audio_AuxIn_Channel(void)
+;;;65     
+;;;66     void drv_audio_AuxIn_Channel(void)
 000000  b510              PUSH     {r4,lr}
-;;;79     {
-;;;80     
-;;;81     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(1));
+;;;67     {
+;;;68     
+;;;69     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(1));
 000002  2001              MOVS     r0,#1
 000004  f7fffffe          BL       drv_pcm1862_input_channel
-;;;82     
-;;;83     }
+;;;70     
+;;;71     }
 000008  bd10              POP      {r4,pc}
-;;;84     
+;;;72     
                           ENDP
 
 
                           AREA ||i.drv_audio_FM_Channel||, CODE, READONLY, ALIGN=1
 
                   drv_audio_FM_Channel PROC
-;;;91     
-;;;92     void drv_audio_FM_Channel(void)
+;;;79     
+;;;80     void drv_audio_FM_Channel(void)
 000000  b510              PUSH     {r4,lr}
-;;;93     {
-;;;94     
-;;;95     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(2));
+;;;81     {
+;;;82     
+;;;83     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(2));
 000002  2002              MOVS     r0,#2
 000004  f7fffffe          BL       drv_pcm1862_input_channel
-;;;96     
-;;;97     }
+;;;84     
+;;;85     }
 000008  bd10              POP      {r4,pc}
-;;;98     /*
+;;;86     
+                          ENDP
+
+
+                          AREA ||i.drv_audio_Null_Channel||, CODE, READONLY, ALIGN=1
+
+                  drv_audio_Null_Channel PROC
+;;;86     
+;;;87     void drv_audio_Null_Channel(void) // channel 4 no use
+000000  b510              PUSH     {r4,lr}
+;;;88     {
+;;;89     
+;;;90     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(4));
+000002  2008              MOVS     r0,#8
+000004  f7fffffe          BL       drv_pcm1862_input_channel
+;;;91     
+;;;92     }
+000008  bd10              POP      {r4,pc}
+;;;93     
                           ENDP
 
 

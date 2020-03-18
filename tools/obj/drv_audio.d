@@ -38,3 +38,4 @@
 .\obj\drv_audio.o: ..\src\driver\audio\drv_dap_tas3251.h
 .\obj\drv_audio.o: ..\src\driver\audio\drv_dap_tas5825.h
 .\obj\drv_audio.o: ..\src\driver\include\drv_Pcm1862.h
+.\obj\drv_audio.o: ..\src\global\tym_global.h

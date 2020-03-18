@@ -29399,6 +29399,16 @@ typedef enum
 
 } eUart_Msg;
 
+
+typedef enum
+{
+    EQ_MODE_NONE      = 0,
+    EQ_MODE_INDOOR,
+    EQ_MODE_OUTDOOR,
+
+} EQ_MODE;
+
+
 typedef struct _PowerStatus
 {
 	uint8_t PowerBatInStatus;
@@ -29420,10 +29430,17 @@ typedef struct
 	uint32_t systick;
 	uint8_t key_led_blink;
 	uint8_t led_poweroff;
+	uint8_t	eq_mode;
+	uint8_t volume;
+	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+
+
 
 
 #line 16 "..\\src\\server\\audio\\srv_audio.c"
@@ -29554,16 +29571,6 @@ void Drv_Dap_init(void);
 
 
  
-void Drv_Dsp_init(void);
-
-
-
-
-
-
-
-
- 
 void Drv_Dap_vol_set(uint8_t value);
 
 
@@ -29583,6 +29590,9 @@ void drv_audio_4G_Channel(void);
 void drv_audio_FM_Channel(void);
 
 void Drv_audio_init(void);
+
+void Drv_audio_channel_switch(void);
+
 
 #line 18 "..\\src\\server\\audio\\srv_audio.c"
 #line 1 "..\\src\\server\\include\\srv_audio.h"

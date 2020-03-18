@@ -37,3 +37,4 @@
 .\obj\drv_dap_tas3251.o: ..\src\driver\audio\drv_dap_tas3251.h
 .\obj\drv_dap_tas3251.o: ..\src\io\include\hal_i2c.h
 .\obj\drv_dap_tas3251.o: ..\src\driver\audio\drv_dap_tas3251_param.h
+.\obj\drv_dap_tas3251.o: ..\src\global\tym_global.h

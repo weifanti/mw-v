@@ -50323,16 +50323,6 @@ Nvoid Drv_Dap_init(void);
 N
 N
 N/**
-N * Drv_Dsp_init
-N * @brief      load Dsp data part
-N * @param      None
-N * @return     None
-N *
-N */
-Nvoid Drv_Dsp_init(void);
-N
-N
-N/**
 N * Load Dap vol set
 N * @brief      Drv_Dap_vol_set
 N * @param      None
@@ -50358,6 +50348,9 @@ N
 Nvoid drv_audio_FM_Channel(void);
 N
 Nvoid Drv_audio_init(void);
+N
+Nvoid Drv_audio_channel_switch(void);
+N
 N
 L 13 "..\src\driver\audio\drv_audio.c" 2
 N#include "drv_dap_tas3251.h"
@@ -50755,6 +50748,130 @@ S    {0x1F, 0xEC, 0x98},           /*6dB*/
 S};
 N#endif
 L 16 "..\src\driver\audio\drv_audio.c" 2
+N#include "tym_global.h"
+L 1 "..\src\global\tym_global.h" 1
+N/*
+N* @file tym_global.h
+N* @brief define global variables
+N* @author Aaron.Shao
+N* @date 25-Jun-2019
+N* @copyright Tymphany Ltd.
+N*/
+N
+N#ifndef __GLOBAL_H__
+N#define __GLOBAL_H__
+N
+N#ifdef TYM_GLOBALS
+S#define TYM_GLOBALS
+N#else
+N#define TYM_GLOBALS extern
+N#endif
+N
+N#define TICK_COUNT              (50)   /* 1 second */
+N#define TICK_IN_MS              (1000/TICK_COUNT)
+N
+N#define GPIO_HIGH  1
+N#define GPIO_LOW   0
+N
+Ntypedef enum
+N{
+N    SYS_ERR_NONE       = 0,
+N    SYS_ERR_I2C0       = (1 << 1),
+N    SYS_ERR_I2C1       = (1 << 2),
+N    SYS_ERR_SPI0       = (1 << 3),
+N    SYS_ERR_SPI1       = (1 << 4),
+N    SYS_ERR_UART0      = (1 << 5),
+N    SYS_ERR_UART1      = (1 << 6)
+N} sys_err_e;
+N
+Nextern volatile sys_err_e sys_err;
+N
+Ntypedef enum
+N{
+N    MSG_4G_SYS_STATE_IND      = 1,
+N    MSG_MCU1_SYS_STATE_IND,
+N    MSG_BT_STATE_IND,
+N    MSG_EA_DET_IND,
+N    MSG_WIFI_CHANNEL_SET,
+N    MSG_ENCODER_IND,
+N    MSG_VOLUME_SET,
+N} eFourG_Msg;
+N
+Ntypedef enum
+N{
+N	POWER_ON_MODE,
+N	WIFI_MODE, 
+N	WIFI_CONNECTED_MODE,
+N	WIFI_CONNECTING_MODE,
+N	FOURG_MODE,
+N	FOURG_CONNECTED_MODE,
+N    BT_MODE,
+N    BT_CONNECTED_MODE,
+N    AUX_MODE,
+N    LOUD_SPEAKER_MODE,
+N    FM_MODE,
+N    SYSTEM_UPDATING,
+N    SYS_LOW_POWER,
+N    POWER_OFF_MODE,
+N    POWER_IDLE_MODE,
+N} mode_status;
+N
+Ntypedef enum
+N{
+N    MSG_4G_CMD_IND      = 1,
+N    MSG_4G_DAT_IND,
+N    MSG_MCU1_CMD_IND,
+N    MSG_MCU1_DAT_IND,
+N
+N} eUart_Msg;
+N
+N
+Ntypedef enum
+N{
+N    EQ_MODE_NONE      = 0,
+N    EQ_MODE_INDOOR,
+N    EQ_MODE_OUTDOOR,
+N
+N} EQ_MODE;
+N
+N
+Ntypedef struct _PowerStatus
+N{
+N	uint8_t PowerBatInStatus;
+N	uint8_t PowerBatExStatus;
+N	uint8_t PowerAcStatus;
+N	uint8_t bat_status;
+N	uint8_t bat_value;  //0-3 in bat , 4-7 ex bat
+N}sPowerStatus;
+N
+N#define ADC_CHANNEL_NUM_MAX 16
+N
+Ntypedef struct
+N{
+N 
+N	int16_t ADC_ChannelValue[ADC_CHANNEL_NUM_MAX];
+X	int16_t ADC_ChannelValue[16];
+N	sPowerStatus g_PowerStatus;
+N	uint8_t g_mode_status;
+N	uint8_t g_4g_initing;
+N	uint32_t systick;
+N	uint8_t key_led_blink;
+N	uint8_t led_poweroff;
+N	uint8_t	eq_mode;
+N	uint8_t volume;
+N	
+N
+N}sGlobalData;
+N
+Nextern sGlobalData Global_datas;
+N
+N#define VOLUME_DEFAULT  5
+N#define VOLUME_MAX		16
+N#define VOLUME_MIN		0
+N
+N
+N#endif
+L 17 "..\src\driver\audio\drv_audio.c" 2
 N
 N
 N
@@ -50778,17 +50895,6 @@ N
 N	drv_5825_mute_pin_set(1);  // unmute
 N}
 N
-N/**
-N * Drv_Dsp_init
-N * @brief      load Dsp data part
-N * @param      None
-N * @return     None
-N *
-N */
-Nvoid Drv_Dsp_init(void)
-N{
-N	return;
-N}
 N
 N/**
 N * Load Dap vol set
@@ -50799,8 +50905,6 @@ N *
 N */
 Nvoid Drv_Dap_vol_set(uint8_t value)
 N{
-N	//drv_pcm1862_PGA_VAL_CH1_L(value);
-N	//drv_pcm1862_PGA_VAL_CH1_R(value);
 N	drv_5825_vol_set(value);
 N	drv_dap_3251_vol_set(value);
 N}
@@ -50841,6 +50945,15 @@ N	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(2));
 X	drv_pcm1862_input_channel((1 << (2-1)));
 N
 N}
+N
+Nvoid drv_audio_Null_Channel(void) // channel 4 no use
+N{
+N
+N	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(4));
+X	drv_pcm1862_input_channel((1 << (4-1)));
+N
+N}
+N
 N/*
 Nvoid drv_Audio_Switch(int var)
 N{
@@ -50873,20 +50986,56 @@ N*/
 N
 Nvoid Drv_audio_init(void)
 N{
-N
+N  	drv_audio_Null_Channel();
 N	drv_5825_powerdown_pin_init(); // 5825 powerdown pin set hi befor i2s is ready
 N	drv_Adc_pcm1862_Init();
 N	TIMER_Delay(TIMER0,5);
 X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),5);
 N	Drv_Dap_init();
-N	Drv_Dsp_init();
+N
+N	if(Global_datas.g_mode_status == FM_MODE)
+N	{
+N		drv_audio_FM_Channel();
+N	}
+N	else if(Global_datas.g_mode_status == AUX_MODE)
+N	{
+N		drv_audio_AuxIn_Channel();
+N	}
+N	else
+N	{
+N		drv_audio_4G_Channel();
+N	}
+N}
+N
+Nvoid Drv_audio_channel_switch(void)
+N{
+N	
+N  	drv_audio_Null_Channel();
+N	TIMER_Delay(TIMER0,100000);
+X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),100000);
+N	Drv_Dap_init();
+N	TIMER_Delay(TIMER0,100000);
+X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),100000);
+N
+N	if(Global_datas.g_mode_status == FM_MODE)
+N	{
+N		drv_audio_FM_Channel();
+N	}
+N	else if(Global_datas.g_mode_status == AUX_MODE)
+N	{
+N		drv_audio_AuxIn_Channel();
+N	}
+N	else
+N	{
+N		drv_audio_4G_Channel();
+N	}	
 N}
 N
 N
 Nvoid Drv_audio_powerdown(void)
 N{
 N
-W "..\src\driver\audio\drv_audio.c" 142 2 function "drv_5825_powerdown_pin_set" declared implicitly
+W "..\src\driver\audio\drv_audio.c" 172 2 function "drv_5825_powerdown_pin_set" declared implicitly
 N	drv_5825_powerdown_pin_set(0);//power down
 N	drv_Adc_pcm1862_Init();
 N	drv_dap_3251_rest();

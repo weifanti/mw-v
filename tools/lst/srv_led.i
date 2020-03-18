@@ -29400,6 +29400,16 @@ typedef enum
 
 } eUart_Msg;
 
+
+typedef enum
+{
+    EQ_MODE_NONE      = 0,
+    EQ_MODE_INDOOR,
+    EQ_MODE_OUTDOOR,
+
+} EQ_MODE;
+
+
 typedef struct _PowerStatus
 {
 	uint8_t PowerBatInStatus;
@@ -29421,10 +29431,17 @@ typedef struct
 	uint32_t systick;
 	uint8_t key_led_blink;
 	uint8_t led_poweroff;
+	uint8_t	eq_mode;
+	uint8_t volume;
+	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+
+
 
 
 #line 17 "..\\src\\server\\led\\srv_led.c"

@@ -29399,6 +29399,16 @@ typedef enum
 
 } eUart_Msg;
 
+
+typedef enum
+{
+    EQ_MODE_NONE      = 0,
+    EQ_MODE_INDOOR,
+    EQ_MODE_OUTDOOR,
+
+} EQ_MODE;
+
+
 typedef struct _PowerStatus
 {
 	uint8_t PowerBatInStatus;
@@ -29420,10 +29430,17 @@ typedef struct
 	uint32_t systick;
 	uint8_t key_led_blink;
 	uint8_t led_poweroff;
+	uint8_t	eq_mode;
+	uint8_t volume;
+	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+
+
 
 
 #line 16 "..\\src\\server\\key\\srv_key.c"
@@ -29657,6 +29674,60 @@ void drv_FM_on_NCU031_reset(void);
 
 
 #line 21 "..\\src\\server\\key\\srv_key.c"
+#line 1 "..\\src\\driver\\audio\\drv_audio.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+void Drv_Dap_init(void);
+
+
+
+
+
+
+
+
+ 
+void Drv_Dap_vol_set(uint8_t value);
+
+
+
+
+
+
+
+
+ 
+void Drv_Dap_vol_mute(uint8_t value);
+
+void drv_audio_AuxIn_Channel(void);
+
+void drv_audio_4G_Channel(void);
+
+void drv_audio_FM_Channel(void);
+
+void Drv_audio_init(void);
+
+void Drv_audio_channel_switch(void);
+
+
+#line 22 "..\\src\\server\\key\\srv_key.c"
+
 
 void srv_key_power_handler(void)
 {
@@ -29741,10 +29812,16 @@ void srv_key_next_station_handler(void)
 	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x31,0x00); 
 }
 
-void srv_key_eq_switch_handler(void)
+ void srv_key_eq_indoor_switch_handler(void)
 {
 	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc1,0x00,0x00); 
 }
+
+void srv_key_eq_outdoor_switch_handler(void)
+{
+	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc2,0x00,0x00); 
+}
+
 
 void srv_key_net_config_handler(void)
 {
@@ -29816,11 +29893,32 @@ void srv_key_handler(void)
 			Global_datas.key_led_blink = 1;
 			srv_key_next_station_handler();
 		break;
-		case IR_KEY_EQ:
+		case IR_KEY_EQ_INDOOR:
 			
 			Global_datas.key_led_blink = 1;
-			srv_key_eq_switch_handler();
+
+			if(Global_datas.eq_mode != EQ_MODE_INDOOR)
+			{
+				Global_datas.eq_mode = EQ_MODE_INDOOR;
+				srv_key_eq_indoor_switch_handler();
+				Drv_audio_channel_switch();
+			}
 		break;
+		
+		case IR_KEY_EQ_OUTDOOR:
+			
+			Global_datas.key_led_blink = 1;
+
+			if(Global_datas.eq_mode != EQ_MODE_OUTDOOR)
+			{
+				Global_datas.eq_mode = EQ_MODE_OUTDOOR;
+				srv_key_eq_outdoor_switch_handler();
+				Drv_audio_channel_switch();
+			}		
+			
+		break;
+
+		
 		case IR_KEY_NET_SET:
 			
 			Global_datas.key_led_blink = 1;
@@ -29831,7 +29929,7 @@ void srv_key_handler(void)
 		break;
 	}
 
-#line 212 "..\\src\\server\\key\\srv_key.c"
+#line 241 "..\\src\\server\\key\\srv_key.c"
 	
 }
 

@@ -14,6 +14,7 @@
 #include "drv_dap_tas3251.h"
 #include "hal_i2c.h"
 #include "drv_dap_tas3251_param.h"
+#include "tym_global.h"
 
 //#include "core_timer.h"
 
@@ -162,8 +163,14 @@ static void drv_dap_3251_i2c_write(cfg_reg *r, int n)
  */
 static void drv_dap_3251_Load_in_Param(void)
 {
-	printf("3251_sizeof(wf_registers) = %d\n",sizeof(wf_registers)/2);
-	drv_dap_3251_i2c_write(wf_registers,sizeof(wf_registers)/2);
+	if(Global_datas.eq_mode == EQ_MODE_INDOOR)
+	{
+		drv_dap_3251_i2c_write(wf_registers_indoor,sizeof(wf_registers_indoor)/2);
+	}
+	else if(Global_datas.eq_mode == EQ_MODE_OUTDOOR)
+	{
+		drv_dap_3251_i2c_write(wf_registers_outdoor,sizeof(wf_registers_outdoor)/2);
+	}
 }
 
 
@@ -261,9 +268,7 @@ void drv_dap_3251_Init(void)
     /* load data */
     /* the first part */
     drv_dap_3251_Load_in_Param(); 
-	
-	//Hal_I2c_Transfer(DAP_I2C_ADDR, (uint8_t*)tas3251_volume_set, sizeof(tas3251_volume_set), (uint8_t*)NULL, 0);
-	drv_dap_3251_vol_set(5);
+	drv_dap_3251_vol_set((Global_datas.volume));
 }
 
 void drv_dap_3251_rest(void)

@@ -39,3 +39,4 @@
 .\obj\srv_key.o: ..\src\core\include\core_msg.h
 .\obj\srv_key.o: ..\src\server\include\srv_key.h
 .\obj\srv_key.o: ..\src\driver\include\drv_nuc031.h
+.\obj\srv_key.o: ..\src\driver\audio\drv_audio.h

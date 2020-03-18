@@ -50350,6 +50350,16 @@ N    MSG_MCU1_DAT_IND,
 N
 N} eUart_Msg;
 N
+N
+Ntypedef enum
+N{
+N    EQ_MODE_NONE      = 0,
+N    EQ_MODE_INDOOR,
+N    EQ_MODE_OUTDOOR,
+N
+N} EQ_MODE;
+N
+N
 Ntypedef struct _PowerStatus
 N{
 N	uint8_t PowerBatInStatus;
@@ -50372,10 +50382,17 @@ N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
 N	uint8_t led_poweroff;
+N	uint8_t	eq_mode;
+N	uint8_t volume;
+N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define VOLUME_DEFAULT  5
+N#define VOLUME_MAX		16
+N#define VOLUME_MIN		0
 N
 N
 N#endif
@@ -50632,6 +50649,61 @@ Nvoid drv_FM_on_NCU031_reset(void);
 N#endif
 N
 L 21 "..\src\server\key\srv_key.c" 2
+N#include "drv_audio.h"
+L 1 "..\src\driver\audio\drv_audio.h" 1
+N/**
+N * drv_audio.h file
+N * @author    Aaron.Shao
+N * @brief     The audio driver
+N * @date      2019-Nov.
+N *
+N * Copyright (c) Tymphany
+N */
+N
+N
+N
+N/**
+N * Drv_Dap_init
+N * @brief      load Dap data part
+N * @param      None
+N * @return     None
+N *
+N */
+Nvoid Drv_Dap_init(void);
+N
+N
+N/**
+N * Load Dap vol set
+N * @brief      Drv_Dap_vol_set
+N * @param      None
+N * @return     None
+N *
+N */
+Nvoid Drv_Dap_vol_set(uint8_t value);
+N
+N
+N/**
+N * Load Dap mute
+N * @brief      load Dap init_arr_main_volume
+N * @param      value 1 unmute, 0 mute
+N * @return     None
+N *
+N */
+Nvoid Drv_Dap_vol_mute(uint8_t value);
+N
+Nvoid drv_audio_AuxIn_Channel(void);
+N
+Nvoid drv_audio_4G_Channel(void);
+N
+Nvoid drv_audio_FM_Channel(void);
+N
+Nvoid Drv_audio_init(void);
+N
+Nvoid Drv_audio_channel_switch(void);
+N
+N
+L 22 "..\src\server\key\srv_key.c" 2
+N
 N
 Nvoid srv_key_power_handler(void)
 N{
@@ -50716,10 +50788,16 @@ N	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //next piece
 N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x31,0x00); //next piece
 N}
 N
-Nvoid srv_key_eq_switch_handler(void)
+N void srv_key_eq_indoor_switch_handler(void)
 N{
-N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc1,0x00,0x00); //inside
+N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc1,0x00,0x00); //indoor
 N}
+N
+Nvoid srv_key_eq_outdoor_switch_handler(void)
+N{
+N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc2,0x00,0x00); //outdoor
+N}
+N
 N
 Nvoid srv_key_net_config_handler(void)
 N{
@@ -50737,15 +50815,15 @@ N			//srv_key_power_handler();
 N			//PowerOff();
 N		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 N		{
-W "..\src\server\key\srv_key.c" 126 4 function "SYS_Status" declared implicitly
+W "..\src\server\key\srv_key.c" 134 4 function "SYS_Status" declared implicitly
 N			SYS_Status();
 N		}
 N		
 N		else
 N		{
-W "..\src\server\key\srv_key.c" 131 4 function "PowerOff" declared implicitly
+W "..\src\server\key\srv_key.c" 139 4 function "PowerOff" declared implicitly
 N			PowerOff();
-W "..\src\server\key\srv_key.c" 132 4 function "SysIdle" declared implicitly
+W "..\src\server\key\srv_key.c" 140 4 function "SysIdle" declared implicitly
 N			SysIdle();
 N		}
 N		break;
@@ -50794,11 +50872,32 @@ N
 N			Global_datas.key_led_blink = 1;
 N			srv_key_next_station_handler();
 N		break;
-N		case IR_KEY_EQ:
+N		case IR_KEY_EQ_INDOOR:
 N			
 N			Global_datas.key_led_blink = 1;
-N			srv_key_eq_switch_handler();
+N
+N			if(Global_datas.eq_mode != EQ_MODE_INDOOR)
+N			{
+N				Global_datas.eq_mode = EQ_MODE_INDOOR;
+N				srv_key_eq_indoor_switch_handler();
+N				Drv_audio_channel_switch();
+N			}
 N		break;
+N		
+N		case IR_KEY_EQ_OUTDOOR:
+N			
+N			Global_datas.key_led_blink = 1;
+N
+N			if(Global_datas.eq_mode != EQ_MODE_OUTDOOR)
+N			{
+N				Global_datas.eq_mode = EQ_MODE_OUTDOOR;
+N				srv_key_eq_outdoor_switch_handler();
+N				Drv_audio_channel_switch();
+N			}		
+N			
+N		break;
+N
+N		
 N		case IR_KEY_NET_SET:
 N			
 N			Global_datas.key_led_blink = 1;

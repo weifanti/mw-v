@@ -37,3 +37,4 @@
 .\obj\drv_dap_tas5825.o: ..\src\io\include\hal_i2c.h
 .\obj\drv_dap_tas5825.o: ..\src\driver\audio\drv_dap_tas5825.h
 .\obj\drv_dap_tas5825.o: ..\src\driver\audio\drv_dap_tas5825_param.h
+.\obj\drv_dap_tas5825.o: ..\src\global\tym_global.h

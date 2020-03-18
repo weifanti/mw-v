@@ -29367,16 +29367,6 @@ void Drv_Dap_init(void);
 
 
  
-void Drv_Dsp_init(void);
-
-
-
-
-
-
-
-
- 
 void Drv_Dap_vol_set(uint8_t value);
 
 
@@ -29396,6 +29386,9 @@ void drv_audio_4G_Channel(void);
 void drv_audio_FM_Channel(void);
 
 void Drv_audio_init(void);
+
+void Drv_audio_channel_switch(void);
+
 
 #line 13 "..\\src\\driver\\audio\\drv_audio.c"
 #line 1 "..\\src\\driver\\audio\\drv_dap_tas3251.h"
@@ -29627,6 +29620,127 @@ void drv_Adc_pcm1862_Init(void);
 
  
 #line 16 "..\\src\\driver\\audio\\drv_audio.c"
+#line 1 "..\\src\\global\\tym_global.h"
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef enum
+{
+    SYS_ERR_NONE       = 0,
+    SYS_ERR_I2C0       = (1 << 1),
+    SYS_ERR_I2C1       = (1 << 2),
+    SYS_ERR_SPI0       = (1 << 3),
+    SYS_ERR_SPI1       = (1 << 4),
+    SYS_ERR_UART0      = (1 << 5),
+    SYS_ERR_UART1      = (1 << 6)
+} sys_err_e;
+
+extern volatile sys_err_e sys_err;
+
+typedef enum
+{
+    MSG_4G_SYS_STATE_IND      = 1,
+    MSG_MCU1_SYS_STATE_IND,
+    MSG_BT_STATE_IND,
+    MSG_EA_DET_IND,
+    MSG_WIFI_CHANNEL_SET,
+    MSG_ENCODER_IND,
+    MSG_VOLUME_SET,
+} eFourG_Msg;
+
+typedef enum
+{
+	POWER_ON_MODE,
+	WIFI_MODE, 
+	WIFI_CONNECTED_MODE,
+	WIFI_CONNECTING_MODE,
+	FOURG_MODE,
+	FOURG_CONNECTED_MODE,
+    BT_MODE,
+    BT_CONNECTED_MODE,
+    AUX_MODE,
+    LOUD_SPEAKER_MODE,
+    FM_MODE,
+    SYSTEM_UPDATING,
+    SYS_LOW_POWER,
+    POWER_OFF_MODE,
+    POWER_IDLE_MODE,
+} mode_status;
+
+typedef enum
+{
+    MSG_4G_CMD_IND      = 1,
+    MSG_4G_DAT_IND,
+    MSG_MCU1_CMD_IND,
+    MSG_MCU1_DAT_IND,
+
+} eUart_Msg;
+
+
+typedef enum
+{
+    EQ_MODE_NONE      = 0,
+    EQ_MODE_INDOOR,
+    EQ_MODE_OUTDOOR,
+
+} EQ_MODE;
+
+
+typedef struct _PowerStatus
+{
+	uint8_t PowerBatInStatus;
+	uint8_t PowerBatExStatus;
+	uint8_t PowerAcStatus;
+	uint8_t bat_status;
+	uint8_t bat_value;  
+}sPowerStatus;
+
+
+
+typedef struct
+{
+ 
+	int16_t ADC_ChannelValue[16];
+	sPowerStatus g_PowerStatus;
+	uint8_t g_mode_status;
+	uint8_t g_4g_initing;
+	uint32_t systick;
+	uint8_t key_led_blink;
+	uint8_t led_poweroff;
+	uint8_t	eq_mode;
+	uint8_t volume;
+	
+
+}sGlobalData;
+
+extern sGlobalData Global_datas;
+
+
+
+
+
+
+#line 17 "..\\src\\driver\\audio\\drv_audio.c"
 
 
 
@@ -29655,23 +29769,10 @@ void Drv_Dap_init(void)
 
 
 
- 
-void Drv_Dsp_init(void)
-{
-	return;
-}
-
-
-
-
-
-
 
  
 void Drv_Dap_vol_set(uint8_t value)
 {
-	
-	
 	drv_5825_vol_set(value);
 	drv_dap_3251_vol_set(value);
 }
@@ -29710,6 +29811,14 @@ void drv_audio_FM_Channel(void)
 
 }
 
+void drv_audio_Null_Channel(void) 
+{
+
+	drv_pcm1862_input_channel((1 << (4-1)));
+
+}
+
+
 
 
 
@@ -29741,12 +29850,46 @@ void drv_audio_FM_Channel(void)
 
 void Drv_audio_init(void)
 {
-
+  	drv_audio_Null_Channel();
 	drv_5825_powerdown_pin_init(); 
 	drv_Adc_pcm1862_Init();
 	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),5);
 	Drv_Dap_init();
-	Drv_Dsp_init();
+
+	if(Global_datas.g_mode_status == FM_MODE)
+	{
+		drv_audio_FM_Channel();
+	}
+	else if(Global_datas.g_mode_status == AUX_MODE)
+	{
+		drv_audio_AuxIn_Channel();
+	}
+	else
+	{
+		drv_audio_4G_Channel();
+	}
+}
+
+void Drv_audio_channel_switch(void)
+{
+	
+  	drv_audio_Null_Channel();
+	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),100000);
+	Drv_Dap_init();
+	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),100000);
+
+	if(Global_datas.g_mode_status == FM_MODE)
+	{
+		drv_audio_FM_Channel();
+	}
+	else if(Global_datas.g_mode_status == AUX_MODE)
+	{
+		drv_audio_AuxIn_Channel();
+	}
+	else
+	{
+		drv_audio_4G_Channel();
+	}	
 }
 
 

@@ -20,16 +20,6 @@ void Drv_Dap_init(void);
 
 
 /**
- * Drv_Dsp_init
- * @brief      load Dsp data part
- * @param      None
- * @return     None
- *
- */
-void Drv_Dsp_init(void);
-
-
-/**
  * Load Dap vol set
  * @brief      Drv_Dap_vol_set
  * @param      None
@@ -55,4 +45,7 @@ void drv_audio_4G_Channel(void);
 void drv_audio_FM_Channel(void);
 
 void Drv_audio_init(void);
+
+void Drv_audio_channel_switch(void);
+
 

@@ -12,6 +12,8 @@
 #include "hal_i2c.h"
 #include "drv_dap_tas5825.h"
 #include "drv_dap_tas5825_param.h"
+#include "tym_global.h"
+
 
 //#include "core_timer.h"
 
@@ -202,13 +204,23 @@ static void drv_5825_Load_in_Param(void);
  */
 static void drv_5825_Load_in_Param(void)
 {
-	printf("sizeof(registers) = %d\n",sizeof(registers_mid)/2);
-	
-	drv_5825_00_i2c_write(registers_mid,sizeof(registers_mid)/2);
+	if(Global_datas.eq_mode == EQ_MODE_INDOOR)
+	{
+		drv_5825_00_i2c_write(registers_mid_indoor,sizeof(registers_mid_indoor)/2);
 
-	drv_5825_gpio012_config();
-	
-	drv_5825_01_i2c_write(registers_tw,sizeof(registers_tw)/2);
+		drv_5825_gpio012_config();
+		
+		drv_5825_01_i2c_write(registers_tw_indoor,sizeof(registers_tw_indoor)/2);
+	}
+	else if(Global_datas.eq_mode == EQ_MODE_OUTDOOR)
+	{
+		drv_5825_00_i2c_write(registers_mid_outdoor,sizeof(registers_mid_outdoor)/2);
+		
+		drv_5825_gpio012_config();
+		
+		drv_5825_01_i2c_write(registers_tw_outdoor,sizeof(registers_tw_outdoor)/2);
+	}
+
 }
 
 /**
@@ -373,12 +385,15 @@ void drv_5825_Init(void)
     drv_5825_amp_warn_det_init();
 
 	printf("drv_5825_Init***********\n");
-	
-	TIMER_Delay(TIMER0,1000);
 
 	
+    drv_5825_powerdown_pin_set(0);
+	TIMER_Delay(TIMER0,50000);
+    drv_5825_powerdown_pin_set(1);
+	TIMER_Delay(TIMER0,20000);
+	
     drv_5825_Load_in_Param(); 
-	drv_5825_vol_set(5);
+	drv_5825_vol_set(Global_datas.volume);
 	
 	drv_5825_gpio012_config();
 }

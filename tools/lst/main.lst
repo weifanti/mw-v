@@ -50466,16 +50466,6 @@ Nvoid Drv_Dap_init(void);
 N
 N
 N/**
-N * Drv_Dsp_init
-N * @brief      load Dsp data part
-N * @param      None
-N * @return     None
-N *
-N */
-Nvoid Drv_Dsp_init(void);
-N
-N
-N/**
 N * Load Dap vol set
 N * @brief      Drv_Dap_vol_set
 N * @param      None
@@ -50501,6 +50491,9 @@ N
 Nvoid drv_audio_FM_Channel(void);
 N
 Nvoid Drv_audio_init(void);
+N
+Nvoid Drv_audio_channel_switch(void);
+N
 N
 L 19 "..\main.c" 2
 N#include "drv_4G_model.h"
@@ -50689,6 +50682,16 @@ N    MSG_MCU1_DAT_IND,
 N
 N} eUart_Msg;
 N
+N
+Ntypedef enum
+N{
+N    EQ_MODE_NONE      = 0,
+N    EQ_MODE_INDOOR,
+N    EQ_MODE_OUTDOOR,
+N
+N} EQ_MODE;
+N
+N
 Ntypedef struct _PowerStatus
 N{
 N	uint8_t PowerBatInStatus;
@@ -50711,10 +50714,17 @@ N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
 N	uint8_t led_poweroff;
+N	uint8_t	eq_mode;
+N	uint8_t volume;
+N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define VOLUME_DEFAULT  5
+N#define VOLUME_MAX		16
+N#define VOLUME_MIN		0
 N
 N
 N#endif
@@ -51156,9 +51166,6 @@ Nvolatile sys_err_e sys_err = SYS_ERR_NONE;
 N#define PLLCTL_SETTING  CLK_PLLCTL_72MHz_HXT
 N#define PLL_CLOCK       72000000
 N
-Nuint8_t volume=5;
-Xunsigned char volume=5;
-N
 N
 Nvoid SYS_Clock_init(void)
 N{
@@ -51323,8 +51330,6 @@ Nvoid SysIdle(void)
 N{
 N	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 N	Global_datas.g_4g_initing = 0;
-N	//TYM_drv_powerkeepon(0);
-N	//Drv_4GMoudle_PowerUp(0);
 N	drv_FourGmodel_power_key_SetLow();
 N	TimeOutSet(&SysTimer_1s,1000);
 N
@@ -51334,14 +51339,17 @@ Nvoid SYS_Status(void)
 N{
 N	Global_datas.g_mode_status = POWER_ON_MODE;	
 N	Global_datas.g_4g_initing = 1;
+N	Global_datas.eq_mode = EQ_MODE_INDOOR;
+N	Global_datas.volume = VOLUME_DEFAULT;
+X	Global_datas.volume = 5;
 N	TYM_drv_powerkeepon(1);
 N	Drv_4GMoudle_PowerUp(1);
 N	drv_FourGmodel_power_key_SetHi();
 N	TimeOutSet(&ModulePowerUpPinTimer,3000);
 N	TimeOutSet(&PoweroffLedTimer, 100);
 N	Drv_audio_init();
-N	volume=5;
 N	Global_datas.led_poweroff = 0;
+N	
 N
 N	
 N	drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
@@ -51355,7 +51363,7 @@ N
 N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N	drv_led_init();// led all off
-W "..\main.c" 213 2 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 211 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
 N	Global_datas.led_poweroff = 1;
 N	TimeOutSet(&PoweroffLedTimer, 5000);
@@ -51723,19 +51731,22 @@ N					}
 N
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x03))
 N					{
-N						if (volume > 0x00)
+N						if (Global_datas.volume > VOLUME_MIN)
+X						if (Global_datas.volume > 0)
 N						{
-N							volume--;
-N							Drv_Dap_vol_set(volume);
+N							Global_datas.volume--;
+N							Drv_Dap_vol_set(Global_datas.volume);
 N							printf("Hal_Dap_Load_vol_add\n");
 N						}
 N					}
+N					
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 N					{
-N						if (volume < 15)
+N						if (Global_datas.volume < VOLUME_MAX)
+X						if (Global_datas.volume < 16)
 N						{
-N							volume++;
-N							Drv_Dap_vol_set(volume);
+N							Global_datas.volume++;
+N							Drv_Dap_vol_set(Global_datas.volume);
 N							printf("Hal_Dap_Load_vol_reduce\n");
 N						}
 N					}

@@ -50393,6 +50393,16 @@ N    MSG_MCU1_DAT_IND,
 N
 N} eUart_Msg;
 N
+N
+Ntypedef enum
+N{
+N    EQ_MODE_NONE      = 0,
+N    EQ_MODE_INDOOR,
+N    EQ_MODE_OUTDOOR,
+N
+N} EQ_MODE;
+N
+N
 Ntypedef struct _PowerStatus
 N{
 N	uint8_t PowerBatInStatus;
@@ -50425,10 +50435,19 @@ N	uint8_t key_led_blink;
 X	unsigned char key_led_blink;
 N	uint8_t led_poweroff;
 X	unsigned char led_poweroff;
+N	uint8_t	eq_mode;
+X	unsigned char	eq_mode;
+N	uint8_t volume;
+X	unsigned char volume;
+N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define VOLUME_DEFAULT  5
+N#define VOLUME_MAX		16
+N#define VOLUME_MIN		0
 N
 N
 N#endif

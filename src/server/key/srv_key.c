@@ -18,6 +18,8 @@
 #include "core_msg.h"
 #include "srv_key.h"
 #include "drv_nuc031.h"
+#include "drv_audio.h"
+
 
 void srv_key_power_handler(void)
 {
@@ -102,10 +104,16 @@ void srv_key_next_station_handler(void)
 	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x31,0x00); //next piece
 }
 
-void srv_key_eq_switch_handler(void)
+ void srv_key_eq_indoor_switch_handler(void)
 {
-	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc1,0x00,0x00); //inside
+	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc1,0x00,0x00); //indoor
 }
+
+void srv_key_eq_outdoor_switch_handler(void)
+{
+	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc2,0x00,0x00); //outdoor
+}
+
 
 void srv_key_net_config_handler(void)
 {
@@ -177,11 +185,32 @@ void srv_key_handler(void)
 			Global_datas.key_led_blink = 1;
 			srv_key_next_station_handler();
 		break;
-		case IR_KEY_EQ:
+		case IR_KEY_EQ_INDOOR:
 			
 			Global_datas.key_led_blink = 1;
-			srv_key_eq_switch_handler();
+
+			if(Global_datas.eq_mode != EQ_MODE_INDOOR)
+			{
+				Global_datas.eq_mode = EQ_MODE_INDOOR;
+				srv_key_eq_indoor_switch_handler();
+				Drv_audio_channel_switch();
+			}
 		break;
+		
+		case IR_KEY_EQ_OUTDOOR:
+			
+			Global_datas.key_led_blink = 1;
+
+			if(Global_datas.eq_mode != EQ_MODE_OUTDOOR)
+			{
+				Global_datas.eq_mode = EQ_MODE_OUTDOOR;
+				srv_key_eq_outdoor_switch_handler();
+				Drv_audio_channel_switch();
+			}		
+			
+		break;
+
+		
 		case IR_KEY_NET_SET:
 			
 			Global_datas.key_led_blink = 1;

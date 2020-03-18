@@ -13,6 +13,7 @@
 #include "drv_dap_tas3251.h"
 #include "drv_dap_tas5825.h"
 #include "drv_Pcm1862.h"
+#include "tym_global.h"
 
 
 
@@ -35,17 +36,6 @@ void Drv_Dap_init(void)
 	drv_5825_mute_pin_set(1);  // unmute
 }
 
-/**
- * Drv_Dsp_init
- * @brief      load Dsp data part
- * @param      None
- * @return     None
- *
- */
-void Drv_Dsp_init(void)
-{
-	return;
-}
 
 /**
  * Load Dap vol set
@@ -56,8 +46,6 @@ void Drv_Dsp_init(void)
  */
 void Drv_Dap_vol_set(uint8_t value)
 {
-	//drv_pcm1862_PGA_VAL_CH1_L(value);
-	//drv_pcm1862_PGA_VAL_CH1_R(value);
 	drv_5825_vol_set(value);
 	drv_dap_3251_vol_set(value);
 }
@@ -95,6 +83,14 @@ void drv_audio_FM_Channel(void)
 	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(2));
 
 }
+
+void drv_audio_Null_Channel(void) // channel 4 no use
+{
+
+	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(4));
+
+}
+
 /*
 void drv_Audio_Switch(int var)
 {
@@ -127,12 +123,46 @@ void drv_Audio_Switch(int var)
 
 void Drv_audio_init(void)
 {
-
+  	drv_audio_Null_Channel();
 	drv_5825_powerdown_pin_init(); // 5825 powerdown pin set hi befor i2s is ready
 	drv_Adc_pcm1862_Init();
 	TIMER_Delay(TIMER0,5);
 	Drv_Dap_init();
-	Drv_Dsp_init();
+
+	if(Global_datas.g_mode_status == FM_MODE)
+	{
+		drv_audio_FM_Channel();
+	}
+	else if(Global_datas.g_mode_status == AUX_MODE)
+	{
+		drv_audio_AuxIn_Channel();
+	}
+	else
+	{
+		drv_audio_4G_Channel();
+	}
+}
+
+void Drv_audio_channel_switch(void)
+{
+	
+  	drv_audio_Null_Channel();
+	TIMER_Delay(TIMER0,100000);
+	Drv_Dap_init();
+	TIMER_Delay(TIMER0,100000);
+
+	if(Global_datas.g_mode_status == FM_MODE)
+	{
+		drv_audio_FM_Channel();
+	}
+	else if(Global_datas.g_mode_status == AUX_MODE)
+	{
+		drv_audio_AuxIn_Channel();
+	}
+	else
+	{
+		drv_audio_4G_Channel();
+	}	
 }
 
 

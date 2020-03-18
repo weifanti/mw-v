@@ -29516,16 +29516,6 @@ void Drv_Dap_init(void);
 
 
  
-void Drv_Dsp_init(void);
-
-
-
-
-
-
-
-
- 
 void Drv_Dap_vol_set(uint8_t value);
 
 
@@ -29545,6 +29535,9 @@ void drv_audio_4G_Channel(void);
 void drv_audio_FM_Channel(void);
 
 void Drv_audio_init(void);
+
+void Drv_audio_channel_switch(void);
+
 
 #line 19 "..\\main.c"
 #line 1 "..\\src\\driver\\include\\drv_4G_model.h"
@@ -29721,6 +29714,16 @@ typedef enum
 
 } eUart_Msg;
 
+
+typedef enum
+{
+    EQ_MODE_NONE      = 0,
+    EQ_MODE_INDOOR,
+    EQ_MODE_OUTDOOR,
+
+} EQ_MODE;
+
+
 typedef struct _PowerStatus
 {
 	uint8_t PowerBatInStatus;
@@ -29742,10 +29745,17 @@ typedef struct
 	uint32_t systick;
 	uint8_t key_led_blink;
 	uint8_t led_poweroff;
+	uint8_t	eq_mode;
+	uint8_t volume;
+	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+
+
 
 
 #line 23 "..\\main.c"
@@ -30143,8 +30153,6 @@ volatile sys_err_e sys_err = SYS_ERR_NONE;
 
 
 
-unsigned char volume=5;
-
 
 void SYS_Clock_init(void)
 {
@@ -30281,8 +30289,6 @@ void SysIdle(void)
 {
 	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 	Global_datas.g_4g_initing = 0;
-	
-	
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
 
@@ -30292,14 +30298,16 @@ void SYS_Status(void)
 {
 	Global_datas.g_mode_status = POWER_ON_MODE;	
 	Global_datas.g_4g_initing = 1;
+	Global_datas.eq_mode = EQ_MODE_INDOOR;
+	Global_datas.volume = 5;
 	TYM_drv_powerkeepon(1);
 	Drv_4GMoudle_PowerUp(1);
 	drv_FourGmodel_power_key_SetHi();
 	TimeOutSet(&ModulePowerUpPinTimer,3000);
 	TimeOutSet(&PoweroffLedTimer, 100);
 	Drv_audio_init();
-	volume=5;
 	Global_datas.led_poweroff = 0;
+	
 
 	
 	drv_Cmd_Send2NCU031(0x70, 0x16,0x00);
@@ -30665,19 +30673,20 @@ int32_t main(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0x03))
 					{
-						if (volume > 0x00)
+						if (Global_datas.volume > 0)
 						{
-							volume--;
-							Drv_Dap_vol_set(volume);
+							Global_datas.volume--;
+							Drv_Dap_vol_set(Global_datas.volume);
 							printf("Hal_Dap_Load_vol_add\n");
 						}
 					}
+					
 					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 					{
-						if (volume < 15)
+						if (Global_datas.volume < 16)
 						{
-							volume++;
-							Drv_Dap_vol_set(volume);
+							Global_datas.volume++;
+							Drv_Dap_vol_set(Global_datas.volume);
 							printf("Hal_Dap_Load_vol_reduce\n");
 						}
 					}

@@ -29532,6 +29532,16 @@ typedef enum
 
 } eUart_Msg;
 
+
+typedef enum
+{
+    EQ_MODE_NONE      = 0,
+    EQ_MODE_INDOOR,
+    EQ_MODE_OUTDOOR,
+
+} EQ_MODE;
+
+
 typedef struct _PowerStatus
 {
 	unsigned char PowerBatInStatus;
@@ -29553,10 +29563,17 @@ typedef struct
 	unsigned int systick;
 	unsigned char key_led_blink;
 	unsigned char led_poweroff;
+	unsigned char	eq_mode;
+	unsigned char volume;
+	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+
+
 
 
 #line 19 "..\\src\\driver\\drv_gpio_key.c"
