@@ -50419,6 +50419,7 @@ Nextern TIMER SysTimer_1s;
 Nextern TIMER TestTimer;
 Nextern TIMER ModulePowerUpPinTimer;
 Nextern TIMER LedKeyBlinkTimer;
+Nextern TIMER PoweroffLedTimer;
 N
 N//extern TIMER AdcTimer;
 N//extern TIMER PaTimer;
@@ -50535,6 +50536,8 @@ N	uint32_t systick;
 X	unsigned int systick;
 N	uint8_t key_led_blink;
 X	unsigned char key_led_blink;
+N	uint8_t led_poweroff;
+X	unsigned char led_poweroff;
 N
 N}sGlobalData;
 N

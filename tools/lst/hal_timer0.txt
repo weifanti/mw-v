@@ -5,26 +5,26 @@
                           AREA ||i.Hal_Timer0_Init||, CODE, READONLY, ALIGN=2
 
                   Hal_Timer0_Init PROC
-;;;73      */
-;;;74     void Hal_Timer0_Init(void)
+;;;74      */
+;;;75     void Hal_Timer0_Init(void)
 000000  b510              PUSH     {r4,lr}
-;;;75     {
-;;;76         /* Enable IP clock */
-;;;77         CLK_EnableModuleClock(TMR0_MODULE);
+;;;76     {
+;;;77         /* Enable IP clock */
+;;;78         CLK_EnableModuleClock(TMR0_MODULE);
 000002  4c12              LDR      r4,|L1.76|
 000004  4620              MOV      r0,r4
 000006  f7fffffe          BL       CLK_EnableModuleClock
-;;;78     
-;;;79         /* Select IP clock source */
-;;;80         CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_HIRC, 0);
+;;;79     
+;;;80         /* Select IP clock source */
+;;;81         CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_HIRC, 0);
 00000a  2107              MOVS     r1,#7
 00000c  2200              MOVS     r2,#0
 00000e  0209              LSLS     r1,r1,#8
 000010  4620              MOV      r0,r4
 000012  f7fffffe          BL       CLK_SetModuleClock
-;;;81     	//CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_HXT, 0);
-;;;82     
-;;;83         TIMER_Open(TIMER0, TIMER_PERIODIC_MODE, 10000); // 100uS
+;;;82     	//CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_HXT, 0);
+;;;83     
+;;;84         TIMER_Open(TIMER0, TIMER_PERIODIC_MODE, 10000); // 100uS
 000016  06a1              LSLS     r1,r4,#26
 000018  4c0e              LDR      r4,|L1.84|
 00001a  4a0d              LDR      r2,|L1.80|
@@ -37,11 +37,11 @@
 00002a  1548              ASRS     r0,r1,#21
 00002c  490a              LDR      r1,|L1.88|
 00002e  6008              STR      r0,[r1,#0]
-;;;84     
-;;;85          //Enable timer interrupt
-;;;86         TIMER_EnableInt(TIMER0);
-;;;87         NVIC_EnableIRQ(TMR0_IRQn);
-;;;88         NVIC_SetPriority(TMR0_IRQn, 1);
+;;;85     
+;;;86          //Enable timer interrupt
+;;;87         TIMER_EnableInt(TIMER0);
+;;;88         NVIC_EnableIRQ(TMR0_IRQn);
+;;;89         NVIC_SetPriority(TMR0_IRQn, 1);
 000030  2101              MOVS     r1,#1
 000032  2008              MOVS     r0,#8
 000034  f7fffffe          BL       NVIC_SetPriority
@@ -49,23 +49,23 @@
 00003a  03a1              LSLS     r1,r4,#14
 00003c  4308              ORRS     r0,r0,r1
 00003e  6020              STR      r0,[r4,#0]
-;;;89     
 ;;;90     
-;;;91         // Start Timer 
-;;;92         TIMER_Start(TIMER0);
-;;;93     
-;;;94     	TimeOutSet(&TestTimer, 100);
+;;;91     
+;;;92         // Start Timer 
+;;;93         TIMER_Start(TIMER0);
+;;;94     
+;;;95     	TimeOutSet(&TestTimer, 100);
 000040  2164              MOVS     r1,#0x64
 000042  4806              LDR      r0,|L1.92|
 000044  f7fffffe          BL       TimeOutSet
-;;;95     //	TimeOutSet(&KeyScanTimer, 10);
-;;;96     //	TimeOutSet(&ModCheckTimer, 10);
-;;;97     //	TimeOutSet(&BatDisplayTimer, 10);	
-;;;98     //	TimeOutSet(&FmStoreTimer, 10);	
-;;;99     	
-;;;100    }
+;;;96     //	TimeOutSet(&KeyScanTimer, 10);
+;;;97     //	TimeOutSet(&ModCheckTimer, 10);
+;;;98     //	TimeOutSet(&BatDisplayTimer, 10);	
+;;;99     //	TimeOutSet(&FmStoreTimer, 10);	
+;;;100    	
+;;;101    }
 000048  bd10              POP      {r4,pc}
-;;;101    
+;;;102    
                           ENDP
 
 00004a  0000              DCW      0x0000
@@ -83,29 +83,29 @@
                           AREA ||i.Hal_Timer1_Init||, CODE, READONLY, ALIGN=2
 
                   Hal_Timer1_Init PROC
-;;;104    
-;;;105    void Hal_Timer1_Init(void)
+;;;105    
+;;;106    void Hal_Timer1_Init(void)
 000000  b510              PUSH     {r4,lr}
-;;;106    {
-;;;107        /* Enable IP clock */
-;;;108        CLK_EnableModuleClock(TMR1_MODULE);
-000002  4c17              LDR      r4,|L2.96|
+;;;107    {
+;;;108        /* Enable IP clock */
+;;;109        CLK_EnableModuleClock(TMR1_MODULE);
+000002  4c1a              LDR      r4,|L2.108|
 000004  4620              MOV      r0,r4
 000006  f7fffffe          BL       CLK_EnableModuleClock
-;;;109    
-;;;110        /* Select IP clock source */
-;;;111        CLK_SetModuleClock(TMR1_MODULE, CLK_CLKSEL1_TMR0SEL_HIRC, 0);
+;;;110    
+;;;111        /* Select IP clock source */
+;;;112        CLK_SetModuleClock(TMR1_MODULE, CLK_CLKSEL1_TMR0SEL_HIRC, 0);
 00000a  2107              MOVS     r1,#7
 00000c  2200              MOVS     r2,#0
 00000e  0209              LSLS     r1,r1,#8
 000010  4620              MOV      r0,r4
 000012  f7fffffe          BL       CLK_SetModuleClock
-;;;112    	//CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_HXT, 0);
-;;;113    
-;;;114        TIMER_Open(TIMER1, TIMER_PERIODIC_MODE, 10000); // 100uS
-000016  4c14              LDR      r4,|L2.104|
+;;;113    	//CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_HXT, 0);
+;;;114    
+;;;115        TIMER_Open(TIMER1, TIMER_PERIODIC_MODE, 10000); // 100uS
+000016  4c17              LDR      r4,|L2.116|
 000018  2101              MOVS     r1,#1
-00001a  4a12              LDR      r2,|L2.100|
+00001a  4a15              LDR      r2,|L2.112|
 00001c  06c9              LSLS     r1,r1,#27
 00001e  4620              MOV      r0,r4
 000020  f7fffffe          BL       TIMER_Open
@@ -114,13 +114,13 @@
 000028  4308              ORRS     r0,r0,r1
 00002a  6020              STR      r0,[r4,#0]
 00002c  1508              ASRS     r0,r1,#20
-00002e  490f              LDR      r1,|L2.108|
+00002e  4912              LDR      r1,|L2.120|
 000030  6008              STR      r0,[r1,#0]
-;;;115    
-;;;116         //Enable timer interrupt
-;;;117        TIMER_EnableInt(TIMER1);
-;;;118        NVIC_EnableIRQ(TMR1_IRQn);
-;;;119        NVIC_SetPriority(TMR1_IRQn, 1);
+;;;116    
+;;;117         //Enable timer interrupt
+;;;118        TIMER_EnableInt(TIMER1);
+;;;119        NVIC_EnableIRQ(TMR1_IRQn);
+;;;120        NVIC_SetPriority(TMR1_IRQn, 1);
 000032  2101              MOVS     r1,#1
 000034  2009              MOVS     r0,#9
 000036  f7fffffe          BL       NVIC_SetPriority
@@ -128,79 +128,86 @@
 00003c  05a1              LSLS     r1,r4,#22
 00003e  4308              ORRS     r0,r0,r1
 000040  6020              STR      r0,[r4,#0]
-;;;120    
 ;;;121    
-;;;122        // Start Timer 
-;;;123        TIMER_Start(TIMER1);
-;;;124    
-;;;125    	TimeOutSet(&TestTimer, 100);
+;;;122    
+;;;123        // Start Timer 
+;;;124        TIMER_Start(TIMER1);
+;;;125    
+;;;126    	TimeOutSet(&TestTimer, 100);
 000042  2164              MOVS     r1,#0x64
-000044  480a              LDR      r0,|L2.112|
+000044  480d              LDR      r0,|L2.124|
 000046  f7fffffe          BL       TimeOutSet
-;;;126    	TimeOutSet(&SysTimer_1s, 100);
-00004a  4809              LDR      r0,|L2.112|
+;;;127    	TimeOutSet(&SysTimer_1s, 100);
+00004a  480c              LDR      r0,|L2.124|
 00004c  2164              MOVS     r1,#0x64
 00004e  3008              ADDS     r0,r0,#8
 000050  f7fffffe          BL       TimeOutSet
-;;;127    	TimeOutSet(&ModulePowerUpPinTimer, 100);
-000054  4806              LDR      r0,|L2.112|
+;;;128    	TimeOutSet(&ModulePowerUpPinTimer, 100);
+000054  4809              LDR      r0,|L2.124|
 000056  2164              MOVS     r1,#0x64
 000058  3010              ADDS     r0,r0,#0x10
 00005a  f7fffffe          BL       TimeOutSet
-;;;128    	
-;;;129    //	TimeOutSet(&KeyScanTimer, 10);
-;;;130    //	TimeOutSet(&ModCheckTimer, 10);
-;;;131    //	TimeOutSet(&BatDisplayTimer, 10);	
-;;;132    //	TimeOutSet(&FmStoreTimer, 10);	
-;;;133    	
-;;;134    }
-00005e  bd10              POP      {r4,pc}
-;;;135    
+;;;129    	
+;;;130    	TimeOutSet(&PoweroffLedTimer, 100);
+00005e  4807              LDR      r0,|L2.124|
+000060  2164              MOVS     r1,#0x64
+000062  3018              ADDS     r0,r0,#0x18
+000064  f7fffffe          BL       TimeOutSet
+;;;131    	
+;;;132    //	TimeOutSet(&KeyScanTimer, 10);
+;;;133    //	TimeOutSet(&ModCheckTimer, 10);
+;;;134    //	TimeOutSet(&BatDisplayTimer, 10);	
+;;;135    //	TimeOutSet(&FmStoreTimer, 10);	
+;;;136    	
+;;;137    }
+000068  bd10              POP      {r4,pc}
+;;;138    
                           ENDP
 
-                  |L2.96|
-                          DCD      0x5ec00003
-                  |L2.100|
-                          DCD      0x00002710
-                  |L2.104|
-                          DCD      0x40010100
+00006a  0000              DCW      0x0000
                   |L2.108|
-                          DCD      0xe000e100
+                          DCD      0x5ec00003
                   |L2.112|
+                          DCD      0x00002710
+                  |L2.116|
+                          DCD      0x40010100
+                  |L2.120|
+                          DCD      0xe000e100
+                  |L2.124|
                           DCD      ||.data||+0x4
 
                           AREA ||i.IsTimeOut||, CODE, READONLY, ALIGN=2
 
                   IsTimeOut PROC
-;;;44     uint8_t
-;;;45     IsTimeOut(
+;;;45     uint8_t
+;;;46     IsTimeOut(
 000000  4904              LDR      r1,|L3.20|
-;;;46     	TIMER 	*timer
-;;;47     	)
-;;;48     {
-;;;49     	//uint8_t	isTimeOut;
-;;;50     	//isTimeOut = gSysControl.systick>= timer->TimeOutVal;
-;;;51     	//return isTimeOut;
-;;;52     
-;;;53         if(Global_datas.systick >= timer->TimeOutVal)
+;;;47     	TIMER 	*timer
+;;;48     	)
+;;;49     {
+;;;50     	//uint8_t	isTimeOut;
+;;;51     	//isTimeOut = gSysControl.systick>= timer->TimeOutVal;
+;;;52     	//return isTimeOut;
+;;;53     
+;;;54         if(Global_datas.systick >= timer->TimeOutVal)
 000002  6800              LDR      r0,[r0,#0]
 000004  6a89              LDR      r1,[r1,#0x28]  ; Global_datas
 000006  4281              CMP      r1,r0
 000008  d301              BCC      |L3.14|
-;;;54         {
-;;;55             return 1;
+;;;55         {
+;;;56             return 1;
 00000a  2001              MOVS     r0,#1
-;;;56         }
-;;;57         else
-;;;58         {
-;;;59             return 0;
-;;;60         }
-;;;61     }
+;;;57         }
+;;;58         else
+;;;59         {
+;;;60             return 0;
+;;;61         }
+;;;62     }
 00000c  4770              BX       lr
                   |L3.14|
-00000e  2000              MOVS     r0,#0                 ;59
+00000e  2000              MOVS     r0,#0                 ;60
 000010  4770              BX       lr
-;;;62     
+;;;63     
                           ENDP
 
 000012  0000              DCW      0x0000
@@ -266,37 +273,37 @@
                           AREA ||i.TMR1_IRQHandler||, CODE, READONLY, ALIGN=2
 
                   TMR1_IRQHandler PROC
-;;;144     */
-;;;145    void TMR1_IRQHandler(void)
+;;;147     */
+;;;148    void TMR1_IRQHandler(void)
 000000  490a              LDR      r1,|L5.44|
-;;;146    {
-;;;147     //   static _Bool on = 0;
-;;;148        // NVIC_ClearPendingIRQ(ADC_IRQn);
-;;;149        // clear timer interrupt flag
-;;;150        static uint8_t temp_count = 0;
-;;;151    
-;;;152    	temp_count++;
+;;;149    {
+;;;150     //   static _Bool on = 0;
+;;;151        // NVIC_ClearPendingIRQ(ADC_IRQn);
+;;;152        // clear timer interrupt flag
+;;;153        static uint8_t temp_count = 0;
+;;;154    
+;;;155    	temp_count++;
 000002  7808              LDRB     r0,[r1,#0]  ; temp_count
 000004  1c40              ADDS     r0,r0,#1
 000006  b2c0              UXTB     r0,r0
 000008  7008              STRB     r0,[r1,#0]
-;;;153    	if(temp_count >= 10)  
+;;;156    	if(temp_count >= 10)  
 00000a  280a              CMP      r0,#0xa
 00000c  d305              BCC      |L5.26|
-;;;154    	{
-;;;155    		temp_count = 0;
+;;;157    	{
+;;;158    		temp_count = 0;
 00000e  2000              MOVS     r0,#0
 000010  7008              STRB     r0,[r1,#0]
-;;;156        	Global_datas.systick++;
+;;;159        	Global_datas.systick++;
 000012  4807              LDR      r0,|L5.48|
 000014  6a81              LDR      r1,[r0,#0x28]  ; Global_datas
 000016  1c49              ADDS     r1,r1,#1
 000018  6281              STR      r1,[r0,#0x28]  ; Global_datas
                   |L5.26|
-;;;157    
-;;;158    	}
-;;;159    
-;;;160    	IrTimerCount++;
+;;;160    
+;;;161    	}
+;;;162    
+;;;163    	IrTimerCount++;
 00001a  4906              LDR      r1,|L5.52|
 00001c  6808              LDR      r0,[r1,#0]  ; IrTimerCount
 00001e  1c40              ADDS     r0,r0,#1
@@ -304,12 +311,12 @@
 000022  4905              LDR      r1,|L5.56|
 000024  2001              MOVS     r0,#1
 000026  6088              STR      r0,[r1,#8]
-;;;161    
-;;;162        TIMER_ClearIntFlag(TIMER1);
-;;;163    
-;;;164    }
+;;;164    
+;;;165        TIMER_ClearIntFlag(TIMER1);
+;;;166    
+;;;167    }
 000028  4770              BX       lr
-;;;165    
+;;;168    
                           ENDP
 
 00002a  0000              DCW      0x0000
@@ -325,23 +332,23 @@
                           AREA ||i.TimeOutSet||, CODE, READONLY, ALIGN=2
 
                   TimeOutSet PROC
-;;;31     void
-;;;32     TimeOutSet(
+;;;32     void
+;;;33     TimeOutSet(
 000000  4a03              LDR      r2,|L6.16|
-;;;33     	TIMER	*timer,
-;;;34     	uint32_t 	timeout
-;;;35     	)
-;;;36     {
-;;;37     	timer->RecTickVal = Global_datas.systick;
+;;;34     	TIMER	*timer,
+;;;35     	uint32_t 	timeout
+;;;36     	)
+;;;37     {
+;;;38     	timer->RecTickVal = Global_datas.systick;
 000002  6a93              LDR      r3,[r2,#0x28]  ; Global_datas
-;;;38     	timer->TimeOutVal = Global_datas.systick + timeout;
+;;;39     	timer->TimeOutVal = Global_datas.systick + timeout;
 000004  6043              STR      r3,[r0,#4]
 000006  6a92              LDR      r2,[r2,#0x28]  ; Global_datas
 000008  1851              ADDS     r1,r2,r1
 00000a  6001              STR      r1,[r0,#0]
-;;;39     }
+;;;40     }
 00000c  4770              BX       lr
-;;;40     
+;;;41     
                           ENDP
 
 00000e  0000              DCW      0x0000
@@ -357,6 +364,8 @@
                   SysTimer_1s
                           %        8
                   ModulePowerUpPinTimer
+                          %        8
+                  PoweroffLedTimer
                           %        8
 
                           AREA ||area_number.10||, DATA, ALIGN=2

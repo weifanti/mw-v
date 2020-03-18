@@ -29741,6 +29741,7 @@ typedef struct
 	uint8_t g_4g_initing;
 	uint32_t systick;
 	uint8_t key_led_blink;
+	uint8_t led_poweroff;
 
 }sGlobalData;
 
@@ -29945,6 +29946,7 @@ extern TIMER SysTimer_1s;
 extern TIMER TestTimer;
 extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
+extern TIMER PoweroffLedTimer;
 
 
 
@@ -30279,8 +30281,8 @@ void SysIdle(void)
 {
 	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 	Global_datas.g_4g_initing = 0;
-	TYM_drv_powerkeepon(0);
-	Drv_4GMoudle_PowerUp(0);
+	
+	
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
 
@@ -30294,24 +30296,37 @@ void SYS_Status(void)
 	Drv_4GMoudle_PowerUp(1);
 	drv_FourGmodel_power_key_SetHi();
 	TimeOutSet(&ModulePowerUpPinTimer,3000);
+	TimeOutSet(&PoweroffLedTimer, 100);
 	Drv_audio_init();
 	volume=5;
+	Global_datas.led_poweroff = 0;
+
 	
+	drv_Cmd_Send2NCU031(0x70, 0x16,0x00);
 	
 }
 
 void PowerOff(void)
 {
-	drv_Cmd_Send2NCU031(0x07, 0x15,0x00);
-	TYM_drv_powerkeepon(0); 
-	Drv_4GMoudle_PowerUp(0);
+	drv_Cmd_Send2NCU031(0x70, 0x15,0x00);
+	
+	Cmd_Send2FourG( 0x03,0x55,0x00); 
+	
 	drv_led_init();
 	Drv_audio_powerdown();
+	Global_datas.led_poweroff = 1;
+	TimeOutSet(&PoweroffLedTimer, 5000);
 }
 
 
 void IoKeyProcess(void)
 {
+
+	if((Global_datas.g_mode_status == POWER_IDLE_MODE)&&(IN_KEY_POWER_CP != IoKeyInputmessage))
+    {
+		return;
+	}
+
 	if(IoKeyInputmessage)
 	{
 		switch(IoKeyInputmessage)
@@ -30364,6 +30379,7 @@ int32_t main(void)
 	unsigned char refcount1=1;
 	unsigned char refcount2=1;
   	unsigned char bat_val[2];
+	unsigned char ledtimecount = 0;
 	
 
 
@@ -30382,7 +30398,7 @@ int32_t main(void)
 
 		if(IsTimeOut(&SysTimer_1s))
 		{
-			TimeOutSet(&SysTimer_1s, 1000);
+			TimeOutSet(&SysTimer_1s, 500);
 			
 	        if(Global_datas.g_4g_initing)
 			{
@@ -30394,6 +30410,39 @@ int32_t main(void)
 			{
 				drv_FourGmodel_power_key_SetLow();
 			}
+
+			if(Global_datas.g_mode_status == POWER_IDLE_MODE)
+			{
+				if(!IsTimeOut(&PoweroffLedTimer))
+				{			
+					if(ledtimecount)
+					{
+						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((12)<<2)))) = 1;
+						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((13)<<2)))) = 1;
+						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 1;
+						ledtimecount = 0;
+					}
+					else
+					{
+						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((12)<<2)))) = 0;
+						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((13)<<2)))) = 0;
+						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 0;
+						ledtimecount = 1;
+					}
+				}
+				else
+				{
+					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((12)<<2)))) = 1;
+					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((13)<<2)))) = 1;
+					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 1;
+					Drv_4GMoudle_PowerUp(0); 
+					TYM_drv_powerkeepon(0); 
+				}
+				
+			}
+
+
+			
 		}
 
 		
@@ -30471,6 +30520,12 @@ int32_t main(void)
 		                	Global_datas.g_mode_status = AUX_MODE;
 						printf("0x0F, msg.param1 = %x \n",msg.param1);
 						}
+					}
+
+					if(msg.param0 == 0x0d)  
+					{
+						Drv_4GMoudle_PowerUp(0);  
+						TYM_drv_powerkeepon(0); 
 					}
 
 					if(msg.param0 == 0x06)  
@@ -30587,7 +30642,17 @@ int32_t main(void)
 	            break;
 
 			 	case MSG_MCU1_SYS_STATE_IND:
-					Cmd_Send2FourG( msg.param0,msg.param1,msg.param2);
+
+				    if((msg.param0 == 0x03) && (msg.param1 == 0x55)) 
+					{
+						
+					}
+					else
+					{
+						Cmd_Send2FourG( msg.param0,msg.param1,msg.param2);
+					}
+					
+					
 					
 					if((msg.param0 == 0x01) && (msg.param1 == 0x00))
 					{
@@ -30617,10 +30682,6 @@ int32_t main(void)
 						}
 					}
 
-					if((msg.param0 == 0x03) && (msg.param1 == 0x55)) 
-					{
-						Global_datas.g_mode_status = POWER_OFF_MODE;
-					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) 
 					{
 						Global_datas.g_mode_status = WIFI_MODE;

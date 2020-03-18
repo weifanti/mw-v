@@ -64,7 +64,8 @@ void Drv_FourG_Gpio_Init(void)
 	PA4 = 0;
 	PA5 = 0;
 	PF5 = 1;
-	Drv_4GMoudle_PowerUp(1);
+	//Drv_4GMoudle_PowerUp(1);
+	Drv_4GMoudle_PowerUp(0);
 }
 
 

@@ -70,9 +70,9 @@ void drv_4G_led_on(uint8_t value)
 void drv_err_led_on(uint8_t value)
 {
 	if(value)
-		PA2 = LED_ON;  //4G
+		PA2 = LED_ON; 
 	else
-		PA2 = LED_OFF;  //FM
+		PA2 = LED_OFF;  
 }
 
 void drv_wlmic_led_on(uint8_t value)

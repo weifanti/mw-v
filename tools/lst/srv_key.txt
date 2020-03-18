@@ -205,7 +205,7 @@
 00001e  2103              MOVS     r1,#3
 000020  2002              MOVS     r0,#2
 000022  f7fffffe          BL       Core_Msg_Send
-;;;33     			drv_Cmd_Send2NCU031(0x07, 0x10,0x00);// change to bt mode
+;;;33     			drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
 000026  2200              MOVS     r2,#0
 000028  2110              MOVS     r1,#0x10
 ;;;34     		break;
@@ -223,7 +223,7 @@
 000032  2002              MOVS     r0,#2
 000034  f7fffffe          BL       Core_Msg_Send
 ;;;42     			
-;;;43     			drv_Cmd_Send2NCU031(0x07, 0x12,0x00);// change to aux mode
+;;;43     			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
 000038  2200              MOVS     r2,#0
 00003a  2112              MOVS     r1,#0x12
 ;;;44     			
@@ -233,7 +233,7 @@
 ;;;47     	    case BT_MODE:
 ;;;48     	    case BT_CONNECTED_MODE:
 ;;;49     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-;;;50     			drv_Cmd_Send2NCU031(0x07, 0x11,0x00);// change to wifi mode
+;;;50     			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode
 ;;;51     		break;
 ;;;52     		
 ;;;53     		case FM_MODE:
@@ -243,17 +243,17 @@
 000042  2103              MOVS     r1,#3
 000044  2002              MOVS     r0,#2
 000046  f7fffffe          BL       Core_Msg_Send
-;;;55     			drv_Cmd_Send2NCU031(0x07, 0x11,0x00);// change to wifi/4g mode
+;;;55     			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
 00004a  2200              MOVS     r2,#0
 00004c  2111              MOVS     r1,#0x11
                   |L3.78|
-00004e  2007              MOVS     r0,#7
+00004e  2070              MOVS     r0,#0x70
 000050  f7fffffe          BL       drv_Cmd_Send2NCU031
 ;;;56     		break;
 ;;;57     		
 ;;;58     		default:
 ;;;59     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-;;;60     			drv_Cmd_Send2NCU031(0x07, 0x12,0x00);// change to aux mode	
+;;;60     			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
 ;;;61     			Global_datas.g_mode_status = AUX_MODE;
 ;;;62     		break;
 ;;;63     	}
@@ -266,7 +266,7 @@
 00005e  f7fffffe          BL       Core_Msg_Send
 000062  2200              MOVS     r2,#0                 ;60
 000064  2112              MOVS     r1,#0x12              ;60
-000066  2007              MOVS     r0,#7                 ;60
+000066  2070              MOVS     r0,#0x70              ;60
 000068  f7fffffe          BL       drv_Cmd_Send2NCU031
 00006c  2008              MOVS     r0,#8                 ;61
 00006e  7160              STRB     r0,[r4,#5]            ;61

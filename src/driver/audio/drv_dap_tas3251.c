@@ -268,9 +268,14 @@ void drv_dap_3251_Init(void)
 
 void drv_dap_3251_rest(void)
 {
+    drv_dap_3251_vol_set(0);
 	GPIO_SetMode(PD, BIT13, GPIO_MODE_OUTPUT);	
+	PD13 = 1; //reset high = on
+	TIMER_Delay(TIMER0, 5000); //delay 100ms
+	TIMER_Delay(TIMER0, 3000); //delay 100ms
 	PD13 = 0; //
 	TIMER_Delay(TIMER0, 5000); //delay 100ms
+	TIMER_Delay(TIMER0, 3000); //delay 100ms
 	PD13 = 1; //reset high = on
 
 }

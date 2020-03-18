@@ -50389,10 +50389,10 @@ N
 Nvoid drv_err_led_on(uint8_t value)
 N{
 N	if(value)
-N		PA2 = LED_ON;  //4G
-X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 0;  
+N		PA2 = LED_ON; 
+X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 0; 
 N	else
-N		PA2 = LED_OFF;  //FM
+N		PA2 = LED_OFF;  
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 1;  
 N}
 N

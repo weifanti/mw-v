@@ -29446,6 +29446,7 @@ extern TIMER SysTimer_1s;
 extern TIMER TestTimer;
 extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
+extern TIMER PoweroffLedTimer;
 
 
 
@@ -29551,6 +29552,7 @@ typedef struct
 	unsigned char g_4g_initing;
 	unsigned int systick;
 	unsigned char key_led_blink;
+	unsigned char led_poweroff;
 
 }sGlobalData;
 

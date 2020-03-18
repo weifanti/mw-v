@@ -29410,7 +29410,7 @@ void drv_4G_led_on(uint8_t value)
 void drv_err_led_on(uint8_t value)
 {
 	if(value)
-		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 0;  
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 0; 
 	else
 		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 1;  
 }

@@ -23,6 +23,7 @@ TIMER TestTimer;
 TIMER SysTimer_1s;
 TIMER ModulePowerUpPinTimer;
 TIMER LedKeyBlinkTimer;
+TIMER PoweroffLedTimer;
 
 
 TIMER AdcTimer;
@@ -125,6 +126,8 @@ void Hal_Timer1_Init(void)
 	TimeOutSet(&TestTimer, 100);
 	TimeOutSet(&SysTimer_1s, 100);
 	TimeOutSet(&ModulePowerUpPinTimer, 100);
+	
+	TimeOutSet(&PoweroffLedTimer, 100);
 	
 //	TimeOutSet(&KeyScanTimer, 10);
 //	TimeOutSet(&ModCheckTimer, 10);

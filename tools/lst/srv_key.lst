@@ -50371,6 +50371,7 @@ N	uint8_t g_mode_status;
 N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
+N	uint8_t led_poweroff;
 N
 N}sGlobalData;
 N
@@ -50643,7 +50644,7 @@ N	{
 N		case AUX_MODE:
 N		case LOUD_SPEAKER_MODE:
 N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
-N			drv_Cmd_Send2NCU031(0x07, 0x10,0x00);// change to bt mode
+N			drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
 N		break;
 N		
 N		case WIFI_MODE:
@@ -50653,24 +50654,24 @@ N		case FOURG_MODE:
 N		case FOURG_CONNECTED_MODE:
 N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
 N			
-N			drv_Cmd_Send2NCU031(0x07, 0x12,0x00);// change to aux mode
+N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
 N			
 N		break;
 N		
 N	    case BT_MODE:
 N	    case BT_CONNECTED_MODE:
 N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-N			drv_Cmd_Send2NCU031(0x07, 0x11,0x00);// change to wifi mode
+N			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode
 N		break;
 N		
 N		case FM_MODE:
 N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-N			drv_Cmd_Send2NCU031(0x07, 0x11,0x00);// change to wifi/4g mode
+N			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
 N		break;
 N		
 N		default:
 N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-N			drv_Cmd_Send2NCU031(0x07, 0x12,0x00);// change to aux mode	
+N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
 N			Global_datas.g_mode_status = AUX_MODE;
 N		break;
 N	}

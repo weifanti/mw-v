@@ -29,6 +29,7 @@ extern TIMER SysTimer_1s;
 extern TIMER TestTimer;
 extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
+extern TIMER PoweroffLedTimer;
 
 //extern TIMER AdcTimer;
 //extern TIMER PaTimer;

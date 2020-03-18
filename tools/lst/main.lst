@@ -50710,6 +50710,7 @@ N	uint8_t g_mode_status;
 N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
+N	uint8_t led_poweroff;
 N
 N}sGlobalData;
 N
@@ -50926,6 +50927,7 @@ Nextern TIMER SysTimer_1s;
 Nextern TIMER TestTimer;
 Nextern TIMER ModulePowerUpPinTimer;
 Nextern TIMER LedKeyBlinkTimer;
+Nextern TIMER PoweroffLedTimer;
 N
 N//extern TIMER AdcTimer;
 N//extern TIMER PaTimer;
@@ -51321,8 +51323,8 @@ Nvoid SysIdle(void)
 N{
 N	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 N	Global_datas.g_4g_initing = 0;
-N	TYM_drv_powerkeepon(0);
-N	Drv_4GMoudle_PowerUp(0);
+N	//TYM_drv_powerkeepon(0);
+N	//Drv_4GMoudle_PowerUp(0);
 N	drv_FourGmodel_power_key_SetLow();
 N	TimeOutSet(&SysTimer_1s,1000);
 N
@@ -51336,25 +51338,38 @@ N	TYM_drv_powerkeepon(1);
 N	Drv_4GMoudle_PowerUp(1);
 N	drv_FourGmodel_power_key_SetHi();
 N	TimeOutSet(&ModulePowerUpPinTimer,3000);
+N	TimeOutSet(&PoweroffLedTimer, 100);
 N	Drv_audio_init();
 N	volume=5;
+N	Global_datas.led_poweroff = 0;
+N
 N	
+N	drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
 N	
 N}
 N
 Nvoid PowerOff(void)
 N{
-N	drv_Cmd_Send2NCU031(0x07, 0x15,0x00);// power off
-N	TYM_drv_powerkeepon(0); 
-N	Drv_4GMoudle_PowerUp(0);
+N	drv_Cmd_Send2NCU031(0x70, 0x15,0x00);// power off cmd to LCD board
+N	
+N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
+N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N	drv_led_init();// led all off
-W "..\main.c" 208 2 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 213 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
+N	Global_datas.led_poweroff = 1;
+N	TimeOutSet(&PoweroffLedTimer, 5000);
 N}
 N
 N
 Nvoid IoKeyProcess(void)
 N{
+N
+N	if((Global_datas.g_mode_status == POWER_IDLE_MODE)&&(IN_KEY_POWER_CP != IoKeyInputmessage))
+N    {
+N		return;
+N	}
+N
 N	if(IoKeyInputmessage)
 N	{
 N		switch(IoKeyInputmessage)
@@ -51412,6 +51427,8 @@ N	uint8_t refcount2=1;
 X	unsigned char refcount2=1;
 N  	uint8_t bat_val[2];
 X  	unsigned char bat_val[2];
+N	uint8_t ledtimecount = 0;
+X	unsigned char ledtimecount = 0;
 N	
 N//	uint8_t autoside = 0;
 N//    S_RTC_TIME_DATA_T sReadRTC;
@@ -51430,7 +51447,7 @@ N    {
 N
 N		if(IsTimeOut(&SysTimer_1s))
 N		{
-N			TimeOutSet(&SysTimer_1s, 1000);
+N			TimeOutSet(&SysTimer_1s, 500);
 N			
 N	        if(Global_datas.g_4g_initing)
 N			{
@@ -51442,6 +51459,48 @@ N			if(IsTimeOut(&ModulePowerUpPinTimer))
 N			{
 N				drv_FourGmodel_power_key_SetLow();
 N			}
+N
+N			if(Global_datas.g_mode_status == POWER_IDLE_MODE)
+N			{
+N				if(!IsTimeOut(&PoweroffLedTimer))
+N				{			
+N					if(ledtimecount)
+N					{
+N						PA12 = 1;
+X						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((12)<<2)))) = 1;
+N						PA13 = 1;
+X						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((13)<<2)))) = 1;
+N						PA1 = 1;
+X						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 1;
+N						ledtimecount = 0;
+N					}
+N					else
+N					{
+N						PA12 = 0;
+X						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((12)<<2)))) = 0;
+N						PA13 = 0;
+X						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((13)<<2)))) = 0;
+N						PA1 = 0;
+X						(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 0;
+N						ledtimecount = 1;
+N					}
+N				}
+N				else
+N				{
+N					PA12 = 1;
+X					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((12)<<2)))) = 1;
+N					PA13 = 1;
+X					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((13)<<2)))) = 1;
+N					PA1 = 1;
+X					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 1;
+N					Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
+N					TYM_drv_powerkeepon(0); 
+N				}
+N				
+N			}
+N
+N
+N			
 N		}
 N
 N		
@@ -51519,6 +51578,12 @@ N						{
 N		                	Global_datas.g_mode_status = AUX_MODE;
 N						printf("0x0F, msg.param1 = %x \n",msg.param1);
 N						}
+N					}
+N
+N					if(msg.param0 == 0x0d)  // 4G GO TO POWER OFF , NEED TO POWER DOWN 4G VCC
+N					{
+N						Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
+N						TYM_drv_powerkeepon(0); 
 N					}
 N
 N					if(msg.param0 == 0x06)  // sys status
@@ -51635,7 +51700,17 @@ N					}
 N	            break;
 N
 N			 	case MSG_MCU1_SYS_STATE_IND:
-N					Cmd_Send2FourG( msg.param0,msg.param1,msg.param2);
+N
+N				    if((msg.param0 == 0x03) && (msg.param1 == 0x55)) //power off mode
+N					{
+N						//Global_datas.g_mode_status = POWER_OFF_MODE;
+N					}
+N					else
+N					{
+N						Cmd_Send2FourG( msg.param0,msg.param1,msg.param2);
+N					}
+N					
+N					
 N					//printf("MSG_MCU1_SYS_STATE_IND:msg.param0 = %x, msg.param1 = %x \n",msg.param0,msg.param1);
 N					if((msg.param0 == 0x01) && (msg.param1 == 0x00))
 N					{
@@ -51665,10 +51740,6 @@ N							printf("Hal_Dap_Load_vol_reduce\n");
 N						}
 N					}
 N
-N					if((msg.param0 == 0x03) && (msg.param1 == 0x55)) //power off mode
-N					{
-N						Global_datas.g_mode_status = POWER_OFF_MODE;
-N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) //wifi mode
 N					{
 N						Global_datas.g_mode_status = WIFI_MODE;

@@ -178,8 +178,8 @@ void SysIdle(void)
 {
 	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 	Global_datas.g_4g_initing = 0;
-	TYM_drv_powerkeepon(0);
-	Drv_4GMoudle_PowerUp(0);
+	//TYM_drv_powerkeepon(0);
+	//Drv_4GMoudle_PowerUp(0);
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
 
@@ -193,24 +193,37 @@ void SYS_Status(void)
 	Drv_4GMoudle_PowerUp(1);
 	drv_FourGmodel_power_key_SetHi();
 	TimeOutSet(&ModulePowerUpPinTimer,3000);
+	TimeOutSet(&PoweroffLedTimer, 100);
 	Drv_audio_init();
 	volume=5;
+	Global_datas.led_poweroff = 0;
+
 	
+	drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
 	
 }
 
 void PowerOff(void)
 {
-	drv_Cmd_Send2NCU031(0x07, 0x15,0x00);// power off
-	TYM_drv_powerkeepon(0); 
-	Drv_4GMoudle_PowerUp(0);
+	drv_Cmd_Send2NCU031(0x70, 0x15,0x00);// power off cmd to LCD board
+	
+	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
+	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 	drv_led_init();// led all off
 	Drv_audio_powerdown();
+	Global_datas.led_poweroff = 1;
+	TimeOutSet(&PoweroffLedTimer, 5000);
 }
 
 
 void IoKeyProcess(void)
 {
+
+	if((Global_datas.g_mode_status == POWER_IDLE_MODE)&&(IN_KEY_POWER_CP != IoKeyInputmessage))
+    {
+		return;
+	}
+
 	if(IoKeyInputmessage)
 	{
 		switch(IoKeyInputmessage)
@@ -263,6 +276,7 @@ int32_t main(void)
 	uint8_t refcount1=1;
 	uint8_t refcount2=1;
   	uint8_t bat_val[2];
+	uint8_t ledtimecount = 0;
 	
 //	uint8_t autoside = 0;
 //    S_RTC_TIME_DATA_T sReadRTC;
@@ -281,7 +295,7 @@ int32_t main(void)
 
 		if(IsTimeOut(&SysTimer_1s))
 		{
-			TimeOutSet(&SysTimer_1s, 1000);
+			TimeOutSet(&SysTimer_1s, 500);
 			
 	        if(Global_datas.g_4g_initing)
 			{
@@ -293,6 +307,39 @@ int32_t main(void)
 			{
 				drv_FourGmodel_power_key_SetLow();
 			}
+
+			if(Global_datas.g_mode_status == POWER_IDLE_MODE)
+			{
+				if(!IsTimeOut(&PoweroffLedTimer))
+				{			
+					if(ledtimecount)
+					{
+						PA12 = 1;
+						PA13 = 1;
+						PA1 = 1;
+						ledtimecount = 0;
+					}
+					else
+					{
+						PA12 = 0;
+						PA13 = 0;
+						PA1 = 0;
+						ledtimecount = 1;
+					}
+				}
+				else
+				{
+					PA12 = 1;
+					PA13 = 1;
+					PA1 = 1;
+					Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
+					TYM_drv_powerkeepon(0); 
+				}
+				
+			}
+
+
+			
 		}
 
 		
@@ -370,6 +417,12 @@ int32_t main(void)
 		                	Global_datas.g_mode_status = AUX_MODE;
 						printf("0x0F, msg.param1 = %x \n",msg.param1);
 						}
+					}
+
+					if(msg.param0 == 0x0d)  // 4G GO TO POWER OFF , NEED TO POWER DOWN 4G VCC
+					{
+						Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
+						TYM_drv_powerkeepon(0); 
 					}
 
 					if(msg.param0 == 0x06)  // sys status
@@ -486,7 +539,17 @@ int32_t main(void)
 	            break;
 
 			 	case MSG_MCU1_SYS_STATE_IND:
-					Cmd_Send2FourG( msg.param0,msg.param1,msg.param2);
+
+				    if((msg.param0 == 0x03) && (msg.param1 == 0x55)) //power off mode
+					{
+						//Global_datas.g_mode_status = POWER_OFF_MODE;
+					}
+					else
+					{
+						Cmd_Send2FourG( msg.param0,msg.param1,msg.param2);
+					}
+					
+					
 					//printf("MSG_MCU1_SYS_STATE_IND:msg.param0 = %x, msg.param1 = %x \n",msg.param0,msg.param1);
 					if((msg.param0 == 0x01) && (msg.param1 == 0x00))
 					{
@@ -516,10 +579,6 @@ int32_t main(void)
 						}
 					}
 
-					if((msg.param0 == 0x03) && (msg.param1 == 0x55)) //power off mode
-					{
-						Global_datas.g_mode_status = POWER_OFF_MODE;
-					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) //wifi mode
 					{
 						Global_datas.g_mode_status = WIFI_MODE;

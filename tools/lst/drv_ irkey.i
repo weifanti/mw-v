@@ -29568,6 +29568,7 @@ typedef struct
 	uint8_t g_4g_initing;
 	uint32_t systick;
 	uint8_t key_led_blink;
+	uint8_t led_poweroff;
 
 }sGlobalData;
 

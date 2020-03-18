@@ -50371,6 +50371,7 @@ N	uint8_t g_mode_status;
 N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
+N	uint8_t led_poweroff;
 N
 N}sGlobalData;
 N
