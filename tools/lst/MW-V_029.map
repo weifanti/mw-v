@@ -385,97 +385,97 @@ Image Symbol Table
     i.drv_5825_01_i2c_write                  0x00002bdc   Section        0  drv_dap_tas5825.o(i.drv_5825_01_i2c_write)
     drv_5825_01_i2c_write                    0x00002bdd   Thumb Code    88  drv_dap_tas5825.o(i.drv_5825_01_i2c_write)
     i.drv_5825_Init                          0x00002c3c   Section        0  drv_dap_tas5825.o(i.drv_5825_Init)
-    i.drv_5825_Load_in_Param                 0x00002ca8   Section        0  drv_dap_tas5825.o(i.drv_5825_Load_in_Param)
-    drv_5825_Load_in_Param                   0x00002ca9   Thumb Code    56  drv_dap_tas5825.o(i.drv_5825_Load_in_Param)
-    i.drv_5825_amp_fault_det_init            0x00002cf8   Section        0  drv_dap_tas5825.o(i.drv_5825_amp_fault_det_init)
-    i.drv_5825_amp_warn_det_init             0x00002d0c   Section        0  drv_dap_tas5825.o(i.drv_5825_amp_warn_det_init)
-    i.drv_5825_gpio012_config                0x00002d20   Section        0  drv_dap_tas5825.o(i.drv_5825_gpio012_config)
-    i.drv_5825_mute_pin_init                 0x00002d5c   Section        0  drv_dap_tas5825.o(i.drv_5825_mute_pin_init)
-    i.drv_5825_mute_pin_set                  0x00002d74   Section        0  drv_dap_tas5825.o(i.drv_5825_mute_pin_set)
-    i.drv_5825_powerdown_pin_init            0x00002d84   Section        0  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_init)
-    i.drv_5825_powerdown_pin_set             0x00002d90   Section        0  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_set)
-    i.drv_5825_vol_set                       0x00002db8   Section        0  drv_dap_tas5825.o(i.drv_5825_vol_set)
-    i.drv_Adc_pcm1862_Init                   0x00002e24   Section        0  drv_adc_pcm1862.o(i.drv_Adc_pcm1862_Init)
-    i.drv_Cmd_Send2NCU031                    0x00002e6c   Section        0  drv_nuc031.o(i.drv_Cmd_Send2NCU031)
-    i.drv_FM_on_NCU031_reset                 0x00002ee8   Section        0  drv_nuc031.o(i.drv_FM_on_NCU031_reset)
-    i.drv_FourGmodel_power_key_SetHi         0x00002f24   Section        0  drv_4g_model.o(i.drv_FourGmodel_power_key_SetHi)
-    i.drv_FourGmodel_power_key_SetLow        0x00002f30   Section        0  drv_4g_model.o(i.drv_FourGmodel_power_key_SetLow)
-    i.drv_all_led_on                         0x00002f3c   Section        0  drv_led.o(i.drv_all_led_on)
-    i.drv_audio_4G_Channel                   0x00002f68   Section        0  drv_audio.o(i.drv_audio_4G_Channel)
-    i.drv_audio_AuxIn_Channel                0x00002f72   Section        0  drv_audio.o(i.drv_audio_AuxIn_Channel)
-    i.drv_audio_FM_Channel                   0x00002f7c   Section        0  drv_audio.o(i.drv_audio_FM_Channel)
-    i.drv_aux_led_on                         0x00002f88   Section        0  drv_led.o(i.drv_aux_led_on)
-    i.drv_bt_led_on                          0x00002fa8   Section        0  drv_led.o(i.drv_bt_led_on)
-    i.drv_dap_3251_Init                      0x00002fd0   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_Init)
-    i.drv_dap_3251_i2c_write                 0x00003054   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_i2c_write)
-    drv_dap_3251_i2c_write                   0x00003055   Thumb Code    90  drv_dap_tas3251.o(i.drv_dap_3251_i2c_write)
-    i.drv_dap_3251_rest                      0x000030b4   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_rest)
-    i.drv_dap_3251_vol_set                   0x0000310c   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_vol_set)
-    i.drv_err_led_on                         0x00003160   Section        0  drv_led.o(i.drv_err_led_on)
-    i.drv_fm_led_on                          0x00003174   Section        0  drv_led.o(i.drv_fm_led_on)
-    i.drv_gipo_key_init                      0x00003194   Section        0  drv_gpio_key.o(i.drv_gipo_key_init)
-    i.drv_led_init                           0x000031b8   Section        0  drv_led.o(i.drv_led_init)
-    i.drv_pairing_cmd_send                   0x00003240   Section        0  drv_4g_model.o(i.drv_pairing_cmd_send)
-    i.drv_pcm1862_input_channel              0x00003250   Section        0  drv_adc_pcm1862.o(i.drv_pcm1862_input_channel)
-    i.drv_power_status_updata                0x000032e8   Section        0  drv_power.o(i.drv_power_status_updata)
-    i.drv_wifi_4g_switch_cmd_send            0x00003300   Section        0  drv_4g_model.o(i.drv_wifi_4g_switch_cmd_send)
-    i.drv_wifi_led_on                        0x00003310   Section        0  drv_led.o(i.drv_wifi_led_on)
-    i.ferror                                 0x00003338   Section        0  retarget.o(i.ferror)
-    i.fputc                                  0x0000333e   Section        0  retarget.o(i.fputc)
-    i.main                                   0x0000334c   Section        0  main.o(i.main)
-    i.srv_audio_channel_check                0x00003964   Section        0  srv_audio.o(i.srv_audio_channel_check)
-    i.srv_audio_channel_switch               0x00003998   Section        0  srv_audio.o(i.srv_audio_channel_switch)
-    i.srv_audio_handler                      0x000039d0   Section        0  srv_audio.o(i.srv_audio_handler)
-    i.srv_bat_charge_handler                 0x000039d8   Section        0  srv_battery.o(i.srv_bat_charge_handler)
-    i.srv_key_eq_indoor_switch_handler       0x00003a64   Section        0  srv_key.o(i.srv_key_eq_indoor_switch_handler)
-    i.srv_key_eq_outdoor_switch_handler      0x00003a74   Section        0  srv_key.o(i.srv_key_eq_outdoor_switch_handler)
-    i.srv_key_handler                        0x00003a84   Section        0  srv_key.o(i.srv_key_handler)
-    i.srv_key_mode_handler                   0x00003b30   Section        0  srv_key.o(i.srv_key_mode_handler)
-    i.srv_key_net_config_handler             0x00003ba8   Section        0  srv_key.o(i.srv_key_net_config_handler)
-    i.srv_key_next_song_handler              0x00003bb8   Section        0  srv_key.o(i.srv_key_next_song_handler)
-    i.srv_key_next_station_handler           0x00003bc8   Section        0  srv_key.o(i.srv_key_next_station_handler)
-    i.srv_key_play_pause_handler             0x00003bd8   Section        0  srv_key.o(i.srv_key_play_pause_handler)
-    i.srv_key_prev_song_handler              0x00003be8   Section        0  srv_key.o(i.srv_key_prev_song_handler)
-    i.srv_key_prev_station_handler           0x00003bf8   Section        0  srv_key.o(i.srv_key_prev_station_handler)
-    i.srv_key_volume_down_handler            0x00003c08   Section        0  srv_key.o(i.srv_key_volume_down_handler)
-    i.srv_key_volume_up_handler              0x00003c18   Section        0  srv_key.o(i.srv_key_volume_up_handler)
-    i.srv_led_change_handler                 0x00003c28   Section        0  srv_led.o(i.srv_led_change_handler)
-    i.srv_led_status_show                    0x00003c3c   Section        0  srv_led.o(i.srv_led_status_show)
-    i.srv_led_sys_initing                    0x00003cd4   Section        0  srv_led.o(i.srv_led_sys_initing)
-    i.srv_rtc_alarm_get                      0x00003d24   Section        0  srv_rtc.o(i.srv_rtc_alarm_get)
-    i.srv_rtc_alarm_set_dw                   0x00003d70   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_dw)
-    i.srv_rtc_alarm_set_hm                   0x00003dc0   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_hm)
-    i.srv_rtc_alarm_set_st                   0x00003e18   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_st)
-    i.srv_rtc_alarm_set_ym                   0x00003e74   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_ym)
-    i.srv_rtc_get                            0x00003ecc   Section        0  srv_rtc.o(i.srv_rtc_get)
-    i.srv_rtc_set_dw                         0x00003f18   Section        0  srv_rtc.o(i.srv_rtc_set_dw)
-    i.srv_rtc_set_hm                         0x00003f6c   Section        0  srv_rtc.o(i.srv_rtc_set_hm)
-    i.srv_rtc_set_st                         0x00003fc4   Section        0  srv_rtc.o(i.srv_rtc_set_st)
-    i.srv_rtc_set_ym                         0x00004020   Section        0  srv_rtc.o(i.srv_rtc_set_ym)
-    i.stackDump                              0x0000407c   Section        0  retarget.o(i.stackDump)
-    stackDump                                0x0000407d   Thumb Code    70  retarget.o(i.stackDump)
-    .constdata                               0x00004124   Section       32  system_nuc029xge.o(.constdata)
-    .constdata                               0x00004144   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x00004146   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x00004148   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x0000414a   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x0000414c   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x0000414e   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x00004150   Section       48  drv_adc_pcm1862.o(.constdata)
-    pcm1862_mt                               0x00004150   Data          48  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x00004180   Section     4752  drv_dap_tas3251.o(.constdata)
-    wf_registers_indoor                      0x00004186   Data        2470  drv_dap_tas3251.o(.constdata)
-    wf_registers_outdoor                     0x00004b2c   Data        2262  drv_dap_tas3251.o(.constdata)
-    .constdata                               0x00005410   Section    31516  drv_dap_tas5825.o(.constdata)
-    .constdata                               0x0000cf2c   Section       12  drv_gpio_key.o(.constdata)
-    SoftwareKeyEvent                         0x0000cf2c   Data          12  drv_gpio_key.o(.constdata)
-    .constdata                               0x0000cf38   Section       48  clk.o(.constdata)
-    .constdata                               0x0000cf68   Section       32  timer.o(.constdata)
-    .constdata                               0x0000cf88   Section       40  _printf_hex_int.o(.constdata)
-    uc_hextab                                0x0000cf88   Data          20  _printf_hex_int.o(.constdata)
-    lc_hextab                                0x0000cf9c   Data          20  _printf_hex_int.o(.constdata)
-    .constdata                               0x0000cfb0   Section       17  __printf_flags_wp.o(.constdata)
-    maptable                                 0x0000cfb0   Data          17  __printf_flags_wp.o(.constdata)
+    i.drv_5825_Load_in_Param                 0x00002c80   Section        0  drv_dap_tas5825.o(i.drv_5825_Load_in_Param)
+    drv_5825_Load_in_Param                   0x00002c81   Thumb Code    56  drv_dap_tas5825.o(i.drv_5825_Load_in_Param)
+    i.drv_5825_amp_fault_det_init            0x00002cd0   Section        0  drv_dap_tas5825.o(i.drv_5825_amp_fault_det_init)
+    i.drv_5825_amp_warn_det_init             0x00002ce4   Section        0  drv_dap_tas5825.o(i.drv_5825_amp_warn_det_init)
+    i.drv_5825_gpio012_config                0x00002cf8   Section        0  drv_dap_tas5825.o(i.drv_5825_gpio012_config)
+    i.drv_5825_mute_pin_init                 0x00002d34   Section        0  drv_dap_tas5825.o(i.drv_5825_mute_pin_init)
+    i.drv_5825_mute_pin_set                  0x00002d4c   Section        0  drv_dap_tas5825.o(i.drv_5825_mute_pin_set)
+    i.drv_5825_powerdown_pin_init            0x00002d5c   Section        0  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_init)
+    i.drv_5825_powerdown_pin_set             0x00002d68   Section        0  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_set)
+    i.drv_5825_vol_set                       0x00002d90   Section        0  drv_dap_tas5825.o(i.drv_5825_vol_set)
+    i.drv_Adc_pcm1862_Init                   0x00002dfc   Section        0  drv_adc_pcm1862.o(i.drv_Adc_pcm1862_Init)
+    i.drv_Cmd_Send2NCU031                    0x00002e44   Section        0  drv_nuc031.o(i.drv_Cmd_Send2NCU031)
+    i.drv_FM_on_NCU031_reset                 0x00002ec0   Section        0  drv_nuc031.o(i.drv_FM_on_NCU031_reset)
+    i.drv_FourGmodel_power_key_SetHi         0x00002efc   Section        0  drv_4g_model.o(i.drv_FourGmodel_power_key_SetHi)
+    i.drv_FourGmodel_power_key_SetLow        0x00002f08   Section        0  drv_4g_model.o(i.drv_FourGmodel_power_key_SetLow)
+    i.drv_all_led_on                         0x00002f14   Section        0  drv_led.o(i.drv_all_led_on)
+    i.drv_audio_4G_Channel                   0x00002f40   Section        0  drv_audio.o(i.drv_audio_4G_Channel)
+    i.drv_audio_AuxIn_Channel                0x00002f4a   Section        0  drv_audio.o(i.drv_audio_AuxIn_Channel)
+    i.drv_audio_FM_Channel                   0x00002f54   Section        0  drv_audio.o(i.drv_audio_FM_Channel)
+    i.drv_aux_led_on                         0x00002f60   Section        0  drv_led.o(i.drv_aux_led_on)
+    i.drv_bt_led_on                          0x00002f80   Section        0  drv_led.o(i.drv_bt_led_on)
+    i.drv_dap_3251_Init                      0x00002fa8   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_Init)
+    i.drv_dap_3251_i2c_write                 0x0000302c   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_i2c_write)
+    drv_dap_3251_i2c_write                   0x0000302d   Thumb Code    90  drv_dap_tas3251.o(i.drv_dap_3251_i2c_write)
+    i.drv_dap_3251_rest                      0x0000308c   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_rest)
+    i.drv_dap_3251_vol_set                   0x000030e4   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_vol_set)
+    i.drv_err_led_on                         0x00003138   Section        0  drv_led.o(i.drv_err_led_on)
+    i.drv_fm_led_on                          0x0000314c   Section        0  drv_led.o(i.drv_fm_led_on)
+    i.drv_gipo_key_init                      0x0000316c   Section        0  drv_gpio_key.o(i.drv_gipo_key_init)
+    i.drv_led_init                           0x00003190   Section        0  drv_led.o(i.drv_led_init)
+    i.drv_pairing_cmd_send                   0x00003218   Section        0  drv_4g_model.o(i.drv_pairing_cmd_send)
+    i.drv_pcm1862_input_channel              0x00003228   Section        0  drv_adc_pcm1862.o(i.drv_pcm1862_input_channel)
+    i.drv_power_status_updata                0x000032c0   Section        0  drv_power.o(i.drv_power_status_updata)
+    i.drv_wifi_4g_switch_cmd_send            0x000032d8   Section        0  drv_4g_model.o(i.drv_wifi_4g_switch_cmd_send)
+    i.drv_wifi_led_on                        0x000032e8   Section        0  drv_led.o(i.drv_wifi_led_on)
+    i.ferror                                 0x00003310   Section        0  retarget.o(i.ferror)
+    i.fputc                                  0x00003316   Section        0  retarget.o(i.fputc)
+    i.main                                   0x00003324   Section        0  main.o(i.main)
+    i.srv_audio_channel_check                0x0000393c   Section        0  srv_audio.o(i.srv_audio_channel_check)
+    i.srv_audio_channel_switch               0x00003970   Section        0  srv_audio.o(i.srv_audio_channel_switch)
+    i.srv_audio_handler                      0x000039a8   Section        0  srv_audio.o(i.srv_audio_handler)
+    i.srv_bat_charge_handler                 0x000039b0   Section        0  srv_battery.o(i.srv_bat_charge_handler)
+    i.srv_key_eq_indoor_switch_handler       0x00003a3c   Section        0  srv_key.o(i.srv_key_eq_indoor_switch_handler)
+    i.srv_key_eq_outdoor_switch_handler      0x00003a4c   Section        0  srv_key.o(i.srv_key_eq_outdoor_switch_handler)
+    i.srv_key_handler                        0x00003a5c   Section        0  srv_key.o(i.srv_key_handler)
+    i.srv_key_mode_handler                   0x00003b08   Section        0  srv_key.o(i.srv_key_mode_handler)
+    i.srv_key_net_config_handler             0x00003b80   Section        0  srv_key.o(i.srv_key_net_config_handler)
+    i.srv_key_next_song_handler              0x00003b90   Section        0  srv_key.o(i.srv_key_next_song_handler)
+    i.srv_key_next_station_handler           0x00003ba0   Section        0  srv_key.o(i.srv_key_next_station_handler)
+    i.srv_key_play_pause_handler             0x00003bb0   Section        0  srv_key.o(i.srv_key_play_pause_handler)
+    i.srv_key_prev_song_handler              0x00003bc0   Section        0  srv_key.o(i.srv_key_prev_song_handler)
+    i.srv_key_prev_station_handler           0x00003bd0   Section        0  srv_key.o(i.srv_key_prev_station_handler)
+    i.srv_key_volume_down_handler            0x00003be0   Section        0  srv_key.o(i.srv_key_volume_down_handler)
+    i.srv_key_volume_up_handler              0x00003bf0   Section        0  srv_key.o(i.srv_key_volume_up_handler)
+    i.srv_led_change_handler                 0x00003c00   Section        0  srv_led.o(i.srv_led_change_handler)
+    i.srv_led_status_show                    0x00003c14   Section        0  srv_led.o(i.srv_led_status_show)
+    i.srv_led_sys_initing                    0x00003cac   Section        0  srv_led.o(i.srv_led_sys_initing)
+    i.srv_rtc_alarm_get                      0x00003cfc   Section        0  srv_rtc.o(i.srv_rtc_alarm_get)
+    i.srv_rtc_alarm_set_dw                   0x00003d48   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_dw)
+    i.srv_rtc_alarm_set_hm                   0x00003d98   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_hm)
+    i.srv_rtc_alarm_set_st                   0x00003df0   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_st)
+    i.srv_rtc_alarm_set_ym                   0x00003e4c   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_ym)
+    i.srv_rtc_get                            0x00003ea4   Section        0  srv_rtc.o(i.srv_rtc_get)
+    i.srv_rtc_set_dw                         0x00003ef0   Section        0  srv_rtc.o(i.srv_rtc_set_dw)
+    i.srv_rtc_set_hm                         0x00003f44   Section        0  srv_rtc.o(i.srv_rtc_set_hm)
+    i.srv_rtc_set_st                         0x00003f9c   Section        0  srv_rtc.o(i.srv_rtc_set_st)
+    i.srv_rtc_set_ym                         0x00003ff8   Section        0  srv_rtc.o(i.srv_rtc_set_ym)
+    i.stackDump                              0x00004054   Section        0  retarget.o(i.stackDump)
+    stackDump                                0x00004055   Thumb Code    70  retarget.o(i.stackDump)
+    .constdata                               0x000040fc   Section       32  system_nuc029xge.o(.constdata)
+    .constdata                               0x0000411c   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x0000411e   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x00004120   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x00004122   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x00004124   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x00004126   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x00004128   Section       48  drv_adc_pcm1862.o(.constdata)
+    pcm1862_mt                               0x00004128   Data          48  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x00004158   Section     4752  drv_dap_tas3251.o(.constdata)
+    wf_registers_indoor                      0x0000415e   Data        2470  drv_dap_tas3251.o(.constdata)
+    wf_registers_outdoor                     0x00004b04   Data        2262  drv_dap_tas3251.o(.constdata)
+    .constdata                               0x000053e8   Section    31516  drv_dap_tas5825.o(.constdata)
+    .constdata                               0x0000cf04   Section       12  drv_gpio_key.o(.constdata)
+    SoftwareKeyEvent                         0x0000cf04   Data          12  drv_gpio_key.o(.constdata)
+    .constdata                               0x0000cf10   Section       48  clk.o(.constdata)
+    .constdata                               0x0000cf40   Section       32  timer.o(.constdata)
+    .constdata                               0x0000cf60   Section       40  _printf_hex_int.o(.constdata)
+    uc_hextab                                0x0000cf60   Data          20  _printf_hex_int.o(.constdata)
+    lc_hextab                                0x0000cf74   Data          20  _printf_hex_int.o(.constdata)
+    .constdata                               0x0000cf88   Section       17  __printf_flags_wp.o(.constdata)
+    maptable                                 0x0000cf88   Data          17  __printf_flags_wp.o(.constdata)
     .data                                    0x20000000   Section       12  system_nuc029xge.o(.data)
     .data                                    0x2000000c   Section        4  core.o(.data)
     .data                                    0x20000010   Section        1  core_msg.o(.data)
@@ -788,88 +788,88 @@ Image Symbol Table
     __ARM_common_switch8                     0x00002b2d   Thumb Code    26  io_i2c.o(i.__ARM_common_switch8)
     _is_digit                                0x00002b47   Thumb Code    14  __printf_wp.o(i._is_digit)
     drv_4G_led_on                            0x00002b55   Thumb Code    32  drv_led.o(i.drv_4G_led_on)
-    drv_5825_Init                            0x00002c3d   Thumb Code    64  drv_dap_tas5825.o(i.drv_5825_Init)
-    drv_5825_amp_fault_det_init              0x00002cf9   Thumb Code    14  drv_dap_tas5825.o(i.drv_5825_amp_fault_det_init)
-    drv_5825_amp_warn_det_init               0x00002d0d   Thumb Code    16  drv_dap_tas5825.o(i.drv_5825_amp_warn_det_init)
-    drv_5825_gpio012_config                  0x00002d21   Thumb Code    54  drv_dap_tas5825.o(i.drv_5825_gpio012_config)
-    drv_5825_mute_pin_init                   0x00002d5d   Thumb Code    20  drv_dap_tas5825.o(i.drv_5825_mute_pin_init)
-    drv_5825_mute_pin_set                    0x00002d75   Thumb Code    12  drv_dap_tas5825.o(i.drv_5825_mute_pin_set)
-    drv_5825_powerdown_pin_init              0x00002d85   Thumb Code    10  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_init)
-    drv_5825_powerdown_pin_set               0x00002d91   Thumb Code    30  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_set)
-    drv_5825_vol_set                         0x00002db9   Thumb Code    98  drv_dap_tas5825.o(i.drv_5825_vol_set)
-    drv_Adc_pcm1862_Init                     0x00002e25   Thumb Code    48  drv_adc_pcm1862.o(i.drv_Adc_pcm1862_Init)
-    drv_Cmd_Send2NCU031                      0x00002e6d   Thumb Code   116  drv_nuc031.o(i.drv_Cmd_Send2NCU031)
-    drv_FM_on_NCU031_reset                   0x00002ee9   Thumb Code    46  drv_nuc031.o(i.drv_FM_on_NCU031_reset)
-    drv_FourGmodel_power_key_SetHi           0x00002f25   Thumb Code     8  drv_4g_model.o(i.drv_FourGmodel_power_key_SetHi)
-    drv_FourGmodel_power_key_SetLow          0x00002f31   Thumb Code     8  drv_4g_model.o(i.drv_FourGmodel_power_key_SetLow)
-    drv_all_led_on                           0x00002f3d   Thumb Code    34  drv_led.o(i.drv_all_led_on)
-    drv_audio_4G_Channel                     0x00002f69   Thumb Code    10  drv_audio.o(i.drv_audio_4G_Channel)
-    drv_audio_AuxIn_Channel                  0x00002f73   Thumb Code    10  drv_audio.o(i.drv_audio_AuxIn_Channel)
-    drv_audio_FM_Channel                     0x00002f7d   Thumb Code    10  drv_audio.o(i.drv_audio_FM_Channel)
-    drv_aux_led_on                           0x00002f89   Thumb Code    24  drv_led.o(i.drv_aux_led_on)
-    drv_bt_led_on                            0x00002fa9   Thumb Code    32  drv_led.o(i.drv_bt_led_on)
-    drv_dap_3251_Init                        0x00002fd1   Thumb Code    70  drv_dap_tas3251.o(i.drv_dap_3251_Init)
-    drv_dap_3251_rest                        0x000030b5   Thumb Code    68  drv_dap_tas3251.o(i.drv_dap_3251_rest)
-    drv_dap_3251_vol_set                     0x0000310d   Thumb Code    70  drv_dap_tas3251.o(i.drv_dap_3251_vol_set)
-    drv_err_led_on                           0x00003161   Thumb Code    16  drv_led.o(i.drv_err_led_on)
-    drv_fm_led_on                            0x00003175   Thumb Code    24  drv_led.o(i.drv_fm_led_on)
-    drv_gipo_key_init                        0x00003195   Thumb Code    30  drv_gpio_key.o(i.drv_gipo_key_init)
-    drv_led_init                             0x000031b9   Thumb Code   124  drv_led.o(i.drv_led_init)
-    drv_pairing_cmd_send                     0x00003241   Thumb Code    14  drv_4g_model.o(i.drv_pairing_cmd_send)
-    drv_pcm1862_input_channel                0x00003251   Thumb Code    72  drv_adc_pcm1862.o(i.drv_pcm1862_input_channel)
-    drv_power_status_updata                  0x000032e9   Thumb Code    24  drv_power.o(i.drv_power_status_updata)
-    drv_wifi_4g_switch_cmd_send              0x00003301   Thumb Code    14  drv_4g_model.o(i.drv_wifi_4g_switch_cmd_send)
-    drv_wifi_led_on                          0x00003311   Thumb Code    32  drv_led.o(i.drv_wifi_led_on)
-    ferror                                   0x00003339   Thumb Code     6  retarget.o(i.ferror)
-    fputc                                    0x0000333f   Thumb Code    12  retarget.o(i.fputc)
-    main                                     0x0000334d   Thumb Code  1514  main.o(i.main)
-    srv_audio_channel_check                  0x00003965   Thumb Code    42  srv_audio.o(i.srv_audio_channel_check)
-    srv_audio_channel_switch                 0x00003999   Thumb Code    52  srv_audio.o(i.srv_audio_channel_switch)
-    srv_audio_handler                        0x000039d1   Thumb Code     8  srv_audio.o(i.srv_audio_handler)
-    srv_bat_charge_handler                   0x000039d9   Thumb Code   126  srv_battery.o(i.srv_bat_charge_handler)
-    srv_key_eq_indoor_switch_handler         0x00003a65   Thumb Code    16  srv_key.o(i.srv_key_eq_indoor_switch_handler)
-    srv_key_eq_outdoor_switch_handler        0x00003a75   Thumb Code    16  srv_key.o(i.srv_key_eq_outdoor_switch_handler)
-    srv_key_handler                          0x00003a85   Thumb Code   166  srv_key.o(i.srv_key_handler)
-    srv_key_mode_handler                     0x00003b31   Thumb Code   114  srv_key.o(i.srv_key_mode_handler)
-    srv_key_net_config_handler               0x00003ba9   Thumb Code    16  srv_key.o(i.srv_key_net_config_handler)
-    srv_key_next_song_handler                0x00003bb9   Thumb Code    16  srv_key.o(i.srv_key_next_song_handler)
-    srv_key_next_station_handler             0x00003bc9   Thumb Code    16  srv_key.o(i.srv_key_next_station_handler)
-    srv_key_play_pause_handler               0x00003bd9   Thumb Code    16  srv_key.o(i.srv_key_play_pause_handler)
-    srv_key_prev_song_handler                0x00003be9   Thumb Code    16  srv_key.o(i.srv_key_prev_song_handler)
-    srv_key_prev_station_handler             0x00003bf9   Thumb Code    16  srv_key.o(i.srv_key_prev_station_handler)
-    srv_key_volume_down_handler              0x00003c09   Thumb Code    16  srv_key.o(i.srv_key_volume_down_handler)
-    srv_key_volume_up_handler                0x00003c19   Thumb Code    16  srv_key.o(i.srv_key_volume_up_handler)
-    srv_led_change_handler                   0x00003c29   Thumb Code    16  srv_led.o(i.srv_led_change_handler)
-    srv_led_status_show                      0x00003c3d   Thumb Code   144  srv_led.o(i.srv_led_status_show)
-    srv_led_sys_initing                      0x00003cd5   Thumb Code    74  srv_led.o(i.srv_led_sys_initing)
-    srv_rtc_alarm_get                        0x00003d25   Thumb Code    76  srv_rtc.o(i.srv_rtc_alarm_get)
-    srv_rtc_alarm_set_dw                     0x00003d71   Thumb Code    48  srv_rtc.o(i.srv_rtc_alarm_set_dw)
-    srv_rtc_alarm_set_hm                     0x00003dc1   Thumb Code    56  srv_rtc.o(i.srv_rtc_alarm_set_hm)
-    srv_rtc_alarm_set_st                     0x00003e19   Thumb Code    60  srv_rtc.o(i.srv_rtc_alarm_set_st)
-    srv_rtc_alarm_set_ym                     0x00003e75   Thumb Code    54  srv_rtc.o(i.srv_rtc_alarm_set_ym)
-    srv_rtc_get                              0x00003ecd   Thumb Code    76  srv_rtc.o(i.srv_rtc_get)
-    srv_rtc_set_dw                           0x00003f19   Thumb Code    50  srv_rtc.o(i.srv_rtc_set_dw)
-    srv_rtc_set_hm                           0x00003f6d   Thumb Code    56  srv_rtc.o(i.srv_rtc_set_hm)
-    srv_rtc_set_st                           0x00003fc5   Thumb Code    60  srv_rtc.o(i.srv_rtc_set_st)
-    srv_rtc_set_ym                           0x00004021   Thumb Code    60  srv_rtc.o(i.srv_rtc_set_ym)
-    gau32ClkSrcTbl                           0x00004124   Data          32  system_nuc029xge.o(.constdata)
-    init_pcm1862_0x01                        0x00004144   Data           2  drv_adc_pcm1862.o(.constdata)
-    init_pcm1862_0x02                        0x00004146   Data           2  drv_adc_pcm1862.o(.constdata)
-    init_pcm1862_0x03                        0x00004148   Data           2  drv_adc_pcm1862.o(.constdata)
-    init_pcm1862_0x04                        0x0000414a   Data           2  drv_adc_pcm1862.o(.constdata)
-    init_pcm1862_0x20                        0x0000414c   Data           2  drv_adc_pcm1862.o(.constdata)
-    pcm1862_frequence                        0x0000414e   Data           2  drv_adc_pcm1862.o(.constdata)
-    tas3251_volume_page                      0x00004180   Data           6  drv_dap_tas3251.o(.constdata)
-    tas3251_cmd_cfm                          0x00005402   Data          14  drv_dap_tas3251.o(.constdata)
-    tas5852_volume_page                      0x00005410   Data           6  drv_dap_tas5825.o(.constdata)
-    tas5825_book0_page0                      0x00005416   Data           6  drv_dap_tas5825.o(.constdata)
-    tas5825_gpio_012_confgi                  0x0000541c   Data           8  drv_dap_tas5825.o(.constdata)
-    registers_mid_indoor                     0x00005424   Data        7874  drv_dap_tas5825.o(.constdata)
-    registers_mid_outdoor                    0x000072e6   Data        7874  drv_dap_tas5825.o(.constdata)
-    registers_tw_indoor                      0x000091a8   Data        7874  drv_dap_tas5825.o(.constdata)
-    registers_tw_outdoor                     0x0000b06a   Data        7874  drv_dap_tas5825.o(.constdata)
-    Region$$Table$$Base                      0x0000cfc4   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x0000cfe4   Number         0  anon$$obj.o(Region$$Table)
+    drv_5825_Init                            0x00002c3d   Thumb Code    34  drv_dap_tas5825.o(i.drv_5825_Init)
+    drv_5825_amp_fault_det_init              0x00002cd1   Thumb Code    14  drv_dap_tas5825.o(i.drv_5825_amp_fault_det_init)
+    drv_5825_amp_warn_det_init               0x00002ce5   Thumb Code    16  drv_dap_tas5825.o(i.drv_5825_amp_warn_det_init)
+    drv_5825_gpio012_config                  0x00002cf9   Thumb Code    54  drv_dap_tas5825.o(i.drv_5825_gpio012_config)
+    drv_5825_mute_pin_init                   0x00002d35   Thumb Code    20  drv_dap_tas5825.o(i.drv_5825_mute_pin_init)
+    drv_5825_mute_pin_set                    0x00002d4d   Thumb Code    12  drv_dap_tas5825.o(i.drv_5825_mute_pin_set)
+    drv_5825_powerdown_pin_init              0x00002d5d   Thumb Code    10  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_init)
+    drv_5825_powerdown_pin_set               0x00002d69   Thumb Code    30  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_set)
+    drv_5825_vol_set                         0x00002d91   Thumb Code    98  drv_dap_tas5825.o(i.drv_5825_vol_set)
+    drv_Adc_pcm1862_Init                     0x00002dfd   Thumb Code    48  drv_adc_pcm1862.o(i.drv_Adc_pcm1862_Init)
+    drv_Cmd_Send2NCU031                      0x00002e45   Thumb Code   116  drv_nuc031.o(i.drv_Cmd_Send2NCU031)
+    drv_FM_on_NCU031_reset                   0x00002ec1   Thumb Code    46  drv_nuc031.o(i.drv_FM_on_NCU031_reset)
+    drv_FourGmodel_power_key_SetHi           0x00002efd   Thumb Code     8  drv_4g_model.o(i.drv_FourGmodel_power_key_SetHi)
+    drv_FourGmodel_power_key_SetLow          0x00002f09   Thumb Code     8  drv_4g_model.o(i.drv_FourGmodel_power_key_SetLow)
+    drv_all_led_on                           0x00002f15   Thumb Code    34  drv_led.o(i.drv_all_led_on)
+    drv_audio_4G_Channel                     0x00002f41   Thumb Code    10  drv_audio.o(i.drv_audio_4G_Channel)
+    drv_audio_AuxIn_Channel                  0x00002f4b   Thumb Code    10  drv_audio.o(i.drv_audio_AuxIn_Channel)
+    drv_audio_FM_Channel                     0x00002f55   Thumb Code    10  drv_audio.o(i.drv_audio_FM_Channel)
+    drv_aux_led_on                           0x00002f61   Thumb Code    24  drv_led.o(i.drv_aux_led_on)
+    drv_bt_led_on                            0x00002f81   Thumb Code    32  drv_led.o(i.drv_bt_led_on)
+    drv_dap_3251_Init                        0x00002fa9   Thumb Code    70  drv_dap_tas3251.o(i.drv_dap_3251_Init)
+    drv_dap_3251_rest                        0x0000308d   Thumb Code    68  drv_dap_tas3251.o(i.drv_dap_3251_rest)
+    drv_dap_3251_vol_set                     0x000030e5   Thumb Code    70  drv_dap_tas3251.o(i.drv_dap_3251_vol_set)
+    drv_err_led_on                           0x00003139   Thumb Code    16  drv_led.o(i.drv_err_led_on)
+    drv_fm_led_on                            0x0000314d   Thumb Code    24  drv_led.o(i.drv_fm_led_on)
+    drv_gipo_key_init                        0x0000316d   Thumb Code    30  drv_gpio_key.o(i.drv_gipo_key_init)
+    drv_led_init                             0x00003191   Thumb Code   124  drv_led.o(i.drv_led_init)
+    drv_pairing_cmd_send                     0x00003219   Thumb Code    14  drv_4g_model.o(i.drv_pairing_cmd_send)
+    drv_pcm1862_input_channel                0x00003229   Thumb Code    72  drv_adc_pcm1862.o(i.drv_pcm1862_input_channel)
+    drv_power_status_updata                  0x000032c1   Thumb Code    24  drv_power.o(i.drv_power_status_updata)
+    drv_wifi_4g_switch_cmd_send              0x000032d9   Thumb Code    14  drv_4g_model.o(i.drv_wifi_4g_switch_cmd_send)
+    drv_wifi_led_on                          0x000032e9   Thumb Code    32  drv_led.o(i.drv_wifi_led_on)
+    ferror                                   0x00003311   Thumb Code     6  retarget.o(i.ferror)
+    fputc                                    0x00003317   Thumb Code    12  retarget.o(i.fputc)
+    main                                     0x00003325   Thumb Code  1514  main.o(i.main)
+    srv_audio_channel_check                  0x0000393d   Thumb Code    42  srv_audio.o(i.srv_audio_channel_check)
+    srv_audio_channel_switch                 0x00003971   Thumb Code    52  srv_audio.o(i.srv_audio_channel_switch)
+    srv_audio_handler                        0x000039a9   Thumb Code     8  srv_audio.o(i.srv_audio_handler)
+    srv_bat_charge_handler                   0x000039b1   Thumb Code   126  srv_battery.o(i.srv_bat_charge_handler)
+    srv_key_eq_indoor_switch_handler         0x00003a3d   Thumb Code    16  srv_key.o(i.srv_key_eq_indoor_switch_handler)
+    srv_key_eq_outdoor_switch_handler        0x00003a4d   Thumb Code    16  srv_key.o(i.srv_key_eq_outdoor_switch_handler)
+    srv_key_handler                          0x00003a5d   Thumb Code   166  srv_key.o(i.srv_key_handler)
+    srv_key_mode_handler                     0x00003b09   Thumb Code   114  srv_key.o(i.srv_key_mode_handler)
+    srv_key_net_config_handler               0x00003b81   Thumb Code    16  srv_key.o(i.srv_key_net_config_handler)
+    srv_key_next_song_handler                0x00003b91   Thumb Code    16  srv_key.o(i.srv_key_next_song_handler)
+    srv_key_next_station_handler             0x00003ba1   Thumb Code    16  srv_key.o(i.srv_key_next_station_handler)
+    srv_key_play_pause_handler               0x00003bb1   Thumb Code    16  srv_key.o(i.srv_key_play_pause_handler)
+    srv_key_prev_song_handler                0x00003bc1   Thumb Code    16  srv_key.o(i.srv_key_prev_song_handler)
+    srv_key_prev_station_handler             0x00003bd1   Thumb Code    16  srv_key.o(i.srv_key_prev_station_handler)
+    srv_key_volume_down_handler              0x00003be1   Thumb Code    16  srv_key.o(i.srv_key_volume_down_handler)
+    srv_key_volume_up_handler                0x00003bf1   Thumb Code    16  srv_key.o(i.srv_key_volume_up_handler)
+    srv_led_change_handler                   0x00003c01   Thumb Code    16  srv_led.o(i.srv_led_change_handler)
+    srv_led_status_show                      0x00003c15   Thumb Code   144  srv_led.o(i.srv_led_status_show)
+    srv_led_sys_initing                      0x00003cad   Thumb Code    74  srv_led.o(i.srv_led_sys_initing)
+    srv_rtc_alarm_get                        0x00003cfd   Thumb Code    76  srv_rtc.o(i.srv_rtc_alarm_get)
+    srv_rtc_alarm_set_dw                     0x00003d49   Thumb Code    48  srv_rtc.o(i.srv_rtc_alarm_set_dw)
+    srv_rtc_alarm_set_hm                     0x00003d99   Thumb Code    56  srv_rtc.o(i.srv_rtc_alarm_set_hm)
+    srv_rtc_alarm_set_st                     0x00003df1   Thumb Code    60  srv_rtc.o(i.srv_rtc_alarm_set_st)
+    srv_rtc_alarm_set_ym                     0x00003e4d   Thumb Code    54  srv_rtc.o(i.srv_rtc_alarm_set_ym)
+    srv_rtc_get                              0x00003ea5   Thumb Code    76  srv_rtc.o(i.srv_rtc_get)
+    srv_rtc_set_dw                           0x00003ef1   Thumb Code    50  srv_rtc.o(i.srv_rtc_set_dw)
+    srv_rtc_set_hm                           0x00003f45   Thumb Code    56  srv_rtc.o(i.srv_rtc_set_hm)
+    srv_rtc_set_st                           0x00003f9d   Thumb Code    60  srv_rtc.o(i.srv_rtc_set_st)
+    srv_rtc_set_ym                           0x00003ff9   Thumb Code    60  srv_rtc.o(i.srv_rtc_set_ym)
+    gau32ClkSrcTbl                           0x000040fc   Data          32  system_nuc029xge.o(.constdata)
+    init_pcm1862_0x01                        0x0000411c   Data           2  drv_adc_pcm1862.o(.constdata)
+    init_pcm1862_0x02                        0x0000411e   Data           2  drv_adc_pcm1862.o(.constdata)
+    init_pcm1862_0x03                        0x00004120   Data           2  drv_adc_pcm1862.o(.constdata)
+    init_pcm1862_0x04                        0x00004122   Data           2  drv_adc_pcm1862.o(.constdata)
+    init_pcm1862_0x20                        0x00004124   Data           2  drv_adc_pcm1862.o(.constdata)
+    pcm1862_frequence                        0x00004126   Data           2  drv_adc_pcm1862.o(.constdata)
+    tas3251_volume_page                      0x00004158   Data           6  drv_dap_tas3251.o(.constdata)
+    tas3251_cmd_cfm                          0x000053da   Data          14  drv_dap_tas3251.o(.constdata)
+    tas5852_volume_page                      0x000053e8   Data           6  drv_dap_tas5825.o(.constdata)
+    tas5825_book0_page0                      0x000053ee   Data           6  drv_dap_tas5825.o(.constdata)
+    tas5825_gpio_012_confgi                  0x000053f4   Data           8  drv_dap_tas5825.o(.constdata)
+    registers_mid_indoor                     0x000053fc   Data        7874  drv_dap_tas5825.o(.constdata)
+    registers_mid_outdoor                    0x000072be   Data        7874  drv_dap_tas5825.o(.constdata)
+    registers_tw_indoor                      0x00009180   Data        7874  drv_dap_tas5825.o(.constdata)
+    registers_tw_outdoor                     0x0000b042   Data        7874  drv_dap_tas5825.o(.constdata)
+    Region$$Table$$Base                      0x0000cf9c   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x0000cfbc   Number         0  anon$$obj.o(Region$$Table)
     SystemCoreClock                          0x20000000   Data           4  system_nuc029xge.o(.data)
     CyclesPerUs                              0x20000004   Data           4  system_nuc029xge.o(.data)
     PllClock                                 0x20000008   Data           4  system_nuc029xge.o(.data)
@@ -927,9 +927,9 @@ Memory Map of the image
 
   Image Entry point : 0x000001d1
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x0000d234, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x0000d20c, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x0000cfe4, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x0000cfbc, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1127,95 +1127,95 @@ Memory Map of the image
     0x00002b54   0x00000028   Code   RO          926    i.drv_4G_led_on     drv_led.o
     0x00002b7c   0x00000060   Code   RO         1180    i.drv_5825_00_i2c_write  drv_dap_tas5825.o
     0x00002bdc   0x00000060   Code   RO         1181    i.drv_5825_01_i2c_write  drv_dap_tas5825.o
-    0x00002c3c   0x0000006c   Code   RO         1182    i.drv_5825_Init     drv_dap_tas5825.o
-    0x00002ca8   0x00000050   Code   RO         1183    i.drv_5825_Load_in_Param  drv_dap_tas5825.o
-    0x00002cf8   0x00000014   Code   RO         1186    i.drv_5825_amp_fault_det_init  drv_dap_tas5825.o
-    0x00002d0c   0x00000014   Code   RO         1187    i.drv_5825_amp_warn_det_init  drv_dap_tas5825.o
-    0x00002d20   0x0000003c   Code   RO         1188    i.drv_5825_gpio012_config  drv_dap_tas5825.o
-    0x00002d5c   0x00000018   Code   RO         1189    i.drv_5825_mute_pin_init  drv_dap_tas5825.o
-    0x00002d74   0x00000010   Code   RO         1190    i.drv_5825_mute_pin_set  drv_dap_tas5825.o
-    0x00002d84   0x0000000a   Code   RO         1191    i.drv_5825_powerdown_pin_init  drv_dap_tas5825.o
-    0x00002d8e   0x00000002   PAD
-    0x00002d90   0x00000028   Code   RO         1192    i.drv_5825_powerdown_pin_set  drv_dap_tas5825.o
-    0x00002db8   0x0000006c   Code   RO         1194    i.drv_5825_vol_set  drv_dap_tas5825.o
-    0x00002e24   0x00000048   Code   RO          994    i.drv_Adc_pcm1862_Init  drv_adc_pcm1862.o
-    0x00002e6c   0x0000007c   Code   RO          900    i.drv_Cmd_Send2NCU031  drv_nuc031.o
-    0x00002ee8   0x0000003c   Code   RO          901    i.drv_FM_on_NCU031_reset  drv_nuc031.o
-    0x00002f24   0x0000000c   Code   RO          775    i.drv_FourGmodel_power_key_SetHi  drv_4g_model.o
-    0x00002f30   0x0000000c   Code   RO          776    i.drv_FourGmodel_power_key_SetLow  drv_4g_model.o
-    0x00002f3c   0x0000002c   Code   RO          927    i.drv_all_led_on    drv_led.o
-    0x00002f68   0x0000000a   Code   RO         1052    i.drv_audio_4G_Channel  drv_audio.o
-    0x00002f72   0x0000000a   Code   RO         1053    i.drv_audio_AuxIn_Channel  drv_audio.o
-    0x00002f7c   0x0000000a   Code   RO         1054    i.drv_audio_FM_Channel  drv_audio.o
-    0x00002f86   0x00000002   PAD
-    0x00002f88   0x00000020   Code   RO          928    i.drv_aux_led_on    drv_led.o
-    0x00002fa8   0x00000028   Code   RO          929    i.drv_bt_led_on     drv_led.o
-    0x00002fd0   0x00000084   Code   RO         1116    i.drv_dap_3251_Init  drv_dap_tas3251.o
-    0x00003054   0x00000060   Code   RO         1119    i.drv_dap_3251_i2c_write  drv_dap_tas3251.o
-    0x000030b4   0x00000058   Code   RO         1120    i.drv_dap_3251_rest  drv_dap_tas3251.o
-    0x0000310c   0x00000054   Code   RO         1122    i.drv_dap_3251_vol_set  drv_dap_tas3251.o
-    0x00003160   0x00000014   Code   RO          930    i.drv_err_led_on    drv_led.o
-    0x00003174   0x00000020   Code   RO          931    i.drv_fm_led_on     drv_led.o
-    0x00003194   0x00000024   Code   RO         1339    i.drv_gipo_key_init  drv_gpio_key.o
-    0x000031b8   0x00000088   Code   RO          932    i.drv_led_init      drv_led.o
-    0x00003240   0x0000000e   Code   RO          777    i.drv_pairing_cmd_send  drv_4g_model.o
-    0x0000324e   0x00000002   PAD
-    0x00003250   0x00000098   Code   RO          997    i.drv_pcm1862_input_channel  drv_adc_pcm1862.o
-    0x000032e8   0x00000018   Code   RO          843    i.drv_power_status_updata  drv_power.o
-    0x00003300   0x0000000e   Code   RO          778    i.drv_wifi_4g_switch_cmd_send  drv_4g_model.o
-    0x0000330e   0x00000002   PAD
-    0x00003310   0x00000028   Code   RO          933    i.drv_wifi_led_on   drv_led.o
-    0x00003338   0x00000006   Code   RO         1382    i.ferror            retarget.o
-    0x0000333e   0x0000000c   Code   RO         1384    i.fputc             retarget.o
-    0x0000334a   0x00000002   PAD
-    0x0000334c   0x00000618   Code   RO          323    i.main              main.o
-    0x00003964   0x00000034   Code   RO         2480    i.srv_audio_channel_check  srv_audio.o
-    0x00003998   0x00000038   Code   RO         2481    i.srv_audio_channel_switch  srv_audio.o
-    0x000039d0   0x00000008   Code   RO         2482    i.srv_audio_handler  srv_audio.o
-    0x000039d8   0x0000008c   Code   RO         2423    i.srv_bat_charge_handler  srv_battery.o
-    0x00003a64   0x00000010   Code   RO         2601    i.srv_key_eq_indoor_switch_handler  srv_key.o
-    0x00003a74   0x00000010   Code   RO         2602    i.srv_key_eq_outdoor_switch_handler  srv_key.o
-    0x00003a84   0x000000ac   Code   RO         2603    i.srv_key_handler   srv_key.o
-    0x00003b30   0x00000078   Code   RO         2604    i.srv_key_mode_handler  srv_key.o
-    0x00003ba8   0x00000010   Code   RO         2605    i.srv_key_net_config_handler  srv_key.o
-    0x00003bb8   0x00000010   Code   RO         2606    i.srv_key_next_song_handler  srv_key.o
-    0x00003bc8   0x00000010   Code   RO         2607    i.srv_key_next_station_handler  srv_key.o
-    0x00003bd8   0x00000010   Code   RO         2608    i.srv_key_play_pause_handler  srv_key.o
-    0x00003be8   0x00000010   Code   RO         2610    i.srv_key_prev_song_handler  srv_key.o
-    0x00003bf8   0x00000010   Code   RO         2611    i.srv_key_prev_station_handler  srv_key.o
-    0x00003c08   0x00000010   Code   RO         2612    i.srv_key_volume_down_handler  srv_key.o
-    0x00003c18   0x00000010   Code   RO         2613    i.srv_key_volume_up_handler  srv_key.o
-    0x00003c28   0x00000014   Code   RO         2446    i.srv_led_change_handler  srv_led.o
-    0x00003c3c   0x00000098   Code   RO         2447    i.srv_led_status_show  srv_led.o
-    0x00003cd4   0x00000050   Code   RO         2448    i.srv_led_sys_initing  srv_led.o
-    0x00003d24   0x0000004c   Code   RO         2516    i.srv_rtc_alarm_get  srv_rtc.o
-    0x00003d70   0x00000050   Code   RO         2517    i.srv_rtc_alarm_set_dw  srv_rtc.o
-    0x00003dc0   0x00000058   Code   RO         2518    i.srv_rtc_alarm_set_hm  srv_rtc.o
-    0x00003e18   0x0000005c   Code   RO         2519    i.srv_rtc_alarm_set_st  srv_rtc.o
-    0x00003e74   0x00000058   Code   RO         2520    i.srv_rtc_alarm_set_ym  srv_rtc.o
-    0x00003ecc   0x0000004c   Code   RO         2521    i.srv_rtc_get       srv_rtc.o
-    0x00003f18   0x00000054   Code   RO         2523    i.srv_rtc_set_dw    srv_rtc.o
-    0x00003f6c   0x00000058   Code   RO         2524    i.srv_rtc_set_hm    srv_rtc.o
-    0x00003fc4   0x0000005c   Code   RO         2525    i.srv_rtc_set_st    srv_rtc.o
-    0x00004020   0x0000005c   Code   RO         2526    i.srv_rtc_set_ym    srv_rtc.o
-    0x0000407c   0x000000a8   Code   RO         1386    i.stackDump         retarget.o
-    0x00004124   0x00000020   Data   RO            5    .constdata          system_nuc029xge.o
-    0x00004144   0x00000002   Data   RO          999    .constdata          drv_adc_pcm1862.o
-    0x00004146   0x00000002   Data   RO         1000    .constdata          drv_adc_pcm1862.o
-    0x00004148   0x00000002   Data   RO         1001    .constdata          drv_adc_pcm1862.o
-    0x0000414a   0x00000002   Data   RO         1002    .constdata          drv_adc_pcm1862.o
-    0x0000414c   0x00000002   Data   RO         1003    .constdata          drv_adc_pcm1862.o
-    0x0000414e   0x00000002   Data   RO         1004    .constdata          drv_adc_pcm1862.o
-    0x00004150   0x00000030   Data   RO         1005    .constdata          drv_adc_pcm1862.o
-    0x00004180   0x00001290   Data   RO         1123    .constdata          drv_dap_tas3251.o
-    0x00005410   0x00007b1c   Data   RO         1196    .constdata          drv_dap_tas5825.o
-    0x0000cf2c   0x0000000c   Data   RO         1340    .constdata          drv_gpio_key.o
-    0x0000cf38   0x00000030   Data   RO         1582    .constdata          clk.o
-    0x0000cf68   0x00000020   Data   RO         2201    .constdata          timer.o
-    0x0000cf88   0x00000028   Data   RO         2703    .constdata          c_p.l(_printf_hex_int.o)
-    0x0000cfb0   0x00000011   Data   RO         2733    .constdata          c_p.l(__printf_flags_wp.o)
-    0x0000cfc1   0x00000003   PAD
-    0x0000cfc4   0x00000020   Data   RO         2939    Region$$Table       anon$$obj.o
+    0x00002c3c   0x00000044   Code   RO         1182    i.drv_5825_Init     drv_dap_tas5825.o
+    0x00002c80   0x00000050   Code   RO         1183    i.drv_5825_Load_in_Param  drv_dap_tas5825.o
+    0x00002cd0   0x00000014   Code   RO         1186    i.drv_5825_amp_fault_det_init  drv_dap_tas5825.o
+    0x00002ce4   0x00000014   Code   RO         1187    i.drv_5825_amp_warn_det_init  drv_dap_tas5825.o
+    0x00002cf8   0x0000003c   Code   RO         1188    i.drv_5825_gpio012_config  drv_dap_tas5825.o
+    0x00002d34   0x00000018   Code   RO         1189    i.drv_5825_mute_pin_init  drv_dap_tas5825.o
+    0x00002d4c   0x00000010   Code   RO         1190    i.drv_5825_mute_pin_set  drv_dap_tas5825.o
+    0x00002d5c   0x0000000a   Code   RO         1191    i.drv_5825_powerdown_pin_init  drv_dap_tas5825.o
+    0x00002d66   0x00000002   PAD
+    0x00002d68   0x00000028   Code   RO         1192    i.drv_5825_powerdown_pin_set  drv_dap_tas5825.o
+    0x00002d90   0x0000006c   Code   RO         1194    i.drv_5825_vol_set  drv_dap_tas5825.o
+    0x00002dfc   0x00000048   Code   RO          994    i.drv_Adc_pcm1862_Init  drv_adc_pcm1862.o
+    0x00002e44   0x0000007c   Code   RO          900    i.drv_Cmd_Send2NCU031  drv_nuc031.o
+    0x00002ec0   0x0000003c   Code   RO          901    i.drv_FM_on_NCU031_reset  drv_nuc031.o
+    0x00002efc   0x0000000c   Code   RO          775    i.drv_FourGmodel_power_key_SetHi  drv_4g_model.o
+    0x00002f08   0x0000000c   Code   RO          776    i.drv_FourGmodel_power_key_SetLow  drv_4g_model.o
+    0x00002f14   0x0000002c   Code   RO          927    i.drv_all_led_on    drv_led.o
+    0x00002f40   0x0000000a   Code   RO         1052    i.drv_audio_4G_Channel  drv_audio.o
+    0x00002f4a   0x0000000a   Code   RO         1053    i.drv_audio_AuxIn_Channel  drv_audio.o
+    0x00002f54   0x0000000a   Code   RO         1054    i.drv_audio_FM_Channel  drv_audio.o
+    0x00002f5e   0x00000002   PAD
+    0x00002f60   0x00000020   Code   RO          928    i.drv_aux_led_on    drv_led.o
+    0x00002f80   0x00000028   Code   RO          929    i.drv_bt_led_on     drv_led.o
+    0x00002fa8   0x00000084   Code   RO         1116    i.drv_dap_3251_Init  drv_dap_tas3251.o
+    0x0000302c   0x00000060   Code   RO         1119    i.drv_dap_3251_i2c_write  drv_dap_tas3251.o
+    0x0000308c   0x00000058   Code   RO         1120    i.drv_dap_3251_rest  drv_dap_tas3251.o
+    0x000030e4   0x00000054   Code   RO         1122    i.drv_dap_3251_vol_set  drv_dap_tas3251.o
+    0x00003138   0x00000014   Code   RO          930    i.drv_err_led_on    drv_led.o
+    0x0000314c   0x00000020   Code   RO          931    i.drv_fm_led_on     drv_led.o
+    0x0000316c   0x00000024   Code   RO         1339    i.drv_gipo_key_init  drv_gpio_key.o
+    0x00003190   0x00000088   Code   RO          932    i.drv_led_init      drv_led.o
+    0x00003218   0x0000000e   Code   RO          777    i.drv_pairing_cmd_send  drv_4g_model.o
+    0x00003226   0x00000002   PAD
+    0x00003228   0x00000098   Code   RO          997    i.drv_pcm1862_input_channel  drv_adc_pcm1862.o
+    0x000032c0   0x00000018   Code   RO          843    i.drv_power_status_updata  drv_power.o
+    0x000032d8   0x0000000e   Code   RO          778    i.drv_wifi_4g_switch_cmd_send  drv_4g_model.o
+    0x000032e6   0x00000002   PAD
+    0x000032e8   0x00000028   Code   RO          933    i.drv_wifi_led_on   drv_led.o
+    0x00003310   0x00000006   Code   RO         1382    i.ferror            retarget.o
+    0x00003316   0x0000000c   Code   RO         1384    i.fputc             retarget.o
+    0x00003322   0x00000002   PAD
+    0x00003324   0x00000618   Code   RO          323    i.main              main.o
+    0x0000393c   0x00000034   Code   RO         2480    i.srv_audio_channel_check  srv_audio.o
+    0x00003970   0x00000038   Code   RO         2481    i.srv_audio_channel_switch  srv_audio.o
+    0x000039a8   0x00000008   Code   RO         2482    i.srv_audio_handler  srv_audio.o
+    0x000039b0   0x0000008c   Code   RO         2423    i.srv_bat_charge_handler  srv_battery.o
+    0x00003a3c   0x00000010   Code   RO         2601    i.srv_key_eq_indoor_switch_handler  srv_key.o
+    0x00003a4c   0x00000010   Code   RO         2602    i.srv_key_eq_outdoor_switch_handler  srv_key.o
+    0x00003a5c   0x000000ac   Code   RO         2603    i.srv_key_handler   srv_key.o
+    0x00003b08   0x00000078   Code   RO         2604    i.srv_key_mode_handler  srv_key.o
+    0x00003b80   0x00000010   Code   RO         2605    i.srv_key_net_config_handler  srv_key.o
+    0x00003b90   0x00000010   Code   RO         2606    i.srv_key_next_song_handler  srv_key.o
+    0x00003ba0   0x00000010   Code   RO         2607    i.srv_key_next_station_handler  srv_key.o
+    0x00003bb0   0x00000010   Code   RO         2608    i.srv_key_play_pause_handler  srv_key.o
+    0x00003bc0   0x00000010   Code   RO         2610    i.srv_key_prev_song_handler  srv_key.o
+    0x00003bd0   0x00000010   Code   RO         2611    i.srv_key_prev_station_handler  srv_key.o
+    0x00003be0   0x00000010   Code   RO         2612    i.srv_key_volume_down_handler  srv_key.o
+    0x00003bf0   0x00000010   Code   RO         2613    i.srv_key_volume_up_handler  srv_key.o
+    0x00003c00   0x00000014   Code   RO         2446    i.srv_led_change_handler  srv_led.o
+    0x00003c14   0x00000098   Code   RO         2447    i.srv_led_status_show  srv_led.o
+    0x00003cac   0x00000050   Code   RO         2448    i.srv_led_sys_initing  srv_led.o
+    0x00003cfc   0x0000004c   Code   RO         2516    i.srv_rtc_alarm_get  srv_rtc.o
+    0x00003d48   0x00000050   Code   RO         2517    i.srv_rtc_alarm_set_dw  srv_rtc.o
+    0x00003d98   0x00000058   Code   RO         2518    i.srv_rtc_alarm_set_hm  srv_rtc.o
+    0x00003df0   0x0000005c   Code   RO         2519    i.srv_rtc_alarm_set_st  srv_rtc.o
+    0x00003e4c   0x00000058   Code   RO         2520    i.srv_rtc_alarm_set_ym  srv_rtc.o
+    0x00003ea4   0x0000004c   Code   RO         2521    i.srv_rtc_get       srv_rtc.o
+    0x00003ef0   0x00000054   Code   RO         2523    i.srv_rtc_set_dw    srv_rtc.o
+    0x00003f44   0x00000058   Code   RO         2524    i.srv_rtc_set_hm    srv_rtc.o
+    0x00003f9c   0x0000005c   Code   RO         2525    i.srv_rtc_set_st    srv_rtc.o
+    0x00003ff8   0x0000005c   Code   RO         2526    i.srv_rtc_set_ym    srv_rtc.o
+    0x00004054   0x000000a8   Code   RO         1386    i.stackDump         retarget.o
+    0x000040fc   0x00000020   Data   RO            5    .constdata          system_nuc029xge.o
+    0x0000411c   0x00000002   Data   RO          999    .constdata          drv_adc_pcm1862.o
+    0x0000411e   0x00000002   Data   RO         1000    .constdata          drv_adc_pcm1862.o
+    0x00004120   0x00000002   Data   RO         1001    .constdata          drv_adc_pcm1862.o
+    0x00004122   0x00000002   Data   RO         1002    .constdata          drv_adc_pcm1862.o
+    0x00004124   0x00000002   Data   RO         1003    .constdata          drv_adc_pcm1862.o
+    0x00004126   0x00000002   Data   RO         1004    .constdata          drv_adc_pcm1862.o
+    0x00004128   0x00000030   Data   RO         1005    .constdata          drv_adc_pcm1862.o
+    0x00004158   0x00001290   Data   RO         1123    .constdata          drv_dap_tas3251.o
+    0x000053e8   0x00007b1c   Data   RO         1196    .constdata          drv_dap_tas5825.o
+    0x0000cf04   0x0000000c   Data   RO         1340    .constdata          drv_gpio_key.o
+    0x0000cf10   0x00000030   Data   RO         1582    .constdata          clk.o
+    0x0000cf40   0x00000020   Data   RO         2201    .constdata          timer.o
+    0x0000cf60   0x00000028   Data   RO         2703    .constdata          c_p.l(_printf_hex_int.o)
+    0x0000cf88   0x00000011   Data   RO         2733    .constdata          c_p.l(__printf_flags_wp.o)
+    0x0000cf99   0x00000003   PAD
+    0x0000cf9c   0x00000020   Data   RO         2939    Region$$Table       anon$$obj.o
 
 
     Execution Region ER_RW (Base: 0x20000000, Size: 0x00000250, Max: 0xffffffff, ABSOLUTE)
@@ -1277,7 +1277,7 @@ Image component sizes
        224        104         60          8          0       2683   drv_adc_pcm1862.o
        240         30          0          0          0       4492   drv_audio.o
        400        102       4752        170          0       3873   drv_dap_tas3251.o
-       678        128      31516        170          0       8041   drv_dap_tas5825.o
+       638        118      31516        170          0       8021   drv_dap_tas5825.o
        344         30         12         20          0       2901   drv_gpio_key.o
        384         66          0          0          0       3628   drv_led.o
        184         22          0          0          0       1199   drv_nuc031.o
@@ -1306,7 +1306,7 @@ Image component sizes
        304         14          0          0          0       1693   usci_uart_1.o
 
     ----------------------------------------------------------------------
-     14850       3016      36676        592       3036     635191   Object Totals
+     14810       3006      36676        592       3036     635171   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         20          0          0          9          1          0   (incl. Padding)
 
@@ -1371,15 +1371,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     16484       3078      36736        592       3136     628283   Grand Totals
-     16484       3078      36736        592       3136     628283   ELF Image Totals
-     16484       3078      36736        592          0          0   ROM Totals
+     16444       3068      36736        592       3136     628263   Grand Totals
+     16444       3068      36736        592       3136     628263   ELF Image Totals
+     16444       3068      36736        592          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                53220 (  51.97kB)
+    Total RO  Size (Code + RO Data)                53180 (  51.93kB)
     Total RW  Size (RW Data + ZI Data)              3728 (   3.64kB)
-    Total ROM Size (Code + RO Data + RW Data)      53812 (  52.55kB)
+    Total ROM Size (Code + RO Data + RW Data)      53772 (  52.51kB)
 
 ==============================================================================
 

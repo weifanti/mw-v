@@ -51011,12 +51011,13 @@ Nvoid Drv_audio_channel_switch(void)
 N{
 N	
 N  	drv_audio_Null_Channel();
-N	TIMER_Delay(TIMER0,100000);
-X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),100000);
+N	TIMER_Delay(TIMER0,30000); // 15ms
+X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),30000); 
 N	Drv_Dap_init();
-N	TIMER_Delay(TIMER0,100000);
-X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),100000);
+N	TIMER_Delay(TIMER0,30000); // 15ms
+X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),30000); 
 N
+N	
 N	if(Global_datas.g_mode_status == FM_MODE)
 N	{
 N		drv_audio_FM_Channel();
@@ -51035,7 +51036,7 @@ N
 Nvoid Drv_audio_powerdown(void)
 N{
 N
-W "..\src\driver\audio\drv_audio.c" 172 2 function "drv_5825_powerdown_pin_set" declared implicitly
+W "..\src\driver\audio\drv_audio.c" 173 2 function "drv_5825_powerdown_pin_set" declared implicitly
 N	drv_5825_powerdown_pin_set(0);//power down
 N	drv_Adc_pcm1862_Init();
 N	drv_dap_3251_rest();

@@ -29874,10 +29874,11 @@ void Drv_audio_channel_switch(void)
 {
 	
   	drv_audio_Null_Channel();
-	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),100000);
+	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),30000); 
 	Drv_Dap_init();
-	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),100000);
+	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),30000); 
 
+	
 	if(Global_datas.g_mode_status == FM_MODE)
 	{
 		drv_audio_FM_Channel();

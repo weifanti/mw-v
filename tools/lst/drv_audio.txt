@@ -80,7 +80,7 @@
 ;;;147    {
 ;;;148    	
 ;;;149      	drv_audio_Null_Channel();
-;;;150    	TIMER_Delay(TIMER0,100000);
+;;;150    	TIMER_Delay(TIMER0,30000); // 15ms
 000008  4c0c              LDR      r4,|L4.60|
 00000a  4d0d              LDR      r5,|L4.64|
 00000c  4621              MOV      r1,r4
@@ -88,45 +88,46 @@
 000010  f7fffffe          BL       TIMER_Delay
 ;;;151    	Drv_Dap_init();
 000014  f7fffffe          BL       Drv_Dap_init
-;;;152    	TIMER_Delay(TIMER0,100000);
+;;;152    	TIMER_Delay(TIMER0,30000); // 15ms
 000018  4621              MOV      r1,r4
 00001a  4628              MOV      r0,r5
 00001c  f7fffffe          BL       TIMER_Delay
 ;;;153    
-;;;154    	if(Global_datas.g_mode_status == FM_MODE)
+;;;154    	
+;;;155    	if(Global_datas.g_mode_status == FM_MODE)
 000020  4808              LDR      r0,|L4.68|
 000022  7940              LDRB     r0,[r0,#5]  ; Global_datas
 000024  280a              CMP      r0,#0xa
 000026  d005              BEQ      |L4.52|
-;;;155    	{
-;;;156    		drv_audio_FM_Channel();
-;;;157    	}
-;;;158    	else if(Global_datas.g_mode_status == AUX_MODE)
+;;;156    	{
+;;;157    		drv_audio_FM_Channel();
+;;;158    	}
+;;;159    	else if(Global_datas.g_mode_status == AUX_MODE)
 000028  2808              CMP      r0,#8
 00002a  d005              BEQ      |L4.56|
 00002c  2004              MOVS     r0,#4
                   |L4.46|
 00002e  f7fffffe          BL       drv_pcm1862_input_channel
-;;;159    	{
-;;;160    		drv_audio_AuxIn_Channel();
-;;;161    	}
-;;;162    	else
-;;;163    	{
-;;;164    		drv_audio_4G_Channel();
-;;;165    	}	
-;;;166    }
+;;;160    	{
+;;;161    		drv_audio_AuxIn_Channel();
+;;;162    	}
+;;;163    	else
+;;;164    	{
+;;;165    		drv_audio_4G_Channel();
+;;;166    	}	
+;;;167    }
 000032  bd70              POP      {r4-r6,pc}
                   |L4.52|
 000034  2002              MOVS     r0,#2
 000036  e7fa              B        |L4.46|
                   |L4.56|
-000038  2001              MOVS     r0,#1                 ;156
+000038  2001              MOVS     r0,#1                 ;157
 00003a  e7f8              B        |L4.46|
-;;;167    
+;;;168    
                           ENDP
 
                   |L4.60|
-                          DCD      0x000186a0
+                          DCD      0x00007530
                   |L4.64|
                           DCD      0x40010000
                   |L4.68|
@@ -193,21 +194,21 @@
                           AREA ||i.Drv_audio_powerdown||, CODE, READONLY, ALIGN=1
 
                   Drv_audio_powerdown PROC
-;;;168    
-;;;169    void Drv_audio_powerdown(void)
+;;;169    
+;;;170    void Drv_audio_powerdown(void)
 000000  b510              PUSH     {r4,lr}
-;;;170    {
-;;;171    
-;;;172    	drv_5825_powerdown_pin_set(0);//power down
+;;;171    {
+;;;172    
+;;;173    	drv_5825_powerdown_pin_set(0);//power down
 000002  2000              MOVS     r0,#0
 000004  f7fffffe          BL       drv_5825_powerdown_pin_set
-;;;173    	drv_Adc_pcm1862_Init();
+;;;174    	drv_Adc_pcm1862_Init();
 000008  f7fffffe          BL       drv_Adc_pcm1862_Init
-;;;174    	drv_dap_3251_rest();
+;;;175    	drv_dap_3251_rest();
 00000c  f7fffffe          BL       drv_dap_3251_rest
-;;;175    }
+;;;176    }
 000010  bd10              POP      {r4,pc}
-;;;176    
+;;;177    
                           ENDP
 
 

@@ -387,10 +387,10 @@ void drv_5825_Init(void)
 	printf("drv_5825_Init***********\n");
 
 	
-    drv_5825_powerdown_pin_set(0);
-	TIMER_Delay(TIMER0,50000);
-    drv_5825_powerdown_pin_set(1);
-	TIMER_Delay(TIMER0,20000);
+//  drv_5825_powerdown_pin_set(0);
+//	TIMER_Delay(TIMER0,50000);
+//    drv_5825_powerdown_pin_set(1);
+//	TIMER_Delay(TIMER0,30000);
 	
     drv_5825_Load_in_Param(); 
 	drv_5825_vol_set(Global_datas.volume);

@@ -187,57 +187,41 @@
 000006  f7fffffe          BL       drv_5825_amp_warn_det_init
 ;;;386    
 ;;;387    	printf("drv_5825_Init***********\n");
-00000a  a00d              ADR      r0,|L3.64|
+00000a  a006              ADR      r0,|L3.36|
 00000c  f7fffffe          BL       __2printf
 ;;;388    
 ;;;389    	
-;;;390        drv_5825_powerdown_pin_set(0);
-000010  2000              MOVS     r0,#0
-000012  f7fffffe          BL       drv_5825_powerdown_pin_set
-;;;391    	TIMER_Delay(TIMER0,50000);
-000016  4c12              LDR      r4,|L3.96|
-000018  4910              LDR      r1,|L3.92|
-00001a  4620              MOV      r0,r4
-00001c  f7fffffe          BL       TIMER_Delay
-;;;392        drv_5825_powerdown_pin_set(1);
-000020  2001              MOVS     r0,#1
-000022  f7fffffe          BL       drv_5825_powerdown_pin_set
-;;;393    	TIMER_Delay(TIMER0,20000);
-000026  490f              LDR      r1,|L3.100|
-000028  4620              MOV      r0,r4
-00002a  f7fffffe          BL       TIMER_Delay
+;;;390    //  drv_5825_powerdown_pin_set(0);
+;;;391    //	TIMER_Delay(TIMER0,50000);
+;;;392    //    drv_5825_powerdown_pin_set(1);
+;;;393    //	TIMER_Delay(TIMER0,30000);
 ;;;394    	
 ;;;395        drv_5825_Load_in_Param(); 
-00002e  f7fffffe          BL       drv_5825_Load_in_Param
+000010  f7fffffe          BL       drv_5825_Load_in_Param
 ;;;396    	drv_5825_vol_set(Global_datas.volume);
-000032  480d              LDR      r0,|L3.104|
-000034  7bc0              LDRB     r0,[r0,#0xf]  ; Global_datas
-000036  f7fffffe          BL       drv_5825_vol_set
+000014  480a              LDR      r0,|L3.64|
+000016  7bc0              LDRB     r0,[r0,#0xf]  ; Global_datas
+000018  f7fffffe          BL       drv_5825_vol_set
 ;;;397    	
 ;;;398    	drv_5825_gpio012_config();
-00003a  f7fffffe          BL       drv_5825_gpio012_config
+00001c  f7fffffe          BL       drv_5825_gpio012_config
 ;;;399    }
-00003e  bd10              POP      {r4,pc}
+000020  bd10              POP      {r4,pc}
 ;;;400    
                           ENDP
 
+000022  0000              DCW      0x0000
+                  |L3.36|
+000024  6472765f          DCB      "drv_5825_Init***********\n",0
+000028  35383235
+00002c  5f496e69
+000030  742a2a2a
+000034  2a2a2a2a
+000038  2a2a2a2a
+00003c  0a00    
+00003e  00                DCB      0
+00003f  00                DCB      0
                   |L3.64|
-000040  6472765f          DCB      "drv_5825_Init***********\n",0
-000044  35383235
-000048  5f496e69
-00004c  742a2a2a
-000050  2a2a2a2a
-000054  2a2a2a2a
-000058  0a00    
-00005a  00                DCB      0
-00005b  00                DCB      0
-                  |L3.92|
-                          DCD      0x0000c350
-                  |L3.96|
-                          DCD      0x40010000
-                  |L3.100|
-                          DCD      0x00004e20
-                  |L3.104|
                           DCD      Global_datas+0x20
 
                           AREA ||i.drv_5825_Load_in_Param||, CODE, READONLY, ALIGN=2

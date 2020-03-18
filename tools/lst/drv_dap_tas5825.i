@@ -46021,10 +46021,10 @@ void drv_5825_Init(void)
 	printf("drv_5825_Init***********\n");
 
 	
-    drv_5825_powerdown_pin_set(0);
-	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),50000);
-    drv_5825_powerdown_pin_set(1);
-	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),20000);
+
+
+
+
 	
     drv_5825_Load_in_Param(); 
 	drv_5825_vol_set(Global_datas.volume);
