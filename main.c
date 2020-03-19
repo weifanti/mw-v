@@ -300,6 +300,10 @@ int32_t main(void)
 				Global_datas.g_mode_status = WIFI_MODE;				
 				srv_led_sys_initing();
 			}
+			else
+			{
+				srv_led_change_handler();
+			}
 
 			if(IsTimeOut(&ModulePowerUpPinTimer))
 			{
@@ -663,7 +667,6 @@ int32_t main(void)
 				refcount1 = 0;
 			
 			drv_power_status_updata();
-			srv_led_change_handler();
 			srv_audio_handler();
 		}
 		

@@ -29558,6 +29558,10 @@ void drv_5825_gpio012_config(void);
  
 
 
+
+
+
+
 void drv_pcm1862_input_channel(uint8_t pcm_channel);
 
 
@@ -29583,6 +29587,9 @@ void drv_pcm1862_PGA_VAL_CH1_R(uint8_t value);
 
 
 void drv_Adc_pcm1862_Init(void);
+
+void drv_pcm1862_PGA_VAL_SET(uint8_t value); 
+
 
 
 
@@ -29793,27 +29800,28 @@ void Drv_Dap_vol_mute(uint8_t value)
 void drv_audio_AuxIn_Channel(void)
 {
 
+	drv_pcm1862_PGA_VAL_SET(0x00);
 	drv_pcm1862_input_channel((1 << (1-1)));
 
 }
 
 void drv_audio_4G_Channel(void)
 {
-
+	drv_pcm1862_PGA_VAL_SET(0xe8);
 	drv_pcm1862_input_channel((1 << (3-1)));
 
 }
 
 void drv_audio_FM_Channel(void)
 {
-
+	drv_pcm1862_PGA_VAL_SET(0x00);
 	drv_pcm1862_input_channel((1 << (2-1)));
 
 }
 
 void drv_audio_Null_Channel(void) 
 {
-
+	drv_pcm1862_PGA_VAL_SET(0xe8);
 	drv_pcm1862_input_channel((1 << (4-1)));
 
 }

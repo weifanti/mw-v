@@ -50431,6 +50431,10 @@ N    FM_CHANNEL,
 N} sSN74LVC157;
 N*/
 N#define PCM1862_IN_CHANNEL(x)  (1 << (x-1)) 
+N#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
+N#define FM_PCM1862_GAIN	0x00 // 0db
+N#define AUX_PCM1862_GAIN	0x00 // 0db
+N
 N
 Nvoid drv_pcm1862_input_channel(uint8_t pcm_channel);
 N
@@ -50457,6 +50461,9 @@ Nvoid drv_pcm1862_PGA_VAL_CH1_R(uint8_t value);
 N
 N
 Nvoid drv_Adc_pcm1862_Init(void);
+N
+Nvoid drv_pcm1862_PGA_VAL_SET(uint8_t value); // 0x00 -> 0db  , 0xeb -> -12db
+N
 N
 N
 N
@@ -50659,6 +50666,7 @@ N#endif
 L 14 "..\src\driver\audio\drv_adc_pcm1862.c" 2
 N
 N
+N
 N#define PCM1862_I2C_ADDR  0x94
 N
 N
@@ -50675,14 +50683,18 @@ N
 N
 Nuint8_t pcm1862_channel_L[] ={0x06, 0x40};
 Nuint8_t pcm1862_channel_R[] ={0x07, 0x40};
-Nuint8_t pcm1862_PGA_VAL_CH1_L[] ={0x01, 0x40};
-Nuint8_t pcm1862_PGA_VAL_CH1_R[] ={0x02, 0x40};
+Nuint8_t pcm1862_PGA_VAL_CH1_L[] ={0x01, 0x00};
+Nuint8_t pcm1862_PGA_VAL_CH1_R[] ={0x02, 0x00};
+Nuint8_t pcm1862_PGA_VAL_CH2_L[] ={0x03, 0x00};
+Nuint8_t pcm1862_PGA_VAL_CH2_R[] ={0x04, 0x00};
+N
 N
 Ntypedef struct
 N{
 N    uint8_t*   arr_ddr;
 N    uint32_t   arr_len;
 N} init_pcm1862_arr_matrix_t;
+N
 N
 Nconst static init_pcm1862_arr_matrix_t pcm1862_mt[] =
 N{
@@ -50697,6 +50709,9 @@ N//    {(uint8_t*)pcm1862_sckradio, sizeof(pcm1862_sckradio)},
 N};
 N	
 N#define PCM1862_INIT_REGRSTER_LEN         (sizeof(pcm1862_mt)/sizeof(init_pcm1862_arr_matrix_t))
+N
+N
+N
 N
 N/**
 N * Load Dsp data part1
@@ -50719,6 +50734,8 @@ X	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_channel_R,sizeof(pcm1862_channel_R),
 N
 N}
 N
+N
+N
 N/**
 N * set DPGA_VAL_CH1_L
 N * @brief      DPGA_VAL_CH1_L
@@ -50726,14 +50743,46 @@ N * @param      value
 N * @return     None
 N *
 N */
-Nvoid drv_pcm1862_PGA_VAL_CH1_L(uint8_t value)
+N//   0xE8   -12DB
+N//   0X00    0DB
+N//
+N
+Nvoid drv_pcm1862_PGA_VAL_SET(uint8_t value)
 N{
 N
-N	pcm1862_PGA_VAL_CH1_L[1] =  value*3 -0x17;
+N	pcm1862_PGA_VAL_CH1_L[1] = value ;
+N	pcm1862_PGA_VAL_CH1_R[1] = value ;
+N	pcm1862_PGA_VAL_CH2_L[1] = value ;
+N	pcm1862_PGA_VAL_CH2_R[1] = value ;
 N
 N	printf("pcm1862_PGA_VAL_CH1_L %x\n",pcm1862_PGA_VAL_CH1_L[1]);
 N	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_L,sizeof(pcm1862_PGA_VAL_CH1_L), (uint8_t*)NULL, 0);
 X	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH1_L,sizeof(pcm1862_PGA_VAL_CH1_L), (uint8_t*)0, 0);
+N	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)NULL, 0);
+X	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)0, 0);
+N	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH2_L,sizeof(pcm1862_PGA_VAL_CH2_L), (uint8_t*)NULL, 0);
+X	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH2_L,sizeof(pcm1862_PGA_VAL_CH2_L), (uint8_t*)0, 0);
+N	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH2_R,sizeof(pcm1862_PGA_VAL_CH2_R), (uint8_t*)NULL, 0);
+X	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH2_R,sizeof(pcm1862_PGA_VAL_CH2_R), (uint8_t*)0, 0);
+N
+N}
+N
+N
+N/**
+N * set DPGA_VAL_CH1_L
+N * @brief      DPGA_VAL_CH1_L
+N * @param      value
+N * @return     None
+N *
+N */
+N//   0xE8   -12DB
+N//   0X00    0DB
+N//
+N
+Nvoid drv_pcm1862_PGA_VAL_CH1_L(uint8_t value)
+N{
+N
+N
 N}
 N
 N/**
@@ -50746,7 +50795,7 @@ N */
 Nvoid drv_pcm1862_PGA_VAL_CH1_R(uint8_t value)
 N{
 N
-N		pcm1862_PGA_VAL_CH1_R[1] = value*3 -0x17;
+N		pcm1862_PGA_VAL_CH1_R[1] = value;
 N
 N		printf("pcm1862_PGA_VAL_CH1_R = %x\n",pcm1862_PGA_VAL_CH1_R[1]);
 N		Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)NULL, 0);

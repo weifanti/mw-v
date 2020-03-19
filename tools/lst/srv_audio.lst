@@ -50390,7 +50390,7 @@ N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  5
+N#define VOLUME_DEFAULT  8
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
@@ -50433,6 +50433,10 @@ N    FM_CHANNEL,
 N} sSN74LVC157;
 N*/
 N#define PCM1862_IN_CHANNEL(x)  (1 << (x-1)) 
+N#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
+N#define FM_PCM1862_GAIN	0x00 // 0db
+N#define AUX_PCM1862_GAIN	0x00 // 0db
+N
 N
 Nvoid drv_pcm1862_input_channel(uint8_t pcm_channel);
 N
@@ -50459,6 +50463,9 @@ Nvoid drv_pcm1862_PGA_VAL_CH1_R(uint8_t value);
 N
 N
 Nvoid drv_Adc_pcm1862_Init(void);
+N
+Nvoid drv_pcm1862_PGA_VAL_SET(uint8_t value); // 0x00 -> 0db  , 0xeb -> -12db
+N
 N
 N
 N

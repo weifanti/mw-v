@@ -29480,6 +29480,10 @@ extern sGlobalData Global_datas;
  
 
 
+
+
+
+
 void drv_pcm1862_input_channel(uint8_t pcm_channel);
 
 
@@ -29505,6 +29509,9 @@ void drv_pcm1862_PGA_VAL_CH1_R(uint8_t value);
 
 
 void drv_Adc_pcm1862_Init(void);
+
+void drv_pcm1862_PGA_VAL_SET(uint8_t value); 
+
 
 
 

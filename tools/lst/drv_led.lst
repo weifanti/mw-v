@@ -50343,7 +50343,7 @@ X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*
 N	PA12 = LED_OFF; //aux
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((12)<<2)))) = 1; 
 N	if(value)
-N		PA1 = LED_ON;  //4G
+N		PA1 = LED_ON;  //bt
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 0;  
 N	else
 N		PA1 = LED_OFF;  //bt
@@ -50380,7 +50380,7 @@ N	if(value)
 N		PF6 = LED_ON;  //4G
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(5))) + ((6)<<2)))) = 0;  
 N	else
-N		PF6 = LED_OFF;  //FM
+N		PF6 = LED_OFF;  //4G
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(5))) + ((6)<<2)))) = 1;  
 N	PC15 = LED_OFF;  //FM
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((15)<<2)))) = 1;  

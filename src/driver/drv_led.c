@@ -39,7 +39,7 @@ void drv_bt_led_on(uint8_t value)
 	PA13 = LED_OFF; //wifi
 	PA12 = LED_OFF; //aux
 	if(value)
-		PA1 = LED_ON;  //4G
+		PA1 = LED_ON;  //bt
 	else
 		PA1 = LED_OFF;  //bt
 	PC15 = LED_OFF;  //FM
@@ -63,7 +63,7 @@ void drv_4G_led_on(uint8_t value)
 	if(value)
 		PF6 = LED_ON;  //4G
 	else
-		PF6 = LED_OFF;  //FM
+		PF6 = LED_OFF;  //4G
 	PC15 = LED_OFF;  //FM
 }
 

@@ -66,27 +66,28 @@ void Drv_Dap_vol_mute(uint8_t value)
 void drv_audio_AuxIn_Channel(void)
 {
 
+	drv_pcm1862_PGA_VAL_SET(AUX_PCM1862_GAIN);
 	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(1));
 
 }
 
 void drv_audio_4G_Channel(void)
 {
-
+	drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
 	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3));
 
 }
 
 void drv_audio_FM_Channel(void)
 {
-
+	drv_pcm1862_PGA_VAL_SET(FM_PCM1862_GAIN);
 	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(2));
 
 }
 
 void drv_audio_Null_Channel(void) // channel 4 no use
 {
-
+	drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
 	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(4));
 
 }

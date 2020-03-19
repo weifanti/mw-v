@@ -32,6 +32,10 @@ typedef enum
 } sSN74LVC157;
 */
 #define PCM1862_IN_CHANNEL(x)  (1 << (x-1)) 
+#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
+#define FM_PCM1862_GAIN	0x00 // 0db
+#define AUX_PCM1862_GAIN	0x00 // 0db
+
 
 void drv_pcm1862_input_channel(uint8_t pcm_channel);
 
@@ -58,6 +62,9 @@ void drv_pcm1862_PGA_VAL_CH1_R(uint8_t value);
 
 
 void drv_Adc_pcm1862_Init(void);
+
+void drv_pcm1862_PGA_VAL_SET(uint8_t value); // 0x00 -> 0db  , 0xeb -> -12db
+
 
 
 

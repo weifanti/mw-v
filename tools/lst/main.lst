@@ -50722,7 +50722,7 @@ N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  5
+N#define VOLUME_DEFAULT  8
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
@@ -51341,7 +51341,7 @@ N	Global_datas.g_mode_status = POWER_ON_MODE;
 N	Global_datas.g_4g_initing = 1;
 N	Global_datas.eq_mode = EQ_MODE_INDOOR;
 N	Global_datas.volume = VOLUME_DEFAULT;
-X	Global_datas.volume = 5;
+X	Global_datas.volume = 8;
 N	TYM_drv_powerkeepon(1);
 N	Drv_4GMoudle_PowerUp(1);
 N	drv_FourGmodel_power_key_SetHi();
@@ -51461,6 +51461,10 @@ N	        if(Global_datas.g_4g_initing)
 N			{
 N				Global_datas.g_mode_status = WIFI_MODE;				
 N				srv_led_sys_initing();
+N			}
+N			else
+N			{
+N				srv_led_change_handler();
 N			}
 N
 N			if(IsTimeOut(&ModulePowerUpPinTimer))
@@ -51836,7 +51840,6 @@ N			else
 N				refcount1 = 0;
 N			
 N			drv_power_status_updata();
-N			srv_led_change_handler();
 N			srv_audio_handler();
 N		}
 N		
