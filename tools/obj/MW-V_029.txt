@@ -31,8 +31,8 @@
     Program header entries: 1
     Section header entries: 16
 
-    Program header offset: 756796 (0x000b8c3c)
-    Section header offset: 756828 (0x000b8c5c)
+    Program header offset: 756792 (0x000b8c38)
+    Section header offset: 756824 (0x000b8c58)
 
     Section header string table index: 15
 
@@ -7311,32 +7311,32 @@
     $d
         0x00003be8:    1010250b    .%..    DCD    269493515
         0x00003bec:    19101010    ....    DCD    420483088
-        0x00003bf0:    19070719    ....    DCD    419890969
+        0x00003bf0:    07250719    ..%.    DCD    119867161
         0x00003bf4:    0025        %.      DCW    37
     $t
         0x00003bf6:    2300        .#      MOVS     r3,#0
-        0x00003bf8:    2216        ."      MOVS     r2,#0x16
+        0x00003bf8:    2215        ."      MOVS     r2,#0x15
         0x00003bfa:    2103        .!      MOVS     r1,#3
         0x00003bfc:    2002        .       MOVS     r0,#2
         0x00003bfe:    f7fdf8ad    ....    BL       Core_Msg_Send ; 0xd5c
         0x00003c02:    2200        ."      MOVS     r2,#0
-        0x00003c04:    2110        .!      MOVS     r1,#0x10
+        0x00003c04:    2111        .!      MOVS     r1,#0x11
         0x00003c06:    e010        ..      B        0x3c2a ; srv_key_mode_handler + 78
         0x00003c08:    2300        .#      MOVS     r3,#0
-        0x00003c0a:    2217        ."      MOVS     r2,#0x17
+        0x00003c0a:    2216        ."      MOVS     r2,#0x16
         0x00003c0c:    2103        .!      MOVS     r1,#3
         0x00003c0e:    2002        .       MOVS     r0,#2
         0x00003c10:    f7fdf8a4    ....    BL       Core_Msg_Send ; 0xd5c
         0x00003c14:    2200        ."      MOVS     r2,#0
-        0x00003c16:    2112        .!      MOVS     r1,#0x12
+        0x00003c16:    2110        .!      MOVS     r1,#0x10
         0x00003c18:    e007        ..      B        0x3c2a ; srv_key_mode_handler + 78
         0x00003c1a:    2300        .#      MOVS     r3,#0
-        0x00003c1c:    2215        ."      MOVS     r2,#0x15
+        0x00003c1c:    2217        ."      MOVS     r2,#0x17
         0x00003c1e:    2103        .!      MOVS     r1,#3
         0x00003c20:    2002        .       MOVS     r0,#2
         0x00003c22:    f7fdf89b    ....    BL       Core_Msg_Send ; 0xd5c
         0x00003c26:    2200        ."      MOVS     r2,#0
-        0x00003c28:    2111        .!      MOVS     r1,#0x11
+        0x00003c28:    2112        .!      MOVS     r1,#0x12
         0x00003c2a:    2070        p       MOVS     r0,#0x70
         0x00003c2c:    f7fff91c    ....    BL       drv_Cmd_Send2NCU031 ; 0x2e68
         0x00003c30:    bd10        ..      POP      {r4,pc}
@@ -17176,11 +17176,11 @@
 
 
 ** Section #6 '.debug_info' (SHT_PROGBITS)
-    Size   : 88168 bytes
+    Size   : 88172 bytes
 
 
 ** Section #7 '.debug_line' (SHT_PROGBITS)
-    Size   : 35032 bytes
+    Size   : 35036 bytes
 
 
 ** Section #8 '.debug_loc' (SHT_PROGBITS)
@@ -17210,7 +17210,7 @@
 
 
 ** Section #14 '.comment' (SHT_PROGBITS)
-    Size   : 39400 bytes
+    Size   : 39388 bytes
 
 
 ** Section #15 '.shstrtab' (SHT_STRTAB)

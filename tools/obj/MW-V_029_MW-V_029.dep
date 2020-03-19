@@ -1272,7 +1272,7 @@ I (..\lib\StdDriver\inc\usci_uart.h)(0x5E66DE67)
 I (..\lib\StdDriver\inc\usci_i2c.h)(0x5E66DE67)
 I (..\src\server\include\srv_rtc.h)(0x5E66DE67)
 I (..\src\driver\include\drv_4G_model.h)(0x5E66DE67)
-F (..\src\server\key\srv_key.c)(0x5E731424)(-c --cpu Cortex-M0 -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\lib\CMSIS\Include -I ..\lib\Device\Nuvoton\NUC029xGE\Include -I ..\lib\StdDriver\inc -I ..\src\core\include -I ..\src\driver\include -I ..\src\io\include -I ..\src\global -I ..\src\server\include -I ..\src\driver\audio -D__UVISION_VERSION="522"-o .\obj\srv_key.o --list_dir ".\\lst\\" --list --omf_browse .\obj\srv_key.crf --depend .\obj\srv_key.d)
+F (..\src\server\key\srv_key.c)(0x5E73336C)(-c --cpu Cortex-M0 -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\lib\CMSIS\Include -I ..\lib\Device\Nuvoton\NUC029xGE\Include -I ..\lib\StdDriver\inc -I ..\src\core\include -I ..\src\driver\include -I ..\src\io\include -I ..\src\global -I ..\src\server\include -I ..\src\driver\audio -D__UVISION_VERSION="522"-o .\obj\srv_key.o --list_dir ".\\lst\\" --list --omf_browse .\obj\srv_key.crf --depend .\obj\srv_key.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x57F606B8)
 I (..\lib\Device\Nuvoton\NUC029xGE\Include\NUC029xGE.h)(0x5E66DE67)
 I (..\lib\CMSIS\Include\core_cm0.h)(0x5E66DE67)

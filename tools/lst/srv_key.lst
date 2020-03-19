@@ -50708,6 +50708,50 @@ N
 N
 Nvoid srv_key_mode_handler(void)
 N{
+N
+Nswitch(Global_datas.g_mode_status)
+N{
+N	case AUX_MODE:
+N
+N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
+N		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
+N
+N	break;
+N	
+N	case WIFI_MODE:
+N	case WIFI_CONNECTED_MODE:
+N	case WIFI_CONNECTING_MODE:
+N	case FOURG_MODE:
+N	case FOURG_CONNECTED_MODE:
+N		
+N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
+N		drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
+N		
+N	break;
+N	
+N	case BT_MODE:
+N	case BT_CONNECTED_MODE:
+N
+N
+N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
+N		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+N	break;
+N	
+N	case FM_MODE:
+N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
+N		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+N	break;
+N	
+N	default:
+N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
+N		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
+N		Global_datas.g_mode_status = AUX_MODE;
+N	break;
+N}
+N
+N
+N
+N/*
 N	switch(Global_datas.g_mode_status)
 N	{
 N		case AUX_MODE:
@@ -50722,7 +50766,6 @@ N		case WIFI_CONNECTING_MODE:
 N		case FOURG_MODE:
 N		case FOURG_CONNECTED_MODE:
 N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-N			
 N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
 N			
 N		break;
@@ -50744,6 +50787,8 @@ N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
 N			Global_datas.g_mode_status = AUX_MODE;
 N		break;
 N	}
+N
+N	*/
 N}
 N
 Nvoid srv_key_volume_up_handler(void)
@@ -50810,15 +50855,15 @@ N
 N		Global_datas.key_led_blink = 1;
 N		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 N		{
-W "..\src\server\key\srv_key.c" 128 4 function "SYS_Status" declared implicitly
+W "..\src\server\key\srv_key.c" 173 4 function "SYS_Status" declared implicitly
 N			SYS_Status();
 N		}
 N		
 N		else
 N		{
-W "..\src\server\key\srv_key.c" 133 4 function "PowerOff" declared implicitly
+W "..\src\server\key\srv_key.c" 178 4 function "PowerOff" declared implicitly
 N			PowerOff();
-W "..\src\server\key\srv_key.c" 134 4 function "SysIdle" declared implicitly
+W "..\src\server\key\srv_key.c" 179 4 function "SysIdle" declared implicitly
 N			SysIdle();
 N		}
 N		break;

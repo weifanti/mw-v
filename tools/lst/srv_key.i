@@ -29732,42 +29732,87 @@ void Drv_audio_channel_switch(void);
 
 void srv_key_mode_handler(void)
 {
-	switch(Global_datas.g_mode_status)
-	{
-		case AUX_MODE:
-		case LOUD_SPEAKER_MODE:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); 
-			drv_Cmd_Send2NCU031(0x70, 0x10,0x00);
-		break;
+
+switch(Global_datas.g_mode_status)
+{
+	case AUX_MODE:
+
+		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
+		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+
+	break;
+	
+	case WIFI_MODE:
+	case WIFI_CONNECTED_MODE:
+	case WIFI_CONNECTING_MODE:
+	case FOURG_MODE:
+	case FOURG_CONNECTED_MODE:
 		
-		case WIFI_MODE:
-		case WIFI_CONNECTED_MODE:
-		case WIFI_CONNECTING_MODE:
-		case FOURG_MODE:
-		case FOURG_CONNECTED_MODE:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); 
-			
-			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
-			
-		break;
+		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); 
+		drv_Cmd_Send2NCU031(0x70, 0x10,0x00);
 		
-	    case BT_MODE:
-	    case BT_CONNECTED_MODE:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
-			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
-		break;
-		
-		case FM_MODE:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
-			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
-		break;
-		
-		default:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); 
-			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
-			Global_datas.g_mode_status = AUX_MODE;
-		break;
-	}
+	break;
+	
+	case BT_MODE:
+	case BT_CONNECTED_MODE:
+
+
+		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); 
+		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
+	break;
+	
+	case FM_MODE:
+		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
+		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+	break;
+	
+	default:
+		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); 
+		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
+		Global_datas.g_mode_status = AUX_MODE;
+	break;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 }
 
 void srv_key_volume_up_handler(void)

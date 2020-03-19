@@ -5,210 +5,210 @@
                           AREA ||i.srv_key_eq_indoor_switch_handler||, CODE, READONLY, ALIGN=1
 
                   srv_key_eq_indoor_switch_handler PROC
-;;;102    
-;;;103     void srv_key_eq_indoor_switch_handler(void)
+;;;147    
+;;;148     void srv_key_eq_indoor_switch_handler(void)
 000000  b510              PUSH     {r4,lr}
-;;;104    {
-;;;105    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc1,0x00,0x00); //indoor
+;;;149    {
+;;;150    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc1,0x00,0x00); //indoor
 000002  2300              MOVS     r3,#0
 000004  461a              MOV      r2,r3
 000006  21c1              MOVS     r1,#0xc1
 000008  2002              MOVS     r0,#2
 00000a  f7fffffe          BL       Core_Msg_Send
-;;;106    }
+;;;151    }
 00000e  bd10              POP      {r4,pc}
-;;;107    
+;;;152    
                           ENDP
 
 
                           AREA ||i.srv_key_eq_outdoor_switch_handler||, CODE, READONLY, ALIGN=1
 
                   srv_key_eq_outdoor_switch_handler PROC
-;;;107    
-;;;108    void srv_key_eq_outdoor_switch_handler(void)
+;;;152    
+;;;153    void srv_key_eq_outdoor_switch_handler(void)
 000000  b510              PUSH     {r4,lr}
-;;;109    {
-;;;110    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc2,0x00,0x00); //outdoor
+;;;154    {
+;;;155    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0xc2,0x00,0x00); //outdoor
 000002  2300              MOVS     r3,#0
 000004  461a              MOV      r2,r3
 000006  21c2              MOVS     r1,#0xc2
 000008  2002              MOVS     r0,#2
 00000a  f7fffffe          BL       Core_Msg_Send
-;;;111    }
+;;;156    }
 00000e  bd10              POP      {r4,pc}
-;;;112    
+;;;157    
                           ENDP
 
 
                           AREA ||i.srv_key_handler||, CODE, READONLY, ALIGN=2
 
                   srv_key_handler PROC
-;;;118    
-;;;119    void srv_key_handler(void)
+;;;163    
+;;;164    void srv_key_handler(void)
 000000  b510              PUSH     {r4,lr}
-;;;120    {	
-;;;121    	switch(GetIrKey())
+;;;165    {	
+;;;166    	switch(GetIrKey())
 000002  f7fffffe          BL       GetIrKey
-;;;122    	{
-;;;123    		case IR_KEY_POWER:
-;;;124    			
-;;;125    		Global_datas.key_led_blink = 1;
+;;;167    	{
+;;;168    		case IR_KEY_POWER:
+;;;169    			
+;;;170    		Global_datas.key_led_blink = 1;
 000006  2201              MOVS     r2,#1
 000008  4927              LDR      r1,|L3.168|
-00000a  0003              MOVS     r3,r0                 ;121
+00000a  0003              MOVS     r3,r0                 ;166
 00000c  f7fffffe          BL       __ARM_common_switch8
 000010  0e100814          DCB      0x0e,0x10,0x08,0x14
 000014  181c2420          DCB      0x18,0x1c,0x24,0x20
 000018  282c3010          DCB      0x28,0x2c,0x30,0x10
 00001c  343c4710          DCB      0x34,0x3c,0x47,0x10
 000020  730a              STRB     r2,[r1,#0xc]
-;;;126    		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
+;;;171    		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 000022  7948              LDRB     r0,[r1,#5]  ; Global_datas
 000024  280e              CMP      r0,#0xe
 000026  d004              BEQ      |L3.50|
-;;;127    		{
-;;;128    			SYS_Status();
-;;;129    		}
-;;;130    		
-;;;131    		else
-;;;132    		{
-;;;133    			PowerOff();
+;;;172    		{
+;;;173    			SYS_Status();
+;;;174    		}
+;;;175    		
+;;;176    		else
+;;;177    		{
+;;;178    			PowerOff();
 000028  f7fffffe          BL       PowerOff
-;;;134    			SysIdle();
+;;;179    			SysIdle();
 00002c  f7fffffe          BL       SysIdle
-;;;135    		}
-;;;136    		break;
-;;;137    
-;;;138    		case IR_KEY_MODE:
-;;;139    			
-;;;140    			Global_datas.key_led_blink = 1;
-;;;141    			srv_key_mode_handler();
-;;;142    		break;
-;;;143    		case IR_KEY_VOLUME_UP:
-;;;144    			
-;;;145    			Global_datas.key_led_blink = 1;
-;;;146    			srv_key_volume_up_handler();
-;;;147    		break;
-;;;148    		case IR_KEY_VOLUME_DOWN:
-;;;149    			
-;;;150    			Global_datas.key_led_blink = 1;
-;;;151    			srv_key_volume_down_handler();
-;;;152    		break;
-;;;153    		case IR_KEY_NEXT_SONG:
-;;;154    			Global_datas.key_led_blink = 1;
-;;;155    			
-;;;156    			srv_key_next_song_handler();
-;;;157    		break;
-;;;158    		case IR_KEY_PREV_SONG:
-;;;159    			Global_datas.key_led_blink = 1;
-;;;160    			
-;;;161    			srv_key_prev_song_handler();
-;;;162    		break;
-;;;163    
-;;;164    		case IR_KEY_PLAY_PAUSE:
-;;;165    			Global_datas.key_led_blink = 1;
-;;;166    			
-;;;167    			srv_key_play_pause_handler();
-;;;168    		break;
-;;;169    
-;;;170    
-;;;171    		
-;;;172    		case IR_KEY_PREV_STATION:
-;;;173    			
-;;;174    			Global_datas.key_led_blink = 1;
-;;;175    			srv_key_prev_station_handler();
-;;;176    		break;
-;;;177    		case IR_KEY_NEXT_STATION:
-;;;178    			
-;;;179    			Global_datas.key_led_blink = 1;
-;;;180    			srv_key_next_station_handler();
+;;;180    		}
 ;;;181    		break;
-;;;182    		case IR_KEY_EQ_INDOOR:
-;;;183    			
-;;;184    			Global_datas.key_led_blink = 1;
-;;;185    
-;;;186    			if(Global_datas.eq_mode != EQ_MODE_INDOOR)
-;;;187    			{
-;;;188    				Global_datas.eq_mode = EQ_MODE_INDOOR;
-;;;189    				srv_key_eq_indoor_switch_handler();
-;;;190    				Drv_audio_channel_switch();
-;;;191    			}
+;;;182    
+;;;183    		case IR_KEY_MODE:
+;;;184    			
+;;;185    			Global_datas.key_led_blink = 1;
+;;;186    			srv_key_mode_handler();
+;;;187    		break;
+;;;188    		case IR_KEY_VOLUME_UP:
+;;;189    			
+;;;190    			Global_datas.key_led_blink = 1;
+;;;191    			srv_key_volume_up_handler();
 ;;;192    		break;
-;;;193    		
-;;;194    		case IR_KEY_EQ_OUTDOOR:
-;;;195    			
-;;;196    			Global_datas.key_led_blink = 1;
-;;;197    
-;;;198    			if(Global_datas.eq_mode != EQ_MODE_OUTDOOR)
-;;;199    			{
-;;;200    				Global_datas.eq_mode = EQ_MODE_OUTDOOR;
-;;;201    				srv_key_eq_outdoor_switch_handler();
-;;;202    				Drv_audio_channel_switch();
-;;;203    			}		
-;;;204    			
-;;;205    		break;
-;;;206    
-;;;207    		
-;;;208    		case IR_KEY_NET_SET:
-;;;209    			
+;;;193    		case IR_KEY_VOLUME_DOWN:
+;;;194    			
+;;;195    			Global_datas.key_led_blink = 1;
+;;;196    			srv_key_volume_down_handler();
+;;;197    		break;
+;;;198    		case IR_KEY_NEXT_SONG:
+;;;199    			Global_datas.key_led_blink = 1;
+;;;200    			
+;;;201    			srv_key_next_song_handler();
+;;;202    		break;
+;;;203    		case IR_KEY_PREV_SONG:
+;;;204    			Global_datas.key_led_blink = 1;
+;;;205    			
+;;;206    			srv_key_prev_song_handler();
+;;;207    		break;
+;;;208    
+;;;209    		case IR_KEY_PLAY_PAUSE:
 ;;;210    			Global_datas.key_led_blink = 1;
-;;;211    			srv_key_net_config_handler();
-;;;212    		break;
-;;;213    		
-;;;214    		default:
-;;;215    		break;
-;;;216    	}
-;;;217    }
+;;;211    			
+;;;212    			srv_key_play_pause_handler();
+;;;213    		break;
+;;;214    
+;;;215    
+;;;216    		
+;;;217    		case IR_KEY_PREV_STATION:
+;;;218    			
+;;;219    			Global_datas.key_led_blink = 1;
+;;;220    			srv_key_prev_station_handler();
+;;;221    		break;
+;;;222    		case IR_KEY_NEXT_STATION:
+;;;223    			
+;;;224    			Global_datas.key_led_blink = 1;
+;;;225    			srv_key_next_station_handler();
+;;;226    		break;
+;;;227    		case IR_KEY_EQ_INDOOR:
+;;;228    			
+;;;229    			Global_datas.key_led_blink = 1;
+;;;230    
+;;;231    			if(Global_datas.eq_mode != EQ_MODE_INDOOR)
+;;;232    			{
+;;;233    				Global_datas.eq_mode = EQ_MODE_INDOOR;
+;;;234    				srv_key_eq_indoor_switch_handler();
+;;;235    				Drv_audio_channel_switch();
+;;;236    			}
+;;;237    		break;
+;;;238    		
+;;;239    		case IR_KEY_EQ_OUTDOOR:
+;;;240    			
+;;;241    			Global_datas.key_led_blink = 1;
+;;;242    
+;;;243    			if(Global_datas.eq_mode != EQ_MODE_OUTDOOR)
+;;;244    			{
+;;;245    				Global_datas.eq_mode = EQ_MODE_OUTDOOR;
+;;;246    				srv_key_eq_outdoor_switch_handler();
+;;;247    				Drv_audio_channel_switch();
+;;;248    			}		
+;;;249    			
+;;;250    		break;
+;;;251    
+;;;252    		
+;;;253    		case IR_KEY_NET_SET:
+;;;254    			
+;;;255    			Global_datas.key_led_blink = 1;
+;;;256    			srv_key_net_config_handler();
+;;;257    		break;
+;;;258    		
+;;;259    		default:
+;;;260    		break;
+;;;261    	}
+;;;262    }
 000030  bd10              POP      {r4,pc}
                   |L3.50|
 000032  f7fffffe          BL       SYS_Status
 000036  bd10              POP      {r4,pc}
-000038  730a              STRB     r2,[r1,#0xc]          ;140
+000038  730a              STRB     r2,[r1,#0xc]          ;185
 00003a  f7fffffe          BL       srv_key_mode_handler
 00003e  bd10              POP      {r4,pc}
-000040  730a              STRB     r2,[r1,#0xc]          ;145
+000040  730a              STRB     r2,[r1,#0xc]          ;190
 000042  f7fffffe          BL       srv_key_volume_up_handler
 000046  bd10              POP      {r4,pc}
-000048  730a              STRB     r2,[r1,#0xc]          ;150
+000048  730a              STRB     r2,[r1,#0xc]          ;195
 00004a  f7fffffe          BL       srv_key_volume_down_handler
 00004e  bd10              POP      {r4,pc}
-000050  730a              STRB     r2,[r1,#0xc]          ;154
+000050  730a              STRB     r2,[r1,#0xc]          ;199
 000052  f7fffffe          BL       srv_key_next_song_handler
 000056  bd10              POP      {r4,pc}
-000058  730a              STRB     r2,[r1,#0xc]          ;159
+000058  730a              STRB     r2,[r1,#0xc]          ;204
 00005a  f7fffffe          BL       srv_key_prev_song_handler
 00005e  bd10              POP      {r4,pc}
-000060  730a              STRB     r2,[r1,#0xc]          ;165
+000060  730a              STRB     r2,[r1,#0xc]          ;210
 000062  f7fffffe          BL       srv_key_play_pause_handler
 000066  bd10              POP      {r4,pc}
-000068  730a              STRB     r2,[r1,#0xc]          ;174
+000068  730a              STRB     r2,[r1,#0xc]          ;219
 00006a  f7fffffe          BL       srv_key_prev_station_handler
 00006e  bd10              POP      {r4,pc}
-000070  730a              STRB     r2,[r1,#0xc]          ;179
+000070  730a              STRB     r2,[r1,#0xc]          ;224
 000072  f7fffffe          BL       srv_key_next_station_handler
                   |L3.118|
 000076  bd10              POP      {r4,pc}
-000078  730a              STRB     r2,[r1,#0xc]          ;184
-00007a  7b88              LDRB     r0,[r1,#0xe]          ;186  ; Global_datas
-00007c  2801              CMP      r0,#1                 ;186
+000078  730a              STRB     r2,[r1,#0xc]          ;229
+00007a  7b88              LDRB     r0,[r1,#0xe]          ;231  ; Global_datas
+00007c  2801              CMP      r0,#1                 ;231
 00007e  d0fa              BEQ      |L3.118|
-000080  738a              STRB     r2,[r1,#0xe]          ;188
+000080  738a              STRB     r2,[r1,#0xe]          ;233
 000082  f7fffffe          BL       srv_key_eq_indoor_switch_handler
 000086  e007              B        |L3.152|
-000088  730a              STRB     r2,[r1,#0xc]          ;196
-00008a  7b88              LDRB     r0,[r1,#0xe]          ;198  ; Global_datas
-00008c  2802              CMP      r0,#2                 ;198
+000088  730a              STRB     r2,[r1,#0xc]          ;241
+00008a  7b88              LDRB     r0,[r1,#0xe]          ;243  ; Global_datas
+00008c  2802              CMP      r0,#2                 ;243
 00008e  d0f2              BEQ      |L3.118|
-000090  2002              MOVS     r0,#2                 ;200
-000092  7388              STRB     r0,[r1,#0xe]          ;200
+000090  2002              MOVS     r0,#2                 ;245
+000092  7388              STRB     r0,[r1,#0xe]          ;245
 000094  f7fffffe          BL       srv_key_eq_outdoor_switch_handler
                   |L3.152|
 000098  f7fffffe          BL       Drv_audio_channel_switch
 00009c  bd10              POP      {r4,pc}
-00009e  730a              STRB     r2,[r1,#0xc]          ;210
+00009e  730a              STRB     r2,[r1,#0xc]          ;255
 0000a0  f7fffffe          BL       srv_key_net_config_handler
 0000a4  bd10              POP      {r4,pc}
-;;;218    
+;;;263    
                           ENDP
 
 0000a6  0000              DCW      0x0000
@@ -222,91 +222,136 @@
 ;;;24     void srv_key_mode_handler(void)
 000000  b510              PUSH     {r4,lr}
 ;;;25     {
-;;;26     	switch(Global_datas.g_mode_status)
+;;;26     
+;;;27     switch(Global_datas.g_mode_status)
 000002  4c1c              LDR      r4,|L4.116|
 000004  7960              LDRB     r0,[r4,#5]  ; Global_datas
 000006  0003              MOVS     r3,r0
 000008  f7fffffe          BL       __ARM_common_switch8
 00000c  0b251010          DCB      0x0b,0x25,0x10,0x10
 000010  10101019          DCB      0x10,0x10,0x10,0x19
-000014  19070719          DCB      0x19,0x07,0x07,0x19
+000014  19072507          DCB      0x19,0x07,0x25,0x07
 000018  2500              DCB      0x25,0x00
-;;;27     	{
-;;;28     		case AUX_MODE:
-;;;29     		case LOUD_SPEAKER_MODE:
-;;;30     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
+;;;28     {
+;;;29     	case AUX_MODE:
+;;;30     
+;;;31     		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
 00001a  2300              MOVS     r3,#0
-00001c  2216              MOVS     r2,#0x16
+00001c  2215              MOVS     r2,#0x15
 00001e  2103              MOVS     r1,#3
 000020  2002              MOVS     r0,#2
 000022  f7fffffe          BL       Core_Msg_Send
-;;;31     			drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
+;;;32     		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
 000026  2200              MOVS     r2,#0
-000028  2110              MOVS     r1,#0x10
-;;;32     		break;
+000028  2111              MOVS     r1,#0x11
+;;;33     
+;;;34     	break;
 00002a  e010              B        |L4.78|
-;;;33     		
-;;;34     		case WIFI_MODE:
-;;;35     		case WIFI_CONNECTED_MODE:
-;;;36     		case WIFI_CONNECTING_MODE:
-;;;37     		case FOURG_MODE:
-;;;38     		case FOURG_CONNECTED_MODE:
-;;;39     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
+;;;35     	
+;;;36     	case WIFI_MODE:
+;;;37     	case WIFI_CONNECTED_MODE:
+;;;38     	case WIFI_CONNECTING_MODE:
+;;;39     	case FOURG_MODE:
+;;;40     	case FOURG_CONNECTED_MODE:
+;;;41     		
+;;;42     		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
 00002c  2300              MOVS     r3,#0
-00002e  2217              MOVS     r2,#0x17
+00002e  2216              MOVS     r2,#0x16
 000030  2103              MOVS     r1,#3
 000032  2002              MOVS     r0,#2
 000034  f7fffffe          BL       Core_Msg_Send
-;;;40     			
-;;;41     			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+;;;43     		drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
 000038  2200              MOVS     r2,#0
-00003a  2112              MOVS     r1,#0x12
-;;;42     			
-;;;43     		break;
-00003c  e007              B        |L4.78|
+00003a  2110              MOVS     r1,#0x10
 ;;;44     		
-;;;45     	    case BT_MODE:
-;;;46     	    case BT_CONNECTED_MODE:
-;;;47     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-;;;48     			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode
-;;;49     		break;
-;;;50     		
-;;;51     		case FM_MODE:
-;;;52     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
+;;;45     	break;
+00003c  e007              B        |L4.78|
+;;;46     	
+;;;47     	case BT_MODE:
+;;;48     	case BT_CONNECTED_MODE:
+;;;49     
+;;;50     
+;;;51     		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
 00003e  2300              MOVS     r3,#0
-000040  2215              MOVS     r2,#0x15
+000040  2217              MOVS     r2,#0x17
 000042  2103              MOVS     r1,#3
 000044  2002              MOVS     r0,#2
 000046  f7fffffe          BL       Core_Msg_Send
-;;;53     			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+;;;52     		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
 00004a  2200              MOVS     r2,#0
-00004c  2111              MOVS     r1,#0x11
+00004c  2112              MOVS     r1,#0x12
                   |L4.78|
+;;;53     	break;
+;;;54     	
+;;;55     	case FM_MODE:
+;;;56     		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
+;;;57     		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
 00004e  2070              MOVS     r0,#0x70
 000050  f7fffffe          BL       drv_Cmd_Send2NCU031
-;;;54     		break;
-;;;55     		
-;;;56     		default:
-;;;57     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-;;;58     			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
-;;;59     			Global_datas.g_mode_status = AUX_MODE;
-;;;60     		break;
-;;;61     	}
-;;;62     }
+;;;58     	break;
+;;;59     	
+;;;60     	default:
+;;;61     		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
+;;;62     		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
+;;;63     		Global_datas.g_mode_status = AUX_MODE;
+;;;64     	break;
+;;;65     }
+;;;66     
+;;;67     
+;;;68     
+;;;69     /*
+;;;70     	switch(Global_datas.g_mode_status)
+;;;71     	{
+;;;72     		case AUX_MODE:
+;;;73     		case LOUD_SPEAKER_MODE:
+;;;74     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
+;;;75     			drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
+;;;76     		break;
+;;;77     		
+;;;78     		case WIFI_MODE:
+;;;79     		case WIFI_CONNECTED_MODE:
+;;;80     		case WIFI_CONNECTING_MODE:
+;;;81     		case FOURG_MODE:
+;;;82     		case FOURG_CONNECTED_MODE:
+;;;83     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
+;;;84     			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+;;;85     			
+;;;86     		break;
+;;;87     		
+;;;88     	    case BT_MODE:
+;;;89     	    case BT_CONNECTED_MODE:
+;;;90     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
+;;;91     			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode
+;;;92     		break;
+;;;93     		
+;;;94     		case FM_MODE:
+;;;95     			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
+;;;96     			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+;;;97     		break;
+;;;98     		
+;;;99     		default:
+;;;100    			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
+;;;101    			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
+;;;102    			Global_datas.g_mode_status = AUX_MODE;
+;;;103    		break;
+;;;104    	}
+;;;105    
+;;;106    	*/
+;;;107    }
 000054  bd10              POP      {r4,pc}
-000056  2300              MOVS     r3,#0                 ;57
-000058  2217              MOVS     r2,#0x17              ;57
-00005a  2103              MOVS     r1,#3                 ;57
-00005c  2002              MOVS     r0,#2                 ;57
+000056  2300              MOVS     r3,#0                 ;61
+000058  2217              MOVS     r2,#0x17              ;61
+00005a  2103              MOVS     r1,#3                 ;61
+00005c  2002              MOVS     r0,#2                 ;61
 00005e  f7fffffe          BL       Core_Msg_Send
-000062  2200              MOVS     r2,#0                 ;58
-000064  2112              MOVS     r1,#0x12              ;58
-000066  2070              MOVS     r0,#0x70              ;58
+000062  2200              MOVS     r2,#0                 ;62
+000064  2112              MOVS     r1,#0x12              ;62
+000066  2070              MOVS     r0,#0x70              ;62
 000068  f7fffffe          BL       drv_Cmd_Send2NCU031
-00006c  2008              MOVS     r0,#8                 ;59
-00006e  7160              STRB     r0,[r4,#5]            ;59
+00006c  2008              MOVS     r0,#8                 ;63
+00006e  7160              STRB     r0,[r4,#5]            ;63
 000070  bd10              POP      {r4,pc}
-;;;63     
+;;;108    
                           ENDP
 
 000072  0000              DCW      0x0000
@@ -316,14 +361,130 @@
                           AREA ||i.srv_key_net_config_handler||, CODE, READONLY, ALIGN=1
 
                   srv_key_net_config_handler PROC
-;;;113    
-;;;114    void srv_key_net_config_handler(void)
+;;;158    
+;;;159    void srv_key_net_config_handler(void)
 000000  b510              PUSH     {r4,lr}
-;;;115    {
-;;;116    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x21,0x00); //net config
+;;;160    {
+;;;161    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x21,0x00); //net config
 000002  2300              MOVS     r3,#0
 000004  2221              MOVS     r2,#0x21
 000006  2103              MOVS     r1,#3
+000008  2002              MOVS     r0,#2
+00000a  f7fffffe          BL       Core_Msg_Send
+;;;162    }
+00000e  bd10              POP      {r4,pc}
+;;;163    
+                          ENDP
+
+
+                          AREA ||i.srv_key_next_song_handler||, CODE, READONLY, ALIGN=1
+
+                  srv_key_next_song_handler PROC
+;;;118    
+;;;119    void srv_key_next_song_handler(void)
+000000  b510              PUSH     {r4,lr}
+;;;120    {
+;;;121    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //
+000002  2300              MOVS     r3,#0
+000004  220d              MOVS     r2,#0xd
+000006  2103              MOVS     r1,#3
+000008  2002              MOVS     r0,#2
+00000a  f7fffffe          BL       Core_Msg_Send
+;;;122    }
+00000e  bd10              POP      {r4,pc}
+;;;123    
+                          ENDP
+
+
+                          AREA ||i.srv_key_next_station_handler||, CODE, READONLY, ALIGN=1
+
+                  srv_key_next_station_handler PROC
+;;;141    
+;;;142    void srv_key_next_station_handler(void)
+000000  b510              PUSH     {r4,lr}
+;;;143    {
+;;;144    	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //next piece
+;;;145    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x31,0x00); //next piece
+000002  2300              MOVS     r3,#0
+000004  2231              MOVS     r2,#0x31
+000006  2103              MOVS     r1,#3
+000008  2002              MOVS     r0,#2
+00000a  f7fffffe          BL       Core_Msg_Send
+;;;146    }
+00000e  bd10              POP      {r4,pc}
+;;;147    
+                          ENDP
+
+
+                          AREA ||i.srv_key_play_pause_handler||, CODE, READONLY, ALIGN=1
+
+                  srv_key_play_pause_handler PROC
+;;;129    
+;;;130    void srv_key_play_pause_handler(void)
+000000  b510              PUSH     {r4,lr}
+;;;131    {
+;;;132    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x56,0x00); //
+000002  2300              MOVS     r3,#0
+000004  2256              MOVS     r2,#0x56
+000006  2103              MOVS     r1,#3
+000008  2002              MOVS     r0,#2
+00000a  f7fffffe          BL       Core_Msg_Send
+;;;133    }
+00000e  bd10              POP      {r4,pc}
+;;;134    
+                          ENDP
+
+
+                          AREA ||i.srv_key_prev_song_handler||, CODE, READONLY, ALIGN=1
+
+                  srv_key_prev_song_handler PROC
+;;;123    
+;;;124    void srv_key_prev_song_handler(void)
+000000  b510              PUSH     {r4,lr}
+;;;125    {
+;;;126    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0e,0x00); //
+000002  2300              MOVS     r3,#0
+000004  220e              MOVS     r2,#0xe
+000006  2103              MOVS     r1,#3
+000008  2002              MOVS     r0,#2
+00000a  f7fffffe          BL       Core_Msg_Send
+;;;127    }
+00000e  bd10              POP      {r4,pc}
+;;;128    
+                          ENDP
+
+
+                          AREA ||i.srv_key_prev_station_handler||, CODE, READONLY, ALIGN=1
+
+                  srv_key_prev_station_handler PROC
+;;;135    
+;;;136    void srv_key_prev_station_handler(void)
+000000  b510              PUSH     {r4,lr}
+;;;137    {
+;;;138    	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0e,0x00); //last piece
+;;;139    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x32,0x00); //last piece
+000002  2300              MOVS     r3,#0
+000004  2232              MOVS     r2,#0x32
+000006  2103              MOVS     r1,#3
+000008  2002              MOVS     r0,#2
+00000a  f7fffffe          BL       Core_Msg_Send
+;;;140    }
+00000e  bd10              POP      {r4,pc}
+;;;141    
+                          ENDP
+
+
+                          AREA ||i.srv_key_volume_down_handler||, CODE, READONLY, ALIGN=1
+
+                  srv_key_volume_down_handler PROC
+;;;113    
+;;;114    void srv_key_volume_down_handler(void)
+000000  b510              PUSH     {r4,lr}
+;;;115    {
+;;;116    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x03,0x00); //vol-
+000002  2203              MOVS     r2,#3
+000004  2300              MOVS     r3,#0
+000006  4611              MOV      r1,r2
 000008  2002              MOVS     r0,#2
 00000a  f7fffffe          BL       Core_Msg_Send
 ;;;117    }
@@ -332,138 +493,22 @@
                           ENDP
 
 
-                          AREA ||i.srv_key_next_song_handler||, CODE, READONLY, ALIGN=1
-
-                  srv_key_next_song_handler PROC
-;;;73     
-;;;74     void srv_key_next_song_handler(void)
-000000  b510              PUSH     {r4,lr}
-;;;75     {
-;;;76     	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //
-000002  2300              MOVS     r3,#0
-000004  220d              MOVS     r2,#0xd
-000006  2103              MOVS     r1,#3
-000008  2002              MOVS     r0,#2
-00000a  f7fffffe          BL       Core_Msg_Send
-;;;77     }
-00000e  bd10              POP      {r4,pc}
-;;;78     
-                          ENDP
-
-
-                          AREA ||i.srv_key_next_station_handler||, CODE, READONLY, ALIGN=1
-
-                  srv_key_next_station_handler PROC
-;;;96     
-;;;97     void srv_key_next_station_handler(void)
-000000  b510              PUSH     {r4,lr}
-;;;98     {
-;;;99     	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //next piece
-;;;100    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x31,0x00); //next piece
-000002  2300              MOVS     r3,#0
-000004  2231              MOVS     r2,#0x31
-000006  2103              MOVS     r1,#3
-000008  2002              MOVS     r0,#2
-00000a  f7fffffe          BL       Core_Msg_Send
-;;;101    }
-00000e  bd10              POP      {r4,pc}
-;;;102    
-                          ENDP
-
-
-                          AREA ||i.srv_key_play_pause_handler||, CODE, READONLY, ALIGN=1
-
-                  srv_key_play_pause_handler PROC
-;;;84     
-;;;85     void srv_key_play_pause_handler(void)
-000000  b510              PUSH     {r4,lr}
-;;;86     {
-;;;87     	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x56,0x00); //
-000002  2300              MOVS     r3,#0
-000004  2256              MOVS     r2,#0x56
-000006  2103              MOVS     r1,#3
-000008  2002              MOVS     r0,#2
-00000a  f7fffffe          BL       Core_Msg_Send
-;;;88     }
-00000e  bd10              POP      {r4,pc}
-;;;89     
-                          ENDP
-
-
-                          AREA ||i.srv_key_prev_song_handler||, CODE, READONLY, ALIGN=1
-
-                  srv_key_prev_song_handler PROC
-;;;78     
-;;;79     void srv_key_prev_song_handler(void)
-000000  b510              PUSH     {r4,lr}
-;;;80     {
-;;;81     	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0e,0x00); //
-000002  2300              MOVS     r3,#0
-000004  220e              MOVS     r2,#0xe
-000006  2103              MOVS     r1,#3
-000008  2002              MOVS     r0,#2
-00000a  f7fffffe          BL       Core_Msg_Send
-;;;82     }
-00000e  bd10              POP      {r4,pc}
-;;;83     
-                          ENDP
-
-
-                          AREA ||i.srv_key_prev_station_handler||, CODE, READONLY, ALIGN=1
-
-                  srv_key_prev_station_handler PROC
-;;;90     
-;;;91     void srv_key_prev_station_handler(void)
-000000  b510              PUSH     {r4,lr}
-;;;92     {
-;;;93     	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0e,0x00); //last piece
-;;;94     	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x32,0x00); //last piece
-000002  2300              MOVS     r3,#0
-000004  2232              MOVS     r2,#0x32
-000006  2103              MOVS     r1,#3
-000008  2002              MOVS     r0,#2
-00000a  f7fffffe          BL       Core_Msg_Send
-;;;95     }
-00000e  bd10              POP      {r4,pc}
-;;;96     
-                          ENDP
-
-
-                          AREA ||i.srv_key_volume_down_handler||, CODE, READONLY, ALIGN=1
-
-                  srv_key_volume_down_handler PROC
-;;;68     
-;;;69     void srv_key_volume_down_handler(void)
-000000  b510              PUSH     {r4,lr}
-;;;70     {
-;;;71     	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x03,0x00); //vol-
-000002  2203              MOVS     r2,#3
-000004  2300              MOVS     r3,#0
-000006  4611              MOV      r1,r2
-000008  2002              MOVS     r0,#2
-00000a  f7fffffe          BL       Core_Msg_Send
-;;;72     }
-00000e  bd10              POP      {r4,pc}
-;;;73     
-                          ENDP
-
-
                           AREA ||i.srv_key_volume_up_handler||, CODE, READONLY, ALIGN=1
 
                   srv_key_volume_up_handler PROC
-;;;63     
-;;;64     void srv_key_volume_up_handler(void)
+;;;108    
+;;;109    void srv_key_volume_up_handler(void)
 000000  b510              PUSH     {r4,lr}
-;;;65     {
-;;;66     	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x02,0x00); //vol+
+;;;110    {
+;;;111    	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x02,0x00); //vol+
 000002  2202              MOVS     r2,#2
 000004  2300              MOVS     r3,#0
 000006  2103              MOVS     r1,#3
 000008  4610              MOV      r0,r2
 00000a  f7fffffe          BL       Core_Msg_Send
-;;;67     }
+;;;112    }
 00000e  bd10              POP      {r4,pc}
-;;;68     
+;;;113    
                           ENDP
 
 
