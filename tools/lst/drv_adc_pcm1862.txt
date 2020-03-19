@@ -33,16 +33,14 @@
 ;;;171    //	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
 ;;;172    //	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
 ;;;173        drv_PM1862_reg_Load();
-;;;174    	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3)); //  channel 4 is no use
-000028  2004              MOVS     r0,#4
-00002a  f7fffffe          BL       drv_pcm1862_input_channel
-;;;175    	
-;;;176    	//drv_audio_4G_Channel(); // first 4g channel
-;;;177    }
-00002e  bdf8              POP      {r3-r7,pc}
-;;;178    
+;;;174    	drv_audio_4G_Channel(); // first 4g channel
+000028  f7fffffe          BL       drv_audio_4G_Channel
+;;;175    }
+00002c  bdf8              POP      {r3-r7,pc}
+;;;176    
                           ENDP
 
+00002e  0000              DCW      0x0000
                   |L1.48|
 000030  4164635f          DCB      "Adc_pcm1862_Init\n",0
 000034  70636d31

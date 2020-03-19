@@ -29426,6 +29426,7 @@ typedef enum
     SYS_LOW_POWER,
     POWER_OFF_MODE,
     POWER_IDLE_MODE,
+
 } mode_status;
 
 typedef enum
@@ -29467,7 +29468,7 @@ typedef struct
 	unsigned char g_4g_initing;
 	unsigned int systick;
 	unsigned char key_led_blink;
-	unsigned char led_poweroff;
+	unsigned char shoutting_down;
 	unsigned char	eq_mode;
 	unsigned char volume;
 	

@@ -50339,6 +50339,7 @@ N    SYSTEM_UPDATING,
 N    SYS_LOW_POWER,
 N    POWER_OFF_MODE,
 N    POWER_IDLE_MODE,
+N
 N} mode_status;
 N
 Ntypedef enum
@@ -50381,7 +50382,7 @@ N	uint8_t g_mode_status;
 N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
-N	uint8_t led_poweroff;
+N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
 N	
@@ -50705,10 +50706,6 @@ N
 L 22 "..\src\server\key\srv_key.c" 2
 N
 N
-Nvoid srv_key_power_handler(void)
-N{
-N
-N}
 Nvoid srv_key_mode_handler(void)
 N{
 N	switch(Global_datas.g_mode_status)
@@ -50810,20 +50807,18 @@ N	switch(GetIrKey())
 N	{
 N		case IR_KEY_POWER:
 N			
-N			Global_datas.key_led_blink = 1;
-N			//srv_key_power_handler();
-N			//PowerOff();
+N		Global_datas.key_led_blink = 1;
 N		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 N		{
-W "..\src\server\key\srv_key.c" 134 4 function "SYS_Status" declared implicitly
+W "..\src\server\key\srv_key.c" 128 4 function "SYS_Status" declared implicitly
 N			SYS_Status();
 N		}
 N		
 N		else
 N		{
-W "..\src\server\key\srv_key.c" 139 4 function "PowerOff" declared implicitly
+W "..\src\server\key\srv_key.c" 133 4 function "PowerOff" declared implicitly
 N			PowerOff();
-W "..\src\server\key\srv_key.c" 140 4 function "SysIdle" declared implicitly
+W "..\src\server\key\srv_key.c" 134 4 function "SysIdle" declared implicitly
 N			SysIdle();
 N		}
 N		break;
@@ -50907,25 +50902,6 @@ N
 N		default:
 N		break;
 N	}
-N
-N#if 0	
-S	switch(drv_get_gpio_key_value())
-S	{
-S		case GPIO_KEY_POWER:
-S			srv_key_power_handler();
-S		break;
-S		case GPIO_KEY_MODE:
-S			srv_key_mode_handler();
-S		break;
-S		case GPIO_KEY_NET_SET:
-S			srv_key_net_config_handler();
-S		break;
-S		default:
-S		break;
-S	}
-S
-N#endif
-N	
 N}
 N
 N

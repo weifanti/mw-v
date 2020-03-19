@@ -29537,6 +29537,7 @@ typedef enum
     SYS_LOW_POWER,
     POWER_OFF_MODE,
     POWER_IDLE_MODE,
+
 } mode_status;
 
 typedef enum
@@ -29578,7 +29579,7 @@ typedef struct
 	uint8_t g_4g_initing;
 	uint32_t systick;
 	uint8_t key_led_blink;
-	uint8_t led_poweroff;
+	uint8_t shoutting_down;
 	uint8_t	eq_mode;
 	uint8_t volume;
 	
@@ -29737,8 +29738,6 @@ uint8_t Ircordpro(void)
 			}
 		}
 	 }
-
-	 
 	 return IR_KEY_NONE;
 }
 
@@ -29751,6 +29750,13 @@ uint8_t GetIrKey(void)
 		printf("ir_data_rx_ok = 1\n");
 		ir_key_value = Ircordpro();
 		ir_data_rx_ok = 0;
+
+
+		
+		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
+		{
+			ir_key_value = IR_KEY_NONE;
+		}
 		return ir_key_value;
 	}
 

@@ -32035,6 +32035,7 @@ typedef enum
     SYS_LOW_POWER,
     POWER_OFF_MODE,
     POWER_IDLE_MODE,
+
 } mode_status;
 
 typedef enum
@@ -32076,7 +32077,7 @@ typedef struct
 	uint8_t g_4g_initing;
 	uint32_t systick;
 	uint8_t key_led_blink;
-	uint8_t led_poweroff;
+	uint8_t shoutting_down;
 	uint8_t	eq_mode;
 	uint8_t volume;
 	

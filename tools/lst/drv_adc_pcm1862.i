@@ -29697,8 +29697,6 @@ void drv_Adc_pcm1862_Init(void)
 
 
     drv_PM1862_reg_Load();
-	drv_pcm1862_input_channel((1 << (3-1))); 
-	
-	
+	drv_audio_4G_Channel(); 
 }
 

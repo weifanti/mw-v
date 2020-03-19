@@ -164,65 +164,89 @@
                           AREA ||i.GetIrKey||, CODE, READONLY, ALIGN=2
 
                   GetIrKey PROC
-;;;166    
-;;;167    uint8_t GetIrKey(void)
+;;;164    
+;;;165    uint8_t GetIrKey(void)
 000000  b570              PUSH     {r4-r6,lr}
-;;;168    {
-;;;169    	uint8_t ir_key_value;
-;;;170    
-;;;171    	if(ir_data_rx_ok)
-000002  4c0a              LDR      r4,|L3.44|
+;;;166    {
+;;;167    	uint8_t ir_key_value;
+;;;168    
+;;;169    	if(ir_data_rx_ok)
+000002  4c10              LDR      r4,|L3.68|
 000004  2500              MOVS     r5,#0
 000006  78a0              LDRB     r0,[r4,#2]  ; ir_data_rx_ok
 000008  2800              CMP      r0,#0
-00000a  d006              BEQ      |L3.26|
-;;;172    	{
-;;;173    		printf("ir_data_rx_ok = 1\n");
-00000c  a008              ADR      r0,|L3.48|
+00000a  d012              BEQ      |L3.50|
+;;;170    	{
+;;;171    		printf("ir_data_rx_ok = 1\n");
+00000c  a00e              ADR      r0,|L3.72|
 00000e  f7fffffe          BL       __2printf
-;;;174    		ir_key_value = Ircordpro();
+;;;172    		ir_key_value = Ircordpro();
 000012  f7fffffe          BL       Ircordpro
-;;;175    		ir_data_rx_ok = 0;
-000016  70a5              STRB     r5,[r4,#2]
-;;;176    		return ir_key_value;
-;;;177    	}
-;;;178    
-;;;179    	if(LongKeyPress)
-;;;180    	{
-;;;181    		LongKeyPress = 0;
-;;;182    		printf("LongPress\n");
-;;;183    	}
-;;;184    	
-;;;185    	return IR_KEY_NONE;
-;;;186    }
-000018  bd70              POP      {r4-r6,pc}
-                  |L3.26|
-00001a  78e0              LDRB     r0,[r4,#3]            ;179  ; LongKeyPress
-00001c  2800              CMP      r0,#0                 ;179
-00001e  d003              BEQ      |L3.40|
-000020  70e5              STRB     r5,[r4,#3]            ;181
-000022  a008              ADR      r0,|L3.68|
-000024  f7fffffe          BL       __2printf
+;;;173    		ir_data_rx_ok = 0;
+;;;174    
+;;;175    
+;;;176    		// shoutting down cann't respond any key. idle state only respond power key
+;;;177    		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
+000016  4911              LDR      r1,|L3.92|
+000018  70a5              STRB     r5,[r4,#2]            ;173
+00001a  794a              LDRB     r2,[r1,#5]  ; Global_datas
+00001c  2a0e              CMP      r2,#0xe
+00001e  d001              BEQ      |L3.36|
+000020  2a00              CMP      r2,#0
+000022  d101              BNE      |L3.40|
+                  |L3.36|
+000024  2801              CMP      r0,#1
+000026  d102              BNE      |L3.46|
                   |L3.40|
-000028  2000              MOVS     r0,#0                 ;185
-00002a  bd70              POP      {r4-r6,pc}
-;;;187    
+000028  7b49              LDRB     r1,[r1,#0xd]  ; Global_datas
+00002a  2900              CMP      r1,#0
+00002c  d000              BEQ      |L3.48|
+                  |L3.46|
+;;;178    		{
+;;;179    			ir_key_value = IR_KEY_NONE;
+00002e  2000              MOVS     r0,#0
+                  |L3.48|
+;;;180    		}
+;;;181    		return ir_key_value;
+;;;182    	}
+;;;183    
+;;;184    	if(LongKeyPress)
+;;;185    	{
+;;;186    		LongKeyPress = 0;
+;;;187    		printf("LongPress\n");
+;;;188    	}
+;;;189    	
+;;;190    	return IR_KEY_NONE;
+;;;191    }
+000030  bd70              POP      {r4-r6,pc}
+                  |L3.50|
+000032  78e0              LDRB     r0,[r4,#3]            ;184  ; LongKeyPress
+000034  2800              CMP      r0,#0                 ;184
+000036  d0fa              BEQ      |L3.46|
+000038  70e5              STRB     r5,[r4,#3]            ;186
+00003a  a009              ADR      r0,|L3.96|
+00003c  f7fffffe          BL       __2printf
+000040  e7f5              B        |L3.46|
+;;;192    
                           ENDP
 
-                  |L3.44|
-                          DCD      ||.data||
-                  |L3.48|
-000030  69725f64          DCB      "ir_data_rx_ok = 1\n",0
-000034  6174615f
-000038  72785f6f
-00003c  6b203d20
-000040  310a00  
-000043  00                DCB      0
+000042  0000              DCW      0x0000
                   |L3.68|
-000044  4c6f6e67          DCB      "LongPress\n",0
-000048  50726573
-00004c  730a00  
-00004f  00                DCB      0
+                          DCD      ||.data||
+                  |L3.72|
+000048  69725f64          DCB      "ir_data_rx_ok = 1\n",0
+00004c  6174615f
+000050  72785f6f
+000054  6b203d20
+000058  310a00  
+00005b  00                DCB      0
+                  |L3.92|
+                          DCD      Global_datas+0x20
+                  |L3.96|
+000060  4c6f6e67          DCB      "LongPress\n",0
+000064  50726573
+000068  730a00  
+00006b  00                DCB      0
 
                           AREA ||i.Ircordpro||, CODE, READONLY, ALIGN=2
 
@@ -375,10 +399,8 @@
 ;;;159    			}
 ;;;160    		}
 ;;;161    	 }
-;;;162    
-;;;163    	 
-;;;164    	 return IR_KEY_NONE;
-;;;165    }
+;;;162    	 return IR_KEY_NONE;
+;;;163    }
 000090  bdf8              POP      {r3-r7,pc}
                   |L4.146|
 000092  1c49              ADDS     r1,r1,#1
@@ -386,9 +408,9 @@
 000096  290b              CMP      r1,#0xb               ;152
 000098  d3ef              BCC      |L4.122|
                   |L4.154|
-00009a  2000              MOVS     r0,#0                 ;164
+00009a  2000              MOVS     r0,#0                 ;162
 00009c  bdf8              POP      {r3-r7,pc}
-;;;166    
+;;;164    
                           ENDP
 
 00009e  0000              DCW      0x0000

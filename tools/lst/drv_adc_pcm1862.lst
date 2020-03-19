@@ -50833,9 +50833,7 @@ N
 N//	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
 N//	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
 N    drv_PM1862_reg_Load();
-N	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3)); //  channel 4 is no use
-X	drv_pcm1862_input_channel((1 << (3-1))); 
-N	
-N	//drv_audio_4G_Channel(); // first 4g channel
+W "..\src\driver\audio\drv_adc_pcm1862.c" 174 2 function "drv_audio_4G_Channel" declared implicitly
+N	drv_audio_4G_Channel(); // first 4g channel
 N}
 N

@@ -193,7 +193,7 @@ void SYS_Status(void)
 	TimeOutSet(&ModulePowerUpPinTimer,3000);
 	TimeOutSet(&PoweroffLedTimer, 100);
 	Drv_audio_init();
-	Global_datas.led_poweroff = 0;
+	Global_datas.shoutting_down = 0;
 	
 
 	
@@ -209,7 +209,7 @@ void PowerOff(void)
 	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 	drv_led_init();// led all off
 	Drv_audio_powerdown();
-	Global_datas.led_poweroff = 1;
+	Global_datas.shoutting_down = 1;
 	TimeOutSet(&PoweroffLedTimer, 5000);
 }
 
@@ -217,7 +217,7 @@ void PowerOff(void)
 void IoKeyProcess(void)
 {
 
-	if((Global_datas.g_mode_status == POWER_IDLE_MODE)&&(IN_KEY_POWER_CP != IoKeyInputmessage))
+	if(((Global_datas.g_mode_status == POWER_IDLE_MODE || Global_datas.g_mode_status == POWER_ON_MODE )&&(IN_KEY_POWER_CP != IoKeyInputmessage)) || (Global_datas.shoutting_down))
     {
 		return;
 	}
@@ -241,7 +241,6 @@ void IoKeyProcess(void)
 				break;
 			case IN_KEY_POWER_CP:
 				printf("power key cp\n");	
-				//PowerOff();
 				if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 				{
 					SYS_Status();
@@ -297,7 +296,6 @@ int32_t main(void)
 			
 	        if(Global_datas.g_4g_initing)
 			{
-				Global_datas.g_mode_status = WIFI_MODE;				
 				srv_led_sys_initing();
 			}
 			else
@@ -336,6 +334,8 @@ int32_t main(void)
 					PA1 = 1;
 					Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
 					TYM_drv_powerkeepon(0); 
+
+					Global_datas.shoutting_down = 0;
 				}
 				
 			}
@@ -372,7 +372,8 @@ int32_t main(void)
 	                	//Cmd_Send2FourG(0x03,0x16,0x00);
 						drv_Cmd_Send2NCU031(msg.param0,msg.param1,0);
 						Global_datas.g_4g_initing = 0;
-						//printf("switch to BT\n");
+						Global_datas.g_mode_status = WIFI_MODE;
+						printf("\n AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
 					} 
 					
 					if((msg.param0 == 0x09) && (msg.param1 == 0x01))
@@ -536,7 +537,7 @@ int32_t main(void)
 					
 					if(msg.param0 == 0x20)
 					{
-						Cmd_Send2FourG(0x20,0x0,0x1);  //version 0.0.1
+						Cmd_Send2FourG(0x20,0x0,0x3);  //version 0.0.3
 					}
 	            break;
 
@@ -668,15 +669,6 @@ int32_t main(void)
 			
 			drv_power_status_updata();
 			srv_audio_handler();
-		}
-		
-		if (((count>>20)&0xF) == refcount2)
-		{
-
-			if(refcount2 <0xF)
-				refcount2++;
-			else
-				refcount2 = 0;
 		}
 		count++;
 	}

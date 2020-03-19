@@ -159,6 +159,8 @@ uint8_t Ircordpro(void)//红外码值处理函数
 			}
 		}
 	 }
+
+	 
 	 return IR_KEY_NONE;
 }
 
@@ -171,13 +173,6 @@ uint8_t GetIrKey(void)
 		printf("ir_data_rx_ok = 1\n");
 		ir_key_value = Ircordpro();
 		ir_data_rx_ok = 0;
-
-
-		// shoutting down cann't respond any key. idle state only respond power key
-		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
-		{
-			ir_key_value = IR_KEY_NONE;
-		}
 		return ir_key_value;
 	}
 

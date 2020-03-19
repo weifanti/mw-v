@@ -21,6 +21,10 @@
 #include "drv_audio.h"
 
 
+void srv_key_power_handler(void)
+{
+
+}
 void srv_key_mode_handler(void)
 {
 	switch(Global_datas.g_mode_status)
@@ -122,7 +126,9 @@ void srv_key_handler(void)
 	{
 		case IR_KEY_POWER:
 			
-		Global_datas.key_led_blink = 1;
+			Global_datas.key_led_blink = 1;
+			//srv_key_power_handler();
+			//PowerOff();
 		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 		{
 			SYS_Status();
@@ -214,6 +220,25 @@ void srv_key_handler(void)
 		default:
 		break;
 	}
+
+#if 0	
+	switch(drv_get_gpio_key_value())
+	{
+		case GPIO_KEY_POWER:
+			srv_key_power_handler();
+		break;
+		case GPIO_KEY_MODE:
+			srv_key_mode_handler();
+		break;
+		case GPIO_KEY_NET_SET:
+			srv_key_net_config_handler();
+		break;
+		default:
+		break;
+	}
+
+#endif
+	
 }
 
 

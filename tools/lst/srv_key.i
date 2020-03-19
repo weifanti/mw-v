@@ -29388,6 +29388,7 @@ typedef enum
     SYS_LOW_POWER,
     POWER_OFF_MODE,
     POWER_IDLE_MODE,
+
 } mode_status;
 
 typedef enum
@@ -29429,7 +29430,7 @@ typedef struct
 	uint8_t g_4g_initing;
 	uint32_t systick;
 	uint8_t key_led_blink;
-	uint8_t led_poweroff;
+	uint8_t shoutting_down;
 	uint8_t	eq_mode;
 	uint8_t volume;
 	
@@ -29729,10 +29730,6 @@ void Drv_audio_channel_switch(void);
 #line 22 "..\\src\\server\\key\\srv_key.c"
 
 
-void srv_key_power_handler(void)
-{
-
-}
 void srv_key_mode_handler(void)
 {
 	switch(Global_datas.g_mode_status)
@@ -29834,9 +29831,7 @@ void srv_key_handler(void)
 	{
 		case IR_KEY_POWER:
 			
-			Global_datas.key_led_blink = 1;
-			
-			
+		Global_datas.key_led_blink = 1;
 		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 		{
 			SYS_Status();
@@ -29928,9 +29923,6 @@ void srv_key_handler(void)
 		default:
 		break;
 	}
-
-#line 241 "..\\src\\server\\key\\srv_key.c"
-	
 }
 
 

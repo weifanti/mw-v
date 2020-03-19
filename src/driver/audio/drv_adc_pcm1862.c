@@ -171,8 +171,6 @@ void drv_Adc_pcm1862_Init(void)
 //	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
 //	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
     drv_PM1862_reg_Load();
-	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3)); //  channel 4 is no use
-	
-	//drv_audio_4G_Channel(); // first 4g channel
+	drv_audio_4G_Channel(); // first 4g channel
 }
 

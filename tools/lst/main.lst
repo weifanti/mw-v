@@ -50671,6 +50671,7 @@ N    SYSTEM_UPDATING,
 N    SYS_LOW_POWER,
 N    POWER_OFF_MODE,
 N    POWER_IDLE_MODE,
+N
 N} mode_status;
 N
 Ntypedef enum
@@ -50713,7 +50714,7 @@ N	uint8_t g_mode_status;
 N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
-N	uint8_t led_poweroff;
+N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
 N	
@@ -51348,7 +51349,7 @@ N	drv_FourGmodel_power_key_SetHi();
 N	TimeOutSet(&ModulePowerUpPinTimer,3000);
 N	TimeOutSet(&PoweroffLedTimer, 100);
 N	Drv_audio_init();
-N	Global_datas.led_poweroff = 0;
+N	Global_datas.shoutting_down = 0;
 N	
 N
 N	
@@ -51365,7 +51366,7 @@ N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, d
 N	drv_led_init();// led all off
 W "..\main.c" 211 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
-N	Global_datas.led_poweroff = 1;
+N	Global_datas.shoutting_down = 1;
 N	TimeOutSet(&PoweroffLedTimer, 5000);
 N}
 N
@@ -51373,7 +51374,7 @@ N
 Nvoid IoKeyProcess(void)
 N{
 N
-N	if((Global_datas.g_mode_status == POWER_IDLE_MODE)&&(IN_KEY_POWER_CP != IoKeyInputmessage))
+N	if(((Global_datas.g_mode_status == POWER_IDLE_MODE || Global_datas.g_mode_status == POWER_ON_MODE )&&(IN_KEY_POWER_CP != IoKeyInputmessage)) || (Global_datas.shoutting_down))
 N    {
 N		return;
 N	}
@@ -51397,7 +51398,6 @@ N				srv_key_mode_handler();
 N				break;
 N			case IN_KEY_POWER_CP:
 N				printf("power key cp\n");	
-N				//PowerOff();
 N				if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 N				{
 N					SYS_Status();
@@ -51459,7 +51459,6 @@ N			TimeOutSet(&SysTimer_1s, 500);
 N			
 N	        if(Global_datas.g_4g_initing)
 N			{
-N				Global_datas.g_mode_status = WIFI_MODE;				
 N				srv_led_sys_initing();
 N			}
 N			else
@@ -51507,6 +51506,8 @@ N					PA1 = 1;
 X					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 1;
 N					Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
 N					TYM_drv_powerkeepon(0); 
+N
+N					Global_datas.shoutting_down = 0;
 N				}
 N				
 N			}
@@ -51543,7 +51544,8 @@ N						printf("0x08, msg.param1 = %x \n",msg.param1);
 N	                	//Cmd_Send2FourG(0x03,0x16,0x00);
 N						drv_Cmd_Send2NCU031(msg.param0,msg.param1,0);
 N						Global_datas.g_4g_initing = 0;
-N						//printf("switch to BT\n");
+N						Global_datas.g_mode_status = WIFI_MODE;
+N						printf("\n AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
 N					} 
 N					
 N					if((msg.param0 == 0x09) && (msg.param1 == 0x01))
@@ -51707,7 +51709,7 @@ N					}
 N					
 N					if(msg.param0 == 0x20)
 N					{
-N						Cmd_Send2FourG(0x20,0x0,0x1);  //version 0.0.1
+N						Cmd_Send2FourG(0x20,0x0,0x3);  //version 0.0.3
 N					}
 N	            break;
 N
@@ -51842,18 +51844,10 @@ N
 N			drv_power_status_updata();
 N			srv_audio_handler();
 N		}
-N		
-N		if (((count>>20)&0xF) == refcount2)
-N		{
-N
-N			if(refcount2 <0xF)
-N				refcount2++;
-N			else
-N				refcount2 = 0;
-N		}
 N		count++;
 N	}
 N
+W "..\main.c" 274 10 variable "refcount2"  was declared but never referenced
 N}
 N
 N

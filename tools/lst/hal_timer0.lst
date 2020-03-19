@@ -50382,6 +50382,7 @@ N    SYSTEM_UPDATING,
 N    SYS_LOW_POWER,
 N    POWER_OFF_MODE,
 N    POWER_IDLE_MODE,
+N
 N} mode_status;
 N
 Ntypedef enum
@@ -50433,8 +50434,8 @@ N	uint32_t systick;
 X	unsigned int systick;
 N	uint8_t key_led_blink;
 X	unsigned char key_led_blink;
-N	uint8_t led_poweroff;
-X	unsigned char led_poweroff;
+N	uint8_t shoutting_down;
+X	unsigned char shoutting_down;
 N	uint8_t	eq_mode;
 X	unsigned char	eq_mode;
 N	uint8_t volume;
