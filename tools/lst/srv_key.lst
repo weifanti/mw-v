@@ -50385,6 +50385,7 @@ N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
+N	uint8_t subboard_online;
 N	
 N
 N}sGlobalData;
@@ -50713,8 +50714,17 @@ Nswitch(Global_datas.g_mode_status)
 N{
 N	case AUX_MODE:
 N
-N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-N		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
+N		if(Global_datas.subboard_online) // if subboard online ,turn on fm
+N		{
+N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x18,0x00); //fm
+N			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode				
+N		}
+N		else
+N		{
+N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
+N			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
+N		}
+N
 N
 N	break;
 N	
@@ -50848,6 +50858,7 @@ N}
 N
 Nvoid srv_key_handler(void)
 N{	
+N	static uint8_t i = 0;
 N	switch(GetIrKey())
 N	{
 N		case IR_KEY_POWER:
@@ -50855,15 +50866,15 @@ N
 N		Global_datas.key_led_blink = 1;
 N		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 N		{
-W "..\src\server\key\srv_key.c" 173 4 function "SYS_Status" declared implicitly
+W "..\src\server\key\srv_key.c" 183 4 function "SYS_Status" declared implicitly
 N			SYS_Status();
 N		}
 N		
 N		else
 N		{
-W "..\src\server\key\srv_key.c" 178 4 function "PowerOff" declared implicitly
+W "..\src\server\key\srv_key.c" 188 4 function "PowerOff" declared implicitly
 N			PowerOff();
-W "..\src\server\key\srv_key.c" 179 4 function "SysIdle" declared implicitly
+W "..\src\server\key\srv_key.c" 189 4 function "SysIdle" declared implicitly
 N			SysIdle();
 N		}
 N		break;
@@ -50896,6 +50907,22 @@ N		break;
 N
 N		case IR_KEY_PLAY_PAUSE:
 N			Global_datas.key_led_blink = 1;
+N
+N			if(i == 0)
+N			{
+N				i = 1;
+W "..\src\server\key\srv_key.c" 225 5 function "drv_5825_mute_pin_set" declared implicitly
+N				drv_5825_mute_pin_set(1);  // unmute
+N				//drv_5825_gpio012_config_a();
+N			}
+N			else 
+N			{
+N				i = 0;
+W "..\src\server\key\srv_key.c" 231 5 function "drv_5825_mute_pin_set" declared implicitly
+N				drv_5825_mute_pin_set(0);  // mute
+N				//drv_5825_gpio012_config();
+N			}
+N			
 N			
 N			srv_key_play_pause_handler();
 N		break;

@@ -29433,6 +29433,7 @@ typedef struct
 	uint8_t shoutting_down;
 	uint8_t	eq_mode;
 	uint8_t volume;
+	uint8_t subboard_online;
 	
 
 }sGlobalData;
@@ -29737,8 +29738,17 @@ switch(Global_datas.g_mode_status)
 {
 	case AUX_MODE:
 
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
-		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+		if(Global_datas.subboard_online) 
+		{
+			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x18,0x00); 
+			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);
+		}
+		else
+		{
+			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
+			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+		}
+
 
 	break;
 	
@@ -29872,6 +29882,7 @@ void srv_key_net_config_handler(void)
 
 void srv_key_handler(void)
 {	
+	static uint8_t i = 0;
 	switch(GetIrKey())
 	{
 		case IR_KEY_POWER:
@@ -29917,6 +29928,20 @@ void srv_key_handler(void)
 
 		case IR_KEY_PLAY_PAUSE:
 			Global_datas.key_led_blink = 1;
+
+			if(i == 0)
+			{
+				i = 1;
+				drv_5825_mute_pin_set(1);  
+				
+			}
+			else 
+			{
+				i = 0;
+				drv_5825_mute_pin_set(0);  
+				
+			}
+			
 			
 			srv_key_play_pause_handler();
 		break;

@@ -28,8 +28,17 @@ switch(Global_datas.g_mode_status)
 {
 	case AUX_MODE:
 
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
+		if(Global_datas.subboard_online) // if subboard online ,turn on fm
+		{
+			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x18,0x00); //fm
+			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode				
+		}
+		else
+		{
+			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
+			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
+		}
+
 
 	break;
 	
@@ -163,6 +172,7 @@ void srv_key_net_config_handler(void)
 
 void srv_key_handler(void)
 {	
+	static uint8_t i = 0;
 	switch(GetIrKey())
 	{
 		case IR_KEY_POWER:
@@ -208,6 +218,20 @@ void srv_key_handler(void)
 
 		case IR_KEY_PLAY_PAUSE:
 			Global_datas.key_led_blink = 1;
+
+			if(i == 0)
+			{
+				i = 1;
+				drv_5825_mute_pin_set(1);  // unmute
+				//drv_5825_gpio012_config_a();
+			}
+			else 
+			{
+				i = 0;
+				drv_5825_mute_pin_set(0);  // mute
+				//drv_5825_gpio012_config();
+			}
+			
 			
 			srv_key_play_pause_handler();
 		break;

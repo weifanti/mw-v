@@ -29397,7 +29397,7 @@ void Drv_FourG_Gpio_Init(void)
 	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((5)<<2)))) = 0;
 	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(5))) + ((5)<<2)))) = 1;
 	
-	Drv_4GMoudle_PowerUp(0);
+	Drv_4GMoudle_PowerUp(0);  
 }
 
 

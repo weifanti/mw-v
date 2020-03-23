@@ -29520,6 +29520,7 @@ typedef struct
 	uint8_t shoutting_down;
 	uint8_t	eq_mode;
 	uint8_t volume;
+	uint8_t subboard_online;
 	
 
 }sGlobalData;

@@ -30,6 +30,7 @@ extern TIMER TestTimer;
 extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
+extern TIMER SubBoardHandshakeTimer;
 
 //extern TIMER AdcTimer;
 //extern TIMER PaTimer;

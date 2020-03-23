@@ -5,7 +5,7 @@
                           AREA ||.bss||, DATA, NOINIT, ALIGN=2
 
                   Global_datas
-                          %        48
+                          %        52
 
 ;*** Start embedded assembler ***
 

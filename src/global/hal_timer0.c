@@ -28,7 +28,7 @@ TIMER PoweroffLedTimer;
 
 TIMER AdcTimer;
 TIMER PaTimer;
-
+TIMER SubBoardHandshakeTimer;
 void
 TimeOutSet(
 	TIMER	*timer,
@@ -92,7 +92,7 @@ void Hal_Timer0_Init(void)
     // Start Timer 
     TIMER_Start(TIMER0);
 
-	TimeOutSet(&TestTimer, 100);
+//	TimeOutSet(&TestTimer, 100);
 //	TimeOutSet(&KeyScanTimer, 10);
 //	TimeOutSet(&ModCheckTimer, 10);
 //	TimeOutSet(&BatDisplayTimer, 10);	
@@ -128,6 +128,7 @@ void Hal_Timer1_Init(void)
 	TimeOutSet(&ModulePowerUpPinTimer, 100);
 	
 	TimeOutSet(&PoweroffLedTimer, 100);
+	TimeOutSet(&SubBoardHandshakeTimer, 100);
 	
 //	TimeOutSet(&KeyScanTimer, 10);
 //	TimeOutSet(&ModCheckTimer, 10);

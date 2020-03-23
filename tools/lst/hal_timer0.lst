@@ -50307,6 +50307,7 @@ Nextern TIMER TestTimer;
 Nextern TIMER ModulePowerUpPinTimer;
 Nextern TIMER LedKeyBlinkTimer;
 Nextern TIMER PoweroffLedTimer;
+Nextern TIMER SubBoardHandshakeTimer;
 N
 N//extern TIMER AdcTimer;
 N//extern TIMER PaTimer;
@@ -50440,6 +50441,8 @@ N	uint8_t	eq_mode;
 X	unsigned char	eq_mode;
 N	uint8_t volume;
 X	unsigned char volume;
+N	uint8_t subboard_online;
+X	unsigned char subboard_online;
 N	
 N
 N}sGlobalData;
@@ -50593,7 +50596,7 @@ N
 N
 NTIMER AdcTimer;
 NTIMER PaTimer;
-N
+NTIMER SubBoardHandshakeTimer;
 Nvoid
 NTimeOutSet(
 N	TIMER	*timer,
@@ -50664,7 +50667,7 @@ N    // Start Timer
 N    TIMER_Start(TIMER0);
 X    TIMER_Start(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)));
 N
-N	TimeOutSet(&TestTimer, 100);
+N//	TimeOutSet(&TestTimer, 100);
 N//	TimeOutSet(&KeyScanTimer, 10);
 N//	TimeOutSet(&ModCheckTimer, 10);
 N//	TimeOutSet(&BatDisplayTimer, 10);	
@@ -50705,6 +50708,7 @@ N	TimeOutSet(&SysTimer_1s, 100);
 N	TimeOutSet(&ModulePowerUpPinTimer, 100);
 N	
 N	TimeOutSet(&PoweroffLedTimer, 100);
+N	TimeOutSet(&SubBoardHandshakeTimer, 100);
 N	
 N//	TimeOutSet(&KeyScanTimer, 10);
 N//	TimeOutSet(&ModCheckTimer, 10);

@@ -50403,6 +50403,7 @@ N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
+N	uint8_t subboard_online;
 N	
 N
 N}sGlobalData;

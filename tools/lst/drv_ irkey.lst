@@ -50536,6 +50536,7 @@ N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
+N	uint8_t subboard_online;
 N	
 N
 N}sGlobalData;
@@ -50715,7 +50716,7 @@ N
 N		// shoutting down cann't respond any key. idle state only respond power key
 N		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
 N		{
-N			ir_key_value = IR_KEY_NONE;
+N			//ir_key_value = IR_KEY_NONE;
 N		}
 N		return ir_key_value;
 N	}

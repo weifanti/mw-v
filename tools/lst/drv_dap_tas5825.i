@@ -45636,6 +45636,7 @@ typedef struct
 	uint8_t shoutting_down;
 	uint8_t	eq_mode;
 	uint8_t volume;
+	uint8_t subboard_online;
 	
 
 }sGlobalData;
@@ -45668,8 +45669,9 @@ cfg_reg tas5852_volume_page[] ={
 cfg_reg tas5825_book0_page0[] ={
    { 0x00, 0x00 },
    { 0x7f, 0x00 },
-   { 0x00, 0x00 }
+ 
    };
+
 
 cfg_reg tas5825_gpio_012_confgi[] ={
 	
@@ -45681,6 +45683,11 @@ cfg_reg tas5825_gpio_012_confgi[] ={
    	{0x64,0x02}   
    	
    };  
+
+cfg_reg reg_60[] = {0x60,0x05};
+cfg_reg reg_61[] = {0x61,0x0b};
+cfg_reg reg_63[] = {0x63,0x08};
+cfg_reg reg_64[] = {0x64,0x02};
 
    
 
@@ -45841,11 +45848,10 @@ static void drv_5825_Load_in_Param(void)
 {
 	if(Global_datas.eq_mode == EQ_MODE_INDOOR)
 	{
-		drv_5825_00_i2c_write(registers_mid_indoor,sizeof(registers_mid_indoor)/2);
-
-		drv_5825_gpio012_config();
 		
+		drv_5825_gpio012_config();
 		drv_5825_01_i2c_write(registers_tw_indoor,sizeof(registers_tw_indoor)/2);
+		drv_5825_00_i2c_write(registers_mid_indoor,sizeof(registers_mid_indoor)/2); 	
 	}
 	else if(Global_datas.eq_mode == EQ_MODE_OUTDOOR)
 	{
@@ -45997,12 +46003,28 @@ void drv_5825_gpio012_config(void)
 {
 
 	drv_5825_00_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
-	Hal_I2c_Transfer((0x98), (uint8_t*)tas5825_gpio_012_confgi, sizeof(tas5825_gpio_012_confgi)/2, (uint8_t*)0, 0);
+	Hal_I2c_Transfer((0x98), (uint8_t*)reg_60, 2, (uint8_t*)0, 0);
+	Hal_I2c_Transfer((0x98), (uint8_t*)reg_61, 2, (uint8_t*)0, 0);
+	Hal_I2c_Transfer((0x98), (uint8_t*)reg_63, 2, (uint8_t*)0, 0);
+	Hal_I2c_Transfer((0x98), (uint8_t*)reg_64, 2, (uint8_t*)0, 0);
 
 	drv_5825_01_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
-	Hal_I2c_Transfer((0x9A), (uint8_t*)tas5825_gpio_012_confgi, sizeof(tas5825_gpio_012_confgi)/2, (uint8_t*)0, 0);
+	Hal_I2c_Transfer((0x9A), (uint8_t*)reg_60, 2, (uint8_t*)0, 0);
+	Hal_I2c_Transfer((0x9A), (uint8_t*)reg_61, 2, (uint8_t*)0, 0);
+	Hal_I2c_Transfer((0x9A), (uint8_t*)reg_63, 2, (uint8_t*)0, 0);
+	Hal_I2c_Transfer((0x9A), (uint8_t*)reg_64, 2, (uint8_t*)0, 0);
+
 
 }
+
+
+void drv_5825_gpio012_config_a(void)
+{
+
+	drv_5825_00_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
+	Hal_I2c_Transfer((0x98), (uint8_t*)tas5825_gpio_012_confgi, sizeof(tas5825_gpio_012_confgi)/2, (uint8_t*)0, 0);
+}
+
 
 
 

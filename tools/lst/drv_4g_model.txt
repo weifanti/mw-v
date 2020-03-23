@@ -150,7 +150,7 @@
 000038  2001              MOVS     r0,#1
 00003a  6148              STR      r0,[r1,#0x14]
 ;;;67     	//Drv_4GMoudle_PowerUp(1);
-;;;68     	Drv_4GMoudle_PowerUp(0);
+;;;68     	Drv_4GMoudle_PowerUp(0);  // first off
 00003c  2000              MOVS     r0,#0
 00003e  f7fffffe          BL       Drv_4GMoudle_PowerUp
 ;;;69     }

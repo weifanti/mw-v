@@ -29352,6 +29352,7 @@ extern TIMER TestTimer;
 extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
+extern TIMER SubBoardHandshakeTimer;
 
 
 
@@ -29471,6 +29472,7 @@ typedef struct
 	unsigned char shoutting_down;
 	unsigned char	eq_mode;
 	unsigned char volume;
+	unsigned char subboard_online;
 	
 
 }sGlobalData;
@@ -29610,7 +29612,7 @@ TIMER PoweroffLedTimer;
 
 TIMER AdcTimer;
 TIMER PaTimer;
-
+TIMER SubBoardHandshakeTimer;
 void
 TimeOutSet(
 	TIMER	*timer,
@@ -29674,7 +29676,7 @@ void Hal_Timer0_Init(void)
     
     TIMER_Start(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)));
 
-	TimeOutSet(&TestTimer, 100);
+
 
 
 
@@ -29710,6 +29712,7 @@ void Hal_Timer1_Init(void)
 	TimeOutSet(&ModulePowerUpPinTimer, 100);
 	
 	TimeOutSet(&PoweroffLedTimer, 100);
+	TimeOutSet(&SubBoardHandshakeTimer, 100);
 	
 
 

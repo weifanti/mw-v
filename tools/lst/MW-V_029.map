@@ -27,88 +27,88 @@ Image Symbol Table
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
     RESET                                    0x00000000   Section      192  startup_nuc029xge.o(RESET)
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit2.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardshut.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
-    ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_zi.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit2.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
     ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_copy.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry.o ABSOLUTE
+    ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_zi.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit2.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry2.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit2.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  rt_div0.o ABSOLUTE
-    ../clib/angel/rt.s                       0x00000000   Number         0  rt_raise.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  aeabi_idiv0_sigfpe.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  aeabi_idiv0.o ABSOLUTE
+    ../clib/angel/rt.s                       0x00000000   Number         0  rt_raise.o ABSOLUTE
     ../clib/angel/scatterp.s                 0x00000000   Number         0  __scatter.o ABSOLUTE
     ../clib/angel/startup.s                  0x00000000   Number         0  __main.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  sys_stackheap_outer.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  libspace.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  indicate_semi.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  use_no_semi.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  tempstk.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  indicate_semi.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  libspace.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  sys_stackheap_outer.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  use_no_semi.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_command.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_exit.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  no_argv.o ABSOLUTE
-    ../clib/armsys.c                         0x00000000   Number         0  _get_argv_nomalloc.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
+    ../clib/armsys.c                         0x00000000   Number         0  _get_argv_nomalloc.o ABSOLUTE
     ../clib/division.c                       0x00000000   Number         0  rtudiv10.o ABSOLUTE
-    ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv.o ABSOLUTE
     ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv_div0.o ABSOLUTE
+    ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv.o ABSOLUTE
     ../clib/heapalloc.c                      0x00000000   Number         0  hrguard.o ABSOLUTE
     ../clib/heapaux.c                        0x00000000   Number         0  heapauxi.o ABSOLUTE
-    ../clib/libinit.s                        0x00000000   Number         0  libinit.o ABSOLUTE
-    ../clib/libinit.s                        0x00000000   Number         0  libinit2.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libshutdown2.o ABSOLUTE
+    ../clib/libinit.s                        0x00000000   Number         0  libinit2.o ABSOLUTE
+    ../clib/libinit.s                        0x00000000   Number         0  libinit.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libshutdown.o ABSOLUTE
     ../clib/memcpset.c                       0x00000000   Number         0  rt_memcpy.o ABSOLUTE
     ../clib/memcpset.c                       0x00000000   Number         0  rt_memcpy.o ABSOLUTE
     ../clib/misc.s                           0x00000000   Number         0  printf_stubs.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  _printf_hex_int_ll.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  _printf_hex_int.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  __printf_flags_ss.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  __printf_wp.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  __printf_flags_wp.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  __printf_ss_wp.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  __printf_nopercent.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  __printf_flags_ss_wp.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  _printf_char_common.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  _printf_intcommon.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  _printf_char_file.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  _printf_hex_int.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  __2printf.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  noretval__2printf.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  __printf.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  _printf_pad.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  _printf_intcommon.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  _printf_char_file.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  _printf_hex_int_ptr.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  __printf_ss_wp.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  __printf_flags_wp.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  _printf_dec.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  __printf_wp.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  __printf_flags_ss.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  _printf_char_common.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  __printf_flags_ss_wp.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  __printf_ss.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  _printf_hex_ll.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  __printf_flags.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  _printf_hex_int_ll.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  _printf_hex_ptr.o ABSOLUTE
-    ../clib/printf.c                         0x00000000   Number         0  _printf_hex_int_ll_ptr.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  _printf_hex_int_ptr.o ABSOLUTE
     ../clib/printf.c                         0x00000000   Number         0  _printf_hex_ll_ptr.o ABSOLUTE
-    ../clib/printf_percent.s                 0x00000000   Number         0  _printf_d.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  __printf_ss.o ABSOLUTE
+    ../clib/printf.c                         0x00000000   Number         0  _printf_hex_int_ll_ptr.o ABSOLUTE
     ../clib/printf_percent.s                 0x00000000   Number         0  _printf_percent_end.o ABSOLUTE
     ../clib/printf_percent.s                 0x00000000   Number         0  _printf_percent.o ABSOLUTE
+    ../clib/printf_percent.s                 0x00000000   Number         0  _printf_d.o ABSOLUTE
     ../clib/printf_percent.s                 0x00000000   Number         0  _printf_x.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_cppl_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_outer.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_other.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_pvfn_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_outer.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_abrt_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_general.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  __raise.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_pvfn_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_cppl_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_outer.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_general.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_formal.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_abrt_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_exit.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_formal.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_other.o ABSOLUTE
     ../clib/signal.s                         0x00000000   Number         0  defsig.o ABSOLUTE
     ../clib/stdlib.c                         0x00000000   Number         0  exit.o ABSOLUTE
     ../fplib/cfplib/fdiv.c                   0x00000000   Number         0  fdiv.o ABSOLUTE
@@ -296,244 +296,246 @@ Image Symbol Table
     i.GPIO_EnableInt                         0x00000fb4   Section        0  gpio.o(i.GPIO_EnableInt)
     i.GPIO_SetMode                           0x00000fce   Section        0  gpio.o(i.GPIO_SetMode)
     i.GetIrKey                               0x00000ff8   Section        0  drv_ irkey.o(i.GetIrKey)
-    i.GetKeyEvent                            0x00001064   Section        0  drv_gpio_key.o(i.GetKeyEvent)
-    i.Hal_I2c0_Stop                          0x00001180   Section        0  io_i2c.o(i.Hal_I2c0_Stop)
-    Hal_I2c0_Stop                            0x00001181   Thumb Code    40  io_i2c.o(i.Hal_I2c0_Stop)
-    i.Hal_I2c1_Stop                          0x000011b0   Section        0  io_i2c.o(i.Hal_I2c1_Stop)
-    Hal_I2c1_Stop                            0x000011b1   Thumb Code    40  io_i2c.o(i.Hal_I2c1_Stop)
-    i.Hal_I2c1_Transfer                      0x000011e0   Section        0  io_i2c.o(i.Hal_I2c1_Transfer)
-    i.Hal_I2c_Init                           0x00001260   Section        0  io_i2c.o(i.Hal_I2c_Init)
-    i.Hal_I2c_Transfer                       0x000012e0   Section        0  io_i2c.o(i.Hal_I2c_Transfer)
-    i.Hal_Timer1_Init                        0x00001360   Section        0  hal_timer0.o(i.Hal_Timer1_Init)
-    i.Hard_Fault_Handler                     0x000013e0   Section        0  retarget.o(i.Hard_Fault_Handler)
-    __tagsym$$used                           0x000013e1   Number         0  retarget.o(i.Hard_Fault_Handler)
-    i.HwKeyScanInit                          0x00001408   Section        0  drv_gpio_key.o(i.HwKeyScanInit)
-    i.I2C0_IRQHandler                        0x00001420   Section        0  io_i2c.o(i.I2C0_IRQHandler)
-    i.I2C1_IRQHandler                        0x0000159c   Section        0  io_i2c.o(i.I2C1_IRQHandler)
-    i.I2C_ClearTimeoutFlag                   0x00001718   Section        0  i2c.o(i.I2C_ClearTimeoutFlag)
-    i.I2C_DisableInt                         0x00001722   Section        0  i2c.o(i.I2C_DisableInt)
-    i.I2C_EnableInt                          0x0000172c   Section        0  i2c.o(i.I2C_EnableInt)
-    i.I2C_EnableTimeout                      0x00001736   Section        0  i2c.o(i.I2C_EnableTimeout)
-    i.I2C_GetData                            0x00001750   Section        0  i2c.o(i.I2C_GetData)
-    i.I2C_GetStatus                          0x00001756   Section        0  i2c.o(i.I2C_GetStatus)
-    i.I2C_Open                               0x0000175c   Section        0  i2c.o(i.I2C_Open)
-    i.I2C_SetData                            0x00001794   Section        0  i2c.o(i.I2C_SetData)
-    i.I2C_Trigger                            0x00001798   Section        0  i2c.o(i.I2C_Trigger)
-    i.IoKeyProcess                           0x000017c8   Section        0  main.o(i.IoKeyProcess)
-    i.Ircordpro                              0x00001888   Section        0  drv_ irkey.o(i.Ircordpro)
-    i.IsTimeOut                              0x00001940   Section        0  hal_timer0.o(i.IsTimeOut)
-    i.NVIC_SetPriority                       0x00001958   Section        0  hal_timer0.o(i.NVIC_SetPriority)
-    NVIC_SetPriority                         0x00001959   Thumb Code    60  hal_timer0.o(i.NVIC_SetPriority)
-    i.NVIC_SetPriority                       0x0000199c   Section        0  io_i2c.o(i.NVIC_SetPriority)
-    NVIC_SetPriority                         0x0000199d   Thumb Code    60  io_i2c.o(i.NVIC_SetPriority)
-    i.PowerOff                               0x000019e0   Section        0  main.o(i.PowerOff)
-    i.RTC_GetAlarmDateAndTime                0x00001a1c   Section        0  rtc.o(i.RTC_GetAlarmDateAndTime)
-    i.RTC_GetDateAndTime                     0x00001b18   Section        0  rtc.o(i.RTC_GetDateAndTime)
-    i.RTC_IRQHandler                         0x00001c08   Section        0  srv_rtc.o(i.RTC_IRQHandler)
-    i.RTC_SetAlarmDate                       0x00001c1c   Section        0  rtc.o(i.RTC_SetAlarmDate)
-    i.RTC_SetAlarmTime                       0x00001c64   Section        0  rtc.o(i.RTC_SetAlarmTime)
-    i.RTC_SetDate                            0x00001cc4   Section        0  rtc.o(i.RTC_SetDate)
-    i.RTC_SetTime                            0x00001d14   Section        0  rtc.o(i.RTC_SetTime)
-    i.RTC_WaitAccessEnable                   0x00001d74   Section        0  rtc.o(i.RTC_WaitAccessEnable)
-    RTC_WaitAccessEnable                     0x00001d75   Thumb Code    24  rtc.o(i.RTC_WaitAccessEnable)
-    i.SYS_BusInit                            0x00001d94   Section        0  main.o(i.SYS_BusInit)
-    i.SYS_Clock_init                         0x00001da8   Section        0  main.o(i.SYS_Clock_init)
-    i.SYS_Init                               0x00001e74   Section        0  main.o(i.SYS_Init)
-    i.SYS_ResetModule                        0x00001eb8   Section        0  sys.o(i.SYS_ResetModule)
-    i.SYS_Status                             0x00001ed4   Section        0  main.o(i.SYS_Status)
-    i.SendChar_ToUART                        0x00001f28   Section        0  retarget.o(i.SendChar_ToUART)
-    i.SysIdle                                0x00001f48   Section        0  main.o(i.SysIdle)
-    i.SystemCoreClockUpdate                  0x00001f6c   Section        0  system_nuc029xge.o(i.SystemCoreClockUpdate)
-    i.SystemInit                             0x00001ffc   Section        0  system_nuc029xge.o(i.SystemInit)
-    i.TIMER_Delay                            0x00002000   Section        0  timer.o(i.TIMER_Delay)
-    i.TIMER_GetModuleClock                   0x000020c4   Section        0  timer.o(i.TIMER_GetModuleClock)
-    i.TIMER_Open                             0x0000212c   Section        0  timer.o(i.TIMER_Open)
-    i.TMR1_IRQHandler                        0x00002190   Section        0  hal_timer0.o(i.TMR1_IRQHandler)
-    i.TYM_DriverInit                         0x000021cc   Section        0  main.o(i.TYM_DriverInit)
-    i.TYM_drv_BQ24610_charge_current_Set     0x000021d8   Section        0  drv_power.o(i.TYM_drv_BQ24610_charge_current_Set)
-    i.TYM_drv_In_bat_status_updata           0x000021f4   Section        0  drv_power.o(i.TYM_drv_In_bat_status_updata)
-    i.TYM_drv_SysPower_init                  0x00002258   Section        0  drv_power.o(i.TYM_drv_SysPower_init)
-    i.TYM_drv_ac_status_updata               0x00002288   Section        0  drv_power.o(i.TYM_drv_ac_status_updata)
-    i.TYM_drv_ex_bat_status_updata           0x000022b8   Section        0  drv_power.o(i.TYM_drv_ex_bat_status_updata)
-    i.TYM_drv_powerkeepon                    0x00002310   Section        0  drv_power.o(i.TYM_drv_powerkeepon)
-    i.TYM_gpio_adc_get                       0x00002320   Section        0  io_gpio.o(i.TYM_gpio_adc_get)
-    i.TYM_gpio_init                          0x000023b8   Section        0  io_gpio.o(i.TYM_gpio_init)
-    i.TYM_power_gpio_init                    0x00002400   Section        0  drv_power.o(i.TYM_power_gpio_init)
-    i.TYM_sys_PowerManger_init               0x00002480   Section        0  drv_power.o(i.TYM_sys_PowerManger_init)
-    i.TimeOutSet                             0x0000249c   Section        0  hal_timer0.o(i.TimeOutSet)
-    i.Transfer_Uart_Init                     0x000024b0   Section        0  io_uart.o(i.Transfer_Uart_Init)
-    i.UART02_IRQHandler                      0x00002530   Section        0  io_uart.o(i.UART02_IRQHandler)
-    i.UART0_Init                             0x00002538   Section        0  io_uart.o(i.UART0_Init)
-    i.UART1_IRQHandler                       0x00002560   Section        0  io_uart.o(i.UART1_IRQHandler)
-    i.UART1_Init                             0x00002568   Section        0  io_uart.o(i.UART1_Init)
-    i.UART2_Init                             0x00002590   Section        0  io_uart.o(i.UART2_Init)
-    i.UART_4G_HANDLE                         0x000025d0   Section        0  io_uart.o(i.UART_4G_HANDLE)
-    i.UART_ClearIntFlag                      0x00002668   Section        0  uart_1.o(i.UART_ClearIntFlag)
-    i.UART_EnableInt                         0x000026a0   Section        0  uart_1.o(i.UART_EnableInt)
-    i.UART_TEST_HANDLE                       0x000026d0   Section        0  io_uart.o(i.UART_TEST_HANDLE)
-    i.USCI0_Init                             0x00002760   Section        0  io_usci_uart.o(i.USCI0_Init)
-    i.USCI_IRQHandler                        0x000027b0   Section        0  io_usci_uart.o(i.USCI_IRQHandler)
-    i.USCI_UART_FunctionTest                 0x000027b8   Section        0  io_usci_uart.o(i.USCI_UART_FunctionTest)
-    i.USCI_UART_TEST_HANDLE                  0x00002940   Section        0  io_usci_uart.o(i.USCI_UART_TEST_HANDLE)
-    i.USCI_Uart_Init                         0x000029d0   Section        0  io_usci_uart.o(i.USCI_Uart_Init)
-    i.UUART_Open                             0x00002a20   Section        0  usci_uart_1.o(i.UUART_Open)
-    i.__ARM_common_switch8                   0x00002b50   Section        0  io_i2c.o(i.__ARM_common_switch8)
-    i._is_digit                              0x00002b6a   Section        0  __printf_wp.o(i._is_digit)
-    i.drv_4G_led_on                          0x00002b78   Section        0  drv_led.o(i.drv_4G_led_on)
-    i.drv_5825_00_i2c_write                  0x00002ba0   Section        0  drv_dap_tas5825.o(i.drv_5825_00_i2c_write)
-    drv_5825_00_i2c_write                    0x00002ba1   Thumb Code    88  drv_dap_tas5825.o(i.drv_5825_00_i2c_write)
-    i.drv_5825_01_i2c_write                  0x00002c00   Section        0  drv_dap_tas5825.o(i.drv_5825_01_i2c_write)
-    drv_5825_01_i2c_write                    0x00002c01   Thumb Code    88  drv_dap_tas5825.o(i.drv_5825_01_i2c_write)
-    i.drv_5825_Init                          0x00002c60   Section        0  drv_dap_tas5825.o(i.drv_5825_Init)
-    i.drv_5825_Load_in_Param                 0x00002ca4   Section        0  drv_dap_tas5825.o(i.drv_5825_Load_in_Param)
-    drv_5825_Load_in_Param                   0x00002ca5   Thumb Code    56  drv_dap_tas5825.o(i.drv_5825_Load_in_Param)
-    i.drv_5825_amp_fault_det_init            0x00002cf4   Section        0  drv_dap_tas5825.o(i.drv_5825_amp_fault_det_init)
-    i.drv_5825_amp_warn_det_init             0x00002d08   Section        0  drv_dap_tas5825.o(i.drv_5825_amp_warn_det_init)
-    i.drv_5825_gpio012_config                0x00002d1c   Section        0  drv_dap_tas5825.o(i.drv_5825_gpio012_config)
-    i.drv_5825_mute_pin_init                 0x00002d58   Section        0  drv_dap_tas5825.o(i.drv_5825_mute_pin_init)
-    i.drv_5825_mute_pin_set                  0x00002d70   Section        0  drv_dap_tas5825.o(i.drv_5825_mute_pin_set)
-    i.drv_5825_powerdown_pin_init            0x00002d80   Section        0  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_init)
-    i.drv_5825_powerdown_pin_set             0x00002d8c   Section        0  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_set)
-    i.drv_5825_vol_set                       0x00002db4   Section        0  drv_dap_tas5825.o(i.drv_5825_vol_set)
-    i.drv_Adc_pcm1862_Init                   0x00002e20   Section        0  drv_adc_pcm1862.o(i.drv_Adc_pcm1862_Init)
-    i.drv_Cmd_Send2NCU031                    0x00002e68   Section        0  drv_nuc031.o(i.drv_Cmd_Send2NCU031)
-    i.drv_FM_on_NCU031_reset                 0x00002ee4   Section        0  drv_nuc031.o(i.drv_FM_on_NCU031_reset)
-    i.drv_FourGmodel_power_key_SetHi         0x00002f20   Section        0  drv_4g_model.o(i.drv_FourGmodel_power_key_SetHi)
-    i.drv_FourGmodel_power_key_SetLow        0x00002f2c   Section        0  drv_4g_model.o(i.drv_FourGmodel_power_key_SetLow)
-    i.drv_all_led_on                         0x00002f38   Section        0  drv_led.o(i.drv_all_led_on)
-    i.drv_audio_4G_Channel                   0x00002f64   Section        0  drv_audio.o(i.drv_audio_4G_Channel)
-    i.drv_audio_AuxIn_Channel                0x00002f74   Section        0  drv_audio.o(i.drv_audio_AuxIn_Channel)
-    i.drv_audio_FM_Channel                   0x00002f84   Section        0  drv_audio.o(i.drv_audio_FM_Channel)
-    i.drv_audio_Null_Channel                 0x00002f94   Section        0  drv_audio.o(i.drv_audio_Null_Channel)
-    i.drv_aux_led_on                         0x00002fa4   Section        0  drv_led.o(i.drv_aux_led_on)
-    i.drv_bt_led_on                          0x00002fc4   Section        0  drv_led.o(i.drv_bt_led_on)
-    i.drv_dap_3251_Init                      0x00002fec   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_Init)
-    i.drv_dap_3251_i2c_write                 0x00003070   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_i2c_write)
-    drv_dap_3251_i2c_write                   0x00003071   Thumb Code    90  drv_dap_tas3251.o(i.drv_dap_3251_i2c_write)
-    i.drv_dap_3251_rest                      0x000030d0   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_rest)
-    i.drv_dap_3251_vol_set                   0x00003128   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_vol_set)
-    i.drv_err_led_on                         0x0000317c   Section        0  drv_led.o(i.drv_err_led_on)
-    i.drv_fm_led_on                          0x00003190   Section        0  drv_led.o(i.drv_fm_led_on)
-    i.drv_gipo_key_init                      0x000031b0   Section        0  drv_gpio_key.o(i.drv_gipo_key_init)
-    i.drv_led_init                           0x000031d4   Section        0  drv_led.o(i.drv_led_init)
-    i.drv_pairing_cmd_send                   0x0000325c   Section        0  drv_4g_model.o(i.drv_pairing_cmd_send)
-    i.drv_pcm1862_PGA_VAL_SET                0x0000326c   Section        0  drv_adc_pcm1862.o(i.drv_pcm1862_PGA_VAL_SET)
-    i.drv_pcm1862_input_channel              0x000032e8   Section        0  drv_adc_pcm1862.o(i.drv_pcm1862_input_channel)
-    i.drv_power_status_updata                0x00003380   Section        0  drv_power.o(i.drv_power_status_updata)
-    i.drv_wifi_4g_switch_cmd_send            0x00003398   Section        0  drv_4g_model.o(i.drv_wifi_4g_switch_cmd_send)
-    i.drv_wifi_led_on                        0x000033a8   Section        0  drv_led.o(i.drv_wifi_led_on)
-    i.ferror                                 0x000033d0   Section        0  retarget.o(i.ferror)
-    i.fputc                                  0x000033d6   Section        0  retarget.o(i.fputc)
-    i.main                                   0x000033e4   Section        0  main.o(i.main)
-    i.srv_audio_channel_check                0x00003a10   Section        0  srv_audio.o(i.srv_audio_channel_check)
-    i.srv_audio_channel_switch               0x00003a44   Section        0  srv_audio.o(i.srv_audio_channel_switch)
-    i.srv_audio_handler                      0x00003a7c   Section        0  srv_audio.o(i.srv_audio_handler)
-    i.srv_bat_charge_handler                 0x00003a84   Section        0  srv_battery.o(i.srv_bat_charge_handler)
-    i.srv_key_eq_indoor_switch_handler       0x00003b10   Section        0  srv_key.o(i.srv_key_eq_indoor_switch_handler)
-    i.srv_key_eq_outdoor_switch_handler      0x00003b20   Section        0  srv_key.o(i.srv_key_eq_outdoor_switch_handler)
-    i.srv_key_handler                        0x00003b30   Section        0  srv_key.o(i.srv_key_handler)
-    i.srv_key_mode_handler                   0x00003bdc   Section        0  srv_key.o(i.srv_key_mode_handler)
-    i.srv_key_net_config_handler             0x00003c54   Section        0  srv_key.o(i.srv_key_net_config_handler)
-    i.srv_key_next_song_handler              0x00003c64   Section        0  srv_key.o(i.srv_key_next_song_handler)
-    i.srv_key_next_station_handler           0x00003c74   Section        0  srv_key.o(i.srv_key_next_station_handler)
-    i.srv_key_play_pause_handler             0x00003c84   Section        0  srv_key.o(i.srv_key_play_pause_handler)
-    i.srv_key_prev_song_handler              0x00003c94   Section        0  srv_key.o(i.srv_key_prev_song_handler)
-    i.srv_key_prev_station_handler           0x00003ca4   Section        0  srv_key.o(i.srv_key_prev_station_handler)
-    i.srv_key_volume_down_handler            0x00003cb4   Section        0  srv_key.o(i.srv_key_volume_down_handler)
-    i.srv_key_volume_up_handler              0x00003cc4   Section        0  srv_key.o(i.srv_key_volume_up_handler)
-    i.srv_led_change_handler                 0x00003cd4   Section        0  srv_led.o(i.srv_led_change_handler)
-    i.srv_led_status_show                    0x00003ce8   Section        0  srv_led.o(i.srv_led_status_show)
-    i.srv_led_sys_initing                    0x00003d80   Section        0  srv_led.o(i.srv_led_sys_initing)
-    i.srv_rtc_alarm_get                      0x00003dd0   Section        0  srv_rtc.o(i.srv_rtc_alarm_get)
-    i.srv_rtc_alarm_set_dw                   0x00003e1c   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_dw)
-    i.srv_rtc_alarm_set_hm                   0x00003e6c   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_hm)
-    i.srv_rtc_alarm_set_st                   0x00003ec4   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_st)
-    i.srv_rtc_alarm_set_ym                   0x00003f20   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_ym)
-    i.srv_rtc_get                            0x00003f78   Section        0  srv_rtc.o(i.srv_rtc_get)
-    i.srv_rtc_set_dw                         0x00003fc4   Section        0  srv_rtc.o(i.srv_rtc_set_dw)
-    i.srv_rtc_set_hm                         0x00004018   Section        0  srv_rtc.o(i.srv_rtc_set_hm)
-    i.srv_rtc_set_st                         0x00004070   Section        0  srv_rtc.o(i.srv_rtc_set_st)
-    i.srv_rtc_set_ym                         0x000040cc   Section        0  srv_rtc.o(i.srv_rtc_set_ym)
-    i.stackDump                              0x00004128   Section        0  retarget.o(i.stackDump)
-    stackDump                                0x00004129   Thumb Code    70  retarget.o(i.stackDump)
-    .constdata                               0x000041d0   Section       32  system_nuc029xge.o(.constdata)
-    .constdata                               0x000041f0   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x000041f2   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x000041f4   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x000041f6   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x000041f8   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x000041fa   Section        2  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x000041fc   Section       48  drv_adc_pcm1862.o(.constdata)
-    pcm1862_mt                               0x000041fc   Data          48  drv_adc_pcm1862.o(.constdata)
-    .constdata                               0x0000422c   Section     4752  drv_dap_tas3251.o(.constdata)
-    wf_registers_indoor                      0x00004232   Data        2470  drv_dap_tas3251.o(.constdata)
-    wf_registers_outdoor                     0x00004bd8   Data        2262  drv_dap_tas3251.o(.constdata)
-    .constdata                               0x000054bc   Section    31516  drv_dap_tas5825.o(.constdata)
-    .constdata                               0x0000cfd8   Section       12  drv_gpio_key.o(.constdata)
-    SoftwareKeyEvent                         0x0000cfd8   Data          12  drv_gpio_key.o(.constdata)
-    .constdata                               0x0000cfe4   Section       48  clk.o(.constdata)
-    .constdata                               0x0000d014   Section       32  timer.o(.constdata)
-    .constdata                               0x0000d034   Section       40  _printf_hex_int.o(.constdata)
-    uc_hextab                                0x0000d034   Data          20  _printf_hex_int.o(.constdata)
-    lc_hextab                                0x0000d048   Data          20  _printf_hex_int.o(.constdata)
-    .constdata                               0x0000d05c   Section       17  __printf_flags_wp.o(.constdata)
-    maptable                                 0x0000d05c   Data          17  __printf_flags_wp.o(.constdata)
+    i.GetKeyEvent                            0x00001048   Section        0  drv_gpio_key.o(i.GetKeyEvent)
+    i.Hal_I2c0_Stop                          0x00001164   Section        0  io_i2c.o(i.Hal_I2c0_Stop)
+    Hal_I2c0_Stop                            0x00001165   Thumb Code    40  io_i2c.o(i.Hal_I2c0_Stop)
+    i.Hal_I2c1_Stop                          0x00001194   Section        0  io_i2c.o(i.Hal_I2c1_Stop)
+    Hal_I2c1_Stop                            0x00001195   Thumb Code    40  io_i2c.o(i.Hal_I2c1_Stop)
+    i.Hal_I2c1_Transfer                      0x000011c4   Section        0  io_i2c.o(i.Hal_I2c1_Transfer)
+    i.Hal_I2c_Init                           0x00001244   Section        0  io_i2c.o(i.Hal_I2c_Init)
+    i.Hal_I2c_Transfer                       0x000012c4   Section        0  io_i2c.o(i.Hal_I2c_Transfer)
+    i.Hal_Timer1_Init                        0x00001344   Section        0  hal_timer0.o(i.Hal_Timer1_Init)
+    i.Hard_Fault_Handler                     0x000013cc   Section        0  retarget.o(i.Hard_Fault_Handler)
+    __tagsym$$used                           0x000013cd   Number         0  retarget.o(i.Hard_Fault_Handler)
+    i.HwKeyScanInit                          0x000013f4   Section        0  drv_gpio_key.o(i.HwKeyScanInit)
+    i.I2C0_IRQHandler                        0x0000140c   Section        0  io_i2c.o(i.I2C0_IRQHandler)
+    i.I2C1_IRQHandler                        0x00001588   Section        0  io_i2c.o(i.I2C1_IRQHandler)
+    i.I2C_ClearTimeoutFlag                   0x00001704   Section        0  i2c.o(i.I2C_ClearTimeoutFlag)
+    i.I2C_DisableInt                         0x0000170e   Section        0  i2c.o(i.I2C_DisableInt)
+    i.I2C_EnableInt                          0x00001718   Section        0  i2c.o(i.I2C_EnableInt)
+    i.I2C_EnableTimeout                      0x00001722   Section        0  i2c.o(i.I2C_EnableTimeout)
+    i.I2C_GetData                            0x0000173c   Section        0  i2c.o(i.I2C_GetData)
+    i.I2C_GetStatus                          0x00001742   Section        0  i2c.o(i.I2C_GetStatus)
+    i.I2C_Open                               0x00001748   Section        0  i2c.o(i.I2C_Open)
+    i.I2C_SetData                            0x00001780   Section        0  i2c.o(i.I2C_SetData)
+    i.I2C_Trigger                            0x00001784   Section        0  i2c.o(i.I2C_Trigger)
+    i.IoKeyProcess                           0x000017b4   Section        0  main.o(i.IoKeyProcess)
+    i.Ircordpro                              0x00001874   Section        0  drv_ irkey.o(i.Ircordpro)
+    i.IsTimeOut                              0x0000192c   Section        0  hal_timer0.o(i.IsTimeOut)
+    i.NVIC_SetPriority                       0x00001944   Section        0  hal_timer0.o(i.NVIC_SetPriority)
+    NVIC_SetPriority                         0x00001945   Thumb Code    60  hal_timer0.o(i.NVIC_SetPriority)
+    i.NVIC_SetPriority                       0x00001988   Section        0  io_i2c.o(i.NVIC_SetPriority)
+    NVIC_SetPriority                         0x00001989   Thumb Code    60  io_i2c.o(i.NVIC_SetPriority)
+    i.PowerOff                               0x000019cc   Section        0  main.o(i.PowerOff)
+    i.RTC_GetAlarmDateAndTime                0x00001a08   Section        0  rtc.o(i.RTC_GetAlarmDateAndTime)
+    i.RTC_GetDateAndTime                     0x00001b04   Section        0  rtc.o(i.RTC_GetDateAndTime)
+    i.RTC_IRQHandler                         0x00001bf4   Section        0  srv_rtc.o(i.RTC_IRQHandler)
+    i.RTC_SetAlarmDate                       0x00001c08   Section        0  rtc.o(i.RTC_SetAlarmDate)
+    i.RTC_SetAlarmTime                       0x00001c50   Section        0  rtc.o(i.RTC_SetAlarmTime)
+    i.RTC_SetDate                            0x00001cb0   Section        0  rtc.o(i.RTC_SetDate)
+    i.RTC_SetTime                            0x00001d00   Section        0  rtc.o(i.RTC_SetTime)
+    i.RTC_WaitAccessEnable                   0x00001d60   Section        0  rtc.o(i.RTC_WaitAccessEnable)
+    RTC_WaitAccessEnable                     0x00001d61   Thumb Code    24  rtc.o(i.RTC_WaitAccessEnable)
+    i.SYS_BusInit                            0x00001d80   Section        0  main.o(i.SYS_BusInit)
+    i.SYS_Clock_init                         0x00001d94   Section        0  main.o(i.SYS_Clock_init)
+    i.SYS_Init                               0x00001e60   Section        0  main.o(i.SYS_Init)
+    i.SYS_ResetModule                        0x00001ea4   Section        0  sys.o(i.SYS_ResetModule)
+    i.SYS_Status                             0x00001ec0   Section        0  main.o(i.SYS_Status)
+    i.SendChar_ToUART                        0x00001f14   Section        0  retarget.o(i.SendChar_ToUART)
+    i.SysIdle                                0x00001f34   Section        0  main.o(i.SysIdle)
+    i.SystemCoreClockUpdate                  0x00001f5c   Section        0  system_nuc029xge.o(i.SystemCoreClockUpdate)
+    i.SystemInit                             0x00001fec   Section        0  system_nuc029xge.o(i.SystemInit)
+    i.TIMER_Delay                            0x00001ff0   Section        0  timer.o(i.TIMER_Delay)
+    i.TIMER_GetModuleClock                   0x000020b4   Section        0  timer.o(i.TIMER_GetModuleClock)
+    i.TIMER_Open                             0x0000211c   Section        0  timer.o(i.TIMER_Open)
+    i.TMR1_IRQHandler                        0x00002180   Section        0  hal_timer0.o(i.TMR1_IRQHandler)
+    i.TYM_DriverInit                         0x000021bc   Section        0  main.o(i.TYM_DriverInit)
+    i.TYM_drv_BQ24610_charge_current_Set     0x000021c8   Section        0  drv_power.o(i.TYM_drv_BQ24610_charge_current_Set)
+    i.TYM_drv_In_bat_status_updata           0x000021e4   Section        0  drv_power.o(i.TYM_drv_In_bat_status_updata)
+    i.TYM_drv_SysPower_init                  0x00002248   Section        0  drv_power.o(i.TYM_drv_SysPower_init)
+    i.TYM_drv_ac_status_updata               0x00002278   Section        0  drv_power.o(i.TYM_drv_ac_status_updata)
+    i.TYM_drv_ex_bat_status_updata           0x000022a8   Section        0  drv_power.o(i.TYM_drv_ex_bat_status_updata)
+    i.TYM_drv_powerkeepon                    0x00002300   Section        0  drv_power.o(i.TYM_drv_powerkeepon)
+    i.TYM_gpio_adc_get                       0x00002310   Section        0  io_gpio.o(i.TYM_gpio_adc_get)
+    i.TYM_gpio_init                          0x000023a8   Section        0  io_gpio.o(i.TYM_gpio_init)
+    i.TYM_power_gpio_init                    0x000023f0   Section        0  drv_power.o(i.TYM_power_gpio_init)
+    i.TYM_sys_PowerManger_init               0x00002470   Section        0  drv_power.o(i.TYM_sys_PowerManger_init)
+    i.TimeOutSet                             0x0000248c   Section        0  hal_timer0.o(i.TimeOutSet)
+    i.Transfer_Uart_Init                     0x000024a0   Section        0  io_uart.o(i.Transfer_Uart_Init)
+    i.UART02_IRQHandler                      0x00002520   Section        0  io_uart.o(i.UART02_IRQHandler)
+    i.UART0_Init                             0x00002528   Section        0  io_uart.o(i.UART0_Init)
+    i.UART1_IRQHandler                       0x00002550   Section        0  io_uart.o(i.UART1_IRQHandler)
+    i.UART1_Init                             0x00002558   Section        0  io_uart.o(i.UART1_Init)
+    i.UART2_Init                             0x00002580   Section        0  io_uart.o(i.UART2_Init)
+    i.UART_4G_HANDLE                         0x000025c0   Section        0  io_uart.o(i.UART_4G_HANDLE)
+    i.UART_ClearIntFlag                      0x00002658   Section        0  uart_1.o(i.UART_ClearIntFlag)
+    i.UART_EnableInt                         0x00002690   Section        0  uart_1.o(i.UART_EnableInt)
+    i.UART_TEST_HANDLE                       0x000026c0   Section        0  io_uart.o(i.UART_TEST_HANDLE)
+    i.USCI0_Init                             0x00002750   Section        0  io_usci_uart.o(i.USCI0_Init)
+    i.USCI_IRQHandler                        0x000027a0   Section        0  io_usci_uart.o(i.USCI_IRQHandler)
+    i.USCI_UART_FunctionTest                 0x000027a8   Section        0  io_usci_uart.o(i.USCI_UART_FunctionTest)
+    i.USCI_UART_TEST_HANDLE                  0x00002930   Section        0  io_usci_uart.o(i.USCI_UART_TEST_HANDLE)
+    i.USCI_Uart_Init                         0x000029c0   Section        0  io_usci_uart.o(i.USCI_Uart_Init)
+    i.UUART_Open                             0x00002a10   Section        0  usci_uart_1.o(i.UUART_Open)
+    i.__ARM_common_switch8                   0x00002b40   Section        0  io_i2c.o(i.__ARM_common_switch8)
+    i._is_digit                              0x00002b5a   Section        0  __printf_wp.o(i._is_digit)
+    i.drv_4G_led_on                          0x00002b68   Section        0  drv_led.o(i.drv_4G_led_on)
+    i.drv_5825_00_i2c_write                  0x00002b90   Section        0  drv_dap_tas5825.o(i.drv_5825_00_i2c_write)
+    drv_5825_00_i2c_write                    0x00002b91   Thumb Code    88  drv_dap_tas5825.o(i.drv_5825_00_i2c_write)
+    i.drv_5825_01_i2c_write                  0x00002bf0   Section        0  drv_dap_tas5825.o(i.drv_5825_01_i2c_write)
+    drv_5825_01_i2c_write                    0x00002bf1   Thumb Code    88  drv_dap_tas5825.o(i.drv_5825_01_i2c_write)
+    i.drv_5825_Init                          0x00002c50   Section        0  drv_dap_tas5825.o(i.drv_5825_Init)
+    i.drv_5825_Load_in_Param                 0x00002c94   Section        0  drv_dap_tas5825.o(i.drv_5825_Load_in_Param)
+    drv_5825_Load_in_Param                   0x00002c95   Thumb Code    60  drv_dap_tas5825.o(i.drv_5825_Load_in_Param)
+    i.drv_5825_amp_fault_det_init            0x00002ce8   Section        0  drv_dap_tas5825.o(i.drv_5825_amp_fault_det_init)
+    i.drv_5825_amp_warn_det_init             0x00002cfc   Section        0  drv_dap_tas5825.o(i.drv_5825_amp_warn_det_init)
+    i.drv_5825_gpio012_config                0x00002d10   Section        0  drv_dap_tas5825.o(i.drv_5825_gpio012_config)
+    i.drv_5825_mute_pin_init                 0x00002dac   Section        0  drv_dap_tas5825.o(i.drv_5825_mute_pin_init)
+    i.drv_5825_mute_pin_set                  0x00002dc4   Section        0  drv_dap_tas5825.o(i.drv_5825_mute_pin_set)
+    i.drv_5825_powerdown_pin_init            0x00002dd4   Section        0  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_init)
+    i.drv_5825_powerdown_pin_set             0x00002de0   Section        0  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_set)
+    i.drv_5825_vol_set                       0x00002e08   Section        0  drv_dap_tas5825.o(i.drv_5825_vol_set)
+    i.drv_Adc_pcm1862_Init                   0x00002e74   Section        0  drv_adc_pcm1862.o(i.drv_Adc_pcm1862_Init)
+    i.drv_Cmd_Send2NCU031                    0x00002ebc   Section        0  drv_nuc031.o(i.drv_Cmd_Send2NCU031)
+    i.drv_FM_on_NCU031_reset                 0x00002f38   Section        0  drv_nuc031.o(i.drv_FM_on_NCU031_reset)
+    i.drv_FourGmodel_power_key_SetHi         0x00002f74   Section        0  drv_4g_model.o(i.drv_FourGmodel_power_key_SetHi)
+    i.drv_FourGmodel_power_key_SetLow        0x00002f80   Section        0  drv_4g_model.o(i.drv_FourGmodel_power_key_SetLow)
+    i.drv_all_led_on                         0x00002f8c   Section        0  drv_led.o(i.drv_all_led_on)
+    i.drv_audio_4G_Channel                   0x00002fb8   Section        0  drv_audio.o(i.drv_audio_4G_Channel)
+    i.drv_audio_AuxIn_Channel                0x00002fc8   Section        0  drv_audio.o(i.drv_audio_AuxIn_Channel)
+    i.drv_audio_FM_Channel                   0x00002fd8   Section        0  drv_audio.o(i.drv_audio_FM_Channel)
+    i.drv_audio_Null_Channel                 0x00002fe8   Section        0  drv_audio.o(i.drv_audio_Null_Channel)
+    i.drv_aux_led_on                         0x00002ff8   Section        0  drv_led.o(i.drv_aux_led_on)
+    i.drv_bt_led_on                          0x00003018   Section        0  drv_led.o(i.drv_bt_led_on)
+    i.drv_dap_3251_Init                      0x00003040   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_Init)
+    i.drv_dap_3251_i2c_write                 0x000030c4   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_i2c_write)
+    drv_dap_3251_i2c_write                   0x000030c5   Thumb Code    90  drv_dap_tas3251.o(i.drv_dap_3251_i2c_write)
+    i.drv_dap_3251_rest                      0x00003124   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_rest)
+    i.drv_dap_3251_vol_set                   0x0000317c   Section        0  drv_dap_tas3251.o(i.drv_dap_3251_vol_set)
+    i.drv_err_led_on                         0x000031d0   Section        0  drv_led.o(i.drv_err_led_on)
+    i.drv_fm_led_on                          0x000031e4   Section        0  drv_led.o(i.drv_fm_led_on)
+    i.drv_gipo_key_init                      0x00003204   Section        0  drv_gpio_key.o(i.drv_gipo_key_init)
+    i.drv_led_init                           0x00003228   Section        0  drv_led.o(i.drv_led_init)
+    i.drv_pairing_cmd_send                   0x000032b0   Section        0  drv_4g_model.o(i.drv_pairing_cmd_send)
+    i.drv_pcm1862_PGA_VAL_SET                0x000032c0   Section        0  drv_adc_pcm1862.o(i.drv_pcm1862_PGA_VAL_SET)
+    i.drv_pcm1862_input_channel              0x0000333c   Section        0  drv_adc_pcm1862.o(i.drv_pcm1862_input_channel)
+    i.drv_power_status_updata                0x000033d4   Section        0  drv_power.o(i.drv_power_status_updata)
+    i.drv_wifi_4g_switch_cmd_send            0x000033ec   Section        0  drv_4g_model.o(i.drv_wifi_4g_switch_cmd_send)
+    i.drv_wifi_led_on                        0x000033fc   Section        0  drv_led.o(i.drv_wifi_led_on)
+    i.ferror                                 0x00003424   Section        0  retarget.o(i.ferror)
+    i.fputc                                  0x0000342a   Section        0  retarget.o(i.fputc)
+    i.main                                   0x00003438   Section        0  main.o(i.main)
+    i.srv_audio_channel_check                0x00003a94   Section        0  srv_audio.o(i.srv_audio_channel_check)
+    i.srv_audio_channel_switch               0x00003ac8   Section        0  srv_audio.o(i.srv_audio_channel_switch)
+    i.srv_audio_handler                      0x00003b00   Section        0  srv_audio.o(i.srv_audio_handler)
+    i.srv_bat_charge_handler                 0x00003b08   Section        0  srv_battery.o(i.srv_bat_charge_handler)
+    i.srv_key_eq_indoor_switch_handler       0x00003b94   Section        0  srv_key.o(i.srv_key_eq_indoor_switch_handler)
+    i.srv_key_eq_outdoor_switch_handler      0x00003ba4   Section        0  srv_key.o(i.srv_key_eq_outdoor_switch_handler)
+    i.srv_key_handler                        0x00003bb4   Section        0  srv_key.o(i.srv_key_handler)
+    i.srv_key_mode_handler                   0x00003c7c   Section        0  srv_key.o(i.srv_key_mode_handler)
+    i.srv_key_net_config_handler             0x00003d0c   Section        0  srv_key.o(i.srv_key_net_config_handler)
+    i.srv_key_next_song_handler              0x00003d1c   Section        0  srv_key.o(i.srv_key_next_song_handler)
+    i.srv_key_next_station_handler           0x00003d2c   Section        0  srv_key.o(i.srv_key_next_station_handler)
+    i.srv_key_play_pause_handler             0x00003d3c   Section        0  srv_key.o(i.srv_key_play_pause_handler)
+    i.srv_key_prev_song_handler              0x00003d4c   Section        0  srv_key.o(i.srv_key_prev_song_handler)
+    i.srv_key_prev_station_handler           0x00003d5c   Section        0  srv_key.o(i.srv_key_prev_station_handler)
+    i.srv_key_volume_down_handler            0x00003d6c   Section        0  srv_key.o(i.srv_key_volume_down_handler)
+    i.srv_key_volume_up_handler              0x00003d7c   Section        0  srv_key.o(i.srv_key_volume_up_handler)
+    i.srv_led_change_handler                 0x00003d8c   Section        0  srv_led.o(i.srv_led_change_handler)
+    i.srv_led_status_show                    0x00003da0   Section        0  srv_led.o(i.srv_led_status_show)
+    i.srv_led_sys_initing                    0x00003e38   Section        0  srv_led.o(i.srv_led_sys_initing)
+    i.srv_rtc_alarm_get                      0x00003e88   Section        0  srv_rtc.o(i.srv_rtc_alarm_get)
+    i.srv_rtc_alarm_set_dw                   0x00003ed4   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_dw)
+    i.srv_rtc_alarm_set_hm                   0x00003f24   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_hm)
+    i.srv_rtc_alarm_set_st                   0x00003f7c   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_st)
+    i.srv_rtc_alarm_set_ym                   0x00003fd8   Section        0  srv_rtc.o(i.srv_rtc_alarm_set_ym)
+    i.srv_rtc_get                            0x00004030   Section        0  srv_rtc.o(i.srv_rtc_get)
+    i.srv_rtc_set_dw                         0x0000407c   Section        0  srv_rtc.o(i.srv_rtc_set_dw)
+    i.srv_rtc_set_hm                         0x000040d0   Section        0  srv_rtc.o(i.srv_rtc_set_hm)
+    i.srv_rtc_set_st                         0x00004128   Section        0  srv_rtc.o(i.srv_rtc_set_st)
+    i.srv_rtc_set_ym                         0x00004184   Section        0  srv_rtc.o(i.srv_rtc_set_ym)
+    i.stackDump                              0x000041e0   Section        0  retarget.o(i.stackDump)
+    stackDump                                0x000041e1   Thumb Code    70  retarget.o(i.stackDump)
+    .constdata                               0x00004288   Section       32  system_nuc029xge.o(.constdata)
+    .constdata                               0x000042a8   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x000042aa   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x000042ac   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x000042ae   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x000042b0   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x000042b2   Section        2  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x000042b4   Section       48  drv_adc_pcm1862.o(.constdata)
+    pcm1862_mt                               0x000042b4   Data          48  drv_adc_pcm1862.o(.constdata)
+    .constdata                               0x000042e4   Section     4752  drv_dap_tas3251.o(.constdata)
+    wf_registers_indoor                      0x000042ea   Data        2470  drv_dap_tas3251.o(.constdata)
+    wf_registers_outdoor                     0x00004c90   Data        2262  drv_dap_tas3251.o(.constdata)
+    .constdata                               0x00005574   Section    31522  drv_dap_tas5825.o(.constdata)
+    .constdata                               0x0000d096   Section       12  drv_gpio_key.o(.constdata)
+    SoftwareKeyEvent                         0x0000d096   Data          12  drv_gpio_key.o(.constdata)
+    .constdata                               0x0000d0a4   Section       48  clk.o(.constdata)
+    .constdata                               0x0000d0d4   Section       32  timer.o(.constdata)
+    .constdata                               0x0000d0f4   Section       40  _printf_hex_int.o(.constdata)
+    uc_hextab                                0x0000d0f4   Data          20  _printf_hex_int.o(.constdata)
+    lc_hextab                                0x0000d108   Data          20  _printf_hex_int.o(.constdata)
+    .constdata                               0x0000d11c   Section       17  __printf_flags_wp.o(.constdata)
+    maptable                                 0x0000d11c   Data          17  __printf_flags_wp.o(.constdata)
     .data                                    0x20000000   Section       12  system_nuc029xge.o(.data)
     .data                                    0x2000000c   Section        4  core.o(.data)
     .data                                    0x20000010   Section        1  core_msg.o(.data)
     curr_pos                                 0x20000010   Data           1  core_msg.o(.data)
-    .data                                    0x20000014   Section       36  hal_timer0.o(.data)
+    .data                                    0x20000014   Section       44  hal_timer0.o(.data)
     temp_count                               0x20000014   Data           1  hal_timer0.o(.data)
-    .data                                    0x20000038   Section        8  hal_timer0.o(.data)
-    .data                                    0x20000040   Section        1  main.o(.data)
-    .data                                    0x20000044   Section       16  io_uart.o(.data)
-    nRxIndex                                 0x20000047   Data           1  io_uart.o(.data)
-    .data                                    0x20000054   Section        4  io_usci_uart.o(.data)
-    nRxIndex                                 0x20000057   Data           1  io_usci_uart.o(.data)
-    .data                                    0x20000058   Section       12  drv_adc_pcm1862.o(.data)
-    .data                                    0x20000064   Section      170  drv_dap_tas3251.o(.data)
-    .data                                    0x2000010e   Section      170  drv_dap_tas5825.o(.data)
-    .data                                    0x200001b8   Section       68  drv_ irkey.o(.data)
-    i                                        0x200001bc   Data           1  drv_ irkey.o(.data)
-    repeat_time                              0x200001c8   Data           4  drv_ irkey.o(.data)
-    IrKeyMap                                 0x200001cc   Data          24  drv_ irkey.o(.data)
-    IrKeyMap_B                               0x200001e4   Data          24  drv_ irkey.o(.data)
-    .data                                    0x200001fc   Section       20  drv_gpio_key.o(.data)
-    PreKeyIndex                              0x200001fd   Data           1  drv_gpio_key.o(.data)
-    .data                                    0x20000210   Section        4  retarget.o(.data)
-    .data                                    0x20000214   Section       48  rtc.o(.data)
-    g_u32hiYear                              0x20000214   Data           4  rtc.o(.data)
-    g_u32loYear                              0x20000218   Data           4  rtc.o(.data)
-    g_u32hiMonth                             0x2000021c   Data           4  rtc.o(.data)
-    g_u32loMonth                             0x20000220   Data           4  rtc.o(.data)
-    g_u32hiDay                               0x20000224   Data           4  rtc.o(.data)
-    g_u32loDay                               0x20000228   Data           4  rtc.o(.data)
-    g_u32hiHour                              0x2000022c   Data           4  rtc.o(.data)
-    g_u32loHour                              0x20000230   Data           4  rtc.o(.data)
-    g_u32hiMin                               0x20000234   Data           4  rtc.o(.data)
-    g_u32loMin                               0x20000238   Data           4  rtc.o(.data)
-    g_u32hiSec                               0x2000023c   Data           4  rtc.o(.data)
-    g_u32loSec                               0x20000240   Data           4  rtc.o(.data)
-    .data                                    0x20000244   Section        2  srv_battery.o(.data)
-    .data                                    0x20000246   Section        3  srv_led.o(.data)
-    led_status                               0x20000246   Data           1  srv_led.o(.data)
-    led_on_off                               0x20000247   Data           1  srv_led.o(.data)
-    i                                        0x20000248   Data           1  srv_led.o(.data)
-    .data                                    0x2000024c   Section        8  srv_audio.o(.data)
-    .bss                                     0x20000254   Section      512  core_msg.o(.bss)
-    msg_arr                                  0x20000254   Data         512  core_msg.o(.bss)
-    .bss                                     0x20000454   Section       24  io_i2c.o(.bss)
-    i2c_trans_data                           0x20000454   Data          24  io_i2c.o(.bss)
-    .bss                                     0x2000046c   Section     1394  io_uart.o(.bss)
-    uart2_data                               0x20000902   Data         220  io_uart.o(.bss)
-    .bss                                     0x200009de   Section       33  drv_ irkey.o(.bss)
-    .bss                                     0x20000a00   Section       48  tym_global.o(.bss)
-    .bss                                     0x20000a30   Section       96  libspace.o(.bss)
-    HEAP                                     0x20000a90   Section        0  startup_nuc029xge.o(HEAP)
-    STACK                                    0x20000a90   Section     1024  startup_nuc029xge.o(STACK)
-    Heap_Mem                                 0x20000a90   Data           0  startup_nuc029xge.o(HEAP)
-    Stack_Mem                                0x20000a90   Data        1024  startup_nuc029xge.o(STACK)
-    __initial_sp                             0x20000e90   Data           0  startup_nuc029xge.o(STACK)
+    .data                                    0x20000040   Section        8  hal_timer0.o(.data)
+    .data                                    0x20000048   Section        1  main.o(.data)
+    .data                                    0x2000004c   Section       16  io_uart.o(.data)
+    nRxIndex                                 0x2000004f   Data           1  io_uart.o(.data)
+    .data                                    0x2000005c   Section        4  io_usci_uart.o(.data)
+    nRxIndex                                 0x2000005f   Data           1  io_usci_uart.o(.data)
+    .data                                    0x20000060   Section       12  drv_adc_pcm1862.o(.data)
+    .data                                    0x2000006c   Section      170  drv_dap_tas3251.o(.data)
+    .data                                    0x20000116   Section      170  drv_dap_tas5825.o(.data)
+    .data                                    0x200001c0   Section       68  drv_ irkey.o(.data)
+    i                                        0x200001c4   Data           1  drv_ irkey.o(.data)
+    repeat_time                              0x200001d0   Data           4  drv_ irkey.o(.data)
+    IrKeyMap                                 0x200001d4   Data          24  drv_ irkey.o(.data)
+    IrKeyMap_B                               0x200001ec   Data          24  drv_ irkey.o(.data)
+    .data                                    0x20000204   Section       20  drv_gpio_key.o(.data)
+    PreKeyIndex                              0x20000205   Data           1  drv_gpio_key.o(.data)
+    .data                                    0x20000218   Section        4  retarget.o(.data)
+    .data                                    0x2000021c   Section       48  rtc.o(.data)
+    g_u32hiYear                              0x2000021c   Data           4  rtc.o(.data)
+    g_u32loYear                              0x20000220   Data           4  rtc.o(.data)
+    g_u32hiMonth                             0x20000224   Data           4  rtc.o(.data)
+    g_u32loMonth                             0x20000228   Data           4  rtc.o(.data)
+    g_u32hiDay                               0x2000022c   Data           4  rtc.o(.data)
+    g_u32loDay                               0x20000230   Data           4  rtc.o(.data)
+    g_u32hiHour                              0x20000234   Data           4  rtc.o(.data)
+    g_u32loHour                              0x20000238   Data           4  rtc.o(.data)
+    g_u32hiMin                               0x2000023c   Data           4  rtc.o(.data)
+    g_u32loMin                               0x20000240   Data           4  rtc.o(.data)
+    g_u32hiSec                               0x20000244   Data           4  rtc.o(.data)
+    g_u32loSec                               0x20000248   Data           4  rtc.o(.data)
+    .data                                    0x2000024c   Section        2  srv_battery.o(.data)
+    .data                                    0x2000024e   Section        3  srv_led.o(.data)
+    led_status                               0x2000024e   Data           1  srv_led.o(.data)
+    led_on_off                               0x2000024f   Data           1  srv_led.o(.data)
+    i                                        0x20000250   Data           1  srv_led.o(.data)
+    .data                                    0x20000254   Section        8  srv_audio.o(.data)
+    .data                                    0x2000025c   Section        1  srv_key.o(.data)
+    i                                        0x2000025c   Data           1  srv_key.o(.data)
+    .bss                                     0x20000260   Section      512  core_msg.o(.bss)
+    msg_arr                                  0x20000260   Data         512  core_msg.o(.bss)
+    .bss                                     0x20000460   Section       24  io_i2c.o(.bss)
+    i2c_trans_data                           0x20000460   Data          24  io_i2c.o(.bss)
+    .bss                                     0x20000478   Section     1394  io_uart.o(.bss)
+    uart2_data                               0x2000090e   Data         220  io_uart.o(.bss)
+    .bss                                     0x200009ea   Section       33  drv_ irkey.o(.bss)
+    .bss                                     0x20000a0c   Section       52  tym_global.o(.bss)
+    .bss                                     0x20000a40   Section       96  libspace.o(.bss)
+    HEAP                                     0x20000aa0   Section        0  startup_nuc029xge.o(HEAP)
+    STACK                                    0x20000aa0   Section     1024  startup_nuc029xge.o(STACK)
+    Heap_Mem                                 0x20000aa0   Data           0  startup_nuc029xge.o(HEAP)
+    Stack_Mem                                0x20000aa0   Data        1024  startup_nuc029xge.o(STACK)
+    __initial_sp                             0x20000ea0   Data           0  startup_nuc029xge.o(STACK)
 
     Global Symbols
 
@@ -716,164 +718,168 @@ Image Symbol Table
     GPCDEF_IRQHandler                        0x00000f45   Thumb Code    98  drv_ irkey.o(i.GPCDEF_IRQHandler)
     GPIO_EnableInt                           0x00000fb5   Thumb Code    26  gpio.o(i.GPIO_EnableInt)
     GPIO_SetMode                             0x00000fcf   Thumb Code    40  gpio.o(i.GPIO_SetMode)
-    GetIrKey                                 0x00000ff9   Thumb Code    66  drv_ irkey.o(i.GetIrKey)
-    GetKeyEvent                              0x00001065   Thumb Code   264  drv_gpio_key.o(i.GetKeyEvent)
-    Hal_I2c1_Transfer                        0x000011e1   Thumb Code   114  io_i2c.o(i.Hal_I2c1_Transfer)
-    Hal_I2c_Init                             0x00001261   Thumb Code    98  io_i2c.o(i.Hal_I2c_Init)
-    Hal_I2c_Transfer                         0x000012e1   Thumb Code   114  io_i2c.o(i.Hal_I2c_Transfer)
-    Hal_Timer1_Init                          0x00001361   Thumb Code   106  hal_timer0.o(i.Hal_Timer1_Init)
-    Hard_Fault_Handler                       0x000013e1   Thumb Code    16  retarget.o(i.Hard_Fault_Handler)
-    HwKeyScanInit                            0x00001409   Thumb Code    20  drv_gpio_key.o(i.HwKeyScanInit)
-    I2C0_IRQHandler                          0x00001421   Thumb Code   354  io_i2c.o(i.I2C0_IRQHandler)
-    I2C1_IRQHandler                          0x0000159d   Thumb Code   358  io_i2c.o(i.I2C1_IRQHandler)
-    I2C_ClearTimeoutFlag                     0x00001719   Thumb Code    10  i2c.o(i.I2C_ClearTimeoutFlag)
-    I2C_DisableInt                           0x00001723   Thumb Code    10  i2c.o(i.I2C_DisableInt)
-    I2C_EnableInt                            0x0000172d   Thumb Code    10  i2c.o(i.I2C_EnableInt)
-    I2C_EnableTimeout                        0x00001737   Thumb Code    26  i2c.o(i.I2C_EnableTimeout)
-    I2C_GetData                              0x00001751   Thumb Code     6  i2c.o(i.I2C_GetData)
-    I2C_GetStatus                            0x00001757   Thumb Code     4  i2c.o(i.I2C_GetStatus)
-    I2C_Open                                 0x0000175d   Thumb Code    50  i2c.o(i.I2C_Open)
-    I2C_SetData                              0x00001795   Thumb Code     4  i2c.o(i.I2C_SetData)
-    I2C_Trigger                              0x00001799   Thumb Code    48  i2c.o(i.I2C_Trigger)
-    IoKeyProcess                             0x000017c9   Thumb Code   118  main.o(i.IoKeyProcess)
-    Ircordpro                                0x00001889   Thumb Code   158  drv_ irkey.o(i.Ircordpro)
-    IsTimeOut                                0x00001941   Thumb Code    18  hal_timer0.o(i.IsTimeOut)
-    PowerOff                                 0x000019e1   Thumb Code    46  main.o(i.PowerOff)
-    RTC_GetAlarmDateAndTime                  0x00001a1d   Thumb Code   242  rtc.o(i.RTC_GetAlarmDateAndTime)
-    RTC_GetDateAndTime                       0x00001b19   Thumb Code   230  rtc.o(i.RTC_GetDateAndTime)
-    RTC_IRQHandler                           0x00001c09   Thumb Code    14  srv_rtc.o(i.RTC_IRQHandler)
-    RTC_SetAlarmDate                         0x00001c1d   Thumb Code    66  rtc.o(i.RTC_SetAlarmDate)
-    RTC_SetAlarmTime                         0x00001c65   Thumb Code    90  rtc.o(i.RTC_SetAlarmTime)
-    RTC_SetDate                              0x00001cc5   Thumb Code    74  rtc.o(i.RTC_SetDate)
-    RTC_SetTime                              0x00001d15   Thumb Code    90  rtc.o(i.RTC_SetTime)
-    SYS_BusInit                              0x00001d95   Thumb Code    20  main.o(i.SYS_BusInit)
-    SYS_Clock_init                           0x00001da9   Thumb Code   170  main.o(i.SYS_Clock_init)
-    SYS_Init                                 0x00001e75   Thumb Code    64  main.o(i.SYS_Init)
-    SYS_ResetModule                          0x00001eb9   Thumb Code    26  sys.o(i.SYS_ResetModule)
-    SYS_Status                               0x00001ed5   Thumb Code    68  main.o(i.SYS_Status)
-    SendChar_ToUART                          0x00001f29   Thumb Code    26  retarget.o(i.SendChar_ToUART)
-    SysIdle                                  0x00001f49   Thumb Code    28  main.o(i.SysIdle)
-    SystemCoreClockUpdate                    0x00001f6d   Thumb Code   116  system_nuc029xge.o(i.SystemCoreClockUpdate)
-    SystemInit                               0x00001ffd   Thumb Code     2  system_nuc029xge.o(i.SystemInit)
-    TIMER_Delay                              0x00002001   Thumb Code   170  timer.o(i.TIMER_Delay)
-    TIMER_GetModuleClock                     0x000020c5   Thumb Code    80  timer.o(i.TIMER_GetModuleClock)
-    TIMER_Open                               0x0000212d   Thumb Code    88  timer.o(i.TIMER_Open)
-    TMR1_IRQHandler                          0x00002191   Thumb Code    42  hal_timer0.o(i.TMR1_IRQHandler)
-    TYM_DriverInit                           0x000021cd   Thumb Code    12  main.o(i.TYM_DriverInit)
-    TYM_drv_BQ24610_charge_current_Set       0x000021d9   Thumb Code    20  drv_power.o(i.TYM_drv_BQ24610_charge_current_Set)
-    TYM_drv_In_bat_status_updata             0x000021f5   Thumb Code    90  drv_power.o(i.TYM_drv_In_bat_status_updata)
-    TYM_drv_SysPower_init                    0x00002259   Thumb Code    42  drv_power.o(i.TYM_drv_SysPower_init)
-    TYM_drv_ac_status_updata                 0x00002289   Thumb Code    40  drv_power.o(i.TYM_drv_ac_status_updata)
-    TYM_drv_ex_bat_status_updata             0x000022b9   Thumb Code    82  drv_power.o(i.TYM_drv_ex_bat_status_updata)
-    TYM_drv_powerkeepon                      0x00002311   Thumb Code    12  drv_power.o(i.TYM_drv_powerkeepon)
-    TYM_gpio_adc_get                         0x00002321   Thumb Code   142  io_gpio.o(i.TYM_gpio_adc_get)
-    TYM_gpio_init                            0x000023b9   Thumb Code    54  io_gpio.o(i.TYM_gpio_init)
-    TYM_power_gpio_init                      0x00002401   Thumb Code   124  drv_power.o(i.TYM_power_gpio_init)
-    TYM_sys_PowerManger_init                 0x00002481   Thumb Code    24  drv_power.o(i.TYM_sys_PowerManger_init)
-    TimeOutSet                               0x0000249d   Thumb Code    14  hal_timer0.o(i.TimeOutSet)
-    Transfer_Uart_Init                       0x000024b1   Thumb Code    52  io_uart.o(i.Transfer_Uart_Init)
-    UART02_IRQHandler                        0x00002531   Thumb Code     8  io_uart.o(i.UART02_IRQHandler)
-    UART0_Init                               0x00002539   Thumb Code    32  io_uart.o(i.UART0_Init)
-    UART1_IRQHandler                         0x00002561   Thumb Code     8  io_uart.o(i.UART1_IRQHandler)
-    UART1_Init                               0x00002569   Thumb Code    32  io_uart.o(i.UART1_Init)
-    UART2_Init                               0x00002591   Thumb Code    50  io_uart.o(i.UART2_Init)
-    UART_4G_HANDLE                           0x000025d1   Thumb Code   142  io_uart.o(i.UART_4G_HANDLE)
-    UART_ClearIntFlag                        0x00002669   Thumb Code    50  uart_1.o(i.UART_ClearIntFlag)
-    UART_EnableInt                           0x000026a1   Thumb Code    36  uart_1.o(i.UART_EnableInt)
-    UART_TEST_HANDLE                         0x000026d1   Thumb Code   120  io_uart.o(i.UART_TEST_HANDLE)
-    USCI0_Init                               0x00002761   Thumb Code    66  io_usci_uart.o(i.USCI0_Init)
-    USCI_IRQHandler                          0x000027b1   Thumb Code     8  io_usci_uart.o(i.USCI_IRQHandler)
-    USCI_UART_FunctionTest                   0x000027b9   Thumb Code    62  io_usci_uart.o(i.USCI_UART_FunctionTest)
-    USCI_UART_TEST_HANDLE                    0x00002941   Thumb Code   136  io_usci_uart.o(i.USCI_UART_TEST_HANDLE)
-    USCI_Uart_Init                           0x000029d1   Thumb Code    30  io_usci_uart.o(i.USCI_Uart_Init)
-    UUART_Open                               0x00002a21   Thumb Code   290  usci_uart_1.o(i.UUART_Open)
-    __ARM_common_switch8                     0x00002b51   Thumb Code    26  io_i2c.o(i.__ARM_common_switch8)
-    _is_digit                                0x00002b6b   Thumb Code    14  __printf_wp.o(i._is_digit)
-    drv_4G_led_on                            0x00002b79   Thumb Code    32  drv_led.o(i.drv_4G_led_on)
-    drv_5825_Init                            0x00002c61   Thumb Code    34  drv_dap_tas5825.o(i.drv_5825_Init)
-    drv_5825_amp_fault_det_init              0x00002cf5   Thumb Code    14  drv_dap_tas5825.o(i.drv_5825_amp_fault_det_init)
-    drv_5825_amp_warn_det_init               0x00002d09   Thumb Code    16  drv_dap_tas5825.o(i.drv_5825_amp_warn_det_init)
-    drv_5825_gpio012_config                  0x00002d1d   Thumb Code    54  drv_dap_tas5825.o(i.drv_5825_gpio012_config)
-    drv_5825_mute_pin_init                   0x00002d59   Thumb Code    20  drv_dap_tas5825.o(i.drv_5825_mute_pin_init)
-    drv_5825_mute_pin_set                    0x00002d71   Thumb Code    12  drv_dap_tas5825.o(i.drv_5825_mute_pin_set)
-    drv_5825_powerdown_pin_init              0x00002d81   Thumb Code    10  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_init)
-    drv_5825_powerdown_pin_set               0x00002d8d   Thumb Code    30  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_set)
-    drv_5825_vol_set                         0x00002db5   Thumb Code    98  drv_dap_tas5825.o(i.drv_5825_vol_set)
-    drv_Adc_pcm1862_Init                     0x00002e21   Thumb Code    46  drv_adc_pcm1862.o(i.drv_Adc_pcm1862_Init)
-    drv_Cmd_Send2NCU031                      0x00002e69   Thumb Code   116  drv_nuc031.o(i.drv_Cmd_Send2NCU031)
-    drv_FM_on_NCU031_reset                   0x00002ee5   Thumb Code    46  drv_nuc031.o(i.drv_FM_on_NCU031_reset)
-    drv_FourGmodel_power_key_SetHi           0x00002f21   Thumb Code     8  drv_4g_model.o(i.drv_FourGmodel_power_key_SetHi)
-    drv_FourGmodel_power_key_SetLow          0x00002f2d   Thumb Code     8  drv_4g_model.o(i.drv_FourGmodel_power_key_SetLow)
-    drv_all_led_on                           0x00002f39   Thumb Code    34  drv_led.o(i.drv_all_led_on)
-    drv_audio_4G_Channel                     0x00002f65   Thumb Code    16  drv_audio.o(i.drv_audio_4G_Channel)
-    drv_audio_AuxIn_Channel                  0x00002f75   Thumb Code    16  drv_audio.o(i.drv_audio_AuxIn_Channel)
-    drv_audio_FM_Channel                     0x00002f85   Thumb Code    16  drv_audio.o(i.drv_audio_FM_Channel)
-    drv_audio_Null_Channel                   0x00002f95   Thumb Code    16  drv_audio.o(i.drv_audio_Null_Channel)
-    drv_aux_led_on                           0x00002fa5   Thumb Code    24  drv_led.o(i.drv_aux_led_on)
-    drv_bt_led_on                            0x00002fc5   Thumb Code    32  drv_led.o(i.drv_bt_led_on)
-    drv_dap_3251_Init                        0x00002fed   Thumb Code    70  drv_dap_tas3251.o(i.drv_dap_3251_Init)
-    drv_dap_3251_rest                        0x000030d1   Thumb Code    68  drv_dap_tas3251.o(i.drv_dap_3251_rest)
-    drv_dap_3251_vol_set                     0x00003129   Thumb Code    70  drv_dap_tas3251.o(i.drv_dap_3251_vol_set)
-    drv_err_led_on                           0x0000317d   Thumb Code    16  drv_led.o(i.drv_err_led_on)
-    drv_fm_led_on                            0x00003191   Thumb Code    24  drv_led.o(i.drv_fm_led_on)
-    drv_gipo_key_init                        0x000031b1   Thumb Code    30  drv_gpio_key.o(i.drv_gipo_key_init)
-    drv_led_init                             0x000031d5   Thumb Code   124  drv_led.o(i.drv_led_init)
-    drv_pairing_cmd_send                     0x0000325d   Thumb Code    14  drv_4g_model.o(i.drv_pairing_cmd_send)
-    drv_pcm1862_PGA_VAL_SET                  0x0000326d   Thumb Code    92  drv_adc_pcm1862.o(i.drv_pcm1862_PGA_VAL_SET)
-    drv_pcm1862_input_channel                0x000032e9   Thumb Code    72  drv_adc_pcm1862.o(i.drv_pcm1862_input_channel)
-    drv_power_status_updata                  0x00003381   Thumb Code    24  drv_power.o(i.drv_power_status_updata)
-    drv_wifi_4g_switch_cmd_send              0x00003399   Thumb Code    14  drv_4g_model.o(i.drv_wifi_4g_switch_cmd_send)
-    drv_wifi_led_on                          0x000033a9   Thumb Code    32  drv_led.o(i.drv_wifi_led_on)
-    ferror                                   0x000033d1   Thumb Code     6  retarget.o(i.ferror)
-    fputc                                    0x000033d7   Thumb Code    12  retarget.o(i.fputc)
-    main                                     0x000033e5   Thumb Code  1536  main.o(i.main)
-    srv_audio_channel_check                  0x00003a11   Thumb Code    42  srv_audio.o(i.srv_audio_channel_check)
-    srv_audio_channel_switch                 0x00003a45   Thumb Code    52  srv_audio.o(i.srv_audio_channel_switch)
-    srv_audio_handler                        0x00003a7d   Thumb Code     8  srv_audio.o(i.srv_audio_handler)
-    srv_bat_charge_handler                   0x00003a85   Thumb Code   126  srv_battery.o(i.srv_bat_charge_handler)
-    srv_key_eq_indoor_switch_handler         0x00003b11   Thumb Code    16  srv_key.o(i.srv_key_eq_indoor_switch_handler)
-    srv_key_eq_outdoor_switch_handler        0x00003b21   Thumb Code    16  srv_key.o(i.srv_key_eq_outdoor_switch_handler)
-    srv_key_handler                          0x00003b31   Thumb Code   166  srv_key.o(i.srv_key_handler)
-    srv_key_mode_handler                     0x00003bdd   Thumb Code   114  srv_key.o(i.srv_key_mode_handler)
-    srv_key_net_config_handler               0x00003c55   Thumb Code    16  srv_key.o(i.srv_key_net_config_handler)
-    srv_key_next_song_handler                0x00003c65   Thumb Code    16  srv_key.o(i.srv_key_next_song_handler)
-    srv_key_next_station_handler             0x00003c75   Thumb Code    16  srv_key.o(i.srv_key_next_station_handler)
-    srv_key_play_pause_handler               0x00003c85   Thumb Code    16  srv_key.o(i.srv_key_play_pause_handler)
-    srv_key_prev_song_handler                0x00003c95   Thumb Code    16  srv_key.o(i.srv_key_prev_song_handler)
-    srv_key_prev_station_handler             0x00003ca5   Thumb Code    16  srv_key.o(i.srv_key_prev_station_handler)
-    srv_key_volume_down_handler              0x00003cb5   Thumb Code    16  srv_key.o(i.srv_key_volume_down_handler)
-    srv_key_volume_up_handler                0x00003cc5   Thumb Code    16  srv_key.o(i.srv_key_volume_up_handler)
-    srv_led_change_handler                   0x00003cd5   Thumb Code    16  srv_led.o(i.srv_led_change_handler)
-    srv_led_status_show                      0x00003ce9   Thumb Code   144  srv_led.o(i.srv_led_status_show)
-    srv_led_sys_initing                      0x00003d81   Thumb Code    74  srv_led.o(i.srv_led_sys_initing)
-    srv_rtc_alarm_get                        0x00003dd1   Thumb Code    76  srv_rtc.o(i.srv_rtc_alarm_get)
-    srv_rtc_alarm_set_dw                     0x00003e1d   Thumb Code    48  srv_rtc.o(i.srv_rtc_alarm_set_dw)
-    srv_rtc_alarm_set_hm                     0x00003e6d   Thumb Code    56  srv_rtc.o(i.srv_rtc_alarm_set_hm)
-    srv_rtc_alarm_set_st                     0x00003ec5   Thumb Code    60  srv_rtc.o(i.srv_rtc_alarm_set_st)
-    srv_rtc_alarm_set_ym                     0x00003f21   Thumb Code    54  srv_rtc.o(i.srv_rtc_alarm_set_ym)
-    srv_rtc_get                              0x00003f79   Thumb Code    76  srv_rtc.o(i.srv_rtc_get)
-    srv_rtc_set_dw                           0x00003fc5   Thumb Code    50  srv_rtc.o(i.srv_rtc_set_dw)
-    srv_rtc_set_hm                           0x00004019   Thumb Code    56  srv_rtc.o(i.srv_rtc_set_hm)
-    srv_rtc_set_st                           0x00004071   Thumb Code    60  srv_rtc.o(i.srv_rtc_set_st)
-    srv_rtc_set_ym                           0x000040cd   Thumb Code    60  srv_rtc.o(i.srv_rtc_set_ym)
-    gau32ClkSrcTbl                           0x000041d0   Data          32  system_nuc029xge.o(.constdata)
-    init_pcm1862_0x01                        0x000041f0   Data           2  drv_adc_pcm1862.o(.constdata)
-    init_pcm1862_0x02                        0x000041f2   Data           2  drv_adc_pcm1862.o(.constdata)
-    init_pcm1862_0x03                        0x000041f4   Data           2  drv_adc_pcm1862.o(.constdata)
-    init_pcm1862_0x04                        0x000041f6   Data           2  drv_adc_pcm1862.o(.constdata)
-    init_pcm1862_0x20                        0x000041f8   Data           2  drv_adc_pcm1862.o(.constdata)
-    pcm1862_frequence                        0x000041fa   Data           2  drv_adc_pcm1862.o(.constdata)
-    tas3251_volume_page                      0x0000422c   Data           6  drv_dap_tas3251.o(.constdata)
-    tas3251_cmd_cfm                          0x000054ae   Data          14  drv_dap_tas3251.o(.constdata)
-    tas5852_volume_page                      0x000054bc   Data           6  drv_dap_tas5825.o(.constdata)
-    tas5825_book0_page0                      0x000054c2   Data           6  drv_dap_tas5825.o(.constdata)
-    tas5825_gpio_012_confgi                  0x000054c8   Data           8  drv_dap_tas5825.o(.constdata)
-    registers_mid_indoor                     0x000054d0   Data        7874  drv_dap_tas5825.o(.constdata)
-    registers_mid_outdoor                    0x00007392   Data        7874  drv_dap_tas5825.o(.constdata)
-    registers_tw_indoor                      0x00009254   Data        7874  drv_dap_tas5825.o(.constdata)
-    registers_tw_outdoor                     0x0000b116   Data        7874  drv_dap_tas5825.o(.constdata)
-    Region$$Table$$Base                      0x0000d070   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x0000d090   Number         0  anon$$obj.o(Region$$Table)
+    GetIrKey                                 0x00000ff9   Thumb Code    44  drv_ irkey.o(i.GetIrKey)
+    GetKeyEvent                              0x00001049   Thumb Code   264  drv_gpio_key.o(i.GetKeyEvent)
+    Hal_I2c1_Transfer                        0x000011c5   Thumb Code   114  io_i2c.o(i.Hal_I2c1_Transfer)
+    Hal_I2c_Init                             0x00001245   Thumb Code    98  io_i2c.o(i.Hal_I2c_Init)
+    Hal_I2c_Transfer                         0x000012c5   Thumb Code   114  io_i2c.o(i.Hal_I2c_Transfer)
+    Hal_Timer1_Init                          0x00001345   Thumb Code   116  hal_timer0.o(i.Hal_Timer1_Init)
+    Hard_Fault_Handler                       0x000013cd   Thumb Code    16  retarget.o(i.Hard_Fault_Handler)
+    HwKeyScanInit                            0x000013f5   Thumb Code    20  drv_gpio_key.o(i.HwKeyScanInit)
+    I2C0_IRQHandler                          0x0000140d   Thumb Code   354  io_i2c.o(i.I2C0_IRQHandler)
+    I2C1_IRQHandler                          0x00001589   Thumb Code   358  io_i2c.o(i.I2C1_IRQHandler)
+    I2C_ClearTimeoutFlag                     0x00001705   Thumb Code    10  i2c.o(i.I2C_ClearTimeoutFlag)
+    I2C_DisableInt                           0x0000170f   Thumb Code    10  i2c.o(i.I2C_DisableInt)
+    I2C_EnableInt                            0x00001719   Thumb Code    10  i2c.o(i.I2C_EnableInt)
+    I2C_EnableTimeout                        0x00001723   Thumb Code    26  i2c.o(i.I2C_EnableTimeout)
+    I2C_GetData                              0x0000173d   Thumb Code     6  i2c.o(i.I2C_GetData)
+    I2C_GetStatus                            0x00001743   Thumb Code     4  i2c.o(i.I2C_GetStatus)
+    I2C_Open                                 0x00001749   Thumb Code    50  i2c.o(i.I2C_Open)
+    I2C_SetData                              0x00001781   Thumb Code     4  i2c.o(i.I2C_SetData)
+    I2C_Trigger                              0x00001785   Thumb Code    48  i2c.o(i.I2C_Trigger)
+    IoKeyProcess                             0x000017b5   Thumb Code   118  main.o(i.IoKeyProcess)
+    Ircordpro                                0x00001875   Thumb Code   158  drv_ irkey.o(i.Ircordpro)
+    IsTimeOut                                0x0000192d   Thumb Code    18  hal_timer0.o(i.IsTimeOut)
+    PowerOff                                 0x000019cd   Thumb Code    46  main.o(i.PowerOff)
+    RTC_GetAlarmDateAndTime                  0x00001a09   Thumb Code   242  rtc.o(i.RTC_GetAlarmDateAndTime)
+    RTC_GetDateAndTime                       0x00001b05   Thumb Code   230  rtc.o(i.RTC_GetDateAndTime)
+    RTC_IRQHandler                           0x00001bf5   Thumb Code    14  srv_rtc.o(i.RTC_IRQHandler)
+    RTC_SetAlarmDate                         0x00001c09   Thumb Code    66  rtc.o(i.RTC_SetAlarmDate)
+    RTC_SetAlarmTime                         0x00001c51   Thumb Code    90  rtc.o(i.RTC_SetAlarmTime)
+    RTC_SetDate                              0x00001cb1   Thumb Code    74  rtc.o(i.RTC_SetDate)
+    RTC_SetTime                              0x00001d01   Thumb Code    90  rtc.o(i.RTC_SetTime)
+    SYS_BusInit                              0x00001d81   Thumb Code    20  main.o(i.SYS_BusInit)
+    SYS_Clock_init                           0x00001d95   Thumb Code   170  main.o(i.SYS_Clock_init)
+    SYS_Init                                 0x00001e61   Thumb Code    64  main.o(i.SYS_Init)
+    SYS_ResetModule                          0x00001ea5   Thumb Code    26  sys.o(i.SYS_ResetModule)
+    SYS_Status                               0x00001ec1   Thumb Code    68  main.o(i.SYS_Status)
+    SendChar_ToUART                          0x00001f15   Thumb Code    26  retarget.o(i.SendChar_ToUART)
+    SysIdle                                  0x00001f35   Thumb Code    30  main.o(i.SysIdle)
+    SystemCoreClockUpdate                    0x00001f5d   Thumb Code   116  system_nuc029xge.o(i.SystemCoreClockUpdate)
+    SystemInit                               0x00001fed   Thumb Code     2  system_nuc029xge.o(i.SystemInit)
+    TIMER_Delay                              0x00001ff1   Thumb Code   170  timer.o(i.TIMER_Delay)
+    TIMER_GetModuleClock                     0x000020b5   Thumb Code    80  timer.o(i.TIMER_GetModuleClock)
+    TIMER_Open                               0x0000211d   Thumb Code    88  timer.o(i.TIMER_Open)
+    TMR1_IRQHandler                          0x00002181   Thumb Code    42  hal_timer0.o(i.TMR1_IRQHandler)
+    TYM_DriverInit                           0x000021bd   Thumb Code    12  main.o(i.TYM_DriverInit)
+    TYM_drv_BQ24610_charge_current_Set       0x000021c9   Thumb Code    20  drv_power.o(i.TYM_drv_BQ24610_charge_current_Set)
+    TYM_drv_In_bat_status_updata             0x000021e5   Thumb Code    90  drv_power.o(i.TYM_drv_In_bat_status_updata)
+    TYM_drv_SysPower_init                    0x00002249   Thumb Code    42  drv_power.o(i.TYM_drv_SysPower_init)
+    TYM_drv_ac_status_updata                 0x00002279   Thumb Code    40  drv_power.o(i.TYM_drv_ac_status_updata)
+    TYM_drv_ex_bat_status_updata             0x000022a9   Thumb Code    82  drv_power.o(i.TYM_drv_ex_bat_status_updata)
+    TYM_drv_powerkeepon                      0x00002301   Thumb Code    12  drv_power.o(i.TYM_drv_powerkeepon)
+    TYM_gpio_adc_get                         0x00002311   Thumb Code   142  io_gpio.o(i.TYM_gpio_adc_get)
+    TYM_gpio_init                            0x000023a9   Thumb Code    54  io_gpio.o(i.TYM_gpio_init)
+    TYM_power_gpio_init                      0x000023f1   Thumb Code   124  drv_power.o(i.TYM_power_gpio_init)
+    TYM_sys_PowerManger_init                 0x00002471   Thumb Code    24  drv_power.o(i.TYM_sys_PowerManger_init)
+    TimeOutSet                               0x0000248d   Thumb Code    14  hal_timer0.o(i.TimeOutSet)
+    Transfer_Uart_Init                       0x000024a1   Thumb Code    52  io_uart.o(i.Transfer_Uart_Init)
+    UART02_IRQHandler                        0x00002521   Thumb Code     8  io_uart.o(i.UART02_IRQHandler)
+    UART0_Init                               0x00002529   Thumb Code    32  io_uart.o(i.UART0_Init)
+    UART1_IRQHandler                         0x00002551   Thumb Code     8  io_uart.o(i.UART1_IRQHandler)
+    UART1_Init                               0x00002559   Thumb Code    32  io_uart.o(i.UART1_Init)
+    UART2_Init                               0x00002581   Thumb Code    50  io_uart.o(i.UART2_Init)
+    UART_4G_HANDLE                           0x000025c1   Thumb Code   142  io_uart.o(i.UART_4G_HANDLE)
+    UART_ClearIntFlag                        0x00002659   Thumb Code    50  uart_1.o(i.UART_ClearIntFlag)
+    UART_EnableInt                           0x00002691   Thumb Code    36  uart_1.o(i.UART_EnableInt)
+    UART_TEST_HANDLE                         0x000026c1   Thumb Code   120  io_uart.o(i.UART_TEST_HANDLE)
+    USCI0_Init                               0x00002751   Thumb Code    66  io_usci_uart.o(i.USCI0_Init)
+    USCI_IRQHandler                          0x000027a1   Thumb Code     8  io_usci_uart.o(i.USCI_IRQHandler)
+    USCI_UART_FunctionTest                   0x000027a9   Thumb Code    62  io_usci_uart.o(i.USCI_UART_FunctionTest)
+    USCI_UART_TEST_HANDLE                    0x00002931   Thumb Code   136  io_usci_uart.o(i.USCI_UART_TEST_HANDLE)
+    USCI_Uart_Init                           0x000029c1   Thumb Code    30  io_usci_uart.o(i.USCI_Uart_Init)
+    UUART_Open                               0x00002a11   Thumb Code   290  usci_uart_1.o(i.UUART_Open)
+    __ARM_common_switch8                     0x00002b41   Thumb Code    26  io_i2c.o(i.__ARM_common_switch8)
+    _is_digit                                0x00002b5b   Thumb Code    14  __printf_wp.o(i._is_digit)
+    drv_4G_led_on                            0x00002b69   Thumb Code    32  drv_led.o(i.drv_4G_led_on)
+    drv_5825_Init                            0x00002c51   Thumb Code    34  drv_dap_tas5825.o(i.drv_5825_Init)
+    drv_5825_amp_fault_det_init              0x00002ce9   Thumb Code    14  drv_dap_tas5825.o(i.drv_5825_amp_fault_det_init)
+    drv_5825_amp_warn_det_init               0x00002cfd   Thumb Code    16  drv_dap_tas5825.o(i.drv_5825_amp_warn_det_init)
+    drv_5825_gpio012_config                  0x00002d11   Thumb Code   150  drv_dap_tas5825.o(i.drv_5825_gpio012_config)
+    drv_5825_mute_pin_init                   0x00002dad   Thumb Code    20  drv_dap_tas5825.o(i.drv_5825_mute_pin_init)
+    drv_5825_mute_pin_set                    0x00002dc5   Thumb Code    12  drv_dap_tas5825.o(i.drv_5825_mute_pin_set)
+    drv_5825_powerdown_pin_init              0x00002dd5   Thumb Code    10  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_init)
+    drv_5825_powerdown_pin_set               0x00002de1   Thumb Code    30  drv_dap_tas5825.o(i.drv_5825_powerdown_pin_set)
+    drv_5825_vol_set                         0x00002e09   Thumb Code    98  drv_dap_tas5825.o(i.drv_5825_vol_set)
+    drv_Adc_pcm1862_Init                     0x00002e75   Thumb Code    46  drv_adc_pcm1862.o(i.drv_Adc_pcm1862_Init)
+    drv_Cmd_Send2NCU031                      0x00002ebd   Thumb Code   116  drv_nuc031.o(i.drv_Cmd_Send2NCU031)
+    drv_FM_on_NCU031_reset                   0x00002f39   Thumb Code    46  drv_nuc031.o(i.drv_FM_on_NCU031_reset)
+    drv_FourGmodel_power_key_SetHi           0x00002f75   Thumb Code     8  drv_4g_model.o(i.drv_FourGmodel_power_key_SetHi)
+    drv_FourGmodel_power_key_SetLow          0x00002f81   Thumb Code     8  drv_4g_model.o(i.drv_FourGmodel_power_key_SetLow)
+    drv_all_led_on                           0x00002f8d   Thumb Code    34  drv_led.o(i.drv_all_led_on)
+    drv_audio_4G_Channel                     0x00002fb9   Thumb Code    16  drv_audio.o(i.drv_audio_4G_Channel)
+    drv_audio_AuxIn_Channel                  0x00002fc9   Thumb Code    16  drv_audio.o(i.drv_audio_AuxIn_Channel)
+    drv_audio_FM_Channel                     0x00002fd9   Thumb Code    16  drv_audio.o(i.drv_audio_FM_Channel)
+    drv_audio_Null_Channel                   0x00002fe9   Thumb Code    16  drv_audio.o(i.drv_audio_Null_Channel)
+    drv_aux_led_on                           0x00002ff9   Thumb Code    24  drv_led.o(i.drv_aux_led_on)
+    drv_bt_led_on                            0x00003019   Thumb Code    32  drv_led.o(i.drv_bt_led_on)
+    drv_dap_3251_Init                        0x00003041   Thumb Code    70  drv_dap_tas3251.o(i.drv_dap_3251_Init)
+    drv_dap_3251_rest                        0x00003125   Thumb Code    68  drv_dap_tas3251.o(i.drv_dap_3251_rest)
+    drv_dap_3251_vol_set                     0x0000317d   Thumb Code    70  drv_dap_tas3251.o(i.drv_dap_3251_vol_set)
+    drv_err_led_on                           0x000031d1   Thumb Code    16  drv_led.o(i.drv_err_led_on)
+    drv_fm_led_on                            0x000031e5   Thumb Code    24  drv_led.o(i.drv_fm_led_on)
+    drv_gipo_key_init                        0x00003205   Thumb Code    30  drv_gpio_key.o(i.drv_gipo_key_init)
+    drv_led_init                             0x00003229   Thumb Code   124  drv_led.o(i.drv_led_init)
+    drv_pairing_cmd_send                     0x000032b1   Thumb Code    14  drv_4g_model.o(i.drv_pairing_cmd_send)
+    drv_pcm1862_PGA_VAL_SET                  0x000032c1   Thumb Code    92  drv_adc_pcm1862.o(i.drv_pcm1862_PGA_VAL_SET)
+    drv_pcm1862_input_channel                0x0000333d   Thumb Code    72  drv_adc_pcm1862.o(i.drv_pcm1862_input_channel)
+    drv_power_status_updata                  0x000033d5   Thumb Code    24  drv_power.o(i.drv_power_status_updata)
+    drv_wifi_4g_switch_cmd_send              0x000033ed   Thumb Code    14  drv_4g_model.o(i.drv_wifi_4g_switch_cmd_send)
+    drv_wifi_led_on                          0x000033fd   Thumb Code    32  drv_led.o(i.drv_wifi_led_on)
+    ferror                                   0x00003425   Thumb Code     6  retarget.o(i.ferror)
+    fputc                                    0x0000342b   Thumb Code    12  retarget.o(i.fputc)
+    main                                     0x00003439   Thumb Code  1562  main.o(i.main)
+    srv_audio_channel_check                  0x00003a95   Thumb Code    42  srv_audio.o(i.srv_audio_channel_check)
+    srv_audio_channel_switch                 0x00003ac9   Thumb Code    52  srv_audio.o(i.srv_audio_channel_switch)
+    srv_audio_handler                        0x00003b01   Thumb Code     8  srv_audio.o(i.srv_audio_handler)
+    srv_bat_charge_handler                   0x00003b09   Thumb Code   126  srv_battery.o(i.srv_bat_charge_handler)
+    srv_key_eq_indoor_switch_handler         0x00003b95   Thumb Code    16  srv_key.o(i.srv_key_eq_indoor_switch_handler)
+    srv_key_eq_outdoor_switch_handler        0x00003ba5   Thumb Code    16  srv_key.o(i.srv_key_eq_outdoor_switch_handler)
+    srv_key_handler                          0x00003bb5   Thumb Code   190  srv_key.o(i.srv_key_handler)
+    srv_key_mode_handler                     0x00003c7d   Thumb Code   138  srv_key.o(i.srv_key_mode_handler)
+    srv_key_net_config_handler               0x00003d0d   Thumb Code    16  srv_key.o(i.srv_key_net_config_handler)
+    srv_key_next_song_handler                0x00003d1d   Thumb Code    16  srv_key.o(i.srv_key_next_song_handler)
+    srv_key_next_station_handler             0x00003d2d   Thumb Code    16  srv_key.o(i.srv_key_next_station_handler)
+    srv_key_play_pause_handler               0x00003d3d   Thumb Code    16  srv_key.o(i.srv_key_play_pause_handler)
+    srv_key_prev_song_handler                0x00003d4d   Thumb Code    16  srv_key.o(i.srv_key_prev_song_handler)
+    srv_key_prev_station_handler             0x00003d5d   Thumb Code    16  srv_key.o(i.srv_key_prev_station_handler)
+    srv_key_volume_down_handler              0x00003d6d   Thumb Code    16  srv_key.o(i.srv_key_volume_down_handler)
+    srv_key_volume_up_handler                0x00003d7d   Thumb Code    16  srv_key.o(i.srv_key_volume_up_handler)
+    srv_led_change_handler                   0x00003d8d   Thumb Code    16  srv_led.o(i.srv_led_change_handler)
+    srv_led_status_show                      0x00003da1   Thumb Code   144  srv_led.o(i.srv_led_status_show)
+    srv_led_sys_initing                      0x00003e39   Thumb Code    74  srv_led.o(i.srv_led_sys_initing)
+    srv_rtc_alarm_get                        0x00003e89   Thumb Code    76  srv_rtc.o(i.srv_rtc_alarm_get)
+    srv_rtc_alarm_set_dw                     0x00003ed5   Thumb Code    48  srv_rtc.o(i.srv_rtc_alarm_set_dw)
+    srv_rtc_alarm_set_hm                     0x00003f25   Thumb Code    56  srv_rtc.o(i.srv_rtc_alarm_set_hm)
+    srv_rtc_alarm_set_st                     0x00003f7d   Thumb Code    60  srv_rtc.o(i.srv_rtc_alarm_set_st)
+    srv_rtc_alarm_set_ym                     0x00003fd9   Thumb Code    54  srv_rtc.o(i.srv_rtc_alarm_set_ym)
+    srv_rtc_get                              0x00004031   Thumb Code    76  srv_rtc.o(i.srv_rtc_get)
+    srv_rtc_set_dw                           0x0000407d   Thumb Code    50  srv_rtc.o(i.srv_rtc_set_dw)
+    srv_rtc_set_hm                           0x000040d1   Thumb Code    56  srv_rtc.o(i.srv_rtc_set_hm)
+    srv_rtc_set_st                           0x00004129   Thumb Code    60  srv_rtc.o(i.srv_rtc_set_st)
+    srv_rtc_set_ym                           0x00004185   Thumb Code    60  srv_rtc.o(i.srv_rtc_set_ym)
+    gau32ClkSrcTbl                           0x00004288   Data          32  system_nuc029xge.o(.constdata)
+    init_pcm1862_0x01                        0x000042a8   Data           2  drv_adc_pcm1862.o(.constdata)
+    init_pcm1862_0x02                        0x000042aa   Data           2  drv_adc_pcm1862.o(.constdata)
+    init_pcm1862_0x03                        0x000042ac   Data           2  drv_adc_pcm1862.o(.constdata)
+    init_pcm1862_0x04                        0x000042ae   Data           2  drv_adc_pcm1862.o(.constdata)
+    init_pcm1862_0x20                        0x000042b0   Data           2  drv_adc_pcm1862.o(.constdata)
+    pcm1862_frequence                        0x000042b2   Data           2  drv_adc_pcm1862.o(.constdata)
+    tas3251_volume_page                      0x000042e4   Data           6  drv_dap_tas3251.o(.constdata)
+    tas3251_cmd_cfm                          0x00005566   Data          14  drv_dap_tas3251.o(.constdata)
+    reg_60                                   0x00005574   Data           2  drv_dap_tas5825.o(.constdata)
+    reg_61                                   0x00005576   Data           2  drv_dap_tas5825.o(.constdata)
+    reg_63                                   0x00005578   Data           2  drv_dap_tas5825.o(.constdata)
+    reg_64                                   0x0000557a   Data           2  drv_dap_tas5825.o(.constdata)
+    tas5825_book0_page0                      0x0000557c   Data           4  drv_dap_tas5825.o(.constdata)
+    tas5852_volume_page                      0x00005580   Data           6  drv_dap_tas5825.o(.constdata)
+    tas5825_gpio_012_confgi                  0x00005586   Data           8  drv_dap_tas5825.o(.constdata)
+    registers_mid_indoor                     0x0000558e   Data        7874  drv_dap_tas5825.o(.constdata)
+    registers_mid_outdoor                    0x00007450   Data        7874  drv_dap_tas5825.o(.constdata)
+    registers_tw_indoor                      0x00009312   Data        7874  drv_dap_tas5825.o(.constdata)
+    registers_tw_outdoor                     0x0000b1d4   Data        7874  drv_dap_tas5825.o(.constdata)
+    Region$$Table$$Base                      0x0000d130   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x0000d150   Number         0  anon$$obj.o(Region$$Table)
     SystemCoreClock                          0x20000000   Data           4  system_nuc029xge.o(.data)
     CyclesPerUs                              0x20000004   Data           4  system_nuc029xge.o(.data)
     PllClock                                 0x20000008   Data           4  system_nuc029xge.o(.data)
@@ -882,48 +888,49 @@ Image Symbol Table
     SysTimer_1s                              0x20000020   Data           8  hal_timer0.o(.data)
     ModulePowerUpPinTimer                    0x20000028   Data           8  hal_timer0.o(.data)
     PoweroffLedTimer                         0x20000030   Data           8  hal_timer0.o(.data)
-    LedKeyBlinkTimer                         0x20000038   Data           8  hal_timer0.o(.data)
-    sys_err                                  0x20000040   Data           1  main.o(.data)
-    uart1_cmd                                0x20000044   Data           1  io_uart.o(.data)
-    uart1_dat                                0x20000045   Data           1  io_uart.o(.data)
-    uart_counts                              0x20000046   Data           1  io_uart.o(.data)
-    g_u32comRbytes                           0x20000048   Data           4  io_uart.o(.data)
-    g_u32comRtail                            0x2000004c   Data           4  io_uart.o(.data)
-    g_bWait                                  0x20000050   Data           4  io_uart.o(.data)
-    uuart0_cmd                               0x20000054   Data           1  io_usci_uart.o(.data)
-    uuart0_dat0                              0x20000055   Data           1  io_usci_uart.o(.data)
-    uuart0_dat1                              0x20000056   Data           1  io_usci_uart.o(.data)
-    pcm1862_channel_L                        0x20000058   Data           2  drv_adc_pcm1862.o(.data)
-    pcm1862_channel_R                        0x2000005a   Data           2  drv_adc_pcm1862.o(.data)
-    pcm1862_PGA_VAL_CH1_L                    0x2000005c   Data           2  drv_adc_pcm1862.o(.data)
-    pcm1862_PGA_VAL_CH1_R                    0x2000005e   Data           2  drv_adc_pcm1862.o(.data)
-    pcm1862_PGA_VAL_CH2_L                    0x20000060   Data           2  drv_adc_pcm1862.o(.data)
-    pcm1862_PGA_VAL_CH2_R                    0x20000062   Data           2  drv_adc_pcm1862.o(.data)
-    tas3251_44volume                         0x20000064   Data          85  drv_dap_tas3251.o(.data)
-    tas3251_48volume                         0x200000b9   Data          85  drv_dap_tas3251.o(.data)
-    tas5825_volume0c                         0x2000010e   Data          85  drv_dap_tas5825.o(.data)
-    tas5825_volume10                         0x20000163   Data          85  drv_dap_tas5825.o(.data)
-    DecodeStartFlag                          0x200001b8   Data           1  drv_ irkey.o(.data)
-    DecodeFinishFlag                         0x200001b9   Data           1  drv_ irkey.o(.data)
-    ir_data_rx_ok                            0x200001ba   Data           1  drv_ irkey.o(.data)
-    LongKeyPress                             0x200001bb   Data           1  drv_ irkey.o(.data)
-    IrTimerCount                             0x200001c0   Data           4  drv_ irkey.o(.data)
-    ir_code                                  0x200001c4   Data           4  drv_ irkey.o(.data)
-    IoKeyInputmessage                        0x200001fc   Data           1  drv_gpio_key.o(.data)
-    SoftwareKeyState                         0x200001fe   Data           1  drv_gpio_key.o(.data)
-    SoftwareKeyWaitTimer                     0x20000200   Data           8  drv_gpio_key.o(.data)
-    SoftwareKeyScanTimer                     0x20000208   Data           8  drv_gpio_key.o(.data)
-    __stdout                                 0x20000210   Data           4  retarget.o(.data)
-    bac_bat_stat                             0x20000244   Data           1  srv_battery.o(.data)
-    bac_bat_val                              0x20000245   Data           1  srv_battery.o(.data)
-    audio_channel                            0x2000024c   Data           4  srv_audio.o(.data)
-    audio_channel_bak                        0x20000250   Data           4  srv_audio.o(.data)
-    g_u8RecData                              0x2000046c   Data        1024  io_uart.o(.bss)
-    uart2_get_data                           0x2000086c   Data         150  io_uart.o(.bss)
-    ir_data                                  0x200009de   Data          33  drv_ irkey.o(.bss)
-    Global_datas                             0x20000a00   Data          48  tym_global.o(.bss)
-    __libspace_start                         0x20000a30   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x20000a90   Data           0  libspace.o(.bss)
+    SubBoardHandshakeTimer                   0x20000038   Data           8  hal_timer0.o(.data)
+    LedKeyBlinkTimer                         0x20000040   Data           8  hal_timer0.o(.data)
+    sys_err                                  0x20000048   Data           1  main.o(.data)
+    uart1_cmd                                0x2000004c   Data           1  io_uart.o(.data)
+    uart1_dat                                0x2000004d   Data           1  io_uart.o(.data)
+    uart_counts                              0x2000004e   Data           1  io_uart.o(.data)
+    g_u32comRbytes                           0x20000050   Data           4  io_uart.o(.data)
+    g_u32comRtail                            0x20000054   Data           4  io_uart.o(.data)
+    g_bWait                                  0x20000058   Data           4  io_uart.o(.data)
+    uuart0_cmd                               0x2000005c   Data           1  io_usci_uart.o(.data)
+    uuart0_dat0                              0x2000005d   Data           1  io_usci_uart.o(.data)
+    uuart0_dat1                              0x2000005e   Data           1  io_usci_uart.o(.data)
+    pcm1862_channel_L                        0x20000060   Data           2  drv_adc_pcm1862.o(.data)
+    pcm1862_channel_R                        0x20000062   Data           2  drv_adc_pcm1862.o(.data)
+    pcm1862_PGA_VAL_CH1_L                    0x20000064   Data           2  drv_adc_pcm1862.o(.data)
+    pcm1862_PGA_VAL_CH1_R                    0x20000066   Data           2  drv_adc_pcm1862.o(.data)
+    pcm1862_PGA_VAL_CH2_L                    0x20000068   Data           2  drv_adc_pcm1862.o(.data)
+    pcm1862_PGA_VAL_CH2_R                    0x2000006a   Data           2  drv_adc_pcm1862.o(.data)
+    tas3251_44volume                         0x2000006c   Data          85  drv_dap_tas3251.o(.data)
+    tas3251_48volume                         0x200000c1   Data          85  drv_dap_tas3251.o(.data)
+    tas5825_volume0c                         0x20000116   Data          85  drv_dap_tas5825.o(.data)
+    tas5825_volume10                         0x2000016b   Data          85  drv_dap_tas5825.o(.data)
+    DecodeStartFlag                          0x200001c0   Data           1  drv_ irkey.o(.data)
+    DecodeFinishFlag                         0x200001c1   Data           1  drv_ irkey.o(.data)
+    ir_data_rx_ok                            0x200001c2   Data           1  drv_ irkey.o(.data)
+    LongKeyPress                             0x200001c3   Data           1  drv_ irkey.o(.data)
+    IrTimerCount                             0x200001c8   Data           4  drv_ irkey.o(.data)
+    ir_code                                  0x200001cc   Data           4  drv_ irkey.o(.data)
+    IoKeyInputmessage                        0x20000204   Data           1  drv_gpio_key.o(.data)
+    SoftwareKeyState                         0x20000206   Data           1  drv_gpio_key.o(.data)
+    SoftwareKeyWaitTimer                     0x20000208   Data           8  drv_gpio_key.o(.data)
+    SoftwareKeyScanTimer                     0x20000210   Data           8  drv_gpio_key.o(.data)
+    __stdout                                 0x20000218   Data           4  retarget.o(.data)
+    bac_bat_stat                             0x2000024c   Data           1  srv_battery.o(.data)
+    bac_bat_val                              0x2000024d   Data           1  srv_battery.o(.data)
+    audio_channel                            0x20000254   Data           4  srv_audio.o(.data)
+    audio_channel_bak                        0x20000258   Data           4  srv_audio.o(.data)
+    g_u8RecData                              0x20000478   Data        1024  io_uart.o(.bss)
+    uart2_get_data                           0x20000878   Data         150  io_uart.o(.bss)
+    ir_data                                  0x200009ea   Data          33  drv_ irkey.o(.bss)
+    Global_datas                             0x20000a0c   Data          52  tym_global.o(.bss)
+    __libspace_start                         0x20000a40   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x20000aa0   Data           0  libspace.o(.bss)
 
 
 
@@ -933,101 +940,101 @@ Memory Map of the image
 
   Image Entry point : 0x000001d1
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x0000d2e4, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x0000d3b0, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x0000d090, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x0000d150, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x00000000   0x000000c0   Data   RO          137    RESET               startup_nuc029xge.o
-    0x000000c0   0x00000008   Code   RO         2753  * !!!main             c_p.l(__main.o)
-    0x000000c8   0x0000003c   Code   RO         2941    !!!scatter          c_p.l(__scatter.o)
-    0x00000104   0x0000001a   Code   RO         2943    !!handler_copy      c_p.l(__scatter_copy.o)
+    0x000000c0   0x00000008   Code   RO         2760  * !!!main             c_p.l(__main.o)
+    0x000000c8   0x0000003c   Code   RO         2948    !!!scatter          c_p.l(__scatter.o)
+    0x00000104   0x0000001a   Code   RO         2950    !!handler_copy      c_p.l(__scatter_copy.o)
     0x0000011e   0x00000002   PAD
-    0x00000120   0x0000001c   Code   RO         2945    !!handler_zi        c_p.l(__scatter_zi.o)
-    0x0000013c   0x00000002   Code   RO         2742    .ARM.Collect$$_printf_percent$$00000000  c_p.l(_printf_percent.o)
-    0x0000013e   0x0000000a   Code   RO         2741    .ARM.Collect$$_printf_percent$$00000009  c_p.l(_printf_d.o)
-    0x00000148   0x0000000a   Code   RO         2740    .ARM.Collect$$_printf_percent$$0000000C  c_p.l(_printf_x.o)
-    0x00000152   0x00000004   Code   RO         2773    .ARM.Collect$$_printf_percent$$00000017  c_p.l(_printf_percent_end.o)
-    0x00000156   0x00000002   Code   RO         2812    .ARM.Collect$$libinit$$00000000  c_p.l(libinit.o)
-    0x00000158   0x00000000   Code   RO         2826    .ARM.Collect$$libinit$$00000002  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2828    .ARM.Collect$$libinit$$00000004  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2831    .ARM.Collect$$libinit$$0000000A  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2833    .ARM.Collect$$libinit$$0000000C  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2835    .ARM.Collect$$libinit$$0000000E  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2838    .ARM.Collect$$libinit$$00000011  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2840    .ARM.Collect$$libinit$$00000013  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2842    .ARM.Collect$$libinit$$00000015  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2844    .ARM.Collect$$libinit$$00000017  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2846    .ARM.Collect$$libinit$$00000019  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2848    .ARM.Collect$$libinit$$0000001B  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2850    .ARM.Collect$$libinit$$0000001D  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2852    .ARM.Collect$$libinit$$0000001F  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2854    .ARM.Collect$$libinit$$00000021  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2856    .ARM.Collect$$libinit$$00000023  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2858    .ARM.Collect$$libinit$$00000025  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2862    .ARM.Collect$$libinit$$0000002C  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2864    .ARM.Collect$$libinit$$0000002E  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2866    .ARM.Collect$$libinit$$00000030  c_p.l(libinit2.o)
-    0x00000158   0x00000000   Code   RO         2868    .ARM.Collect$$libinit$$00000032  c_p.l(libinit2.o)
-    0x00000158   0x00000002   Code   RO         2869    .ARM.Collect$$libinit$$00000033  c_p.l(libinit2.o)
-    0x0000015a   0x00000002   Code   RO         2898    .ARM.Collect$$libshutdown$$00000000  c_p.l(libshutdown.o)
-    0x0000015c   0x00000000   Code   RO         2924    .ARM.Collect$$libshutdown$$00000002  c_p.l(libshutdown2.o)
-    0x0000015c   0x00000000   Code   RO         2926    .ARM.Collect$$libshutdown$$00000004  c_p.l(libshutdown2.o)
-    0x0000015c   0x00000000   Code   RO         2929    .ARM.Collect$$libshutdown$$00000007  c_p.l(libshutdown2.o)
-    0x0000015c   0x00000000   Code   RO         2932    .ARM.Collect$$libshutdown$$0000000A  c_p.l(libshutdown2.o)
-    0x0000015c   0x00000000   Code   RO         2934    .ARM.Collect$$libshutdown$$0000000C  c_p.l(libshutdown2.o)
-    0x0000015c   0x00000000   Code   RO         2937    .ARM.Collect$$libshutdown$$0000000F  c_p.l(libshutdown2.o)
-    0x0000015c   0x00000002   Code   RO         2938    .ARM.Collect$$libshutdown$$00000010  c_p.l(libshutdown2.o)
-    0x0000015e   0x00000000   Code   RO         2764    .ARM.Collect$$rtentry$$00000000  c_p.l(__rtentry.o)
-    0x0000015e   0x00000000   Code   RO         2778    .ARM.Collect$$rtentry$$00000002  c_p.l(__rtentry2.o)
-    0x0000015e   0x00000006   Code   RO         2790    .ARM.Collect$$rtentry$$00000004  c_p.l(__rtentry4.o)
-    0x00000164   0x00000000   Code   RO         2780    .ARM.Collect$$rtentry$$00000009  c_p.l(__rtentry2.o)
-    0x00000164   0x00000004   Code   RO         2781    .ARM.Collect$$rtentry$$0000000A  c_p.l(__rtentry2.o)
-    0x00000168   0x00000000   Code   RO         2783    .ARM.Collect$$rtentry$$0000000C  c_p.l(__rtentry2.o)
-    0x00000168   0x00000008   Code   RO         2784    .ARM.Collect$$rtentry$$0000000D  c_p.l(__rtentry2.o)
-    0x00000170   0x00000002   Code   RO         2817    .ARM.Collect$$rtexit$$00000000  c_p.l(rtexit.o)
-    0x00000172   0x00000000   Code   RO         2873    .ARM.Collect$$rtexit$$00000002  c_p.l(rtexit2.o)
-    0x00000172   0x00000004   Code   RO         2874    .ARM.Collect$$rtexit$$00000003  c_p.l(rtexit2.o)
-    0x00000176   0x00000006   Code   RO         2875    .ARM.Collect$$rtexit$$00000004  c_p.l(rtexit2.o)
-    0x0000017c   0x0000001c   Code   RO         1381    .emb_text           retarget.o
-    0x00000198   0x00000038   Code   RO         2743    .emb_text           c_p.l(rt_memcpy.o)
+    0x00000120   0x0000001c   Code   RO         2952    !!handler_zi        c_p.l(__scatter_zi.o)
+    0x0000013c   0x00000002   Code   RO         2749    .ARM.Collect$$_printf_percent$$00000000  c_p.l(_printf_percent.o)
+    0x0000013e   0x0000000a   Code   RO         2748    .ARM.Collect$$_printf_percent$$00000009  c_p.l(_printf_d.o)
+    0x00000148   0x0000000a   Code   RO         2747    .ARM.Collect$$_printf_percent$$0000000C  c_p.l(_printf_x.o)
+    0x00000152   0x00000004   Code   RO         2780    .ARM.Collect$$_printf_percent$$00000017  c_p.l(_printf_percent_end.o)
+    0x00000156   0x00000002   Code   RO         2819    .ARM.Collect$$libinit$$00000000  c_p.l(libinit.o)
+    0x00000158   0x00000000   Code   RO         2833    .ARM.Collect$$libinit$$00000002  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2835    .ARM.Collect$$libinit$$00000004  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2838    .ARM.Collect$$libinit$$0000000A  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2840    .ARM.Collect$$libinit$$0000000C  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2842    .ARM.Collect$$libinit$$0000000E  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2845    .ARM.Collect$$libinit$$00000011  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2847    .ARM.Collect$$libinit$$00000013  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2849    .ARM.Collect$$libinit$$00000015  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2851    .ARM.Collect$$libinit$$00000017  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2853    .ARM.Collect$$libinit$$00000019  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2855    .ARM.Collect$$libinit$$0000001B  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2857    .ARM.Collect$$libinit$$0000001D  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2859    .ARM.Collect$$libinit$$0000001F  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2861    .ARM.Collect$$libinit$$00000021  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2863    .ARM.Collect$$libinit$$00000023  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2865    .ARM.Collect$$libinit$$00000025  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2869    .ARM.Collect$$libinit$$0000002C  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2871    .ARM.Collect$$libinit$$0000002E  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2873    .ARM.Collect$$libinit$$00000030  c_p.l(libinit2.o)
+    0x00000158   0x00000000   Code   RO         2875    .ARM.Collect$$libinit$$00000032  c_p.l(libinit2.o)
+    0x00000158   0x00000002   Code   RO         2876    .ARM.Collect$$libinit$$00000033  c_p.l(libinit2.o)
+    0x0000015a   0x00000002   Code   RO         2905    .ARM.Collect$$libshutdown$$00000000  c_p.l(libshutdown.o)
+    0x0000015c   0x00000000   Code   RO         2931    .ARM.Collect$$libshutdown$$00000002  c_p.l(libshutdown2.o)
+    0x0000015c   0x00000000   Code   RO         2933    .ARM.Collect$$libshutdown$$00000004  c_p.l(libshutdown2.o)
+    0x0000015c   0x00000000   Code   RO         2936    .ARM.Collect$$libshutdown$$00000007  c_p.l(libshutdown2.o)
+    0x0000015c   0x00000000   Code   RO         2939    .ARM.Collect$$libshutdown$$0000000A  c_p.l(libshutdown2.o)
+    0x0000015c   0x00000000   Code   RO         2941    .ARM.Collect$$libshutdown$$0000000C  c_p.l(libshutdown2.o)
+    0x0000015c   0x00000000   Code   RO         2944    .ARM.Collect$$libshutdown$$0000000F  c_p.l(libshutdown2.o)
+    0x0000015c   0x00000002   Code   RO         2945    .ARM.Collect$$libshutdown$$00000010  c_p.l(libshutdown2.o)
+    0x0000015e   0x00000000   Code   RO         2771    .ARM.Collect$$rtentry$$00000000  c_p.l(__rtentry.o)
+    0x0000015e   0x00000000   Code   RO         2785    .ARM.Collect$$rtentry$$00000002  c_p.l(__rtentry2.o)
+    0x0000015e   0x00000006   Code   RO         2797    .ARM.Collect$$rtentry$$00000004  c_p.l(__rtentry4.o)
+    0x00000164   0x00000000   Code   RO         2787    .ARM.Collect$$rtentry$$00000009  c_p.l(__rtentry2.o)
+    0x00000164   0x00000004   Code   RO         2788    .ARM.Collect$$rtentry$$0000000A  c_p.l(__rtentry2.o)
+    0x00000168   0x00000000   Code   RO         2790    .ARM.Collect$$rtentry$$0000000C  c_p.l(__rtentry2.o)
+    0x00000168   0x00000008   Code   RO         2791    .ARM.Collect$$rtentry$$0000000D  c_p.l(__rtentry2.o)
+    0x00000170   0x00000002   Code   RO         2824    .ARM.Collect$$rtexit$$00000000  c_p.l(rtexit.o)
+    0x00000172   0x00000000   Code   RO         2880    .ARM.Collect$$rtexit$$00000002  c_p.l(rtexit2.o)
+    0x00000172   0x00000004   Code   RO         2881    .ARM.Collect$$rtexit$$00000003  c_p.l(rtexit2.o)
+    0x00000176   0x00000006   Code   RO         2882    .ARM.Collect$$rtexit$$00000004  c_p.l(rtexit2.o)
+    0x0000017c   0x0000001c   Code   RO         1387    .emb_text           retarget.o
+    0x00000198   0x00000038   Code   RO         2750    .emb_text           c_p.l(rt_memcpy.o)
     0x000001d0   0x00000034   Code   RO          138  * .text               startup_nuc029xge.o
-    0x00000204   0x0000001c   Code   RO         2691    .text               c_p.l(noretval__2printf.o)
-    0x00000220   0x0000004e   Code   RO         2695    .text               c_p.l(_printf_pad.o)
+    0x00000204   0x0000001c   Code   RO         2698    .text               c_p.l(noretval__2printf.o)
+    0x00000220   0x0000004e   Code   RO         2702    .text               c_p.l(_printf_pad.o)
     0x0000026e   0x00000002   PAD
-    0x00000270   0x0000006c   Code   RO         2697    .text               c_p.l(_printf_dec.o)
-    0x000002dc   0x00000058   Code   RO         2702    .text               c_p.l(_printf_hex_int.o)
-    0x00000334   0x00000138   Code   RO         2732    .text               c_p.l(__printf_flags_wp.o)
-    0x0000046c   0x0000015a   Code   RO         2747    .text               c_p.l(aeabi_sdiv.o)
-    0x000005c6   0x00000006   Code   RO         2751    .text               c_p.l(heapauxi.o)
-    0x000005cc   0x000000b0   Code   RO         2769    .text               c_p.l(_printf_intcommon.o)
-    0x0000067c   0x00000028   Code   RO         2771    .text               c_p.l(_printf_char_file.o)
-    0x000006a4   0x00000028   Code   RO         2774    .text               c_p.l(rtudiv10.o)
-    0x000006cc   0x00000030   Code   RO         2794    .text               c_p.l(_printf_char_common.o)
-    0x000006fc   0x0000003e   Code   RO         2796    .text               c_p.l(sys_stackheap_outer.o)
-    0x0000073a   0x00000010   Code   RO         2801    .text               c_p.l(exit.o)
+    0x00000270   0x0000006c   Code   RO         2704    .text               c_p.l(_printf_dec.o)
+    0x000002dc   0x00000058   Code   RO         2709    .text               c_p.l(_printf_hex_int.o)
+    0x00000334   0x00000138   Code   RO         2739    .text               c_p.l(__printf_flags_wp.o)
+    0x0000046c   0x0000015a   Code   RO         2754    .text               c_p.l(aeabi_sdiv.o)
+    0x000005c6   0x00000006   Code   RO         2758    .text               c_p.l(heapauxi.o)
+    0x000005cc   0x000000b0   Code   RO         2776    .text               c_p.l(_printf_intcommon.o)
+    0x0000067c   0x00000028   Code   RO         2778    .text               c_p.l(_printf_char_file.o)
+    0x000006a4   0x00000028   Code   RO         2781    .text               c_p.l(rtudiv10.o)
+    0x000006cc   0x00000030   Code   RO         2801    .text               c_p.l(_printf_char_common.o)
+    0x000006fc   0x0000003e   Code   RO         2803    .text               c_p.l(sys_stackheap_outer.o)
+    0x0000073a   0x00000010   Code   RO         2808    .text               c_p.l(exit.o)
     0x0000074a   0x00000002   PAD
-    0x0000074c   0x00000008   Code   RO         2813    .text               c_p.l(libspace.o)
-    0x00000754   0x0000000c   Code   RO         2870    .text               c_p.l(sys_exit.o)
-    0x00000760   0x00000002   Code   RO         2887    .text               c_p.l(use_no_semi.o)
-    0x00000762   0x00000000   Code   RO         2889    .text               c_p.l(indicate_semi.o)
+    0x0000074c   0x00000008   Code   RO         2820    .text               c_p.l(libspace.o)
+    0x00000754   0x0000000c   Code   RO         2877    .text               c_p.l(sys_exit.o)
+    0x00000760   0x00000002   Code   RO         2894    .text               c_p.l(use_no_semi.o)
+    0x00000762   0x00000000   Code   RO         2896    .text               c_p.l(indicate_semi.o)
     0x00000762   0x00000002   PAD
-    0x00000764   0x0000002c   Code   RO         2055    i.ADC_DisableInt    adc.o
-    0x00000790   0x0000002c   Code   RO         2057    i.ADC_EnableInt     adc.o
+    0x00000764   0x0000002c   Code   RO         2061    i.ADC_DisableInt    adc.o
+    0x00000790   0x0000002c   Code   RO         2063    i.ADC_EnableInt     adc.o
     0x000007bc   0x00000084   Code   RO          432    i.ADC_IRQHandler    io_gpio.o
-    0x00000840   0x00000020   Code   RO         2058    i.ADC_Open          adc.o
-    0x00000860   0x00000010   Code   RO         1567    i.CLK_DisablePLL    clk.o
-    0x00000870   0x00000030   Code   RO         1571    i.CLK_EnableModuleClock  clk.o
-    0x000008a0   0x00000198   Code   RO         1572    i.CLK_EnablePLL     clk.o
-    0x00000a38   0x00000010   Code   RO         1574    i.CLK_EnableXtalRC  clk.o
-    0x00000a48   0x00000020   Code   RO         1579    i.CLK_GetPCLK0Freq  clk.o
-    0x00000a68   0x00000020   Code   RO         1580    i.CLK_GetPCLK1Freq  clk.o
-    0x00000a88   0x00000080   Code   RO         1583    i.CLK_SetCoreClock  clk.o
-    0x00000b08   0x0000004c   Code   RO         1584    i.CLK_SetHCLK       clk.o
-    0x00000b54   0x00000074   Code   RO         1585    i.CLK_SetModuleClock  clk.o
-    0x00000bc8   0x00000014   Code   RO         1586    i.CLK_SetSysTickClockSrc  clk.o
-    0x00000bdc   0x0000002c   Code   RO         1587    i.CLK_WaitClockReady  clk.o
+    0x00000840   0x00000020   Code   RO         2064    i.ADC_Open          adc.o
+    0x00000860   0x00000010   Code   RO         1573    i.CLK_DisablePLL    clk.o
+    0x00000870   0x00000030   Code   RO         1577    i.CLK_EnableModuleClock  clk.o
+    0x000008a0   0x00000198   Code   RO         1578    i.CLK_EnablePLL     clk.o
+    0x00000a38   0x00000010   Code   RO         1580    i.CLK_EnableXtalRC  clk.o
+    0x00000a48   0x00000020   Code   RO         1585    i.CLK_GetPCLK0Freq  clk.o
+    0x00000a68   0x00000020   Code   RO         1586    i.CLK_GetPCLK1Freq  clk.o
+    0x00000a88   0x00000080   Code   RO         1589    i.CLK_SetCoreClock  clk.o
+    0x00000b08   0x0000004c   Code   RO         1590    i.CLK_SetHCLK       clk.o
+    0x00000b54   0x00000074   Code   RO         1591    i.CLK_SetModuleClock  clk.o
+    0x00000bc8   0x00000014   Code   RO         1592    i.CLK_SetSysTickClockSrc  clk.o
+    0x00000bdc   0x0000002c   Code   RO         1593    i.CLK_WaitClockReady  clk.o
     0x00000c08   0x0000007c   Code   RO          772    i.Cmd_Send2FourG    drv_4g_model.o
     0x00000c84   0x00000014   Code   RO          145    i.Core_Int_Get      core.o
     0x00000c98   0x00000018   Code   RO          146    i.Core_Int_Restore  core.o
@@ -1040,192 +1047,193 @@ Memory Map of the image
     0x00000df0   0x00000028   Code   RO         1052    i.Drv_Dap_init      drv_audio.o
     0x00000e18   0x00000010   Code   RO         1054    i.Drv_Dap_vol_set   drv_audio.o
     0x00000e28   0x00000050   Code   RO          774    i.Drv_FourG_Gpio_Init  drv_4g_model.o
-    0x00000e78   0x00000030   Code   RO         1298    i.Drv_IrKey_init    drv_ irkey.o
+    0x00000e78   0x00000030   Code   RO         1304    i.Drv_IrKey_init    drv_ irkey.o
     0x00000ea8   0x00000048   Code   RO         1055    i.Drv_audio_channel_switch  drv_audio.o
     0x00000ef0   0x00000040   Code   RO         1056    i.Drv_audio_init    drv_audio.o
     0x00000f30   0x00000012   Code   RO         1057    i.Drv_audio_powerdown  drv_audio.o
     0x00000f42   0x00000002   PAD
-    0x00000f44   0x00000070   Code   RO         1299    i.GPCDEF_IRQHandler  drv_ irkey.o
-    0x00000fb4   0x0000001a   Code   RO         2022    i.GPIO_EnableInt    gpio.o
-    0x00000fce   0x00000028   Code   RO         2023    i.GPIO_SetMode      gpio.o
+    0x00000f44   0x00000070   Code   RO         1305    i.GPCDEF_IRQHandler  drv_ irkey.o
+    0x00000fb4   0x0000001a   Code   RO         2028    i.GPIO_EnableInt    gpio.o
+    0x00000fce   0x00000028   Code   RO         2029    i.GPIO_SetMode      gpio.o
     0x00000ff6   0x00000002   PAD
-    0x00000ff8   0x0000006c   Code   RO         1300    i.GetIrKey          drv_ irkey.o
-    0x00001064   0x0000011c   Code   RO         1343    i.GetKeyEvent       drv_gpio_key.o
-    0x00001180   0x00000030   Code   RO          471    i.Hal_I2c0_Stop     io_i2c.o
-    0x000011b0   0x00000030   Code   RO          472    i.Hal_I2c1_Stop     io_i2c.o
-    0x000011e0   0x00000080   Code   RO          473    i.Hal_I2c1_Transfer  io_i2c.o
-    0x00001260   0x00000080   Code   RO          474    i.Hal_I2c_Init      io_i2c.o
-    0x000012e0   0x00000080   Code   RO          475    i.Hal_I2c_Transfer  io_i2c.o
-    0x00001360   0x00000080   Code   RO          243    i.Hal_Timer1_Init   hal_timer0.o
-    0x000013e0   0x00000028   Code   RO         1383    i.Hard_Fault_Handler  retarget.o
-    0x00001408   0x00000018   Code   RO         1344    i.HwKeyScanInit     drv_gpio_key.o
-    0x00001420   0x0000017c   Code   RO          476    i.I2C0_IRQHandler   io_i2c.o
-    0x0000159c   0x0000017c   Code   RO          477    i.I2C1_IRQHandler   io_i2c.o
-    0x00001718   0x0000000a   Code   RO         1827    i.I2C_ClearTimeoutFlag  i2c.o
-    0x00001722   0x0000000a   Code   RO         1829    i.I2C_DisableInt    i2c.o
-    0x0000172c   0x0000000a   Code   RO         1832    i.I2C_EnableInt     i2c.o
-    0x00001736   0x0000001a   Code   RO         1833    i.I2C_EnableTimeout  i2c.o
-    0x00001750   0x00000006   Code   RO         1836    i.I2C_GetData       i2c.o
-    0x00001756   0x00000004   Code   RO         1838    i.I2C_GetStatus     i2c.o
-    0x0000175a   0x00000002   PAD
-    0x0000175c   0x00000038   Code   RO         1839    i.I2C_Open          i2c.o
-    0x00001794   0x00000004   Code   RO         1847    i.I2C_SetData       i2c.o
-    0x00001798   0x00000030   Code   RO         1850    i.I2C_Trigger       i2c.o
-    0x000017c8   0x000000c0   Code   RO          315    i.IoKeyProcess      main.o
-    0x00001888   0x000000b8   Code   RO         1301    i.Ircordpro         drv_ irkey.o
-    0x00001940   0x00000018   Code   RO          244    i.IsTimeOut         hal_timer0.o
-    0x00001958   0x00000044   Code   RO          245    i.NVIC_SetPriority  hal_timer0.o
-    0x0000199c   0x00000044   Code   RO          478    i.NVIC_SetPriority  io_i2c.o
-    0x000019e0   0x0000003c   Code   RO          316    i.PowerOff          main.o
-    0x00001a1c   0x000000fc   Code   RO         2286    i.RTC_GetAlarmDateAndTime  rtc.o
-    0x00001b18   0x000000f0   Code   RO         2287    i.RTC_GetDateAndTime  rtc.o
-    0x00001c08   0x00000014   Code   RO         2521    i.RTC_IRQHandler    srv_rtc.o
-    0x00001c1c   0x00000048   Code   RO         2290    i.RTC_SetAlarmDate  rtc.o
-    0x00001c64   0x00000060   Code   RO         2293    i.RTC_SetAlarmTime  rtc.o
-    0x00001cc4   0x00000050   Code   RO         2295    i.RTC_SetDate       rtc.o
-    0x00001d14   0x00000060   Code   RO         2298    i.RTC_SetTime       rtc.o
-    0x00001d74   0x00000020   Code   RO         2299    i.RTC_WaitAccessEnable  rtc.o
-    0x00001d94   0x00000014   Code   RO          317    i.SYS_BusInit       main.o
-    0x00001da8   0x000000cc   Code   RO          318    i.SYS_Clock_init    main.o
-    0x00001e74   0x00000044   Code   RO          319    i.SYS_Init          main.o
-    0x00001eb8   0x0000001a   Code   RO         1479    i.SYS_ResetModule   sys.o
-    0x00001ed2   0x00000002   PAD
-    0x00001ed4   0x00000054   Code   RO          320    i.SYS_Status        main.o
-    0x00001f28   0x00000020   Code   RO         1386    i.SendChar_ToUART   retarget.o
-    0x00001f48   0x00000024   Code   RO          321    i.SysIdle           main.o
-    0x00001f6c   0x00000090   Code   RO            3    i.SystemCoreClockUpdate  system_nuc029xge.o
-    0x00001ffc   0x00000002   Code   RO            4    i.SystemInit        system_nuc029xge.o
-    0x00001ffe   0x00000002   PAD
-    0x00002000   0x000000c4   Code   RO         2196    i.TIMER_Delay       timer.o
-    0x000020c4   0x00000068   Code   RO         2203    i.TIMER_GetModuleClock  timer.o
-    0x0000212c   0x00000064   Code   RO         2204    i.TIMER_Open        timer.o
-    0x00002190   0x0000003c   Code   RO          246    i.TMR1_IRQHandler   hal_timer0.o
-    0x000021cc   0x0000000c   Code   RO          322    i.TYM_DriverInit    main.o
-    0x000021d8   0x0000001c   Code   RO          835    i.TYM_drv_BQ24610_charge_current_Set  drv_power.o
-    0x000021f4   0x00000064   Code   RO          836    i.TYM_drv_In_bat_status_updata  drv_power.o
-    0x00002258   0x00000030   Code   RO          837    i.TYM_drv_SysPower_init  drv_power.o
-    0x00002288   0x00000030   Code   RO          838    i.TYM_drv_ac_status_updata  drv_power.o
-    0x000022b8   0x00000058   Code   RO          839    i.TYM_drv_ex_bat_status_updata  drv_power.o
-    0x00002310   0x00000010   Code   RO          840    i.TYM_drv_powerkeepon  drv_power.o
-    0x00002320   0x00000098   Code   RO          433    i.TYM_gpio_adc_get  io_gpio.o
-    0x000023b8   0x00000048   Code   RO          434    i.TYM_gpio_init     io_gpio.o
-    0x00002400   0x00000080   Code   RO          841    i.TYM_power_gpio_init  drv_power.o
-    0x00002480   0x0000001c   Code   RO          842    i.TYM_sys_PowerManger_init  drv_power.o
-    0x0000249c   0x00000014   Code   RO          247    i.TimeOutSet        hal_timer0.o
-    0x000024b0   0x00000080   Code   RO          540    i.Transfer_Uart_Init  io_uart.o
-    0x00002530   0x00000008   Code   RO          541    i.UART02_IRQHandler  io_uart.o
-    0x00002538   0x00000028   Code   RO          542    i.UART0_Init        io_uart.o
-    0x00002560   0x00000008   Code   RO          543    i.UART1_IRQHandler  io_uart.o
-    0x00002568   0x00000028   Code   RO          544    i.UART1_Init        io_uart.o
-    0x00002590   0x00000040   Code   RO          545    i.UART2_Init        io_uart.o
-    0x000025d0   0x00000098   Code   RO          546    i.UART_4G_HANDLE    io_uart.o
-    0x00002668   0x00000038   Code   RO         1718    i.UART_ClearIntFlag  uart_1.o
-    0x000026a0   0x00000030   Code   RO         1723    i.UART_EnableInt    uart_1.o
-    0x000026d0   0x00000090   Code   RO          547    i.UART_TEST_HANDLE  io_uart.o
-    0x00002760   0x00000050   Code   RO          621    i.USCI0_Init        io_usci_uart.o
-    0x000027b0   0x00000008   Code   RO          622    i.USCI_IRQHandler   io_usci_uart.o
-    0x000027b8   0x00000188   Code   RO          623    i.USCI_UART_FunctionTest  io_usci_uart.o
-    0x00002940   0x00000090   Code   RO          624    i.USCI_UART_TEST_HANDLE  io_usci_uart.o
-    0x000029d0   0x00000050   Code   RO          625    i.USCI_Uart_Init    io_usci_uart.o
-    0x00002a20   0x00000130   Code   RO         2112    i.UUART_Open        usci_uart_1.o
-    0x00002b50   0x0000001a   Code   RO          527    i.__ARM_common_switch8  io_i2c.o
-    0x00002b6a   0x0000000e   Code   RO         2730    i._is_digit         c_p.l(__printf_wp.o)
-    0x00002b78   0x00000028   Code   RO          926    i.drv_4G_led_on     drv_led.o
-    0x00002ba0   0x00000060   Code   RO         1186    i.drv_5825_00_i2c_write  drv_dap_tas5825.o
-    0x00002c00   0x00000060   Code   RO         1187    i.drv_5825_01_i2c_write  drv_dap_tas5825.o
-    0x00002c60   0x00000044   Code   RO         1188    i.drv_5825_Init     drv_dap_tas5825.o
-    0x00002ca4   0x00000050   Code   RO         1189    i.drv_5825_Load_in_Param  drv_dap_tas5825.o
-    0x00002cf4   0x00000014   Code   RO         1192    i.drv_5825_amp_fault_det_init  drv_dap_tas5825.o
-    0x00002d08   0x00000014   Code   RO         1193    i.drv_5825_amp_warn_det_init  drv_dap_tas5825.o
-    0x00002d1c   0x0000003c   Code   RO         1194    i.drv_5825_gpio012_config  drv_dap_tas5825.o
-    0x00002d58   0x00000018   Code   RO         1195    i.drv_5825_mute_pin_init  drv_dap_tas5825.o
-    0x00002d70   0x00000010   Code   RO         1196    i.drv_5825_mute_pin_set  drv_dap_tas5825.o
-    0x00002d80   0x0000000a   Code   RO         1197    i.drv_5825_powerdown_pin_init  drv_dap_tas5825.o
-    0x00002d8a   0x00000002   PAD
-    0x00002d8c   0x00000028   Code   RO         1198    i.drv_5825_powerdown_pin_set  drv_dap_tas5825.o
-    0x00002db4   0x0000006c   Code   RO         1200    i.drv_5825_vol_set  drv_dap_tas5825.o
-    0x00002e20   0x00000048   Code   RO          994    i.drv_Adc_pcm1862_Init  drv_adc_pcm1862.o
-    0x00002e68   0x0000007c   Code   RO          900    i.drv_Cmd_Send2NCU031  drv_nuc031.o
-    0x00002ee4   0x0000003c   Code   RO          901    i.drv_FM_on_NCU031_reset  drv_nuc031.o
-    0x00002f20   0x0000000c   Code   RO          775    i.drv_FourGmodel_power_key_SetHi  drv_4g_model.o
-    0x00002f2c   0x0000000c   Code   RO          776    i.drv_FourGmodel_power_key_SetLow  drv_4g_model.o
-    0x00002f38   0x0000002c   Code   RO          927    i.drv_all_led_on    drv_led.o
-    0x00002f64   0x00000010   Code   RO         1058    i.drv_audio_4G_Channel  drv_audio.o
-    0x00002f74   0x00000010   Code   RO         1059    i.drv_audio_AuxIn_Channel  drv_audio.o
-    0x00002f84   0x00000010   Code   RO         1060    i.drv_audio_FM_Channel  drv_audio.o
-    0x00002f94   0x00000010   Code   RO         1061    i.drv_audio_Null_Channel  drv_audio.o
-    0x00002fa4   0x00000020   Code   RO          928    i.drv_aux_led_on    drv_led.o
-    0x00002fc4   0x00000028   Code   RO          929    i.drv_bt_led_on     drv_led.o
-    0x00002fec   0x00000084   Code   RO         1122    i.drv_dap_3251_Init  drv_dap_tas3251.o
-    0x00003070   0x00000060   Code   RO         1125    i.drv_dap_3251_i2c_write  drv_dap_tas3251.o
-    0x000030d0   0x00000058   Code   RO         1126    i.drv_dap_3251_rest  drv_dap_tas3251.o
-    0x00003128   0x00000054   Code   RO         1128    i.drv_dap_3251_vol_set  drv_dap_tas3251.o
-    0x0000317c   0x00000014   Code   RO          930    i.drv_err_led_on    drv_led.o
-    0x00003190   0x00000020   Code   RO          931    i.drv_fm_led_on     drv_led.o
-    0x000031b0   0x00000024   Code   RO         1345    i.drv_gipo_key_init  drv_gpio_key.o
-    0x000031d4   0x00000088   Code   RO          932    i.drv_led_init      drv_led.o
-    0x0000325c   0x0000000e   Code   RO          777    i.drv_pairing_cmd_send  drv_4g_model.o
-    0x0000326a   0x00000002   PAD
-    0x0000326c   0x0000007c   Code   RO          997    i.drv_pcm1862_PGA_VAL_SET  drv_adc_pcm1862.o
-    0x000032e8   0x00000098   Code   RO          998    i.drv_pcm1862_input_channel  drv_adc_pcm1862.o
-    0x00003380   0x00000018   Code   RO          843    i.drv_power_status_updata  drv_power.o
-    0x00003398   0x0000000e   Code   RO          778    i.drv_wifi_4g_switch_cmd_send  drv_4g_model.o
-    0x000033a6   0x00000002   PAD
-    0x000033a8   0x00000028   Code   RO          933    i.drv_wifi_led_on   drv_led.o
-    0x000033d0   0x00000006   Code   RO         1388    i.ferror            retarget.o
-    0x000033d6   0x0000000c   Code   RO         1390    i.fputc             retarget.o
-    0x000033e2   0x00000002   PAD
-    0x000033e4   0x0000062c   Code   RO          323    i.main              main.o
-    0x00003a10   0x00000034   Code   RO         2486    i.srv_audio_channel_check  srv_audio.o
-    0x00003a44   0x00000038   Code   RO         2487    i.srv_audio_channel_switch  srv_audio.o
-    0x00003a7c   0x00000008   Code   RO         2488    i.srv_audio_handler  srv_audio.o
-    0x00003a84   0x0000008c   Code   RO         2429    i.srv_bat_charge_handler  srv_battery.o
-    0x00003b10   0x00000010   Code   RO         2607    i.srv_key_eq_indoor_switch_handler  srv_key.o
-    0x00003b20   0x00000010   Code   RO         2608    i.srv_key_eq_outdoor_switch_handler  srv_key.o
-    0x00003b30   0x000000ac   Code   RO         2609    i.srv_key_handler   srv_key.o
-    0x00003bdc   0x00000078   Code   RO         2610    i.srv_key_mode_handler  srv_key.o
-    0x00003c54   0x00000010   Code   RO         2611    i.srv_key_net_config_handler  srv_key.o
-    0x00003c64   0x00000010   Code   RO         2612    i.srv_key_next_song_handler  srv_key.o
-    0x00003c74   0x00000010   Code   RO         2613    i.srv_key_next_station_handler  srv_key.o
-    0x00003c84   0x00000010   Code   RO         2614    i.srv_key_play_pause_handler  srv_key.o
-    0x00003c94   0x00000010   Code   RO         2615    i.srv_key_prev_song_handler  srv_key.o
-    0x00003ca4   0x00000010   Code   RO         2616    i.srv_key_prev_station_handler  srv_key.o
-    0x00003cb4   0x00000010   Code   RO         2617    i.srv_key_volume_down_handler  srv_key.o
-    0x00003cc4   0x00000010   Code   RO         2618    i.srv_key_volume_up_handler  srv_key.o
-    0x00003cd4   0x00000014   Code   RO         2452    i.srv_led_change_handler  srv_led.o
-    0x00003ce8   0x00000098   Code   RO         2453    i.srv_led_status_show  srv_led.o
-    0x00003d80   0x00000050   Code   RO         2454    i.srv_led_sys_initing  srv_led.o
-    0x00003dd0   0x0000004c   Code   RO         2522    i.srv_rtc_alarm_get  srv_rtc.o
-    0x00003e1c   0x00000050   Code   RO         2523    i.srv_rtc_alarm_set_dw  srv_rtc.o
-    0x00003e6c   0x00000058   Code   RO         2524    i.srv_rtc_alarm_set_hm  srv_rtc.o
-    0x00003ec4   0x0000005c   Code   RO         2525    i.srv_rtc_alarm_set_st  srv_rtc.o
-    0x00003f20   0x00000058   Code   RO         2526    i.srv_rtc_alarm_set_ym  srv_rtc.o
-    0x00003f78   0x0000004c   Code   RO         2527    i.srv_rtc_get       srv_rtc.o
-    0x00003fc4   0x00000054   Code   RO         2529    i.srv_rtc_set_dw    srv_rtc.o
-    0x00004018   0x00000058   Code   RO         2530    i.srv_rtc_set_hm    srv_rtc.o
-    0x00004070   0x0000005c   Code   RO         2531    i.srv_rtc_set_st    srv_rtc.o
-    0x000040cc   0x0000005c   Code   RO         2532    i.srv_rtc_set_ym    srv_rtc.o
-    0x00004128   0x000000a8   Code   RO         1392    i.stackDump         retarget.o
-    0x000041d0   0x00000020   Data   RO            5    .constdata          system_nuc029xge.o
-    0x000041f0   0x00000002   Data   RO         1000    .constdata          drv_adc_pcm1862.o
-    0x000041f2   0x00000002   Data   RO         1001    .constdata          drv_adc_pcm1862.o
-    0x000041f4   0x00000002   Data   RO         1002    .constdata          drv_adc_pcm1862.o
-    0x000041f6   0x00000002   Data   RO         1003    .constdata          drv_adc_pcm1862.o
-    0x000041f8   0x00000002   Data   RO         1004    .constdata          drv_adc_pcm1862.o
-    0x000041fa   0x00000002   Data   RO         1005    .constdata          drv_adc_pcm1862.o
-    0x000041fc   0x00000030   Data   RO         1006    .constdata          drv_adc_pcm1862.o
-    0x0000422c   0x00001290   Data   RO         1129    .constdata          drv_dap_tas3251.o
-    0x000054bc   0x00007b1c   Data   RO         1202    .constdata          drv_dap_tas5825.o
-    0x0000cfd8   0x0000000c   Data   RO         1346    .constdata          drv_gpio_key.o
-    0x0000cfe4   0x00000030   Data   RO         1588    .constdata          clk.o
-    0x0000d014   0x00000020   Data   RO         2207    .constdata          timer.o
-    0x0000d034   0x00000028   Data   RO         2703    .constdata          c_p.l(_printf_hex_int.o)
-    0x0000d05c   0x00000011   Data   RO         2733    .constdata          c_p.l(__printf_flags_wp.o)
-    0x0000d06d   0x00000003   PAD
-    0x0000d070   0x00000020   Data   RO         2939    Region$$Table       anon$$obj.o
+    0x00000ff8   0x00000050   Code   RO         1306    i.GetIrKey          drv_ irkey.o
+    0x00001048   0x0000011c   Code   RO         1349    i.GetKeyEvent       drv_gpio_key.o
+    0x00001164   0x00000030   Code   RO          471    i.Hal_I2c0_Stop     io_i2c.o
+    0x00001194   0x00000030   Code   RO          472    i.Hal_I2c1_Stop     io_i2c.o
+    0x000011c4   0x00000080   Code   RO          473    i.Hal_I2c1_Transfer  io_i2c.o
+    0x00001244   0x00000080   Code   RO          474    i.Hal_I2c_Init      io_i2c.o
+    0x000012c4   0x00000080   Code   RO          475    i.Hal_I2c_Transfer  io_i2c.o
+    0x00001344   0x00000088   Code   RO          243    i.Hal_Timer1_Init   hal_timer0.o
+    0x000013cc   0x00000028   Code   RO         1389    i.Hard_Fault_Handler  retarget.o
+    0x000013f4   0x00000018   Code   RO         1350    i.HwKeyScanInit     drv_gpio_key.o
+    0x0000140c   0x0000017c   Code   RO          476    i.I2C0_IRQHandler   io_i2c.o
+    0x00001588   0x0000017c   Code   RO          477    i.I2C1_IRQHandler   io_i2c.o
+    0x00001704   0x0000000a   Code   RO         1833    i.I2C_ClearTimeoutFlag  i2c.o
+    0x0000170e   0x0000000a   Code   RO         1835    i.I2C_DisableInt    i2c.o
+    0x00001718   0x0000000a   Code   RO         1838    i.I2C_EnableInt     i2c.o
+    0x00001722   0x0000001a   Code   RO         1839    i.I2C_EnableTimeout  i2c.o
+    0x0000173c   0x00000006   Code   RO         1842    i.I2C_GetData       i2c.o
+    0x00001742   0x00000004   Code   RO         1844    i.I2C_GetStatus     i2c.o
+    0x00001746   0x00000002   PAD
+    0x00001748   0x00000038   Code   RO         1845    i.I2C_Open          i2c.o
+    0x00001780   0x00000004   Code   RO         1853    i.I2C_SetData       i2c.o
+    0x00001784   0x00000030   Code   RO         1856    i.I2C_Trigger       i2c.o
+    0x000017b4   0x000000c0   Code   RO          315    i.IoKeyProcess      main.o
+    0x00001874   0x000000b8   Code   RO         1307    i.Ircordpro         drv_ irkey.o
+    0x0000192c   0x00000018   Code   RO          244    i.IsTimeOut         hal_timer0.o
+    0x00001944   0x00000044   Code   RO          245    i.NVIC_SetPriority  hal_timer0.o
+    0x00001988   0x00000044   Code   RO          478    i.NVIC_SetPriority  io_i2c.o
+    0x000019cc   0x0000003c   Code   RO          316    i.PowerOff          main.o
+    0x00001a08   0x000000fc   Code   RO         2292    i.RTC_GetAlarmDateAndTime  rtc.o
+    0x00001b04   0x000000f0   Code   RO         2293    i.RTC_GetDateAndTime  rtc.o
+    0x00001bf4   0x00000014   Code   RO         2527    i.RTC_IRQHandler    srv_rtc.o
+    0x00001c08   0x00000048   Code   RO         2296    i.RTC_SetAlarmDate  rtc.o
+    0x00001c50   0x00000060   Code   RO         2299    i.RTC_SetAlarmTime  rtc.o
+    0x00001cb0   0x00000050   Code   RO         2301    i.RTC_SetDate       rtc.o
+    0x00001d00   0x00000060   Code   RO         2304    i.RTC_SetTime       rtc.o
+    0x00001d60   0x00000020   Code   RO         2305    i.RTC_WaitAccessEnable  rtc.o
+    0x00001d80   0x00000014   Code   RO          317    i.SYS_BusInit       main.o
+    0x00001d94   0x000000cc   Code   RO          318    i.SYS_Clock_init    main.o
+    0x00001e60   0x00000044   Code   RO          319    i.SYS_Init          main.o
+    0x00001ea4   0x0000001a   Code   RO         1485    i.SYS_ResetModule   sys.o
+    0x00001ebe   0x00000002   PAD
+    0x00001ec0   0x00000054   Code   RO          320    i.SYS_Status        main.o
+    0x00001f14   0x00000020   Code   RO         1392    i.SendChar_ToUART   retarget.o
+    0x00001f34   0x00000028   Code   RO          321    i.SysIdle           main.o
+    0x00001f5c   0x00000090   Code   RO            3    i.SystemCoreClockUpdate  system_nuc029xge.o
+    0x00001fec   0x00000002   Code   RO            4    i.SystemInit        system_nuc029xge.o
+    0x00001fee   0x00000002   PAD
+    0x00001ff0   0x000000c4   Code   RO         2202    i.TIMER_Delay       timer.o
+    0x000020b4   0x00000068   Code   RO         2209    i.TIMER_GetModuleClock  timer.o
+    0x0000211c   0x00000064   Code   RO         2210    i.TIMER_Open        timer.o
+    0x00002180   0x0000003c   Code   RO          246    i.TMR1_IRQHandler   hal_timer0.o
+    0x000021bc   0x0000000c   Code   RO          322    i.TYM_DriverInit    main.o
+    0x000021c8   0x0000001c   Code   RO          835    i.TYM_drv_BQ24610_charge_current_Set  drv_power.o
+    0x000021e4   0x00000064   Code   RO          836    i.TYM_drv_In_bat_status_updata  drv_power.o
+    0x00002248   0x00000030   Code   RO          837    i.TYM_drv_SysPower_init  drv_power.o
+    0x00002278   0x00000030   Code   RO          838    i.TYM_drv_ac_status_updata  drv_power.o
+    0x000022a8   0x00000058   Code   RO          839    i.TYM_drv_ex_bat_status_updata  drv_power.o
+    0x00002300   0x00000010   Code   RO          840    i.TYM_drv_powerkeepon  drv_power.o
+    0x00002310   0x00000098   Code   RO          433    i.TYM_gpio_adc_get  io_gpio.o
+    0x000023a8   0x00000048   Code   RO          434    i.TYM_gpio_init     io_gpio.o
+    0x000023f0   0x00000080   Code   RO          841    i.TYM_power_gpio_init  drv_power.o
+    0x00002470   0x0000001c   Code   RO          842    i.TYM_sys_PowerManger_init  drv_power.o
+    0x0000248c   0x00000014   Code   RO          247    i.TimeOutSet        hal_timer0.o
+    0x000024a0   0x00000080   Code   RO          540    i.Transfer_Uart_Init  io_uart.o
+    0x00002520   0x00000008   Code   RO          541    i.UART02_IRQHandler  io_uart.o
+    0x00002528   0x00000028   Code   RO          542    i.UART0_Init        io_uart.o
+    0x00002550   0x00000008   Code   RO          543    i.UART1_IRQHandler  io_uart.o
+    0x00002558   0x00000028   Code   RO          544    i.UART1_Init        io_uart.o
+    0x00002580   0x00000040   Code   RO          545    i.UART2_Init        io_uart.o
+    0x000025c0   0x00000098   Code   RO          546    i.UART_4G_HANDLE    io_uart.o
+    0x00002658   0x00000038   Code   RO         1724    i.UART_ClearIntFlag  uart_1.o
+    0x00002690   0x00000030   Code   RO         1729    i.UART_EnableInt    uart_1.o
+    0x000026c0   0x00000090   Code   RO          547    i.UART_TEST_HANDLE  io_uart.o
+    0x00002750   0x00000050   Code   RO          621    i.USCI0_Init        io_usci_uart.o
+    0x000027a0   0x00000008   Code   RO          622    i.USCI_IRQHandler   io_usci_uart.o
+    0x000027a8   0x00000188   Code   RO          623    i.USCI_UART_FunctionTest  io_usci_uart.o
+    0x00002930   0x00000090   Code   RO          624    i.USCI_UART_TEST_HANDLE  io_usci_uart.o
+    0x000029c0   0x00000050   Code   RO          625    i.USCI_Uart_Init    io_usci_uart.o
+    0x00002a10   0x00000130   Code   RO         2118    i.UUART_Open        usci_uart_1.o
+    0x00002b40   0x0000001a   Code   RO          527    i.__ARM_common_switch8  io_i2c.o
+    0x00002b5a   0x0000000e   Code   RO         2737    i._is_digit         c_p.l(__printf_wp.o)
+    0x00002b68   0x00000028   Code   RO          926    i.drv_4G_led_on     drv_led.o
+    0x00002b90   0x00000060   Code   RO         1186    i.drv_5825_00_i2c_write  drv_dap_tas5825.o
+    0x00002bf0   0x00000060   Code   RO         1187    i.drv_5825_01_i2c_write  drv_dap_tas5825.o
+    0x00002c50   0x00000044   Code   RO         1188    i.drv_5825_Init     drv_dap_tas5825.o
+    0x00002c94   0x00000054   Code   RO         1189    i.drv_5825_Load_in_Param  drv_dap_tas5825.o
+    0x00002ce8   0x00000014   Code   RO         1192    i.drv_5825_amp_fault_det_init  drv_dap_tas5825.o
+    0x00002cfc   0x00000014   Code   RO         1193    i.drv_5825_amp_warn_det_init  drv_dap_tas5825.o
+    0x00002d10   0x0000009c   Code   RO         1194    i.drv_5825_gpio012_config  drv_dap_tas5825.o
+    0x00002dac   0x00000018   Code   RO         1196    i.drv_5825_mute_pin_init  drv_dap_tas5825.o
+    0x00002dc4   0x00000010   Code   RO         1197    i.drv_5825_mute_pin_set  drv_dap_tas5825.o
+    0x00002dd4   0x0000000a   Code   RO         1198    i.drv_5825_powerdown_pin_init  drv_dap_tas5825.o
+    0x00002dde   0x00000002   PAD
+    0x00002de0   0x00000028   Code   RO         1199    i.drv_5825_powerdown_pin_set  drv_dap_tas5825.o
+    0x00002e08   0x0000006c   Code   RO         1201    i.drv_5825_vol_set  drv_dap_tas5825.o
+    0x00002e74   0x00000048   Code   RO          994    i.drv_Adc_pcm1862_Init  drv_adc_pcm1862.o
+    0x00002ebc   0x0000007c   Code   RO          900    i.drv_Cmd_Send2NCU031  drv_nuc031.o
+    0x00002f38   0x0000003c   Code   RO          901    i.drv_FM_on_NCU031_reset  drv_nuc031.o
+    0x00002f74   0x0000000c   Code   RO          775    i.drv_FourGmodel_power_key_SetHi  drv_4g_model.o
+    0x00002f80   0x0000000c   Code   RO          776    i.drv_FourGmodel_power_key_SetLow  drv_4g_model.o
+    0x00002f8c   0x0000002c   Code   RO          927    i.drv_all_led_on    drv_led.o
+    0x00002fb8   0x00000010   Code   RO         1058    i.drv_audio_4G_Channel  drv_audio.o
+    0x00002fc8   0x00000010   Code   RO         1059    i.drv_audio_AuxIn_Channel  drv_audio.o
+    0x00002fd8   0x00000010   Code   RO         1060    i.drv_audio_FM_Channel  drv_audio.o
+    0x00002fe8   0x00000010   Code   RO         1061    i.drv_audio_Null_Channel  drv_audio.o
+    0x00002ff8   0x00000020   Code   RO          928    i.drv_aux_led_on    drv_led.o
+    0x00003018   0x00000028   Code   RO          929    i.drv_bt_led_on     drv_led.o
+    0x00003040   0x00000084   Code   RO         1122    i.drv_dap_3251_Init  drv_dap_tas3251.o
+    0x000030c4   0x00000060   Code   RO         1125    i.drv_dap_3251_i2c_write  drv_dap_tas3251.o
+    0x00003124   0x00000058   Code   RO         1126    i.drv_dap_3251_rest  drv_dap_tas3251.o
+    0x0000317c   0x00000054   Code   RO         1128    i.drv_dap_3251_vol_set  drv_dap_tas3251.o
+    0x000031d0   0x00000014   Code   RO          930    i.drv_err_led_on    drv_led.o
+    0x000031e4   0x00000020   Code   RO          931    i.drv_fm_led_on     drv_led.o
+    0x00003204   0x00000024   Code   RO         1351    i.drv_gipo_key_init  drv_gpio_key.o
+    0x00003228   0x00000088   Code   RO          932    i.drv_led_init      drv_led.o
+    0x000032b0   0x0000000e   Code   RO          777    i.drv_pairing_cmd_send  drv_4g_model.o
+    0x000032be   0x00000002   PAD
+    0x000032c0   0x0000007c   Code   RO          997    i.drv_pcm1862_PGA_VAL_SET  drv_adc_pcm1862.o
+    0x0000333c   0x00000098   Code   RO          998    i.drv_pcm1862_input_channel  drv_adc_pcm1862.o
+    0x000033d4   0x00000018   Code   RO          843    i.drv_power_status_updata  drv_power.o
+    0x000033ec   0x0000000e   Code   RO          778    i.drv_wifi_4g_switch_cmd_send  drv_4g_model.o
+    0x000033fa   0x00000002   PAD
+    0x000033fc   0x00000028   Code   RO          933    i.drv_wifi_led_on   drv_led.o
+    0x00003424   0x00000006   Code   RO         1394    i.ferror            retarget.o
+    0x0000342a   0x0000000c   Code   RO         1396    i.fputc             retarget.o
+    0x00003436   0x00000002   PAD
+    0x00003438   0x0000065c   Code   RO          323    i.main              main.o
+    0x00003a94   0x00000034   Code   RO         2492    i.srv_audio_channel_check  srv_audio.o
+    0x00003ac8   0x00000038   Code   RO         2493    i.srv_audio_channel_switch  srv_audio.o
+    0x00003b00   0x00000008   Code   RO         2494    i.srv_audio_handler  srv_audio.o
+    0x00003b08   0x0000008c   Code   RO         2435    i.srv_bat_charge_handler  srv_battery.o
+    0x00003b94   0x00000010   Code   RO         2613    i.srv_key_eq_indoor_switch_handler  srv_key.o
+    0x00003ba4   0x00000010   Code   RO         2614    i.srv_key_eq_outdoor_switch_handler  srv_key.o
+    0x00003bb4   0x000000c8   Code   RO         2615    i.srv_key_handler   srv_key.o
+    0x00003c7c   0x00000090   Code   RO         2616    i.srv_key_mode_handler  srv_key.o
+    0x00003d0c   0x00000010   Code   RO         2617    i.srv_key_net_config_handler  srv_key.o
+    0x00003d1c   0x00000010   Code   RO         2618    i.srv_key_next_song_handler  srv_key.o
+    0x00003d2c   0x00000010   Code   RO         2619    i.srv_key_next_station_handler  srv_key.o
+    0x00003d3c   0x00000010   Code   RO         2620    i.srv_key_play_pause_handler  srv_key.o
+    0x00003d4c   0x00000010   Code   RO         2621    i.srv_key_prev_song_handler  srv_key.o
+    0x00003d5c   0x00000010   Code   RO         2622    i.srv_key_prev_station_handler  srv_key.o
+    0x00003d6c   0x00000010   Code   RO         2623    i.srv_key_volume_down_handler  srv_key.o
+    0x00003d7c   0x00000010   Code   RO         2624    i.srv_key_volume_up_handler  srv_key.o
+    0x00003d8c   0x00000014   Code   RO         2458    i.srv_led_change_handler  srv_led.o
+    0x00003da0   0x00000098   Code   RO         2459    i.srv_led_status_show  srv_led.o
+    0x00003e38   0x00000050   Code   RO         2460    i.srv_led_sys_initing  srv_led.o
+    0x00003e88   0x0000004c   Code   RO         2528    i.srv_rtc_alarm_get  srv_rtc.o
+    0x00003ed4   0x00000050   Code   RO         2529    i.srv_rtc_alarm_set_dw  srv_rtc.o
+    0x00003f24   0x00000058   Code   RO         2530    i.srv_rtc_alarm_set_hm  srv_rtc.o
+    0x00003f7c   0x0000005c   Code   RO         2531    i.srv_rtc_alarm_set_st  srv_rtc.o
+    0x00003fd8   0x00000058   Code   RO         2532    i.srv_rtc_alarm_set_ym  srv_rtc.o
+    0x00004030   0x0000004c   Code   RO         2533    i.srv_rtc_get       srv_rtc.o
+    0x0000407c   0x00000054   Code   RO         2535    i.srv_rtc_set_dw    srv_rtc.o
+    0x000040d0   0x00000058   Code   RO         2536    i.srv_rtc_set_hm    srv_rtc.o
+    0x00004128   0x0000005c   Code   RO         2537    i.srv_rtc_set_st    srv_rtc.o
+    0x00004184   0x0000005c   Code   RO         2538    i.srv_rtc_set_ym    srv_rtc.o
+    0x000041e0   0x000000a8   Code   RO         1398    i.stackDump         retarget.o
+    0x00004288   0x00000020   Data   RO            5    .constdata          system_nuc029xge.o
+    0x000042a8   0x00000002   Data   RO         1000    .constdata          drv_adc_pcm1862.o
+    0x000042aa   0x00000002   Data   RO         1001    .constdata          drv_adc_pcm1862.o
+    0x000042ac   0x00000002   Data   RO         1002    .constdata          drv_adc_pcm1862.o
+    0x000042ae   0x00000002   Data   RO         1003    .constdata          drv_adc_pcm1862.o
+    0x000042b0   0x00000002   Data   RO         1004    .constdata          drv_adc_pcm1862.o
+    0x000042b2   0x00000002   Data   RO         1005    .constdata          drv_adc_pcm1862.o
+    0x000042b4   0x00000030   Data   RO         1006    .constdata          drv_adc_pcm1862.o
+    0x000042e4   0x00001290   Data   RO         1129    .constdata          drv_dap_tas3251.o
+    0x00005574   0x00007b22   Data   RO         1203    .constdata          drv_dap_tas5825.o
+    0x0000d096   0x0000000c   Data   RO         1352    .constdata          drv_gpio_key.o
+    0x0000d0a2   0x00000002   PAD
+    0x0000d0a4   0x00000030   Data   RO         1594    .constdata          clk.o
+    0x0000d0d4   0x00000020   Data   RO         2213    .constdata          timer.o
+    0x0000d0f4   0x00000028   Data   RO         2710    .constdata          c_p.l(_printf_hex_int.o)
+    0x0000d11c   0x00000011   Data   RO         2740    .constdata          c_p.l(__printf_flags_wp.o)
+    0x0000d12d   0x00000003   PAD
+    0x0000d130   0x00000020   Data   RO         2946    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_RW (Base: 0x20000000, Size: 0x00000254, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Base: 0x20000000, Size: 0x00000260, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1233,38 +1241,39 @@ Memory Map of the image
     0x2000000c   0x00000004   Data   RW          148    .data               core.o
     0x20000010   0x00000001   Data   RW          203    .data               core_msg.o
     0x20000011   0x00000003   PAD
-    0x20000014   0x00000024   Data   RW          248    .data               hal_timer0.o
-    0x20000038   0x00000008   Data   RW          249    .data               hal_timer0.o
-    0x20000040   0x00000001   Data   RW          324    .data               main.o
-    0x20000041   0x00000003   PAD
-    0x20000044   0x00000010   Data   RW          549    .data               io_uart.o
-    0x20000054   0x00000004   Data   RW          631    .data               io_usci_uart.o
-    0x20000058   0x0000000c   Data   RW         1007    .data               drv_adc_pcm1862.o
-    0x20000064   0x000000aa   Data   RW         1132    .data               drv_dap_tas3251.o
-    0x2000010e   0x000000aa   Data   RW         1204    .data               drv_dap_tas5825.o
-    0x200001b8   0x00000044   Data   RW         1303    .data               drv_ irkey.o
-    0x200001fc   0x00000014   Data   RW         1347    .data               drv_gpio_key.o
-    0x20000210   0x00000004   Data   RW         1393    .data               retarget.o
-    0x20000214   0x00000030   Data   RW         2300    .data               rtc.o
-    0x20000244   0x00000002   Data   RW         2430    .data               srv_battery.o
-    0x20000246   0x00000003   Data   RW         2455    .data               srv_led.o
-    0x20000249   0x00000003   PAD
-    0x2000024c   0x00000008   Data   RW         2489    .data               srv_audio.o
+    0x20000014   0x0000002c   Data   RW          248    .data               hal_timer0.o
+    0x20000040   0x00000008   Data   RW          249    .data               hal_timer0.o
+    0x20000048   0x00000001   Data   RW          324    .data               main.o
+    0x20000049   0x00000003   PAD
+    0x2000004c   0x00000010   Data   RW          549    .data               io_uart.o
+    0x2000005c   0x00000004   Data   RW          631    .data               io_usci_uart.o
+    0x20000060   0x0000000c   Data   RW         1007    .data               drv_adc_pcm1862.o
+    0x2000006c   0x000000aa   Data   RW         1132    .data               drv_dap_tas3251.o
+    0x20000116   0x000000aa   Data   RW         1205    .data               drv_dap_tas5825.o
+    0x200001c0   0x00000044   Data   RW         1309    .data               drv_ irkey.o
+    0x20000204   0x00000014   Data   RW         1353    .data               drv_gpio_key.o
+    0x20000218   0x00000004   Data   RW         1399    .data               retarget.o
+    0x2000021c   0x00000030   Data   RW         2306    .data               rtc.o
+    0x2000024c   0x00000002   Data   RW         2436    .data               srv_battery.o
+    0x2000024e   0x00000003   Data   RW         2461    .data               srv_led.o
+    0x20000251   0x00000003   PAD
+    0x20000254   0x00000008   Data   RW         2495    .data               srv_audio.o
+    0x2000025c   0x00000001   Data   RW         2625    .data               srv_key.o
 
 
-    Execution Region ER_ZI (Base: 0x20000254, Size: 0x00000c3c, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_ZI (Base: 0x20000260, Size: 0x00000c40, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000254   0x00000200   Zero   RW          202    .bss                core_msg.o
-    0x20000454   0x00000018   Zero   RW          479    .bss                io_i2c.o
-    0x2000046c   0x00000572   Zero   RW          548    .bss                io_uart.o
-    0x200009de   0x00000021   Zero   RW         1302    .bss                drv_ irkey.o
-    0x200009ff   0x00000001   PAD
-    0x20000a00   0x00000030   Zero   RW         2408    .bss                tym_global.o
-    0x20000a30   0x00000060   Zero   RW         2814    .bss                c_p.l(libspace.o)
-    0x20000a90   0x00000000   Zero   RW          136    HEAP                startup_nuc029xge.o
-    0x20000a90   0x00000400   Zero   RW          135    STACK               startup_nuc029xge.o
+    0x20000260   0x00000200   Zero   RW          202    .bss                core_msg.o
+    0x20000460   0x00000018   Zero   RW          479    .bss                io_i2c.o
+    0x20000478   0x00000572   Zero   RW          548    .bss                io_uart.o
+    0x200009ea   0x00000021   Zero   RW         1308    .bss                drv_ irkey.o
+    0x20000a0b   0x00000001   PAD
+    0x20000a0c   0x00000034   Zero   RW         2414    .bss                tym_global.o
+    0x20000a40   0x00000060   Zero   RW         2821    .bss                c_p.l(libspace.o)
+    0x20000aa0   0x00000000   Zero   RW          136    HEAP                startup_nuc029xge.o
+    0x20000aa0   0x00000400   Zero   RW          135    STACK               startup_nuc029xge.o
 
 
 ==============================================================================
@@ -1278,43 +1287,43 @@ Image component sizes
        936        140         48          0          0       7380   clk.o
         64         26          0          4          0       1754   core.o
        236         28          0          1        512       3135   core_msg.o
-       452         90          0         68         33       4307   drv_ irkey.o
+       424         84          0         68         33       4299   drv_ irkey.o
        272         32          0          0          0       3770   drv_4g_model.o
        348        138         60         12          0       3369   drv_adc_pcm1862.o
        274         30          0          0          0       4716   drv_audio.o
        400        102       4752        170          0       3873   drv_dap_tas3251.o
-       638        118      31516        170          0       8021   drv_dap_tas5825.o
+       738        118      31522        170          0       8221   drv_dap_tas5825.o
        344         30         12         20          0       2901   drv_gpio_key.o
        384         66          0          0          0       3628   drv_led.o
        184         22          0          0          0       1199   drv_nuc031.o
        508         50          0          0          0       4805   drv_power.o
         66          0          0          0          0       1424   gpio.o
-       300         60          0         44          0      13250   hal_timer0.o
+       308         58          0         52          0      13317   hal_timer0.o
        174          6          0          0          0       4737   i2c.o
        356        118          0          0          0       8052   io_gpio.o
       1334        158          0          0         24      12334   io_i2c.o
        632        174          0         16       1394       5603   io_uart.o
        704        412          0          4          0       9970   io_usci_uart.o
-      2256        552          0          1          0      80144   main.o
+      2308        562          0          1          0      80271   main.o
        286        132          0          4          0       4723   retarget.o
        868         52          0         48          0       7069   rtc.o
        116         36          0          8          0       1699   srv_audio.o
        140         14          0          2          0        856   srv_battery.o
-       452         42          0          0          0       6168   srv_key.o
+       504         46          0          1          0       6232   srv_key.o
        252         26          0          3          0       1841   srv_led.o
        876        266          0          0          0       6447   srv_rtc.o
         52         22        192          0       1024        656   startup_nuc029xge.o
         26          0          0          0          0     189374   sys.o
        146         28         32         12          0     212835   system_nuc029xge.o
        400         62         32          0          0       2690   timer.o
-         0          0          0          0         48       1813   tym_global.o
+         0          0          0          0         52       1837   tym_global.o
        104         18          0          0          0       7897   uart_1.o
        304         14          0          0          0       1693   usci_uart_1.o
 
     ----------------------------------------------------------------------
-     15022       3086      36676        596       3036     636017   Object Totals
+     15206       3092      36684        608       3040     636491   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        18          0          0          9          1          0   (incl. Padding)
+        18          0          2         12          1          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -1377,15 +1386,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     16656       3148      36736        596       3132     629021   Grand Totals
-     16656       3148      36736        596       3132     629021   ELF Image Totals
-     16656       3148      36736        596          0          0   ROM Totals
+     16840       3154      36744        608       3136     629495   Grand Totals
+     16840       3154      36744        608       3136     629495   ELF Image Totals
+     16840       3154      36744        608          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                53392 (  52.14kB)
-    Total RW  Size (RW Data + ZI Data)              3728 (   3.64kB)
-    Total ROM Size (Code + RO Data + RW Data)      53988 (  52.72kB)
+    Total RO  Size (Code + RO Data)                53584 (  52.33kB)
+    Total RW  Size (RW Data + ZI Data)              3744 (   3.66kB)
+    Total ROM Size (Code + RO Data + RW Data)      54192 (  52.92kB)
 
 ==============================================================================
 

@@ -50717,6 +50717,7 @@ N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
+N	uint8_t subboard_online;
 N	
 N
 N}sGlobalData;
@@ -50939,6 +50940,7 @@ Nextern TIMER TestTimer;
 Nextern TIMER ModulePowerUpPinTimer;
 Nextern TIMER LedKeyBlinkTimer;
 Nextern TIMER PoweroffLedTimer;
+Nextern TIMER SubBoardHandshakeTimer;
 N
 N//extern TIMER AdcTimer;
 N//extern TIMER PaTimer;
@@ -51312,7 +51314,6 @@ N	TYM_sys_PowerManger_init();
 N	drv_led_init();
 N
 N	Drv_FourG_Gpio_Init();
-N	//drv_FourGmodel_power_key_down(); // first turn on the power ,and power key set hi(off)
 N	
 N
 N	SYS_BusInit();
@@ -51333,6 +51334,7 @@ N	Global_datas.g_mode_status = POWER_IDLE_MODE;
 N	Global_datas.g_4g_initing = 0;
 N	drv_FourGmodel_power_key_SetLow();
 N	TimeOutSet(&SysTimer_1s,1000);
+N	Global_datas.subboard_online = 0;	
 N
 N}
 N
@@ -51513,9 +51515,11 @@ N
 N			}
 N
 N
-N			
+N			if(IsTimeOut(&SubBoardHandshakeTimer))
+N			{
+N				Global_datas.subboard_online = 0;
+N			}			
 N		}
-N
 N		
 N		if(Global_datas.key_led_blink)
 N		{
@@ -51810,6 +51814,13 @@ N					if((msg.param0 == 0x03) && (msg.param1 == 0xC3)) //autoside
 N					{
 N						printf("autoside\n");
 N					}
+N
+N					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) // handshake
+N					{
+N						Global_datas.subboard_online = 1;
+N						TimeOutSet(&SubBoardHandshakeTimer, 4000);
+N					}					
+N					
 N	            break;
 N					
 N	            default:

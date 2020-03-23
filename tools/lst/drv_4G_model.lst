@@ -50375,7 +50375,7 @@ X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*
 N	PF5 = 1;
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(5))) + ((5)<<2)))) = 1;
 N	//Drv_4GMoudle_PowerUp(1);
-N	Drv_4GMoudle_PowerUp(0);
+N	Drv_4GMoudle_PowerUp(0);  // first off
 N}
 N
 N

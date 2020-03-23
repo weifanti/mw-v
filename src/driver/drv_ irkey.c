@@ -176,7 +176,7 @@ uint8_t GetIrKey(void)
 		// shoutting down cann't respond any key. idle state only respond power key
 		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
 		{
-			ir_key_value = IR_KEY_NONE;
+			//ir_key_value = IR_KEY_NONE;
 		}
 		return ir_key_value;
 	}

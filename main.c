@@ -157,7 +157,6 @@ void SYS_Init(void)
 	drv_led_init();
 
 	Drv_FourG_Gpio_Init();
-	//drv_FourGmodel_power_key_down(); // first turn on the power ,and power key set hi(off)
 	
 
 	SYS_BusInit();
@@ -178,6 +177,7 @@ void SysIdle(void)
 	Global_datas.g_4g_initing = 0;
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
+	Global_datas.subboard_online = 0;	
 
 }
 
@@ -341,9 +341,11 @@ int32_t main(void)
 			}
 
 
-			
+			if(IsTimeOut(&SubBoardHandshakeTimer))
+			{
+				Global_datas.subboard_online = 0;
+			}			
 		}
-
 		
 		if(Global_datas.key_led_blink)
 		{
@@ -636,6 +638,13 @@ int32_t main(void)
 					{
 						printf("autoside\n");
 					}
+
+					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) // handshake
+					{
+						Global_datas.subboard_online = 1;
+						TimeOutSet(&SubBoardHandshakeTimer, 4000);
+					}					
+					
 	            break;
 					
 	            default:

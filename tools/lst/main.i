@@ -29748,6 +29748,7 @@ typedef struct
 	uint8_t shoutting_down;
 	uint8_t	eq_mode;
 	uint8_t volume;
+	uint8_t subboard_online;
 	
 
 }sGlobalData;
@@ -29958,6 +29959,7 @@ extern TIMER TestTimer;
 extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
+extern TIMER SubBoardHandshakeTimer;
 
 
 
@@ -30272,7 +30274,6 @@ void SYS_Init(void)
 
 	Drv_FourG_Gpio_Init();
 	
-	
 
 	SYS_BusInit();
 	
@@ -30292,6 +30293,7 @@ void SysIdle(void)
 	Global_datas.g_4g_initing = 0;
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
+	Global_datas.subboard_online = 0;	
 
 }
 
@@ -30455,9 +30457,11 @@ int32_t main(void)
 			}
 
 
-			
+			if(IsTimeOut(&SubBoardHandshakeTimer))
+			{
+				Global_datas.subboard_online = 0;
+			}			
 		}
-
 		
 		if(Global_datas.key_led_blink)
 		{
@@ -30750,6 +30754,13 @@ int32_t main(void)
 					{
 						printf("autoside\n");
 					}
+
+					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) 
+					{
+						Global_datas.subboard_online = 1;
+						TimeOutSet(&SubBoardHandshakeTimer, 4000);
+					}					
+					
 	            break;
 					
 	            default:
