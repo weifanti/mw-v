@@ -1,7 +1,5 @@
----- drv_5825_mute_pin_set Matches (6 in 4 files) ----
-Drv_Dap_init in drv_audio.c (src\driver\audio) : 	drv_5825_mute_pin_set(1);  // unmute
-drv_dap_tas5825.c (src\driver\audio) line 310 : void drv_5825_mute_pin_set(uint8_t value)  // MUTE 0, UN MUTE 1
-drv_5825_mute_pin_init in drv_dap_tas5825.c (src\driver\audio) : 	drv_5825_mute_pin_set(0);  // mute
-drv_dap_tas5825.h (src\driver\audio) line 61 : void drv_5825_mute_pin_set(uint8_t value);  // MUTE 0, UN MUTE 1
-srv_key_handler in srv_key.c (src\server\key) : 				//drv_5825_mute_pin_set(1);  // unmute
-srv_key_handler in srv_key.c (src\server\key) : 				//drv_5825_mute_pin_set(0);  // mute
+---- TestTimer Matches (4 in 2 files) ----
+hal_timer0.c (src\global) line 22 : TIMER TestTimer;
+Hal_Timer0_Init in hal_timer0.c (src\global) : 	TimeOutSet(&TestTimer, 100);
+Hal_Timer1_Init in hal_timer0.c (src\global) : 	TimeOutSet(&TestTimer, 100);
+hal_timer0.h (src\global) line 29 : extern TIMER TestTimer;

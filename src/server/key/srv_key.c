@@ -128,30 +128,33 @@ void srv_key_volume_down_handler(void)
 void srv_key_next_song_handler(void)
 {
 	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //
+	drv_Cmd_Send2NCU031(0x70, 0x19,0x00);
 }
 
 void srv_key_prev_song_handler(void)
 {
 	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0e,0x00); //
+	drv_Cmd_Send2NCU031(0x70, 0x18,0x00);
 }
 
 
 void srv_key_play_pause_handler(void)
 {
 	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x56,0x00); //
+	drv_Cmd_Send2NCU031(0x70, 0x17,0x00);
 }
 
 
 void srv_key_prev_station_handler(void)
 {
-	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0e,0x00); //last piece
 	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x32,0x00); //last piece
+	drv_Cmd_Send2NCU031(0x70, 0x1a,0x00);
 }
 
 void srv_key_next_station_handler(void)
 {
-	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //next piece
 	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x31,0x00); //next piece
+	drv_Cmd_Send2NCU031(0x70, 0x1b,0x00);
 }
 
  void srv_key_eq_indoor_switch_handler(void)
@@ -172,7 +175,7 @@ void srv_key_net_config_handler(void)
 
 void srv_key_handler(void)
 {	
-	static uint8_t i = 0;
+	//static uint8_t i = 0;
 	switch(GetIrKey())
 	{
 		case IR_KEY_POWER:
@@ -219,20 +222,16 @@ void srv_key_handler(void)
 		case IR_KEY_PLAY_PAUSE:
 			Global_datas.key_led_blink = 1;
 
-			if(i == 0)
+		/*	if(i == 0)
 			{
 				i = 1;
 				drv_5825_mute_pin_set(1);  // unmute
-				//drv_5825_gpio012_config_a();
 			}
 			else 
 			{
 				i = 0;
 				drv_5825_mute_pin_set(0);  // mute
-				//drv_5825_gpio012_config();
-			}
-			
-			
+			}*/
 			srv_key_play_pause_handler();
 		break;
 

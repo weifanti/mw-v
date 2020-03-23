@@ -50814,30 +50814,33 @@ N
 Nvoid srv_key_next_song_handler(void)
 N{
 N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //
+N	drv_Cmd_Send2NCU031(0x70, 0x19,0x00);
 N}
 N
 Nvoid srv_key_prev_song_handler(void)
 N{
 N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0e,0x00); //
+N	drv_Cmd_Send2NCU031(0x70, 0x18,0x00);
 N}
 N
 N
 Nvoid srv_key_play_pause_handler(void)
 N{
 N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x56,0x00); //
+N	drv_Cmd_Send2NCU031(0x70, 0x17,0x00);
 N}
 N
 N
 Nvoid srv_key_prev_station_handler(void)
 N{
-N	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0e,0x00); //last piece
 N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x32,0x00); //last piece
+N	drv_Cmd_Send2NCU031(0x70, 0x1a,0x00);
 N}
 N
 Nvoid srv_key_next_station_handler(void)
 N{
-N	//Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x0d,0x00); //next piece
 N	Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x31,0x00); //next piece
+N	drv_Cmd_Send2NCU031(0x70, 0x1b,0x00);
 N}
 N
 N void srv_key_eq_indoor_switch_handler(void)
@@ -50858,7 +50861,7 @@ N}
 N
 Nvoid srv_key_handler(void)
 N{	
-N	static uint8_t i = 0;
+N	//static uint8_t i = 0;
 N	switch(GetIrKey())
 N	{
 N		case IR_KEY_POWER:
@@ -50866,15 +50869,15 @@ N
 N		Global_datas.key_led_blink = 1;
 N		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 N		{
-W "..\src\server\key\srv_key.c" 183 4 function "SYS_Status" declared implicitly
+W "..\src\server\key\srv_key.c" 186 4 function "SYS_Status" declared implicitly
 N			SYS_Status();
 N		}
 N		
 N		else
 N		{
-W "..\src\server\key\srv_key.c" 188 4 function "PowerOff" declared implicitly
+W "..\src\server\key\srv_key.c" 191 4 function "PowerOff" declared implicitly
 N			PowerOff();
-W "..\src\server\key\srv_key.c" 189 4 function "SysIdle" declared implicitly
+W "..\src\server\key\srv_key.c" 192 4 function "SysIdle" declared implicitly
 N			SysIdle();
 N		}
 N		break;
@@ -50908,22 +50911,16 @@ N
 N		case IR_KEY_PLAY_PAUSE:
 N			Global_datas.key_led_blink = 1;
 N
-N			if(i == 0)
+N		/*	if(i == 0)
 N			{
 N				i = 1;
-W "..\src\server\key\srv_key.c" 225 5 function "drv_5825_mute_pin_set" declared implicitly
 N				drv_5825_mute_pin_set(1);  // unmute
-N				//drv_5825_gpio012_config_a();
 N			}
 N			else 
 N			{
 N				i = 0;
-W "..\src\server\key\srv_key.c" 231 5 function "drv_5825_mute_pin_set" declared implicitly
 N				drv_5825_mute_pin_set(0);  // mute
-N				//drv_5825_gpio012_config();
-N			}
-N			
-N			
+N			}*/
 N			srv_key_play_pause_handler();
 N		break;
 N
