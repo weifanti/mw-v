@@ -31,7 +31,6 @@ extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
 extern TIMER SubBoardHandshakeTimer;
-extern TIMER ModeSwitchTimer;
 
 //extern TIMER AdcTimer;
 //extern TIMER PaTimer;

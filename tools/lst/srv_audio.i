@@ -29434,6 +29434,8 @@ typedef struct
 	uint8_t	eq_mode;
 	uint8_t volume;
 	uint8_t subboard_online;
+	uint8_t mode_switching;  
+	uint8_t mute;
 	
 
 }sGlobalData;
@@ -29642,7 +29644,6 @@ void srv_audio_channel_check()
 	switch(Global_datas.g_mode_status)
 		{
 			case AUX_MODE:
-			case LOUD_SPEAKER_MODE:
 				audio_channel = AUXIN_CHANNEL;
 			break;
 			
@@ -29698,7 +29699,6 @@ void srv_audio_channel_switch()
 
 void srv_audio_handler(void)
 {
-	
 		srv_audio_channel_switch();
 }
 

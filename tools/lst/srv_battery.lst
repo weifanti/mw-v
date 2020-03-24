@@ -50481,6 +50481,8 @@ N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
 N	uint8_t subboard_online;
+N	uint8_t mode_switching;  // during mode switching , need to mute amp
+N	uint8_t mute;
 N	
 N
 N}sGlobalData;

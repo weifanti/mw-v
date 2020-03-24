@@ -33,7 +33,6 @@
 #include "drv_irkey.h"
 #include "drv_gpio_key.h"
 #include "srv_key.h"
-#include "drv_dap_tas5825.h"
 
 
 
@@ -176,9 +175,6 @@ void SysIdle(void)
 {
 	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 	Global_datas.g_4g_initing = 0;
-	Global_datas.mode_switching = 0;
-	Global_datas.mute = 0;
-	
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
 	Global_datas.subboard_online = 0;	
@@ -362,23 +358,6 @@ int32_t main(void)
 		{
 			drv_err_led_on(0);
 		}
-
-		if(Global_datas.mode_switching)
-		{
-			Global_datas.mode_switching = 0;
-			drv_5825_mute_pin_set(0);  // mute
-			TimeOutSet(&ModeSwitchTimer, 1000);
-		}
-
-		if(IsTimeOut(&ModeSwitchTimer))
-		{
-			if(Global_datas.mute == 0)
-			{
-				drv_5825_mute_pin_set(1);  // unmute
-			}
-		}
-
-		
 
 		if(Core_Msg_Get(&msg))
 		{
@@ -592,19 +571,12 @@ int32_t main(void)
 						{
 							Global_datas.volume--;
 							Drv_Dap_vol_set(Global_datas.volume);
-							if(Global_datas.volume == 0)
-							{
-								Global_datas.mute = 1;
-								drv_5825_mute_pin_set(0); 
-							}
 							printf("Hal_Dap_Load_vol_add\n");
 						}
 					}
 					
 					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 					{
-
-						Global_datas.mute = 0;
 						if (Global_datas.volume < VOLUME_MAX)
 						{
 							Global_datas.volume++;
@@ -615,37 +587,24 @@ int32_t main(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) //wifi mode
 					{
-
-						drv_5825_mute_pin_set(0); 
-						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = WIFI_MODE;
-						drv_audio_4G_Channel();
-						
 						printf("FourG_WIFI_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x16)) //BT mode
 					{
-						drv_5825_mute_pin_set(0); 
-						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = BT_MODE;
-						drv_audio_4G_Channel();  	// bt wifi use the same mode
-						printf("BT_CHANNEL\n");
+						printf("FourG_BT_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x17)) //AUX mode
 					{
-						drv_5825_mute_pin_set(0); 
-						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = AUX_MODE;
-						drv_audio_AuxIn_Channel(); 
 						printf("AUXIN_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x18)) //FM mode
 					{
-						drv_5825_mute_pin_set(0); 
-						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = FM_MODE;
-						drv_audio_FM_Channel(); 
-						printf("FM_CHANNEL\n");
+						printf("AUXIN_CHANNEL\n");
+					//	drv_fm_led_on();
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) // NEXT CHANNEL
 					{
@@ -718,6 +677,7 @@ int32_t main(void)
 				refcount1 = 0;
 			
 			drv_power_status_updata();
+			srv_audio_handler();
 		}
 		count++;
 	}

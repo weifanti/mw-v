@@ -29441,6 +29441,8 @@ typedef struct
 	uint8_t	eq_mode;
 	uint8_t volume;
 	uint8_t subboard_online;
+	uint8_t mode_switching;  
+	uint8_t mute;
 	
 
 }sGlobalData;

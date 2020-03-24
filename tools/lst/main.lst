@@ -50718,6 +50718,8 @@ N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
 N	uint8_t subboard_online;
+N	uint8_t mode_switching;  // during mode switching , need to mute amp
+N	uint8_t mute;
 N	
 N
 N}sGlobalData;
@@ -50941,6 +50943,7 @@ Nextern TIMER ModulePowerUpPinTimer;
 Nextern TIMER LedKeyBlinkTimer;
 Nextern TIMER PoweroffLedTimer;
 Nextern TIMER SubBoardHandshakeTimer;
+Nextern TIMER ModeSwitchTimer;
 N
 N//extern TIMER AdcTimer;
 N//extern TIMER PaTimer;
@@ -51162,6 +51165,78 @@ Nvoid srv_key_handler(void);
 Nvoid srv_key_mode_handler(void);
 N	
 L 36 "..\main.c" 2
+N#include "drv_dap_tas5825.h"
+L 1 "..\src\driver\audio\drv_dap_tas5825.h" 1
+N/**
+N * drv_tas5825.h file
+N * @author    Daniel.Duan
+N * @brief     The Dap(TAS5825) driver
+N * @date      2019-Nov.
+N *
+N * Copyright (c) Tymphany
+N */
+N
+N/**
+N * Load Dap vol+
+N * @brief      load Dap init_arr_main_volume
+N * @param      None
+N * @return     None
+N *
+N */
+Nvoid drv_5825_Load_vol_add(void);
+N
+N
+N/**
+N * Load Dap vol-
+N * @brief      load Dap init_arr_main_volume
+N * @param      None
+N * @return     None
+N *
+N */
+Nvoid drv_5825_Load_vol_reduce(void);
+N
+N
+N/**
+N * Load Dap vol set
+N * @brief      drv_5825_vol_set
+N * @param      None
+N * @return     None
+N *
+N */
+Nvoid drv_5825_vol_set(uint8_t value);
+Xvoid drv_5825_vol_set(unsigned char value);
+N
+N
+N/**
+N * Load Dap mute
+N * @brief      load Dap init_arr_main_volume
+N * @param      None
+N * @return     None
+N *
+N */
+Nvoid drv_5825_vol_mute(uint8_t value);
+Xvoid drv_5825_vol_mute(unsigned char value);
+N
+N
+N
+N/**
+N * Init Dsp
+N * @brief      Init Dsp
+N * @param      None
+N * @return     None
+N *
+N */
+Nvoid drv_5825_Init(void);
+Nvoid drv_5825_powerdown_pin_init(void);
+Nvoid drv_5825_mute_pin_init(void);
+Nvoid drv_5825_mute_pin_set(uint8_t value);  // MUTE 0, UN MUTE 1
+Xvoid drv_5825_mute_pin_set(unsigned char value);  
+N
+Nvoid drv_5825_gpio012_config(void);
+N
+N
+N
+L 37 "..\main.c" 2
 N
 N
 N
@@ -51332,6 +51407,9 @@ Nvoid SysIdle(void)
 N{
 N	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 N	Global_datas.g_4g_initing = 0;
+N	Global_datas.mode_switching = 0;
+N	Global_datas.mute = 0;
+N	
 N	drv_FourGmodel_power_key_SetLow();
 N	TimeOutSet(&SysTimer_1s,1000);
 N	Global_datas.subboard_online = 0;	
@@ -51366,7 +51444,7 @@ N
 N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N	drv_led_init();// led all off
-W "..\main.c" 211 2 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 215 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
 N	Global_datas.shoutting_down = 1;
 N	TimeOutSet(&PoweroffLedTimer, 5000);
@@ -51532,6 +51610,23 @@ N		if(IsTimeOut(&LedKeyBlinkTimer))
 N		{
 N			drv_err_led_on(0);
 N		}
+N
+N		if(Global_datas.mode_switching)
+N		{
+N			Global_datas.mode_switching = 0;
+N			drv_5825_mute_pin_set(0);  // mute
+N			TimeOutSet(&ModeSwitchTimer, 1000);
+N		}
+N
+N		if(IsTimeOut(&ModeSwitchTimer))
+N		{
+N			if(Global_datas.mute == 0)
+N			{
+N				drv_5825_mute_pin_set(1);  // unmute
+N			}
+N		}
+N
+N		
 N
 N		if(Core_Msg_Get(&msg))
 N		{
@@ -51746,12 +51841,19 @@ X						if (Global_datas.volume > 0)
 N						{
 N							Global_datas.volume--;
 N							Drv_Dap_vol_set(Global_datas.volume);
+N							if(Global_datas.volume == 0)
+N							{
+N								Global_datas.mute = 1;
+N								drv_5825_mute_pin_set(0); 
+N							}
 N							printf("Hal_Dap_Load_vol_add\n");
 N						}
 N					}
 N					
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 N					{
+N
+N						Global_datas.mute = 0;
 N						if (Global_datas.volume < VOLUME_MAX)
 X						if (Global_datas.volume < 16)
 N						{
@@ -51763,24 +51865,37 @@ N					}
 N
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) //wifi mode
 N					{
+N
+N						drv_5825_mute_pin_set(0); 
+N						Global_datas.mode_switching = 1;
 N						Global_datas.g_mode_status = WIFI_MODE;
+N						drv_audio_4G_Channel();
+N						
 N						printf("FourG_WIFI_CHANNEL\n");
 N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x16)) //BT mode
 N					{
+N						drv_5825_mute_pin_set(0); 
+N						Global_datas.mode_switching = 1;
 N						Global_datas.g_mode_status = BT_MODE;
-N						printf("FourG_BT_CHANNEL\n");
+N						drv_audio_4G_Channel();  	// bt wifi use the same mode
+N						printf("BT_CHANNEL\n");
 N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x17)) //AUX mode
 N					{
+N						drv_5825_mute_pin_set(0); 
+N						Global_datas.mode_switching = 1;
 N						Global_datas.g_mode_status = AUX_MODE;
+N						drv_audio_AuxIn_Channel(); 
 N						printf("AUXIN_CHANNEL\n");
 N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x18)) //FM mode
 N					{
+N						drv_5825_mute_pin_set(0); 
+N						Global_datas.mode_switching = 1;
 N						Global_datas.g_mode_status = FM_MODE;
-N						printf("AUXIN_CHANNEL\n");
-N					//	drv_fm_led_on();
+N						drv_audio_FM_Channel(); 
+N						printf("FM_CHANNEL\n");
 N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) // NEXT CHANNEL
 N					{
@@ -51853,12 +51968,12 @@ N			else
 N				refcount1 = 0;
 N			
 N			drv_power_status_updata();
-N			srv_audio_handler();
+N			//srv_audio_handler();
 N		}
 N		count++;
 N	}
 N
-W "..\main.c" 274 10 variable "refcount2"  was declared but never referenced
+W "..\main.c" 278 10 variable "refcount2"  was declared but never referenced
 N}
 N
 N

@@ -51,3 +51,4 @@
 .\obj\main.o: ..\src\driver\include\drv_irkey.h
 .\obj\main.o: ..\src\driver\include\drv_gpio_key.h
 .\obj\main.o: ..\src\server\include\srv_key.h
+.\obj\main.o: ..\src\driver\audio\drv_dap_tas5825.h

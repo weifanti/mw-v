@@ -108,8 +108,6 @@ typedef struct
 	uint8_t	eq_mode;
 	uint8_t volume;
 	uint8_t subboard_online;
-	uint8_t mode_switching;  // during mode switching , need to mute amp
-	uint8_t mute;
 	
 
 }sGlobalData;

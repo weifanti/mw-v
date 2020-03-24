@@ -50308,6 +50308,7 @@ Nextern TIMER ModulePowerUpPinTimer;
 Nextern TIMER LedKeyBlinkTimer;
 Nextern TIMER PoweroffLedTimer;
 Nextern TIMER SubBoardHandshakeTimer;
+Nextern TIMER ModeSwitchTimer;
 N
 N//extern TIMER AdcTimer;
 N//extern TIMER PaTimer;
@@ -50443,6 +50444,10 @@ N	uint8_t volume;
 X	unsigned char volume;
 N	uint8_t subboard_online;
 X	unsigned char subboard_online;
+N	uint8_t mode_switching;  // during mode switching , need to mute amp
+X	unsigned char mode_switching;  
+N	uint8_t mute;
+X	unsigned char mute;
 N	
 N
 N}sGlobalData;
@@ -50592,6 +50597,8 @@ NTIMER SysTimer_1s;
 NTIMER ModulePowerUpPinTimer;
 NTIMER LedKeyBlinkTimer;
 NTIMER PoweroffLedTimer;
+NTIMER ModeSwitchTimer;
+N
 N
 N
 NTIMER AdcTimer;
@@ -50709,7 +50716,9 @@ N	TimeOutSet(&ModulePowerUpPinTimer, 100);
 N	
 N	TimeOutSet(&PoweroffLedTimer, 100);
 N	TimeOutSet(&SubBoardHandshakeTimer, 100);
-N	
+N	TimeOutSet(&ModeSwitchTimer, 100);
+N
+N
 N//	TimeOutSet(&KeyScanTimer, 10);
 N//	TimeOutSet(&ModCheckTimer, 10);
 N//	TimeOutSet(&BatDisplayTimer, 10);	

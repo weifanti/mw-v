@@ -50386,6 +50386,8 @@ N	uint8_t shoutting_down;
 N	uint8_t	eq_mode;
 N	uint8_t volume;
 N	uint8_t subboard_online;
+N	uint8_t mode_switching;  // during mode switching , need to mute amp
+N	uint8_t mute;
 N	
 N
 N}sGlobalData;
@@ -50761,7 +50763,6 @@ N
 N	switch(Global_datas.g_mode_status)
 N		{
 N			case AUX_MODE:
-N			case LOUD_SPEAKER_MODE:
 N				audio_channel = AUXIN_CHANNEL;
 N			break;
 N			
@@ -50817,7 +50818,6 @@ N}
 N
 Nvoid srv_audio_handler(void)
 N{
-N	//if(!(Global_datas.g_4g_initing))
 N		srv_audio_channel_switch();
 N}
 N

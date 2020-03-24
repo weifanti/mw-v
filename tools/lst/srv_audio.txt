@@ -15,44 +15,43 @@
 000004  7941              LDRB     r1,[r0,#5]  ; Global_datas
 ;;;27     		{
 ;;;28     			case AUX_MODE:
-;;;29     			case LOUD_SPEAKER_MODE:
-;;;30     				audio_channel = AUXIN_CHANNEL;
+;;;29     				audio_channel = AUXIN_CHANNEL;
 000006  480a              LDR      r0,|L1.48|
 000008  000b              MOVS     r3,r1                 ;26
 00000a  f7fffffe          BL       __ARM_common_switch8
 00000e  0b0d              DCB      0x0b,0x0d
 000010  09090909          DCB      0x09,0x09,0x09,0x09
 000014  09090907          DCB      0x09,0x09,0x09,0x07
-000018  070b0d00          DCB      0x07,0x0b,0x0d,0x00
+000018  0d0b0d00          DCB      0x0d,0x0b,0x0d,0x00
 00001c  2101              MOVS     r1,#1
-;;;31     			break;
+;;;30     			break;
 00001e  e002              B        |L1.38|
-;;;32     			
-;;;33     			case WIFI_MODE:
-;;;34     			case WIFI_CONNECTED_MODE:
-;;;35     			case WIFI_CONNECTING_MODE:
-;;;36     			case FOURG_MODE:
-;;;37     			case FOURG_CONNECTED_MODE:
-;;;38     		    case BT_MODE:
-;;;39     		    case BT_CONNECTED_MODE:
-;;;40     				audio_channel = FourG_4G_CHANNEL;
+;;;31     			
+;;;32     			case WIFI_MODE:
+;;;33     			case WIFI_CONNECTED_MODE:
+;;;34     			case WIFI_CONNECTING_MODE:
+;;;35     			case FOURG_MODE:
+;;;36     			case FOURG_CONNECTED_MODE:
+;;;37     		    case BT_MODE:
+;;;38     		    case BT_CONNECTED_MODE:
+;;;39     				audio_channel = FourG_4G_CHANNEL;
 000020  2104              MOVS     r1,#4
-;;;41     			break;
+;;;40     			break;
 000022  e000              B        |L1.38|
-;;;42     			
-;;;43     			case FM_MODE:
-;;;44     				audio_channel = FM_CHANNEL;
+;;;41     			
+;;;42     			case FM_MODE:
+;;;43     				audio_channel = FM_CHANNEL;
 000024  2105              MOVS     r1,#5
                   |L1.38|
 000026  6001              STR      r1,[r0,#0]  ; audio_channel
-;;;45     			break;
-;;;46     	
-;;;47     			default:
-;;;48     			break;
-;;;49     		}
-;;;50     }
+;;;44     			break;
+;;;45     	
+;;;46     			default:
+;;;47     			break;
+;;;48     		}
+;;;49     }
 000028  bd00              POP      {pc}
-;;;51     
+;;;50     
                           ENDP
 
 00002a  0000              DCW      0x0000
@@ -64,60 +63,60 @@
                           AREA ||i.srv_audio_channel_switch||, CODE, READONLY, ALIGN=2
 
                   srv_audio_channel_switch PROC
-;;;51     
-;;;52     void srv_audio_channel_switch()
+;;;50     
+;;;51     void srv_audio_channel_switch()
 000000  b510              PUSH     {r4,lr}
-;;;53     {
-;;;54     	srv_audio_channel_check();
+;;;52     {
+;;;53     	srv_audio_channel_check();
 000002  f7fffffe          BL       srv_audio_channel_check
-;;;55     	if(audio_channel_bak != audio_channel)
+;;;54     	if(audio_channel_bak != audio_channel)
 000006  4c0b              LDR      r4,|L2.52|
 000008  cc03              LDM      r4!,{r0,r1}
 00000a  3c08              SUBS     r4,r4,#8
 00000c  4281              CMP      r1,r0
 00000e  d010              BEQ      |L2.50|
-;;;56     	{ 
-;;;57     		switch(audio_channel)
+;;;55     	{ 
+;;;56     		switch(audio_channel)
 000010  0003              MOVS     r3,r0
 000012  f7fffffe          BL       __ARM_common_switch8
 000016  060c              DCB      0x06,0x0c
 000018  04070707          DCB      0x04,0x07,0x07,0x07
 00001c  0a0c              DCB      0x0a,0x0c
-;;;58     		{
-;;;59     			case AUXIN_CHANNEL:
-;;;60     				drv_audio_AuxIn_Channel();
+;;;57     		{
+;;;58     			case AUXIN_CHANNEL:
+;;;59     				drv_audio_AuxIn_Channel();
 00001e  f7fffffe          BL       drv_audio_AuxIn_Channel
-;;;61     			break;
+;;;60     			break;
 000022  e004              B        |L2.46|
-;;;62     			
-;;;63     			case FourG_BT_CHANNEL:
-;;;64     			case FourG_WIFI_CHANNEL:
-;;;65     			case FourG_4G_CHANNEL:
-;;;66     				drv_audio_4G_Channel();
+;;;61     			
+;;;62     			case FourG_BT_CHANNEL:
+;;;63     			case FourG_WIFI_CHANNEL:
+;;;64     			case FourG_4G_CHANNEL:
+;;;65     				drv_audio_4G_Channel();
 000024  f7fffffe          BL       drv_audio_4G_Channel
-;;;67     			break;
+;;;66     			break;
 000028  e001              B        |L2.46|
-;;;68     			
-;;;69     			case FM_CHANNEL:
-;;;70     				drv_audio_FM_Channel();
+;;;67     			
+;;;68     			case FM_CHANNEL:
+;;;69     				drv_audio_FM_Channel();
 00002a  f7fffffe          BL       drv_audio_FM_Channel
                   |L2.46|
-;;;71     			break;
-;;;72     
-;;;73     			default:
-;;;74     			break;
-;;;75     		}
-;;;76     		
-;;;77     	
-;;;78     		audio_channel_bak = audio_channel;
+;;;70     			break;
+;;;71     
+;;;72     			default:
+;;;73     			break;
+;;;74     		}
+;;;75     		
+;;;76     	
+;;;77     		audio_channel_bak = audio_channel;
 00002e  6820              LDR      r0,[r4,#0]  ; audio_channel
 000030  6060              STR      r0,[r4,#4]  ; audio_channel_bak
                   |L2.50|
-;;;79     	}
-;;;80     
-;;;81     }
+;;;78     	}
+;;;79     
+;;;80     }
 000032  bd10              POP      {r4,pc}
-;;;82     
+;;;81     
                           ENDP
 
                   |L2.52|
@@ -126,16 +125,15 @@
                           AREA ||i.srv_audio_handler||, CODE, READONLY, ALIGN=1
 
                   srv_audio_handler PROC
-;;;82     
-;;;83     void srv_audio_handler(void)
+;;;81     
+;;;82     void srv_audio_handler(void)
 000000  b510              PUSH     {r4,lr}
-;;;84     {
-;;;85     	//if(!(Global_datas.g_4g_initing))
-;;;86     		srv_audio_channel_switch();
+;;;83     {
+;;;84     		srv_audio_channel_switch();
 000002  f7fffffe          BL       srv_audio_channel_switch
-;;;87     }
+;;;85     }
 000006  bd10              POP      {r4,pc}
-;;;88     
+;;;86     
                           ENDP
 
 

@@ -29434,6 +29434,8 @@ typedef struct
 	uint8_t	eq_mode;
 	uint8_t volume;
 	uint8_t subboard_online;
+	uint8_t mode_switching;  
+	uint8_t mute;
 	
 
 }sGlobalData;
@@ -29741,12 +29743,18 @@ switch(Global_datas.g_mode_status)
 		if(Global_datas.subboard_online) 
 		{
 			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x18,0x00); 
+			
+			Global_datas.g_mode_status = FM_MODE;
 			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);
+			drv_audio_FM_Channel(); 
 		}
 		else
 		{
 			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
+			
+			Global_datas.g_mode_status = WIFI_MODE;
 			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+			drv_audio_4G_Channel(); 
 		}
 
 
@@ -29759,7 +29767,10 @@ switch(Global_datas.g_mode_status)
 	case FOURG_CONNECTED_MODE:
 		
 		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); 
+		
+		Global_datas.g_mode_status = BT_MODE;
 		drv_Cmd_Send2NCU031(0x70, 0x10,0x00);
+		drv_audio_4G_Channel();   
 		
 	break;
 	
@@ -29768,18 +29779,28 @@ switch(Global_datas.g_mode_status)
 
 
 		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); 
+		
+		Global_datas.g_mode_status = AUX_MODE;
 		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
+		drv_audio_AuxIn_Channel(); 
+		
 	break;
 	
 	case FM_MODE:
+		
 		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
+		
+		Global_datas.g_mode_status = WIFI_MODE;
 		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+		drv_audio_4G_Channel(); 
 	break;
 	
 	default:
 		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); 
+		
 		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
 		Global_datas.g_mode_status = AUX_MODE;
+		drv_audio_AuxIn_Channel(); 
 	break;
 }
 
@@ -29906,6 +29927,8 @@ void srv_key_handler(void)
 		case IR_KEY_MODE:
 			
 			Global_datas.key_led_blink = 1;
+			Global_datas.mode_switching = 1;
+			drv_5825_mute_pin_set(0);  
 			srv_key_mode_handler();
 		break;
 		case IR_KEY_VOLUME_UP:

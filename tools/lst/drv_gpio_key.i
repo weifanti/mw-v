@@ -29448,6 +29448,7 @@ extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
 extern TIMER SubBoardHandshakeTimer;
+extern TIMER ModeSwitchTimer;
 
 
 
@@ -29568,6 +29569,8 @@ typedef struct
 	unsigned char	eq_mode;
 	unsigned char volume;
 	unsigned char subboard_online;
+	unsigned char mode_switching;  
+	unsigned char mute;
 	
 
 }sGlobalData;

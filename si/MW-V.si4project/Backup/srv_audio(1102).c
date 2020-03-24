@@ -26,6 +26,7 @@ void srv_audio_channel_check()
 	switch(Global_datas.g_mode_status)
 		{
 			case AUX_MODE:
+			case LOUD_SPEAKER_MODE:
 				audio_channel = AUXIN_CHANNEL;
 			break;
 			
@@ -81,6 +82,7 @@ void srv_audio_channel_switch()
 
 void srv_audio_handler(void)
 {
+	//if(!(Global_datas.g_4g_initing))
 		srv_audio_channel_switch();
 }
 

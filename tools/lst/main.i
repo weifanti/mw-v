@@ -29749,6 +29749,8 @@ typedef struct
 	uint8_t	eq_mode;
 	uint8_t volume;
 	uint8_t subboard_online;
+	uint8_t mode_switching;  
+	uint8_t mute;
 	
 
 }sGlobalData;
@@ -29960,6 +29962,7 @@ extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
 extern TIMER SubBoardHandshakeTimer;
+extern TIMER ModeSwitchTimer;
 
 
 
@@ -30149,6 +30152,74 @@ void srv_key_handler(void);
 void srv_key_mode_handler(void);
 	
 #line 36 "..\\main.c"
+#line 1 "..\\src\\driver\\audio\\drv_dap_tas5825.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+void drv_5825_Load_vol_add(void);
+
+
+
+
+
+
+
+
+ 
+void drv_5825_Load_vol_reduce(void);
+
+
+
+
+
+
+
+
+ 
+void drv_5825_vol_set(unsigned char value);
+
+
+
+
+
+
+
+
+ 
+void drv_5825_vol_mute(unsigned char value);
+
+
+
+
+
+
+
+
+
+ 
+void drv_5825_Init(void);
+void drv_5825_powerdown_pin_init(void);
+void drv_5825_mute_pin_init(void);
+void drv_5825_mute_pin_set(unsigned char value);  
+
+void drv_5825_gpio012_config(void);
+
+
+
+#line 37 "..\\main.c"
 
 
 
@@ -30291,6 +30362,9 @@ void SysIdle(void)
 {
 	Global_datas.g_mode_status = POWER_IDLE_MODE;	
 	Global_datas.g_4g_initing = 0;
+	Global_datas.mode_switching = 0;
+	Global_datas.mute = 0;
+	
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
 	Global_datas.subboard_online = 0;	
@@ -30474,6 +30548,23 @@ int32_t main(void)
 		{
 			drv_err_led_on(0);
 		}
+
+		if(Global_datas.mode_switching)
+		{
+			Global_datas.mode_switching = 0;
+			drv_5825_mute_pin_set(0);  
+			TimeOutSet(&ModeSwitchTimer, 1000);
+		}
+
+		if(IsTimeOut(&ModeSwitchTimer))
+		{
+			if(Global_datas.mute == 0)
+			{
+				drv_5825_mute_pin_set(1);  
+			}
+		}
+
+		
 
 		if(Core_Msg_Get(&msg))
 		{
@@ -30687,12 +30778,19 @@ int32_t main(void)
 						{
 							Global_datas.volume--;
 							Drv_Dap_vol_set(Global_datas.volume);
+							if(Global_datas.volume == 0)
+							{
+								Global_datas.mute = 1;
+								drv_5825_mute_pin_set(0); 
+							}
 							printf("Hal_Dap_Load_vol_add\n");
 						}
 					}
 					
 					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 					{
+
+						Global_datas.mute = 0;
 						if (Global_datas.volume < 16)
 						{
 							Global_datas.volume++;
@@ -30703,24 +30801,37 @@ int32_t main(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) 
 					{
+
+						drv_5825_mute_pin_set(0); 
+						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = WIFI_MODE;
+						drv_audio_4G_Channel();
+						
 						printf("FourG_WIFI_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x16)) 
 					{
+						drv_5825_mute_pin_set(0); 
+						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = BT_MODE;
-						printf("FourG_BT_CHANNEL\n");
+						drv_audio_4G_Channel();  	
+						printf("BT_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x17)) 
 					{
+						drv_5825_mute_pin_set(0); 
+						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = AUX_MODE;
+						drv_audio_AuxIn_Channel(); 
 						printf("AUXIN_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x18)) 
 					{
+						drv_5825_mute_pin_set(0); 
+						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = FM_MODE;
-						printf("AUXIN_CHANNEL\n");
-					
+						drv_audio_FM_Channel(); 
+						printf("FM_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) 
 					{
@@ -30793,7 +30904,7 @@ int32_t main(void)
 				refcount1 = 0;
 			
 			drv_power_status_updata();
-			srv_audio_handler();
+			
 		}
 		count++;
 	}

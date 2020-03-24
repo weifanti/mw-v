@@ -29353,6 +29353,7 @@ extern TIMER ModulePowerUpPinTimer;
 extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
 extern TIMER SubBoardHandshakeTimer;
+extern TIMER ModeSwitchTimer;
 
 
 
@@ -29473,6 +29474,8 @@ typedef struct
 	unsigned char	eq_mode;
 	unsigned char volume;
 	unsigned char subboard_online;
+	unsigned char mode_switching;  
+	unsigned char mute;
 	
 
 }sGlobalData;
@@ -29608,6 +29611,8 @@ TIMER SysTimer_1s;
 TIMER ModulePowerUpPinTimer;
 TIMER LedKeyBlinkTimer;
 TIMER PoweroffLedTimer;
+TIMER ModeSwitchTimer;
+
 
 
 TIMER AdcTimer;
@@ -29713,7 +29718,9 @@ void Hal_Timer1_Init(void)
 	
 	TimeOutSet(&PoweroffLedTimer, 100);
 	TimeOutSet(&SubBoardHandshakeTimer, 100);
-	
+	TimeOutSet(&ModeSwitchTimer, 100);
+
+
 
 
 
