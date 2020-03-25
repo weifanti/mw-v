@@ -29995,10 +29995,15 @@ typedef enum _IR_KEY
 	IR_KEY_POWER,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
+	IR_KEY_VOLUME_UP_CP,
 	IR_KEY_VOLUME_DOWN,
+	IR_KEY_VOLUME_DOWN_CP,
 	IR_KEY_PREV_SONG,
+	IR_KEY_PREV_SONG_CP,
 	IR_KEY_NEXT_SONG,
+	IR_KEY_NEXT_SONG_CP,
 	IR_KEY_PLAY_PAUSE,
+	IR_KEY_PLAY_PAUSE_CP,
 	IR_KEY_PREV_STATION,
 	IR_KEY_NEXT_STATION,
 	IR_KEY_EQ,	
@@ -30025,36 +30030,36 @@ typedef enum _IR_KEY
  
 
 
-static unsigned char IrKeyMap[12][2] = 
+static unsigned char IrKeyMap[12][3] = 
 {
-	{IR_KEY_POWER,			0x20},
-	{IR_KEY_MODE,			0x24},
-	{IR_KEY_VOLUME_UP,		0x22},
-	{IR_KEY_VOLUME_DOWN,	0x21},	
-	{IR_KEY_NEXT_SONG,		0x28},
-	{IR_KEY_PLAY_PAUSE,		0x27},
-	{IR_KEY_PREV_SONG,		0x26},
-	{IR_KEY_PREV_STATION,	0x23},
-	{IR_KEY_NEXT_STATION,	0x25},		
-	{IR_KEY_EQ_INDOOR,		0x29},	
-	{IR_KEY_EQ_OUTDOOR,		0x2A},		
-	{IR_KEY_NONE,			0xAA},		
+	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
+	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
+	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	
+	{IR_KEY_NEXT_SONG,		0x28,	IR_KEY_NEXT_SONG_CP},
+	{IR_KEY_PLAY_PAUSE,		0x27,	IR_KEY_PLAY_PAUSE_CP},
+	{IR_KEY_PREV_SONG,		0x26,	IR_KEY_PREV_SONG_CP},
+	{IR_KEY_PREV_STATION,	0x23,	IR_KEY_NONE},
+	{IR_KEY_NEXT_STATION,	0x25,	IR_KEY_NONE},		
+	{IR_KEY_EQ_INDOOR,		0x29,	IR_KEY_NONE},	
+	{IR_KEY_EQ_OUTDOOR,		0x2A,	IR_KEY_NONE},		
+	{IR_KEY_NONE,			0xAA,	IR_KEY_NONE},		
 };
 
-static unsigned char IrKeyMap_B[12][2] = 
+static unsigned char IrKeyMap_B[12][3] = 
 {
-	{IR_KEY_POWER,			0xd0},
-	{IR_KEY_MODE,			0xd4},
-	{IR_KEY_VOLUME_UP,		0xd2},
-	{IR_KEY_VOLUME_DOWN,	0xd1},	
-	{IR_KEY_NEXT_SONG,		0xd8},
-	{IR_KEY_PLAY_PAUSE,		0xd7},
-	{IR_KEY_PREV_SONG,		0xd6},
-	{IR_KEY_PREV_STATION,	0xd3},
-	{IR_KEY_NEXT_STATION,	0xd5},		
-	{IR_KEY_EQ_INDOOR,		0xd9},	
-	{IR_KEY_EQ_OUTDOOR,		0xdA},		
-	{IR_KEY_NONE,			0xAA},		
+	{IR_KEY_POWER,			0xd0,	IR_KEY_NONE},
+	{IR_KEY_MODE,			0xd4,	IR_KEY_NONE},
+	{IR_KEY_VOLUME_UP,		0xd2,	IR_KEY_VOLUME_UP_CP},
+	{IR_KEY_VOLUME_DOWN,	0xd1,	IR_KEY_VOLUME_DOWN_CP},	
+	{IR_KEY_NEXT_SONG,		0xd8,	IR_KEY_NEXT_SONG_CP},
+	{IR_KEY_PLAY_PAUSE,		0xd7,	IR_KEY_PLAY_PAUSE_CP},
+	{IR_KEY_PREV_SONG,		0xd6,	IR_KEY_PREV_SONG_CP},
+	{IR_KEY_PREV_STATION,	0xd3,	IR_KEY_NONE},
+	{IR_KEY_NEXT_STATION,	0xd5,	IR_KEY_NONE},		
+	{IR_KEY_EQ_INDOOR,		0xd9,	IR_KEY_NONE},	
+	{IR_KEY_EQ_OUTDOOR,		0xdA,	IR_KEY_NONE},		
+	{IR_KEY_NONE,			0xAA,	IR_KEY_NONE},		
 };
 
 
@@ -30071,7 +30076,9 @@ extern unsigned char LongKeyPress;
 
 
 
-extern unsigned char IrKeyMap[12][2];
+extern unsigned char IrKeyMap[12][3];
+extern unsigned char IrKeyMap_B[12][3];
+
 
 extern void Drv_IrKey_init(void);
 unsigned char GetIrKey(void);
@@ -30783,7 +30790,7 @@ int32_t main(void)
 								Global_datas.mute = 1;
 								drv_5825_mute_pin_set(0); 
 							}
-							printf("Hal_Dap_Load_vol_add\n");
+							
 						}
 					}
 					
@@ -30795,7 +30802,7 @@ int32_t main(void)
 						{
 							Global_datas.volume++;
 							Drv_Dap_vol_set(Global_datas.volume);
-							printf("Hal_Dap_Load_vol_reduce\n");
+							
 						}
 					}
 
@@ -30870,6 +30877,7 @@ int32_t main(void)
 					{
 						Global_datas.subboard_online = 1;
 						TimeOutSet(&SubBoardHandshakeTimer, 4000);
+						drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);
 					}					
 					
 	            break;
@@ -30904,7 +30912,6 @@ int32_t main(void)
 				refcount1 = 0;
 			
 			drv_power_status_updata();
-			
 		}
 		count++;
 	}

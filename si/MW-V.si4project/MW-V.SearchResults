@@ -1,5 +1,3 @@
----- TestTimer Matches (4 in 2 files) ----
-hal_timer0.c (src\global) line 22 : TIMER TestTimer;
-Hal_Timer0_Init in hal_timer0.c (src\global) : 	TimeOutSet(&TestTimer, 100);
-Hal_Timer1_Init in hal_timer0.c (src\global) : 	TimeOutSet(&TestTimer, 100);
-hal_timer0.h (src\global) line 29 : extern TIMER TestTimer;
+---- SYS_LOW_POWER Matches (2 in 2 files) ----
+main in main.c : 		                	Global_datas.g_mode_status = SYS_LOW_POWER;
+tym_global.h (src\global) line 62 :     SYS_LOW_POWER,

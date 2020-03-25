@@ -597,7 +597,7 @@ int32_t main(void)
 								Global_datas.mute = 1;
 								drv_5825_mute_pin_set(0); 
 							}
-							//printf("Hal_Dap_Load_vol_reduce\n");
+							printf("Hal_Dap_Load_vol_add\n");
 						}
 					}
 					
@@ -609,7 +609,7 @@ int32_t main(void)
 						{
 							Global_datas.volume++;
 							Drv_Dap_vol_set(Global_datas.volume);
-							//printf("Hal_Dap_Load_vol_add\n");
+							printf("Hal_Dap_Load_vol_reduce\n");
 						}
 					}
 

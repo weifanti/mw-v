@@ -220,12 +220,11 @@ void srv_key_handler(void)
 			srv_key_mode_handler();
 		break;
 		case IR_KEY_VOLUME_UP:
-		case IR_KEY_VOLUME_UP_CP:
+			
 			Global_datas.key_led_blink = 1;
 			srv_key_volume_up_handler();
 		break;
 		case IR_KEY_VOLUME_DOWN:
-		case IR_KEY_VOLUME_DOWN_CP:
 			
 			Global_datas.key_led_blink = 1;
 			srv_key_volume_down_handler();

@@ -23,7 +23,6 @@ uint8_t DecodeStartFlag = 0;
 uint8_t DecodeFinishFlag = 0;
 uint8_t ir_data_rx_ok = 0;
 uint8_t LongKeyPress = 0;
-uint8_t key_value_bak = 0;
 
 
 void GPCDEF_IRQHandler(void)
@@ -44,42 +43,18 @@ void GPCDEF_IRQHandler(void)
 					i = 0;
 					repeat_time = 0;
 					LongKeyPress = 0;
-					key_value_bak = 0;
 			}
 			else if((IrTimerCount > 23) && (IrTimerCount < 120))
 			{
 				IrTimerCount = 0;
 				//printf("REPPPPPPPPPPPPPPP\n");
 
-				if(key_value_bak == IR_KEY_PLAY_PAUSE)
+				repeat_time++;
+			    if(repeat_time >10)
 				{
-					if(repeat_time < 15)
-					{
-						repeat_time++;
-						if(repeat_time == 15)
-						{
-							LongKeyPress = 1;
-						}
-					}
+					LongKeyPress = 1;
+					repeat_time = 0;
 				}
-				else
-				{
-					repeat_time++;
-					if(repeat_time <10)
-					{
-						;
-					}
-					else
-					{
-						if(repeat_time%2)
-						{
-							LongKeyPress = 1;
-						}
-					}
-
-
-				}
-
 
 			}
 			else 
@@ -165,7 +140,6 @@ uint8_t Ircordpro(void)//红外码值处理函数
 			{
 				ir_key = IrKeyMap[temp][0];
 				printf("ir_key_num:%d\n", temp);
-				key_value_bak = ir_key;
 				return ir_key;
 			}
 		}
@@ -181,7 +155,6 @@ uint8_t Ircordpro(void)//红外码值处理函数
 			{
 				ir_key = IrKeyMap_B[temp][0];
 				printf("ir_key_num:%d\n", temp);
-				key_value_bak = ir_key;
 				return ir_key;
 			}
 		}
@@ -191,9 +164,7 @@ uint8_t Ircordpro(void)//红外码值处理函数
 
 uint8_t GetIrKey(void)
 {
-	uint8_t ir_key_value = 0;
-	
-	uint8_t ir_key_hold = 0;
+	uint8_t ir_key_value;
 
 	if(ir_data_rx_ok)
 	{
@@ -212,32 +183,8 @@ uint8_t GetIrKey(void)
 
 	if(LongKeyPress)
 	{
-		printf("longpress:%d\n", LongKeyPress);
-		LongKeyPress--;
-		switch(key_value_bak)
-		{
-			case IR_KEY_PLAY_PAUSE:
-				ir_key_hold = IR_KEY_PLAY_PAUSE_CP;
-				break;
-			case IR_KEY_VOLUME_DOWN:
-				ir_key_hold = IR_KEY_VOLUME_DOWN_CP;
-				break;
-			case IR_KEY_VOLUME_UP:
-				ir_key_hold = IR_KEY_VOLUME_UP_CP;
-				break;
-			case IR_KEY_PREV_SONG:
-				ir_key_hold = IR_KEY_PREV_SONG_CP;
-				break;	
-			case IR_KEY_NEXT_SONG:
-				ir_key_hold = IR_KEY_NEXT_SONG_CP;
-				break;
-			default:ir_key_hold = IR_KEY_NONE;
-			break;
-
-				
-		}
-		return ir_key_hold;
-		
+		LongKeyPress = 0;
+		printf("LongPress\n");
 	}
 	
 	return IR_KEY_NONE;

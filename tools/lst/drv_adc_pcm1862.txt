@@ -5,12 +5,12 @@
                           AREA ||i.drv_Adc_pcm1862_Init||, CODE, READONLY, ALIGN=2
 
                   drv_Adc_pcm1862_Init PROC
-;;;165    
-;;;166    void drv_Adc_pcm1862_Init(void)
+;;;160    
+;;;161    void drv_Adc_pcm1862_Init(void)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;167    {
-;;;168    	/* load data */
-;;;169    	printf("Adc_pcm1862_Init\n");
+;;;162    {
+;;;163    	/* load data */
+;;;164    	printf("Adc_pcm1862_Init\n");
 000002  a00b              ADR      r0,|L1.48|
 000004  f7fffffe          BL       __2printf
 000008  2400              MOVS     r4,#0
@@ -29,15 +29,15 @@
 000022  b2e4              UXTB     r4,r4
 000024  2c06              CMP      r4,#6
 000026  d3f2              BCC      |L1.14|
-;;;170    	
-;;;171    //	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
-;;;172    //	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
-;;;173        drv_PM1862_reg_Load();
-;;;174    	drv_audio_4G_Channel(); // first 4g channel
+;;;165    	
+;;;166    //	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
+;;;167    //	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
+;;;168        drv_PM1862_reg_Load();
+;;;169    	drv_audio_4G_Channel(); // first 4g channel
 000028  f7fffffe          BL       drv_audio_4G_Channel
-;;;175    }
+;;;170    }
 00002c  bdf8              POP      {r3-r7,pc}
-;;;176    
+;;;171    
                           ENDP
 
 00002e  0000              DCW      0x0000
@@ -55,220 +55,147 @@
                           AREA ||i.drv_pcm1862_PGA_VAL_CH1_L||, CODE, READONLY, ALIGN=1
 
                   drv_pcm1862_PGA_VAL_CH1_L PROC
-;;;122    
-;;;123    void drv_pcm1862_PGA_VAL_CH1_L(uint8_t value)
+;;;118    
+;;;119    void drv_pcm1862_PGA_VAL_CH1_L(uint8_t value)
 000000  4770              BX       lr
-;;;124    {
-;;;125    
-;;;126    
-;;;127    }
-;;;128    
+;;;120    {
+;;;121    
+;;;122    
+;;;123    }
+;;;124    
                           ENDP
 
 
                           AREA ||i.drv_pcm1862_PGA_VAL_CH1_R||, CODE, READONLY, ALIGN=2
 
-                          REQUIRE _printf_percent
-                          REQUIRE _printf_x
-                          REQUIRE _printf_longlong_hex
                   drv_pcm1862_PGA_VAL_CH1_R PROC
-;;;135     */
-;;;136    void drv_pcm1862_PGA_VAL_CH1_R(uint8_t value)
+;;;131     */
+;;;132    void drv_pcm1862_PGA_VAL_CH1_R(uint8_t value)
 000000  b508              PUSH     {r3,lr}
-;;;137    {
+;;;133    {
+;;;134    
+;;;135    		pcm1862_PGA_VAL_CH1_R[1] = value;
+000002  4905              LDR      r1,|L3.24|
+;;;136    
+;;;137    		Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)NULL, 0);
+000004  2202              MOVS     r2,#2
+000006  7048              STRB     r0,[r1,#1]            ;135
+000008  2000              MOVS     r0,#0
+00000a  4603              MOV      r3,r0
+00000c  9000              STR      r0,[sp,#0]
+00000e  2094              MOVS     r0,#0x94
+000010  f7fffffe          BL       Hal_I2c1_Transfer
 ;;;138    
-;;;139    		pcm1862_PGA_VAL_CH1_R[1] = value;
-000002  4907              LDR      r1,|L3.32|
-000004  7048              STRB     r0,[r1,#1]
+;;;139    }
+000014  bd08              POP      {r3,pc}
 ;;;140    
-;;;141    		printf("pcm1862_PGA_VAL_CH1_R = %x\n",pcm1862_PGA_VAL_CH1_R[1]);
-000006  4601              MOV      r1,r0
-000008  a006              ADR      r0,|L3.36|
-00000a  f7fffffe          BL       __2printf
-;;;142    		Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)NULL, 0);
-00000e  2000              MOVS     r0,#0
-000010  4603              MOV      r3,r0
-000012  9000              STR      r0,[sp,#0]
-000014  2202              MOVS     r2,#2
-000016  4902              LDR      r1,|L3.32|
-000018  2094              MOVS     r0,#0x94
-00001a  f7fffffe          BL       Hal_I2c1_Transfer
-;;;143    
-;;;144    }
-00001e  bd08              POP      {r3,pc}
-;;;145    
                           ENDP
 
-                  |L3.32|
+000016  0000              DCW      0x0000
+                  |L3.24|
                           DCD      ||.data||+0x6
-                  |L3.36|
-000024  70636d31          DCB      "pcm1862_PGA_VAL_CH1_R = %x\n",0
-000028  3836325f
-00002c  5047415f
-000030  56414c5f
-000034  4348315f
-000038  52203d20
-00003c  25780a00
 
                           AREA ||i.drv_pcm1862_PGA_VAL_SET||, CODE, READONLY, ALIGN=2
 
-                          REQUIRE _printf_percent
-                          REQUIRE _printf_x
-                          REQUIRE _printf_longlong_hex
                   drv_pcm1862_PGA_VAL_SET PROC
-;;;94     
-;;;95     void drv_pcm1862_PGA_VAL_SET(uint8_t value)
+;;;91     
+;;;92     void drv_pcm1862_PGA_VAL_SET(uint8_t value)
 000000  b538              PUSH     {r3-r5,lr}
-;;;96     {
-;;;97     
-;;;98     	pcm1862_PGA_VAL_CH1_L[1] = value ;
-000002  4916              LDR      r1,|L4.92|
-000004  7048              STRB     r0,[r1,#1]
-;;;99     	pcm1862_PGA_VAL_CH1_R[1] = value ;
-000006  1c89              ADDS     r1,r1,#2
-000008  7048              STRB     r0,[r1,#1]
-;;;100    	pcm1862_PGA_VAL_CH2_L[1] = value ;
-00000a  1c89              ADDS     r1,r1,#2
-00000c  7048              STRB     r0,[r1,#1]
-;;;101    	pcm1862_PGA_VAL_CH2_R[1] = value ;
-00000e  1c89              ADDS     r1,r1,#2
-000010  7048              STRB     r0,[r1,#1]
-;;;102    
-;;;103    	printf("pcm1862_PGA_VAL_CH1_L %x\n",pcm1862_PGA_VAL_CH1_L[1]);
-000012  4601              MOV      r1,r0
-000014  a012              ADR      r0,|L4.96|
-000016  f7fffffe          BL       __2printf
-;;;104    	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_L,sizeof(pcm1862_PGA_VAL_CH1_L), (uint8_t*)NULL, 0);
-00001a  2400              MOVS     r4,#0
-00001c  4623              MOV      r3,r4
-00001e  2202              MOVS     r2,#2
-000020  490e              LDR      r1,|L4.92|
-000022  2094              MOVS     r0,#0x94
-000024  9400              STR      r4,[sp,#0]
-000026  f7fffffe          BL       Hal_I2c1_Transfer
-;;;105    	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)NULL, 0);
-00002a  490c              LDR      r1,|L4.92|
-00002c  2300              MOVS     r3,#0
-00002e  2202              MOVS     r2,#2
-000030  1c89              ADDS     r1,r1,#2
-000032  2094              MOVS     r0,#0x94
-000034  9400              STR      r4,[sp,#0]
-000036  f7fffffe          BL       Hal_I2c1_Transfer
-;;;106    	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH2_L,sizeof(pcm1862_PGA_VAL_CH2_L), (uint8_t*)NULL, 0);
-00003a  4908              LDR      r1,|L4.92|
-00003c  2300              MOVS     r3,#0
-00003e  2202              MOVS     r2,#2
-000040  1d09              ADDS     r1,r1,#4
-000042  2094              MOVS     r0,#0x94
-000044  9400              STR      r4,[sp,#0]
-000046  f7fffffe          BL       Hal_I2c1_Transfer
-;;;107    	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH2_R,sizeof(pcm1862_PGA_VAL_CH2_R), (uint8_t*)NULL, 0);
-00004a  4904              LDR      r1,|L4.92|
-00004c  2300              MOVS     r3,#0
-00004e  2202              MOVS     r2,#2
-000050  1d89              ADDS     r1,r1,#6
-000052  2094              MOVS     r0,#0x94
-000054  9400              STR      r4,[sp,#0]
-000056  f7fffffe          BL       Hal_I2c1_Transfer
-;;;108    
-;;;109    }
-00005a  bd38              POP      {r3-r5,pc}
-;;;110    
+;;;93     {
+;;;94     
+;;;95     	pcm1862_PGA_VAL_CH1_L[1] = value ;
+000002  4914              LDR      r1,|L4.84|
+;;;96     	pcm1862_PGA_VAL_CH1_R[1] = value ;
+;;;97     	pcm1862_PGA_VAL_CH2_L[1] = value ;
+;;;98     	pcm1862_PGA_VAL_CH2_R[1] = value ;
+;;;99     
+;;;100    	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_L,sizeof(pcm1862_PGA_VAL_CH1_L), (uint8_t*)NULL, 0);
+000004  2400              MOVS     r4,#0
+000006  7048              STRB     r0,[r1,#1]            ;95
+000008  1c89              ADDS     r1,r1,#2              ;96
+00000a  7048              STRB     r0,[r1,#1]            ;96
+00000c  1c89              ADDS     r1,r1,#2              ;97
+00000e  7048              STRB     r0,[r1,#1]            ;97
+000010  1c89              ADDS     r1,r1,#2              ;98
+000012  7048              STRB     r0,[r1,#1]            ;98
+000014  4623              MOV      r3,r4
+000016  2202              MOVS     r2,#2
+000018  1f89              SUBS     r1,r1,#6
+00001a  2094              MOVS     r0,#0x94
+00001c  9400              STR      r4,[sp,#0]
+00001e  f7fffffe          BL       Hal_I2c1_Transfer
+;;;101    	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)NULL, 0);
+000022  490c              LDR      r1,|L4.84|
+000024  2300              MOVS     r3,#0
+000026  2202              MOVS     r2,#2
+000028  1c89              ADDS     r1,r1,#2
+00002a  2094              MOVS     r0,#0x94
+00002c  9400              STR      r4,[sp,#0]
+00002e  f7fffffe          BL       Hal_I2c1_Transfer
+;;;102    	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH2_L,sizeof(pcm1862_PGA_VAL_CH2_L), (uint8_t*)NULL, 0);
+000032  4908              LDR      r1,|L4.84|
+000034  2300              MOVS     r3,#0
+000036  2202              MOVS     r2,#2
+000038  1d09              ADDS     r1,r1,#4
+00003a  2094              MOVS     r0,#0x94
+00003c  9400              STR      r4,[sp,#0]
+00003e  f7fffffe          BL       Hal_I2c1_Transfer
+;;;103    	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH2_R,sizeof(pcm1862_PGA_VAL_CH2_R), (uint8_t*)NULL, 0);
+000042  4904              LDR      r1,|L4.84|
+000044  2300              MOVS     r3,#0
+000046  2202              MOVS     r2,#2
+000048  1d89              ADDS     r1,r1,#6
+00004a  2094              MOVS     r0,#0x94
+00004c  9400              STR      r4,[sp,#0]
+00004e  f7fffffe          BL       Hal_I2c1_Transfer
+;;;104    
+;;;105    }
+000052  bd38              POP      {r3-r5,pc}
+;;;106    
                           ENDP
 
-                  |L4.92|
+                  |L4.84|
                           DCD      ||.data||+0x4
-                  |L4.96|
-000060  70636d31          DCB      "pcm1862_PGA_VAL_CH1_L %x\n",0
-000064  3836325f
-000068  5047415f
-00006c  56414c5f
-000070  4348315f
-000074  4c202578
-000078  0a00    
-00007a  00                DCB      0
-00007b  00                DCB      0
 
                           AREA ||i.drv_pcm1862_input_channel||, CODE, READONLY, ALIGN=2
 
-                          REQUIRE _printf_percent
-                          REQUIRE _printf_x
-                          REQUIRE _printf_longlong_hex
                   drv_pcm1862_input_channel PROC
 ;;;69      */
 ;;;70     void drv_pcm1862_input_channel(uint8_t pcm_channel)
 000000  b538              PUSH     {r3-r5,lr}
 ;;;71     {
-000002  4604              MOV      r4,r0
-;;;72     	printf("pcm_channel = %x\n",pcm_channel);
-000004  4601              MOV      r1,r0
-000006  a010              ADR      r0,|L5.72|
-000008  f7fffffe          BL       __2printf
-;;;73     	pcm1862_channel_L[1] = pcm_channel | 0x40;
-00000c  2040              MOVS     r0,#0x40
-00000e  4304              ORRS     r4,r4,r0
-000010  4812              LDR      r0,|L5.92|
-000012  4621              MOV      r1,r4
-000014  7044              STRB     r4,[r0,#1]
-;;;74     	pcm1862_channel_R[1] = pcm_channel | 0x40;
-000016  1c85              ADDS     r5,r0,#2
-000018  706c              STRB     r4,[r5,#1]
-;;;75     	printf("pcm1862_channel_L[1] = %x\n",pcm1862_channel_L[1]);
-00001a  a011              ADR      r0,|L5.96|
-00001c  f7fffffe          BL       __2printf
-;;;76     	printf("pcm1862_channel_R[1] = %x\n",pcm1862_channel_R[1]);
-000020  7869              LDRB     r1,[r5,#1]  ; pcm1862_channel_R
-000022  a016              ADR      r0,|L5.124|
-000024  f7fffffe          BL       __2printf
-;;;77     	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_channel_L,sizeof(pcm1862_channel_L), (uint8_t*)NULL, 0);
-000028  2400              MOVS     r4,#0
-00002a  4623              MOV      r3,r4
-00002c  2202              MOVS     r2,#2
-00002e  1ea9              SUBS     r1,r5,#2
-000030  2094              MOVS     r0,#0x94
-000032  9400              STR      r4,[sp,#0]
-000034  f7fffffe          BL       Hal_I2c1_Transfer
-;;;78     	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_channel_R,sizeof(pcm1862_channel_R), (uint8_t*)NULL, 0);
-000038  2300              MOVS     r3,#0
-00003a  2202              MOVS     r2,#2
-00003c  4629              MOV      r1,r5
-00003e  2094              MOVS     r0,#0x94
-000040  9400              STR      r4,[sp,#0]
-000042  f7fffffe          BL       Hal_I2c1_Transfer
-;;;79     
-;;;80     }
-000046  bd38              POP      {r3-r5,pc}
-;;;81     
+;;;72     	pcm1862_channel_L[1] = pcm_channel | 0x40;
+000002  2140              MOVS     r1,#0x40
+000004  4308              ORRS     r0,r0,r1
+000006  490a              LDR      r1,|L5.48|
+;;;73     	pcm1862_channel_R[1] = pcm_channel | 0x40;
+;;;74     	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_channel_L,sizeof(pcm1862_channel_L), (uint8_t*)NULL, 0);
+000008  2400              MOVS     r4,#0
+00000a  7048              STRB     r0,[r1,#1]            ;72
+00000c  1c89              ADDS     r1,r1,#2              ;73
+00000e  7048              STRB     r0,[r1,#1]            ;73
+000010  4623              MOV      r3,r4
+000012  2202              MOVS     r2,#2
+000014  1e89              SUBS     r1,r1,#2
+000016  2094              MOVS     r0,#0x94
+000018  9400              STR      r4,[sp,#0]
+00001a  f7fffffe          BL       Hal_I2c1_Transfer
+;;;75     	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_channel_R,sizeof(pcm1862_channel_R), (uint8_t*)NULL, 0);
+00001e  4904              LDR      r1,|L5.48|
+000020  2300              MOVS     r3,#0
+000022  2202              MOVS     r2,#2
+000024  1c89              ADDS     r1,r1,#2
+000026  2094              MOVS     r0,#0x94
+000028  9400              STR      r4,[sp,#0]
+00002a  f7fffffe          BL       Hal_I2c1_Transfer
+;;;76     
+;;;77     }
+00002e  bd38              POP      {r3-r5,pc}
+;;;78     
                           ENDP
 
-                  |L5.72|
-000048  70636d5f          DCB      "pcm_channel = %x\n",0
-00004c  6368616e
-000050  6e656c20
-000054  3d202578
-000058  0a00    
-00005a  00                DCB      0
-00005b  00                DCB      0
-                  |L5.92|
+                  |L5.48|
                           DCD      ||.data||
-                  |L5.96|
-000060  70636d31          DCB      "pcm1862_channel_L[1] = %x\n",0
-000064  3836325f
-000068  6368616e
-00006c  6e656c5f
-000070  4c5b315d
-000074  203d2025
-000078  780a00  
-00007b  00                DCB      0
-                  |L5.124|
-00007c  70636d31          DCB      "pcm1862_channel_R[1] = %x\n",0
-000080  3836325f
-000084  6368616e
-000088  6e656c5f
-00008c  525b315d
-000090  203d2025
-000094  780a00  
-000097  00                DCB      0
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=0
 

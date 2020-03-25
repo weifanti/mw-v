@@ -29595,11 +29595,8 @@ const static init_pcm1862_arr_matrix_t pcm1862_mt[] =
  
 void drv_pcm1862_input_channel(uint8_t pcm_channel)
 {
-	printf("pcm_channel = %x\n",pcm_channel);
 	pcm1862_channel_L[1] = pcm_channel | 0x40;
 	pcm1862_channel_R[1] = pcm_channel | 0x40;
-	printf("pcm1862_channel_L[1] = %x\n",pcm1862_channel_L[1]);
-	printf("pcm1862_channel_R[1] = %x\n",pcm1862_channel_R[1]);
 	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_channel_L,sizeof(pcm1862_channel_L), (uint8_t*)0, 0);
 	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_channel_R,sizeof(pcm1862_channel_R), (uint8_t*)0, 0);
 
@@ -29626,7 +29623,6 @@ void drv_pcm1862_PGA_VAL_SET(uint8_t value)
 	pcm1862_PGA_VAL_CH2_L[1] = value ;
 	pcm1862_PGA_VAL_CH2_R[1] = value ;
 
-	printf("pcm1862_PGA_VAL_CH1_L %x\n",pcm1862_PGA_VAL_CH1_L[1]);
 	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH1_L,sizeof(pcm1862_PGA_VAL_CH1_L), (uint8_t*)0, 0);
 	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)0, 0);
 	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH2_L,sizeof(pcm1862_PGA_VAL_CH2_L), (uint8_t*)0, 0);
@@ -29664,7 +29660,6 @@ void drv_pcm1862_PGA_VAL_CH1_R(uint8_t value)
 
 		pcm1862_PGA_VAL_CH1_R[1] = value;
 
-		printf("pcm1862_PGA_VAL_CH1_R = %x\n",pcm1862_PGA_VAL_CH1_R[1]);
 		Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)0, 0);
 
 }

@@ -5,18 +5,18 @@
                           AREA ||i.Drv_IrKey_init||, CODE, READONLY, ALIGN=2
 
                   Drv_IrKey_init PROC
-;;;85     
-;;;86     void Drv_IrKey_init(void)
+;;;110    
+;;;111    void Drv_IrKey_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;87     {
-;;;88     
-;;;89     	GPIO_SetMode(PD, BIT0,  GPIO_MODE_INPUT);
+;;;112    {
+;;;113    
+;;;114    	GPIO_SetMode(PD, BIT0,  GPIO_MODE_INPUT);
 000002  4c09              LDR      r4,|L1.40|
 000004  2200              MOVS     r2,#0
 000006  2101              MOVS     r1,#1
 000008  4620              MOV      r0,r4
 00000a  f7fffffe          BL       GPIO_SetMode
-;;;90     	GPIO_EnableInt(PD, 0, GPIO_INT_FALLING);
+;;;115    	GPIO_EnableInt(PD, 0, GPIO_INT_FALLING);
 00000e  2201              MOVS     r2,#1
 000010  2100              MOVS     r1,#0
 000012  4620              MOV      r0,r4
@@ -25,15 +25,15 @@
 00001a  4904              LDR      r1,|L1.44|
 00001c  2020              MOVS     r0,#0x20
 00001e  6008              STR      r0,[r1,#0]
-;;;91     	
-;;;92     	NVIC_EnableIRQ(GPCDEF_IRQn);  
-;;;93         GPIO_ENABLE_DEBOUNCE(PD, BIT0);
+;;;116    	
+;;;117    	NVIC_EnableIRQ(GPCDEF_IRQn);  
+;;;118        GPIO_ENABLE_DEBOUNCE(PD, BIT0);
 000020  6961              LDR      r1,[r4,#0x14]
 000022  4311              ORRS     r1,r1,r2
 000024  6161              STR      r1,[r4,#0x14]
-;;;94     }
+;;;119    }
 000026  bd10              POP      {r4,pc}
-;;;95     
+;;;120    
                           ENDP
 
                   |L1.40|
@@ -44,192 +44,285 @@
                           AREA ||i.GPCDEF_IRQHandler||, CODE, READONLY, ALIGN=2
 
                   GPCDEF_IRQHandler PROC
-;;;27     
-;;;28     void GPCDEF_IRQHandler(void)
+;;;28     
+;;;29     void GPCDEF_IRQHandler(void)
 000000  b530              PUSH     {r4,r5,lr}
-;;;29     {
-;;;30         volatile uint32_t temp;
-;;;31     	static uint8_t i = 0;
-;;;32     	static uint32_t repeat_time = 0;	
-;;;33     
-;;;34     	    if(GPIO_GET_INT_FLAG(PD,BIT0)) // IR KEY
-000002  4818              LDR      r0,|L2.100|
+;;;30     {
+;;;31         volatile uint32_t temp;
+;;;32     	static uint8_t i = 0;
+;;;33     	static uint32_t repeat_time = 0;	
+;;;34     
+;;;35     	    if(GPIO_GET_INT_FLAG(PD,BIT0)) // IR KEY
+000002  481e              LDR      r0,|L2.124|
 000004  6a01              LDR      r1,[r0,#0x20]
 000006  07c9              LSLS     r1,r1,#31
-000008  d00d              BEQ      |L2.38|
-;;;35     		{
-;;;36     	        GPIO_CLR_INT_FLAG(PD, BIT0);
-00000a  2401              MOVS     r4,#1
-00000c  6204              STR      r4,[r0,#0x20]
-;;;37     
-;;;38     			if((IrTimerCount > 120) && (IrTimerCount < 145))// start code  14ms
-00000e  4816              LDR      r0,|L2.104|
-000010  2300              MOVS     r3,#0
-000012  6881              LDR      r1,[r0,#8]  ; IrTimerCount
-000014  460a              MOV      r2,r1
-000016  3a79              SUBS     r2,r2,#0x79
-000018  2a18              CMP      r2,#0x18
-00001a  d205              BCS      |L2.40|
-;;;39     			{
-;;;40     				//	printf("IR KEY:%d\n",IrTimerCount);
-;;;41     					DecodeStartFlag = 1;
-00001c  7004              STRB     r4,[r0,#0]
-;;;42     					IrTimerCount = 0;
-;;;43     					i = 0;
-00001e  6083              STR      r3,[r0,#8]  ; IrTimerCount
-000020  7103              STRB     r3,[r0,#4]
-;;;44     					repeat_time = 0;
-;;;45     					LongKeyPress = 0;
-000022  6103              STR      r3,[r0,#0x10]  ; repeat_time
-000024  70c3              STRB     r3,[r0,#3]
-                  |L2.38|
-;;;46     			}
-;;;47     			else if((IrTimerCount > 23) && (IrTimerCount < 120))
-;;;48     			{
-;;;49     				IrTimerCount = 0;
-;;;50     				//printf("REPPPPPPPPPPPPPPP\n");
-;;;51     
-;;;52     				repeat_time++;
-;;;53     			    if(repeat_time >10)
-;;;54     				{
-;;;55     					LongKeyPress = 1;
-;;;56     					repeat_time = 0;
-;;;57     				}
-;;;58     
-;;;59     			}
-;;;60     			else 
-;;;61     			{
-;;;62     			   
-;;;63     				if(DecodeStartFlag)
-;;;64     				{
-;;;65     					ir_data[i] = IrTimerCount;
-;;;66     				//	printf("IR KEY %d:%d\n",i,ir_data[i]);
-;;;67     					i++;
-;;;68     					if(i >= 32)
-;;;69     					{
-;;;70     						i=0;
-;;;71     						ir_data_rx_ok = 1;
-;;;72     						DecodeStartFlag = 0;
-;;;73     					}
-;;;74     				}
-;;;75     				IrTimerCount = 0;
-;;;76     			}	
-;;;77     	    }
-;;;78     		
-;;;79     }
-000026  bd30              POP      {r4,r5,pc}
+000008  d00e              BEQ      |L2.40|
+;;;36     		{
+;;;37     	        GPIO_CLR_INT_FLAG(PD, BIT0);
+00000a  2201              MOVS     r2,#1
+00000c  6202              STR      r2,[r0,#0x20]
+;;;38     
+;;;39     			if((IrTimerCount > 120) && (IrTimerCount < 145))// start code  14ms
+00000e  491c              LDR      r1,|L2.128|
+000010  2000              MOVS     r0,#0
+000012  688b              LDR      r3,[r1,#8]  ; IrTimerCount
+000014  461c              MOV      r4,r3
+000016  3c79              SUBS     r4,r4,#0x79
+000018  2c18              CMP      r4,#0x18
+00001a  d206              BCS      |L2.42|
+;;;40     			{
+;;;41     				//	printf("IR KEY:%d\n",IrTimerCount);
+;;;42     					DecodeStartFlag = 1;
+00001c  700a              STRB     r2,[r1,#0]
+;;;43     					IrTimerCount = 0;
+;;;44     					i = 0;
+00001e  6088              STR      r0,[r1,#8]  ; IrTimerCount
+000020  7148              STRB     r0,[r1,#5]
+;;;45     					repeat_time = 0;
+;;;46     					LongKeyPress = 0;
+000022  6108              STR      r0,[r1,#0x10]  ; repeat_time
+000024  70c8              STRB     r0,[r1,#3]
+;;;47     					key_value_bak = 0;
+000026  7108              STRB     r0,[r1,#4]
                   |L2.40|
-000028  460a              MOV      r2,r1                 ;47
-00002a  3a18              SUBS     r2,r2,#0x18           ;47
-00002c  2a60              CMP      r2,#0x60              ;47
-00002e  d208              BCS      |L2.66|
-000030  6083              STR      r3,[r0,#8]            ;52  ; IrTimerCount
-000032  6901              LDR      r1,[r0,#0x10]         ;52  ; repeat_time
-000034  1c49              ADDS     r1,r1,#1              ;52
-000036  6101              STR      r1,[r0,#0x10]         ;53  ; repeat_time
-000038  290a              CMP      r1,#0xa               ;53
-00003a  d9f4              BLS      |L2.38|
-00003c  70c4              STRB     r4,[r0,#3]            ;55
-00003e  6103              STR      r3,[r0,#0x10]         ;56  ; repeat_time
-000040  bd30              POP      {r4,r5,pc}
-                  |L2.66|
-000042  7802              LDRB     r2,[r0,#0]            ;63  ; DecodeStartFlag
-000044  2a00              CMP      r2,#0                 ;63
-000046  d00a              BEQ      |L2.94|
-000048  4d08              LDR      r5,|L2.108|
-00004a  7902              LDRB     r2,[r0,#4]            ;65  ; i
-00004c  54a9              STRB     r1,[r5,r2]            ;65
-00004e  1c52              ADDS     r2,r2,#1              ;65
-000050  b2d1              UXTB     r1,r2                 ;67
-000052  7101              STRB     r1,[r0,#4]            ;67
-000054  2920              CMP      r1,#0x20              ;68
-000056  d302              BCC      |L2.94|
-000058  7103              STRB     r3,[r0,#4]            ;70
-00005a  7084              STRB     r4,[r0,#2]            ;71
-00005c  7003              STRB     r3,[r0,#0]            ;72
-                  |L2.94|
-00005e  6083              STR      r3,[r0,#8]            ;75  ; IrTimerCount
-000060  bd30              POP      {r4,r5,pc}
-;;;80     		
+;;;48     			}
+;;;49     			else if((IrTimerCount > 23) && (IrTimerCount < 120))
+;;;50     			{
+;;;51     				IrTimerCount = 0;
+;;;52     				//printf("REPPPPPPPPPPPPPPP\n");
+;;;53     
+;;;54     				if(key_value_bak == IR_KEY_PLAY_PAUSE)
+;;;55     				{
+;;;56     					if(repeat_time < 15)
+;;;57     					{
+;;;58     						repeat_time++;
+;;;59     						if(repeat_time == 15)
+;;;60     						{
+;;;61     							LongKeyPress = 1;
+;;;62     						}
+;;;63     					}
+;;;64     				}
+;;;65     				else
+;;;66     				{
+;;;67     					repeat_time++;
+;;;68     					if(repeat_time <10)
+;;;69     					{
+;;;70     						;
+;;;71     					}
+;;;72     					else
+;;;73     					{
+;;;74     						if(repeat_time%2)
+;;;75     						{
+;;;76     							LongKeyPress = 1;
+;;;77     						}
+;;;78     					}
+;;;79     
+;;;80     
+;;;81     				}
+;;;82     
+;;;83     
+;;;84     			}
+;;;85     			else 
+;;;86     			{
+;;;87     			   
+;;;88     				if(DecodeStartFlag)
+;;;89     				{
+;;;90     					ir_data[i] = IrTimerCount;
+;;;91     				//	printf("IR KEY %d:%d\n",i,ir_data[i]);
+;;;92     					i++;
+;;;93     					if(i >= 32)
+;;;94     					{
+;;;95     						i=0;
+;;;96     						ir_data_rx_ok = 1;
+;;;97     						DecodeStartFlag = 0;
+;;;98     					}
+;;;99     				}
+;;;100    				IrTimerCount = 0;
+;;;101    			}	
+;;;102    	    }
+;;;103    		
+;;;104    }
+000028  bd30              POP      {r4,r5,pc}
+                  |L2.42|
+00002a  461c              MOV      r4,r3                 ;49
+00002c  3c18              SUBS     r4,r4,#0x18           ;49
+00002e  2c60              CMP      r4,#0x60              ;49
+000030  d213              BCS      |L2.90|
+000032  6088              STR      r0,[r1,#8]            ;54  ; IrTimerCount
+000034  4812              LDR      r0,|L2.128|
+000036  790c              LDRB     r4,[r1,#4]            ;54  ; key_value_bak
+000038  6903              LDR      r3,[r0,#0x10]         ;58
+00003a  1c58              ADDS     r0,r3,#1              ;58
+00003c  2c0b              CMP      r4,#0xb               ;54
+00003e  d006              BEQ      |L2.78|
+000040  6108              STR      r0,[r1,#0x10]         ;68  ; repeat_time
+000042  280a              CMP      r0,#0xa               ;68
+000044  d3f0              BCC      |L2.40|
+000046  07c0              LSLS     r0,r0,#31             ;74
+000048  d0ee              BEQ      |L2.40|
+                  |L2.74|
+00004a  70ca              STRB     r2,[r1,#3]            ;76
+                  |L2.76|
+00004c  bd30              POP      {r4,r5,pc}
+                  |L2.78|
+00004e  2b0f              CMP      r3,#0xf               ;56
+000050  d2fc              BCS      |L2.76|
+000052  6108              STR      r0,[r1,#0x10]         ;59  ; repeat_time
+000054  280f              CMP      r0,#0xf               ;59
+000056  d0f8              BEQ      |L2.74|
+000058  bd30              POP      {r4,r5,pc}
+                  |L2.90|
+00005a  780c              LDRB     r4,[r1,#0]            ;88  ; DecodeStartFlag
+00005c  2c00              CMP      r4,#0                 ;88
+00005e  d00a              BEQ      |L2.118|
+000060  4d08              LDR      r5,|L2.132|
+000062  794c              LDRB     r4,[r1,#5]            ;90  ; i
+000064  552b              STRB     r3,[r5,r4]            ;90
+000066  1c64              ADDS     r4,r4,#1              ;90
+000068  b2e3              UXTB     r3,r4                 ;92
+00006a  714b              STRB     r3,[r1,#5]            ;92
+00006c  2b20              CMP      r3,#0x20              ;93
+00006e  d302              BCC      |L2.118|
+000070  7148              STRB     r0,[r1,#5]            ;95
+000072  708a              STRB     r2,[r1,#2]            ;96
+000074  7008              STRB     r0,[r1,#0]            ;97
+                  |L2.118|
+000076  6088              STR      r0,[r1,#8]            ;100  ; IrTimerCount
+000078  bd30              POP      {r4,r5,pc}
+;;;105    		
                           ENDP
 
-000062  0000              DCW      0x0000
-                  |L2.100|
+00007a  0000              DCW      0x0000
+                  |L2.124|
                           DCD      0x500040c0
-                  |L2.104|
+                  |L2.128|
                           DCD      ||.data||
-                  |L2.108|
+                  |L2.132|
                           DCD      ||.bss||
 
                           AREA ||i.GetIrKey||, CODE, READONLY, ALIGN=2
 
+                          REQUIRE _printf_percent
+                          REQUIRE _printf_d
+                          REQUIRE _printf_int_dec
                   GetIrKey PROC
-;;;164    
-;;;165    uint8_t GetIrKey(void)
+;;;191    
+;;;192    uint8_t GetIrKey(void)
 000000  b570              PUSH     {r4-r6,lr}
-;;;166    {
-;;;167    	uint8_t ir_key_value;
-;;;168    
-;;;169    	if(ir_data_rx_ok)
-000002  4c0a              LDR      r4,|L3.44|
-000004  2500              MOVS     r5,#0
-000006  78a0              LDRB     r0,[r4,#2]  ; ir_data_rx_ok
+;;;193    {
+;;;194    	uint8_t ir_key_value = 0;
+;;;195    	
+;;;196    	uint8_t ir_key_hold = 0;
+;;;197    
+;;;198    	if(ir_data_rx_ok)
+000002  4d17              LDR      r5,|L3.96|
+000004  2400              MOVS     r4,#0                 ;196
+000006  78a8              LDRB     r0,[r5,#2]  ; ir_data_rx_ok
 000008  2800              CMP      r0,#0
-00000a  d006              BEQ      |L3.26|
-;;;170    	{
-;;;171    		printf("ir_data_rx_ok = 1\n");
-00000c  a008              ADR      r0,|L3.48|
+00000a  d007              BEQ      |L3.28|
+;;;199    	{
+;;;200    		printf("ir_data_rx_ok = 1\n");
+00000c  a015              ADR      r0,|L3.100|
 00000e  f7fffffe          BL       __2printf
-;;;172    		ir_key_value = Ircordpro();
+;;;201    		ir_key_value = Ircordpro();
 000012  f7fffffe          BL       Ircordpro
-;;;173    		ir_data_rx_ok = 0;
-000016  70a5              STRB     r5,[r4,#2]
-;;;174    
-;;;175    
-;;;176    		// shoutting down cann't respond any key. idle state only respond power key
-;;;177    		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
-;;;178    		{
-;;;179    			//ir_key_value = IR_KEY_NONE;
-;;;180    		}
-;;;181    		return ir_key_value;
-;;;182    	}
-;;;183    
-;;;184    	if(LongKeyPress)
-;;;185    	{
-;;;186    		LongKeyPress = 0;
-;;;187    		printf("LongPress\n");
-;;;188    	}
-;;;189    	
-;;;190    	return IR_KEY_NONE;
-;;;191    }
-000018  bd70              POP      {r4-r6,pc}
-                  |L3.26|
-00001a  78e0              LDRB     r0,[r4,#3]            ;184  ; LongKeyPress
-00001c  2800              CMP      r0,#0                 ;184
-00001e  d003              BEQ      |L3.40|
-000020  70e5              STRB     r5,[r4,#3]            ;186
-000022  a008              ADR      r0,|L3.68|
+;;;202    		ir_data_rx_ok = 0;
+000016  2100              MOVS     r1,#0
+000018  70a9              STRB     r1,[r5,#2]
+;;;203    
+;;;204    
+;;;205    		// shoutting down cann't respond any key. idle state only respond power key
+;;;206    		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
+;;;207    		{
+;;;208    			//ir_key_value = IR_KEY_NONE;
+;;;209    		}
+;;;210    		return ir_key_value;
+;;;211    	}
+;;;212    
+;;;213    	if(LongKeyPress)
+;;;214    	{
+;;;215    		printf("longpress:%d\n", LongKeyPress);
+;;;216    		LongKeyPress--;
+;;;217    		switch(key_value_bak)
+;;;218    		{
+;;;219    			case IR_KEY_PLAY_PAUSE:
+;;;220    				ir_key_hold = IR_KEY_PLAY_PAUSE_CP;
+;;;221    				break;
+;;;222    			case IR_KEY_VOLUME_DOWN:
+;;;223    				ir_key_hold = IR_KEY_VOLUME_DOWN_CP;
+;;;224    				break;
+;;;225    			case IR_KEY_VOLUME_UP:
+;;;226    				ir_key_hold = IR_KEY_VOLUME_UP_CP;
+;;;227    				break;
+;;;228    			case IR_KEY_PREV_SONG:
+;;;229    				ir_key_hold = IR_KEY_PREV_SONG_CP;
+;;;230    				break;	
+;;;231    			case IR_KEY_NEXT_SONG:
+;;;232    				ir_key_hold = IR_KEY_NEXT_SONG_CP;
+;;;233    				break;
+;;;234    			default:ir_key_hold = IR_KEY_NONE;
+;;;235    			break;
+;;;236    
+;;;237    				
+;;;238    		}
+;;;239    		return ir_key_hold;
+;;;240    		
+;;;241    	}
+;;;242    	
+;;;243    	return IR_KEY_NONE;
+;;;244    }
+00001a  bd70              POP      {r4-r6,pc}
+                  |L3.28|
+00001c  78e9              LDRB     r1,[r5,#3]            ;213  ; LongKeyPress
+00001e  2900              CMP      r1,#0                 ;213
+000020  d01b              BEQ      |L3.90|
+000022  a015              ADR      r0,|L3.120|
 000024  f7fffffe          BL       __2printf
-                  |L3.40|
-000028  2000              MOVS     r0,#0                 ;190
-00002a  bd70              POP      {r4-r6,pc}
-;;;192    
+000028  78e8              LDRB     r0,[r5,#3]            ;216  ; LongKeyPress
+00002a  1e40              SUBS     r0,r0,#1              ;216
+00002c  70e8              STRB     r0,[r5,#3]            ;216
+00002e  7928              LDRB     r0,[r5,#4]            ;217  ; key_value_bak
+000030  1ec0              SUBS     r0,r0,#3              ;217
+000032  0003              MOVS     r3,r0                 ;217
+000034  f7fffffe          BL       __ARM_common_switch8
+000038  090a0f08          DCB      0x09,0x0a,0x0f,0x08
+00003c  0f0c0f0e          DCB      0x0f,0x0c,0x0f,0x0e
+000040  0f060f00          DCB      0x0f,0x06,0x0f,0x00
+000044  240c              MOVS     r4,#0xc               ;220
+000046  e006              B        |L3.86|
+000048  2406              MOVS     r4,#6                 ;223
+00004a  e004              B        |L3.86|
+00004c  2404              MOVS     r4,#4                 ;226
+00004e  e002              B        |L3.86|
+000050  2408              MOVS     r4,#8                 ;229
+000052  e000              B        |L3.86|
+000054  240a              MOVS     r4,#0xa               ;232
+                  |L3.86|
+000056  4620              MOV      r0,r4                 ;239
+000058  bd70              POP      {r4-r6,pc}
+                  |L3.90|
+00005a  2000              MOVS     r0,#0                 ;243
+00005c  bd70              POP      {r4-r6,pc}
+;;;245    
                           ENDP
 
-                  |L3.44|
+00005e  0000              DCW      0x0000
+                  |L3.96|
                           DCD      ||.data||
-                  |L3.48|
-000030  69725f64          DCB      "ir_data_rx_ok = 1\n",0
-000034  6174615f
-000038  72785f6f
-00003c  6b203d20
-000040  310a00  
-000043  00                DCB      0
-                  |L3.68|
-000044  4c6f6e67          DCB      "LongPress\n",0
-000048  50726573
-00004c  730a00  
-00004f  00                DCB      0
+                  |L3.100|
+000064  69725f64          DCB      "ir_data_rx_ok = 1\n",0
+000068  6174615f
+00006c  72785f6f
+000070  6b203d20
+000074  310a00  
+000077  00                DCB      0
+                  |L3.120|
+000078  6c6f6e67          DCB      "longpress:%d\n",0
+00007c  70726573
+000080  733a2564
+000084  0a00    
+000086  00                DCB      0
+000087  00                DCB      0
 
                           AREA ||i.Ircordpro||, CODE, READONLY, ALIGN=2
 
@@ -237,176 +330,182 @@
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
                   Ircordpro PROC
-;;;97     
-;;;98     uint8_t Ircordpro(void)//红外码值处理函数
+;;;122    
+;;;123    uint8_t Ircordpro(void)//红外码值处理函数
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;99     { 
-;;;100      unsigned char i, j, k,temp;
-;;;101      unsigned char cord,value = 0;
+;;;124    { 
+;;;125      unsigned char i, j, k,temp;
+;;;126      unsigned char cord,value = 0;
 000002  2000              MOVS     r0,#0
-;;;102      uint8_t ir_key =0;
-;;;103      uint8_t key_value=0;
-;;;104    
-;;;105      k=0;
-;;;106      for(i=0;i<4;i++)      //处理4个字节
-;;;107         {
-;;;108          for(j=1;j<=8;j++) //处理1个字节8位
-;;;109             {
-;;;110              cord=ir_data[k];
-000004  4d26              LDR      r5,|L4.160|
-;;;111              if(cord>15)//大于某值为1，这个和晶振有绝对关系，这里使用12M计算，此值可以有一定误差
-;;;112                 value|=0x80;
-;;;113              if(j<8)
-;;;114                {
-;;;115                 value>>=1;
-;;;116                }
-;;;117               k++;
-;;;118             }
-;;;119          ir_code[i]=value & 0xff;
-000006  4f27              LDR      r7,|L4.164|
-000008  4602              MOV      r2,r0                 ;105
-00000a  4603              MOV      r3,r0                 ;106
-00000c  2680              MOVS     r6,#0x80              ;112
+;;;127      uint8_t ir_key =0;
+;;;128      uint8_t key_value=0;
+;;;129    
+;;;130      k=0;
+;;;131      for(i=0;i<4;i++)      //处理4个字节
+;;;132         {
+;;;133          for(j=1;j<=8;j++) //处理1个字节8位
+;;;134             {
+;;;135              cord=ir_data[k];
+000004  4d28              LDR      r5,|L4.168|
+;;;136              if(cord>15)//大于某值为1，这个和晶振有绝对关系，这里使用12M计算，此值可以有一定误差
+;;;137                 value|=0x80;
+;;;138              if(j<8)
+;;;139                {
+;;;140                 value>>=1;
+;;;141                }
+;;;142               k++;
+;;;143             }
+;;;144          ir_code[i]=value & 0xff;
+000006  4f29              LDR      r7,|L4.172|
+000008  4602              MOV      r2,r0                 ;130
+00000a  4603              MOV      r3,r0                 ;131
+00000c  2680              MOVS     r6,#0x80              ;137
                   |L4.14|
-00000e  2101              MOVS     r1,#1                 ;108
+00000e  2101              MOVS     r1,#1                 ;133
                   |L4.16|
-000010  5cac              LDRB     r4,[r5,r2]            ;110
-000012  2c0f              CMP      r4,#0xf               ;111
+000010  5cac              LDRB     r4,[r5,r2]            ;135
+000012  2c0f              CMP      r4,#0xf               ;136
 000014  d900              BLS      |L4.24|
-000016  4330              ORRS     r0,r0,r6              ;112
+000016  4330              ORRS     r0,r0,r6              ;137
                   |L4.24|
-000018  2908              CMP      r1,#8                 ;113
+000018  2908              CMP      r1,#8                 ;138
 00001a  d200              BCS      |L4.30|
-00001c  0840              LSRS     r0,r0,#1              ;115
+00001c  0840              LSRS     r0,r0,#1              ;140
                   |L4.30|
-00001e  1c52              ADDS     r2,r2,#1              ;115
-000020  1c49              ADDS     r1,r1,#1              ;117
-000022  b2c9              UXTB     r1,r1                 ;108
-000024  b2d2              UXTB     r2,r2                 ;117
-000026  2908              CMP      r1,#8                 ;108
+00001e  1c52              ADDS     r2,r2,#1              ;140
+000020  1c49              ADDS     r1,r1,#1              ;142
+000022  b2c9              UXTB     r1,r1                 ;133
+000024  b2d2              UXTB     r2,r2                 ;142
+000026  2908              CMP      r1,#8                 ;133
 000028  d9f2              BLS      |L4.16|
 00002a  54f8              STRB     r0,[r7,r3]
-;;;120    	  value = 0;
+;;;145    	  value = 0;
 00002c  1c5b              ADDS     r3,r3,#1
 00002e  2000              MOVS     r0,#0
-000030  b2db              UXTB     r3,r3                 ;106
-000032  2b04              CMP      r3,#4                 ;106
+000030  b2db              UXTB     r3,r3                 ;131
+000032  2b04              CMP      r3,#4                 ;131
 000034  d3eb              BCC      |L4.14|
-;;;121    	  
-;;;122    	  //printf("KeyData %d:%x\n", i, ir_code[i]);
-;;;123          //value=0;     
-;;;124         } 
-;;;125      
-;;;126         DecodeFinishFlag =1;//处理完毕标志位置1
-000036  491b              LDR      r1,|L4.164|
+;;;146    	  
+;;;147    	  //printf("KeyData %d:%x\n", i, ir_code[i]);
+;;;148          //value=0;     
+;;;149         } 
+;;;150      
+;;;151         DecodeFinishFlag =1;//处理完毕标志位置1
+000036  4c1d              LDR      r4,|L4.172|
 000038  2001              MOVS     r0,#1
-00003a  390c              SUBS     r1,r1,#0xc
-00003c  7048              STRB     r0,[r1,#1]
-;;;127    
-;;;128    
-;;;129    	 ///////////////////////////////////////////////////////////////////////////
-;;;130    
-;;;131    	 //if((ir_code[0] == 0x40) && (ir_code[1] == 0xbf))// cs code is ok  0x40bf
-;;;132    	 if((ir_code[0] == 0x12) && (ir_code[1] == 0x34))// cs code is ok  0x1234
+00003a  3c0c              SUBS     r4,r4,#0xc
+00003c  7060              STRB     r0,[r4,#1]
+;;;152    
+;;;153    
+;;;154    	 ///////////////////////////////////////////////////////////////////////////
+;;;155    
+;;;156    	 //if((ir_code[0] == 0x40) && (ir_code[1] == 0xbf))// cs code is ok  0x40bf
+;;;157    	 if((ir_code[0] == 0x12) && (ir_code[1] == 0x34))// cs code is ok  0x1234
 00003e  7838              LDRB     r0,[r7,#0]  ; ir_code
 000040  2812              CMP      r0,#0x12
 000042  d002              BEQ      |L4.74|
-;;;133    	 {
-;;;134    		key_value = ir_code[2];
-;;;135    	  //  printf("keyvalue:%x\n", key_value);
-;;;136    
-;;;137    		for(temp=0;temp<11;temp++)
-;;;138    		{
-;;;139    			if(IrKeyMap[temp][1] == key_value)
-;;;140    			{
-;;;141    				ir_key = IrKeyMap[temp][0];
-;;;142    				printf("ir_key_num:%d\n", temp);
-;;;143    				return ir_key;
-;;;144    			}
-;;;145    		}
-;;;146    	 }
-;;;147    	 else if((ir_code[0] == 0x0c) && (ir_code[1] == 0xf3))// cs code is ok  0x1234
+;;;158    	 {
+;;;159    		key_value = ir_code[2];
+;;;160    	  //  printf("keyvalue:%x\n", key_value);
+;;;161    
+;;;162    		for(temp=0;temp<11;temp++)
+;;;163    		{
+;;;164    			if(IrKeyMap[temp][1] == key_value)
+;;;165    			{
+;;;166    				ir_key = IrKeyMap[temp][0];
+;;;167    				printf("ir_key_num:%d\n", temp);
+;;;168    				key_value_bak = ir_key;
+;;;169    				return ir_key;
+;;;170    			}
+;;;171    		}
+;;;172    	 }
+;;;173    	 else if((ir_code[0] == 0x0c) && (ir_code[1] == 0xf3))// cs code is ok  0x1234
 000044  280c              CMP      r0,#0xc
-000046  d011              BEQ      |L4.108|
-000048  e027              B        |L4.154|
+000046  d012              BEQ      |L4.110|
+000048  e02b              B        |L4.162|
                   |L4.74|
-00004a  7878              LDRB     r0,[r7,#1]            ;132  ; ir_code
-00004c  2834              CMP      r0,#0x34              ;132
-00004e  d124              BNE      |L4.154|
-000050  4814              LDR      r0,|L4.164|
-000052  78ba              LDRB     r2,[r7,#2]            ;134  ; ir_code
-000054  2100              MOVS     r1,#0                 ;137
-000056  3008              ADDS     r0,r0,#8              ;139
+00004a  7878              LDRB     r0,[r7,#1]            ;157  ; ir_code
+00004c  2834              CMP      r0,#0x34              ;157
+00004e  d128              BNE      |L4.162|
+000050  4816              LDR      r0,|L4.172|
+000052  78ba              LDRB     r2,[r7,#2]            ;159  ; ir_code
+000054  2100              MOVS     r1,#0                 ;162
+000056  3008              ADDS     r0,r0,#8              ;164
                   |L4.88|
-000058  004b              LSLS     r3,r1,#1              ;139
-00005a  181b              ADDS     r3,r3,r0              ;139
-00005c  785b              LDRB     r3,[r3,#1]            ;139
-00005e  4293              CMP      r3,r2                 ;139
-000060  d010              BEQ      |L4.132|
-000062  1c49              ADDS     r1,r1,#1              ;139
-000064  b2c9              UXTB     r1,r1                 ;137
-000066  290b              CMP      r1,#0xb               ;137
-000068  d3f6              BCC      |L4.88|
-00006a  e016              B        |L4.154|
-                  |L4.108|
-00006c  7878              LDRB     r0,[r7,#1]  ; ir_code
-00006e  28f3              CMP      r0,#0xf3
-000070  d113              BNE      |L4.154|
-;;;148    	 {
-;;;149    		key_value = ir_code[2];
-;;;150    	  //  printf("keyvalue:%x\n", key_value);
-;;;151    
-;;;152    		for(temp=0;temp<11;temp++)
-;;;153    		{
-;;;154    			if(IrKeyMap_B[temp][1] == key_value)
-000072  480c              LDR      r0,|L4.164|
-000074  78ba              LDRB     r2,[r7,#2]            ;149  ; ir_code
-000076  2100              MOVS     r1,#0                 ;152
-000078  3020              ADDS     r0,r0,#0x20
-                  |L4.122|
-00007a  004b              LSLS     r3,r1,#1
-00007c  181b              ADDS     r3,r3,r0
-00007e  785b              LDRB     r3,[r3,#1]
-000080  4293              CMP      r3,r2
-000082  d106              BNE      |L4.146|
-                  |L4.132|
-;;;155    			{
-;;;156    				ir_key = IrKeyMap_B[temp][0];
-000084  004a              LSLS     r2,r1,#1
-000086  5c84              LDRB     r4,[r0,r2]
-;;;157    				printf("ir_key_num:%d\n", temp);
-000088  a007              ADR      r0,|L4.168|
-00008a  f7fffffe          BL       __2printf
-;;;158    				return ir_key;
-00008e  4620              MOV      r0,r4
-;;;159    			}
-;;;160    		}
-;;;161    	 }
-;;;162    	 return IR_KEY_NONE;
-;;;163    }
-000090  bdf8              POP      {r3-r7,pc}
-                  |L4.146|
-000092  1c49              ADDS     r1,r1,#1
-000094  b2c9              UXTB     r1,r1                 ;152
-000096  290b              CMP      r1,#0xb               ;152
-000098  d3ef              BCC      |L4.122|
+000058  004b              LSLS     r3,r1,#1              ;164
+00005a  18cb              ADDS     r3,r1,r3              ;164
+00005c  181b              ADDS     r3,r3,r0              ;164
+00005e  785b              LDRB     r3,[r3,#1]            ;164
+000060  4293              CMP      r3,r2                 ;164
+000062  d011              BEQ      |L4.136|
+000064  1c49              ADDS     r1,r1,#1              ;164
+000066  b2c9              UXTB     r1,r1                 ;162
+000068  290b              CMP      r1,#0xb               ;162
+00006a  d3f5              BCC      |L4.88|
+00006c  e019              B        |L4.162|
+                  |L4.110|
+00006e  7878              LDRB     r0,[r7,#1]  ; ir_code
+000070  28f3              CMP      r0,#0xf3
+000072  d116              BNE      |L4.162|
+;;;174    	 {
+;;;175    		key_value = ir_code[2];
+;;;176    	  //  printf("keyvalue:%x\n", key_value);
+;;;177    
+;;;178    		for(temp=0;temp<11;temp++)
+;;;179    		{
+;;;180    			if(IrKeyMap_B[temp][1] == key_value)
+000074  480d              LDR      r0,|L4.172|
+000076  78ba              LDRB     r2,[r7,#2]            ;175  ; ir_code
+000078  2100              MOVS     r1,#0                 ;178
+00007a  302c              ADDS     r0,r0,#0x2c
+                  |L4.124|
+00007c  004b              LSLS     r3,r1,#1
+00007e  18cb              ADDS     r3,r1,r3
+000080  181b              ADDS     r3,r3,r0
+000082  785b              LDRB     r3,[r3,#1]
+000084  4293              CMP      r3,r2
+000086  d108              BNE      |L4.154|
+                  |L4.136|
+;;;181    			{
+;;;182    				ir_key = IrKeyMap_B[temp][0];
+000088  004a              LSLS     r2,r1,#1
+00008a  188a              ADDS     r2,r1,r2
+00008c  5c85              LDRB     r5,[r0,r2]
+;;;183    				printf("ir_key_num:%d\n", temp);
+00008e  a008              ADR      r0,|L4.176|
+000090  f7fffffe          BL       __2printf
+;;;184    				key_value_bak = ir_key;
+000094  7125              STRB     r5,[r4,#4]
+;;;185    				return ir_key;
+000096  4628              MOV      r0,r5
+;;;186    			}
+;;;187    		}
+;;;188    	 }
+;;;189    	 return IR_KEY_NONE;
+;;;190    }
+000098  bdf8              POP      {r3-r7,pc}
                   |L4.154|
-00009a  2000              MOVS     r0,#0                 ;162
-00009c  bdf8              POP      {r3-r7,pc}
-;;;164    
+00009a  1c49              ADDS     r1,r1,#1
+00009c  b2c9              UXTB     r1,r1                 ;178
+00009e  290b              CMP      r1,#0xb               ;178
+0000a0  d3ec              BCC      |L4.124|
+                  |L4.162|
+0000a2  2000              MOVS     r0,#0                 ;189
+0000a4  bdf8              POP      {r3-r7,pc}
+;;;191    
                           ENDP
 
-00009e  0000              DCW      0x0000
-                  |L4.160|
-                          DCD      ||.bss||
-                  |L4.164|
-                          DCD      ||.data||+0xc
+0000a6  0000              DCW      0x0000
                   |L4.168|
-0000a8  69725f6b          DCB      "ir_key_num:%d\n",0
-0000ac  65795f6e
-0000b0  756d3a25
-0000b4  640a00  
-0000b7  00                DCB      0
+                          DCD      ||.bss||
+                  |L4.172|
+                          DCD      ||.data||+0xc
+                  |L4.176|
+0000b0  69725f6b          DCB      "ir_key_num:%d\n",0
+0000b4  65795f6e
+0000b8  756d3a25
+0000bc  640a00  
+0000bf  00                DCB      0
 
                           AREA ||.bss||, DATA, NOINIT, ALIGN=0
 
@@ -423,8 +522,10 @@
 000002  00                DCB      0x00
                   LongKeyPress
 000003  00                DCB      0x00
+                  key_value_bak
+000004  00                DCB      0x00
                   i
-000004  00000000          DCB      0x00,0x00,0x00,0x00
+000005  000000            DCB      0x00,0x00,0x00
                   IrTimerCount
                           DCD      0x00000000
                   ir_code
@@ -432,19 +533,45 @@
                   repeat_time
                           DCD      0x00000000
                   IrKeyMap
-000014  01200224          DCB      0x01,0x20,0x02,0x24
-000018  03220421          DCB      0x03,0x22,0x04,0x21
-00001c  06280727          DCB      0x06,0x28,0x07,0x27
-000020  05260823          DCB      0x05,0x26,0x08,0x23
-000024  09250b29          DCB      0x09,0x25,0x0b,0x29
-000028  0c2a00aa          DCB      0x0c,0x2a,0x00,0xaa
+000014  01200002          DCB      0x01,0x20,0x00,0x02
+000018  24000322          DCB      0x24,0x00,0x03,0x22
+00001c  04052106          DCB      0x04,0x05,0x21,0x06
+000020  09280a0b          DCB      0x09,0x28,0x0a,0x0b
+000024  270c0726          DCB      0x27,0x0c,0x07,0x26
+000028  080d2300          DCB      0x08,0x0d,0x23,0x00
+00002c  0e250010          DCB      0x0e,0x25,0x00,0x10
+000030  2900112a          DCB      0x29,0x00,0x11,0x2a
+000034  0000aa00          DCB      0x00,0x00,0xaa,0x00
                   IrKeyMap_B
-00002c  01d002d4          DCB      0x01,0xd0,0x02,0xd4
-000030  03d204d1          DCB      0x03,0xd2,0x04,0xd1
-000034  06d807d7          DCB      0x06,0xd8,0x07,0xd7
-000038  05d608d3          DCB      0x05,0xd6,0x08,0xd3
-00003c  09d50bd9          DCB      0x09,0xd5,0x0b,0xd9
-000040  0cda00aa          DCB      0x0c,0xda,0x00,0xaa
+000038  01d00002          DCB      0x01,0xd0,0x00,0x02
+00003c  d40003d2          DCB      0xd4,0x00,0x03,0xd2
+000040  0405d106          DCB      0x04,0x05,0xd1,0x06
+000044  09d80a0b          DCB      0x09,0xd8,0x0a,0x0b
+000048  d70c07d6          DCB      0xd7,0x0c,0x07,0xd6
+00004c  080dd300          DCB      0x08,0x0d,0xd3,0x00
+000050  0ed50010          DCB      0x0e,0xd5,0x00,0x10
+000054  d90011da          DCB      0xd9,0x00,0x11,0xda
+000058  0000aa00          DCB      0x00,0x00,0xaa,0x00
+
+                          AREA ||i.__ARM_common_switch8||, COMGROUP=__ARM_common_switch8, CODE, READONLY, ALIGN=1
+
+                  __ARM_common_switch8 PROC
+000000  b430              PUSH     {r4,r5}
+000002  4674              MOV      r4,lr
+000004  1e64              SUBS     r4,r4,#1
+000006  7825              LDRB     r5,[r4,#0]
+000008  1c64              ADDS     r4,r4,#1
+00000a  42ab              CMP      r3,r5
+00000c  d200              BCS      |L35.16|
+00000e  461d              MOV      r5,r3
+                  |L35.16|
+000010  5d63              LDRB     r3,[r4,r5]
+000012  005b              LSLS     r3,r3,#1
+000014  18e3              ADDS     r3,r4,r3
+000016  bc30              POP      {r4,r5}
+000018  4718              BX       r3
+                          ENDP
+
 
 ;*** Start embedded assembler ***
 

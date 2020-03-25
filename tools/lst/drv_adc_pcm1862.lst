@@ -50722,11 +50722,8 @@ N *
 N */
 Nvoid drv_pcm1862_input_channel(uint8_t pcm_channel)
 N{
-N	printf("pcm_channel = %x\n",pcm_channel);
 N	pcm1862_channel_L[1] = pcm_channel | 0x40;
 N	pcm1862_channel_R[1] = pcm_channel | 0x40;
-N	printf("pcm1862_channel_L[1] = %x\n",pcm1862_channel_L[1]);
-N	printf("pcm1862_channel_R[1] = %x\n",pcm1862_channel_R[1]);
 N	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_channel_L,sizeof(pcm1862_channel_L), (uint8_t*)NULL, 0);
 X	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_channel_L,sizeof(pcm1862_channel_L), (uint8_t*)0, 0);
 N	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_channel_R,sizeof(pcm1862_channel_R), (uint8_t*)NULL, 0);
@@ -50755,7 +50752,6 @@ N	pcm1862_PGA_VAL_CH1_R[1] = value ;
 N	pcm1862_PGA_VAL_CH2_L[1] = value ;
 N	pcm1862_PGA_VAL_CH2_R[1] = value ;
 N
-N	printf("pcm1862_PGA_VAL_CH1_L %x\n",pcm1862_PGA_VAL_CH1_L[1]);
 N	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_L,sizeof(pcm1862_PGA_VAL_CH1_L), (uint8_t*)NULL, 0);
 X	Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH1_L,sizeof(pcm1862_PGA_VAL_CH1_L), (uint8_t*)0, 0);
 N	Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)NULL, 0);
@@ -50797,7 +50793,6 @@ N{
 N
 N		pcm1862_PGA_VAL_CH1_R[1] = value;
 N
-N		printf("pcm1862_PGA_VAL_CH1_R = %x\n",pcm1862_PGA_VAL_CH1_R[1]);
 N		Hal_I2c1_Transfer(PCM1862_I2C_ADDR, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)NULL, 0);
 X		Hal_I2c1_Transfer(0x94, (uint8_t*)pcm1862_PGA_VAL_CH1_R,sizeof(pcm1862_PGA_VAL_CH1_R), (uint8_t*)0, 0);
 N
@@ -50833,7 +50828,7 @@ N
 N//	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
 N//	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
 N    drv_PM1862_reg_Load();
-W "..\src\driver\audio\drv_adc_pcm1862.c" 174 2 function "drv_audio_4G_Channel" declared implicitly
+W "..\src\driver\audio\drv_adc_pcm1862.c" 169 2 function "drv_audio_4G_Channel" declared implicitly
 N	drv_audio_4G_Channel(); // first 4g channel
 N}
 N

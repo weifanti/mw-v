@@ -29385,10 +29385,15 @@ typedef enum _IR_KEY
 	IR_KEY_POWER,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
+	IR_KEY_VOLUME_UP_CP,
 	IR_KEY_VOLUME_DOWN,
+	IR_KEY_VOLUME_DOWN_CP,
 	IR_KEY_PREV_SONG,
+	IR_KEY_PREV_SONG_CP,
 	IR_KEY_NEXT_SONG,
+	IR_KEY_NEXT_SONG_CP,
 	IR_KEY_PLAY_PAUSE,
+	IR_KEY_PLAY_PAUSE_CP,
 	IR_KEY_PREV_STATION,
 	IR_KEY_NEXT_STATION,
 	IR_KEY_EQ,	
@@ -29415,36 +29420,36 @@ typedef enum _IR_KEY
  
 
 
-static uint8_t IrKeyMap[12][2] = 
+static uint8_t IrKeyMap[12][3] = 
 {
-	{IR_KEY_POWER,			0x20},
-	{IR_KEY_MODE,			0x24},
-	{IR_KEY_VOLUME_UP,		0x22},
-	{IR_KEY_VOLUME_DOWN,	0x21},	
-	{IR_KEY_NEXT_SONG,		0x28},
-	{IR_KEY_PLAY_PAUSE,		0x27},
-	{IR_KEY_PREV_SONG,		0x26},
-	{IR_KEY_PREV_STATION,	0x23},
-	{IR_KEY_NEXT_STATION,	0x25},		
-	{IR_KEY_EQ_INDOOR,		0x29},	
-	{IR_KEY_EQ_OUTDOOR,		0x2A},		
-	{IR_KEY_NONE,			0xAA},		
+	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
+	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
+	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	
+	{IR_KEY_NEXT_SONG,		0x28,	IR_KEY_NEXT_SONG_CP},
+	{IR_KEY_PLAY_PAUSE,		0x27,	IR_KEY_PLAY_PAUSE_CP},
+	{IR_KEY_PREV_SONG,		0x26,	IR_KEY_PREV_SONG_CP},
+	{IR_KEY_PREV_STATION,	0x23,	IR_KEY_NONE},
+	{IR_KEY_NEXT_STATION,	0x25,	IR_KEY_NONE},		
+	{IR_KEY_EQ_INDOOR,		0x29,	IR_KEY_NONE},	
+	{IR_KEY_EQ_OUTDOOR,		0x2A,	IR_KEY_NONE},		
+	{IR_KEY_NONE,			0xAA,	IR_KEY_NONE},		
 };
 
-static uint8_t IrKeyMap_B[12][2] = 
+static uint8_t IrKeyMap_B[12][3] = 
 {
-	{IR_KEY_POWER,			0xd0},
-	{IR_KEY_MODE,			0xd4},
-	{IR_KEY_VOLUME_UP,		0xd2},
-	{IR_KEY_VOLUME_DOWN,	0xd1},	
-	{IR_KEY_NEXT_SONG,		0xd8},
-	{IR_KEY_PLAY_PAUSE,		0xd7},
-	{IR_KEY_PREV_SONG,		0xd6},
-	{IR_KEY_PREV_STATION,	0xd3},
-	{IR_KEY_NEXT_STATION,	0xd5},		
-	{IR_KEY_EQ_INDOOR,		0xd9},	
-	{IR_KEY_EQ_OUTDOOR,		0xdA},		
-	{IR_KEY_NONE,			0xAA},		
+	{IR_KEY_POWER,			0xd0,	IR_KEY_NONE},
+	{IR_KEY_MODE,			0xd4,	IR_KEY_NONE},
+	{IR_KEY_VOLUME_UP,		0xd2,	IR_KEY_VOLUME_UP_CP},
+	{IR_KEY_VOLUME_DOWN,	0xd1,	IR_KEY_VOLUME_DOWN_CP},	
+	{IR_KEY_NEXT_SONG,		0xd8,	IR_KEY_NEXT_SONG_CP},
+	{IR_KEY_PLAY_PAUSE,		0xd7,	IR_KEY_PLAY_PAUSE_CP},
+	{IR_KEY_PREV_SONG,		0xd6,	IR_KEY_PREV_SONG_CP},
+	{IR_KEY_PREV_STATION,	0xd3,	IR_KEY_NONE},
+	{IR_KEY_NEXT_STATION,	0xd5,	IR_KEY_NONE},		
+	{IR_KEY_EQ_INDOOR,		0xd9,	IR_KEY_NONE},	
+	{IR_KEY_EQ_OUTDOOR,		0xdA,	IR_KEY_NONE},		
+	{IR_KEY_NONE,			0xAA,	IR_KEY_NONE},		
 };
 
 
@@ -29461,7 +29466,9 @@ extern uint8_t LongKeyPress;
 
 
 
-extern uint8_t IrKeyMap[12][2];
+extern uint8_t IrKeyMap[12][3];
+extern uint8_t IrKeyMap_B[12][3];
+
 
 extern void Drv_IrKey_init(void);
 uint8_t GetIrKey(void);
@@ -29605,6 +29612,7 @@ uint8_t DecodeStartFlag = 0;
 uint8_t DecodeFinishFlag = 0;
 uint8_t ir_data_rx_ok = 0;
 uint8_t LongKeyPress = 0;
+uint8_t key_value_bak = 0;
 
 
 void GPCDEF_IRQHandler(void)
@@ -29625,18 +29633,42 @@ void GPCDEF_IRQHandler(void)
 					i = 0;
 					repeat_time = 0;
 					LongKeyPress = 0;
+					key_value_bak = 0;
 			}
 			else if((IrTimerCount > 23) && (IrTimerCount < 120))
 			{
 				IrTimerCount = 0;
 				
 
-				repeat_time++;
-			    if(repeat_time >10)
+				if(key_value_bak == IR_KEY_PLAY_PAUSE)
 				{
-					LongKeyPress = 1;
-					repeat_time = 0;
+					if(repeat_time < 15)
+					{
+						repeat_time++;
+						if(repeat_time == 15)
+						{
+							LongKeyPress = 1;
+						}
+					}
 				}
+				else
+				{
+					repeat_time++;
+					if(repeat_time <10)
+					{
+						;
+					}
+					else
+					{
+						if(repeat_time%2)
+						{
+							LongKeyPress = 1;
+						}
+					}
+
+
+				}
+
 
 			}
 			else 
@@ -29722,6 +29754,7 @@ uint8_t Ircordpro(void)
 			{
 				ir_key = IrKeyMap[temp][0];
 				printf("ir_key_num:%d\n", temp);
+				key_value_bak = ir_key;
 				return ir_key;
 			}
 		}
@@ -29737,6 +29770,7 @@ uint8_t Ircordpro(void)
 			{
 				ir_key = IrKeyMap_B[temp][0];
 				printf("ir_key_num:%d\n", temp);
+				key_value_bak = ir_key;
 				return ir_key;
 			}
 		}
@@ -29746,7 +29780,9 @@ uint8_t Ircordpro(void)
 
 uint8_t GetIrKey(void)
 {
-	uint8_t ir_key_value;
+	uint8_t ir_key_value = 0;
+	
+	uint8_t ir_key_hold = 0;
 
 	if(ir_data_rx_ok)
 	{
@@ -29765,8 +29801,32 @@ uint8_t GetIrKey(void)
 
 	if(LongKeyPress)
 	{
-		LongKeyPress = 0;
-		printf("LongPress\n");
+		printf("longpress:%d\n", LongKeyPress);
+		LongKeyPress--;
+		switch(key_value_bak)
+		{
+			case IR_KEY_PLAY_PAUSE:
+				ir_key_hold = IR_KEY_PLAY_PAUSE_CP;
+				break;
+			case IR_KEY_VOLUME_DOWN:
+				ir_key_hold = IR_KEY_VOLUME_DOWN_CP;
+				break;
+			case IR_KEY_VOLUME_UP:
+				ir_key_hold = IR_KEY_VOLUME_UP_CP;
+				break;
+			case IR_KEY_PREV_SONG:
+				ir_key_hold = IR_KEY_PREV_SONG_CP;
+				break;	
+			case IR_KEY_NEXT_SONG:
+				ir_key_hold = IR_KEY_NEXT_SONG_CP;
+				break;
+			default:ir_key_hold = IR_KEY_NONE;
+			break;
+
+				
+		}
+		return ir_key_hold;
+		
 	}
 	
 	return IR_KEY_NONE;
