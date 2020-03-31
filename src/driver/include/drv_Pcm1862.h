@@ -32,7 +32,8 @@ typedef enum
 } sSN74LVC157;
 */
 #define PCM1862_IN_CHANNEL(x)  (1 << (x-1)) 
-#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
+//#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
+#define BT_WIFI_PCM1862_GAIN	0x00 // 0db
 #define FM_PCM1862_GAIN	0x00 // 0db
 #define AUX_PCM1862_GAIN	0x00 // 0db
 

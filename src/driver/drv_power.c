@@ -28,6 +28,19 @@ void TYM_drv_powerkeepon(uint8_t onoff) // 1 0n, 0 off
 		PC2 = 0;
 }
 
+
+void TYM_SysPower12V_3V3_onoff(uint8_t on)
+{
+		if(on)
+		{
+			PB14 = 1; //sys pw on
+		}
+		else
+		{
+			PB14 = 0; //sys pw off
+		}
+}
+
 void TYM_power_gpio_init(void)
 {
 	//battery 
@@ -43,19 +56,14 @@ void TYM_power_gpio_init(void)
 	***/
 	GPIO_SetMode(PB, BIT10, GPIO_MODE_INPUT); // STAT1
 	GPIO_SetMode(PB, BIT11, GPIO_MODE_INPUT); // STAT2   
-	GPIO_SetMode(PD, BIT14, GPIO_MODE_OUTPUT); //charger enable  high en, low dis
-	GPIO_SetMode(PD, BIT7, GPIO_MODE_INPUT); // PG low VCC valid, hig VCC invalid
+
 
 	//power on/off
 	GPIO_SetMode(PC, BIT2, GPIO_MODE_OUTPUT); // SYS power keep on
 	
 	//system power 
-	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis
+	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis  +12V(TAS5825) ,3.3V EN(AMP and other 3.3v , not mcu 3.3V)
 
-	//
-	GPIO_SetMode(PC, BIT1, GPIO_MODE_OUTPUT); //+34V/BAT_POWER_EN
-
-//	GPIO_SetMode(PC, BIT6, GPIO_MODE_OUTPUT); //WF_BATTERY_POWER_EN
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -76,13 +84,10 @@ void TYM_drv_BQ24610_charge_current_Set(int val)
 void TYM_drv_SysPower_init(void)
 {  
 	TYM_drv_powerkeepon(0); // first off, wait 1 second than keep on
-	PB14 = 1; //sys pw
-	PA8 = 0; //enter bat 
-	PD14 = 0; //charge en
-	PC1 = 0; //+34V/BAT keep low unless AC en
-//	PC6 = 1; //WF_BATTERY when power on set high
+	PB14 = 0; //sys pw
+	PA8 = 0; // internal bat 
+
 	TYM_drv_BQ24610_charge_current_Set(GPIO_HIGH);
-	//TYM_drv_BQ24610_charge_current_Set(GPIO_LOW);
 }
 #if 1
 /*---------------------------------------------------------------------------------------------------------*/
@@ -169,7 +174,9 @@ void drv_power_status_updata(void)
 	TYM_drv_In_bat_status_updata();
 	TYM_drv_ex_bat_status_updata();
 	TYM_drv_ac_status_updata();
-//	printf("bat in vol: %x, bat ex vol: %x,ac \n",Global_datas.ADC_ChannelValue[15],Global_datas.ADC_ChannelValue[12]);
+//	printf("bat in val: %d \n",Global_datas.ADC_ChannelValue[15]);
+//	printf("bat ex val: %d \n",Global_datas.ADC_ChannelValue[12]);
+	
 //	printf("bat in sta: %x, bat ex sta: %x,ac sta: %x\n",Global_datas.g_PowerStatus.PowerBatInStatus,Global_datas.g_PowerStatus.PowerBatExStatus,Global_datas.g_PowerStatus.PowerAcStatus);
 	
 }

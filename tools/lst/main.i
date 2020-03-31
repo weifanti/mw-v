@@ -29634,6 +29634,7 @@ void TYM_sys_PowerManger_init(void);
 
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
+void TYM_SysPower12V_3V3_onoff(uint8_t on);
 
 
 
@@ -29751,6 +29752,7 @@ typedef struct
 	uint8_t subboard_online;
 	uint8_t mode_switching;  
 	uint8_t mute;
+	uint8_t volume_resume;
 	
 
 }sGlobalData;
@@ -29782,6 +29784,9 @@ void drv_Cmd_Send2NCU031(uint8_t cmd, uint8_t param0, uint8_t param1);
  
  
 void drv_FM_on_NCU031_reset(void);
+
+void drv_SendAllstateToSubboard(void);
+
 
 
 #line 24 "..\\main.c"
@@ -29993,6 +29998,7 @@ typedef enum _IR_KEY
 {
 	IR_KEY_NONE = 0,
 	IR_KEY_POWER,
+	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
 	IR_KEY_VOLUME_UP_CP,
@@ -30032,7 +30038,7 @@ typedef enum _IR_KEY
 
 static unsigned char IrKeyMap[12][3] = 
 {
-	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+	{IR_KEY_POWER,			0x20,	IR_KEY_POWER_CP},
 	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
 	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
 	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	
@@ -30371,19 +30377,21 @@ void SysIdle(void)
 	Global_datas.g_4g_initing = 0;
 	Global_datas.mode_switching = 0;
 	Global_datas.mute = 0;
+	Global_datas.volume_resume = 0;
 	
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
 	Global_datas.subboard_online = 0;	
-
+	
 }
 
 void SYS_Status(void)
 {
+	TYM_SysPower12V_3V3_onoff(1);
 	Global_datas.g_mode_status = POWER_ON_MODE;	
 	Global_datas.g_4g_initing = 1;
 	Global_datas.eq_mode = EQ_MODE_INDOOR;
-	Global_datas.volume = 8;
+	Global_datas.volume = 5;
 	TYM_drv_powerkeepon(1);
 	Drv_4GMoudle_PowerUp(1);
 	drv_FourGmodel_power_key_SetHi();
@@ -30407,8 +30415,54 @@ void PowerOff(void)
 	drv_led_init();
 	Drv_audio_powerdown();
 	Global_datas.shoutting_down = 1;
-	TimeOutSet(&PoweroffLedTimer, 5000);
+	TimeOutSet(&PoweroffLedTimer, 3000);
 }
+
+
+ 
+ 
+ 
+void PowerDownFunction(void)
+{
+     
+    while(!((((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->FIFOSTS) & (0x1ul << (28))) >> (28)));
+
+     
+    CLK_PowerDown();
+}
+
+
+
+void PowerDown_deepsleep(void)
+{
+	drv_Cmd_Send2NCU031(0x70, 0x15,0x00);
+	
+	Cmd_Send2FourG( 0x03,0x55,0x00); 
+	
+	drv_led_init();
+	Drv_audio_powerdown();
+	Global_datas.shoutting_down = 1;
+	TimeOutSet(&PoweroffLedTimer, 5000);
+
+
+
+	Drv_4GMoudle_PowerUp(0); 
+	TYM_drv_powerkeepon(0); 		
+	TYM_SysPower12V_3V3_onoff(0);
+
+
+	
+    SYS_UnlockReg();
+	printf("Enter to Power-Down ......\n");
+     
+	
+    PowerDownFunction();
+	
+    printf("System waken-up done.\n\n");
+
+	
+}
+
 
 
 void IoKeyProcess(void)
@@ -30471,6 +30525,7 @@ int32_t main(void)
 	unsigned char refcount2=1;
   	unsigned char bat_val[2];
 	unsigned char ledtimecount = 0;
+	unsigned char resume_timecount = 0;
 	
 
 
@@ -30490,6 +30545,18 @@ int32_t main(void)
 		if(IsTimeOut(&SysTimer_1s))
 		{
 			TimeOutSet(&SysTimer_1s, 500);
+
+			if(Global_datas.volume_resume)
+			{
+				resume_timecount++;
+				if(resume_timecount >8)
+				{
+					Global_datas.volume_resume = 0;
+					resume_timecount = 0;
+					Drv_Dap_vol_set(Global_datas.volume);
+					
+				}
+			}
 			
 	        if(Global_datas.g_4g_initing)
 			{
@@ -30531,6 +30598,7 @@ int32_t main(void)
 					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 1;
 					Drv_4GMoudle_PowerUp(0); 
 					TYM_drv_powerkeepon(0); 
+					TYM_SysPower12V_3V3_onoff(0);
 
 					Global_datas.shoutting_down = 0;
 				}
@@ -30614,6 +30682,22 @@ int32_t main(void)
 	                	
 	                	
 						printf("0x07, msg.param1 = %x \n",msg.param1);
+						
+					
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+						
 					}
 					if(msg.param0 == 0x04 )
 					{
@@ -30642,6 +30726,7 @@ int32_t main(void)
 					{
 						Drv_4GMoudle_PowerUp(0);  
 						TYM_drv_powerkeepon(0); 
+						TYM_SysPower12V_3V3_onoff(0);
 					}
 
 					if(msg.param0 == 0x06)  
@@ -30650,13 +30735,15 @@ int32_t main(void)
 						{
 		                	Global_datas.g_mode_status = BT_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
+							Drv_Dap_vol_set(5);
+							
 						}
 					
 						if (msg.param1 == 0x07)
 						{
 		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
-		                	
-						printf("0x06, msg.param1 = %x \n",msg.param1);
+							Global_datas.volume_resume = 1;
+							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x02)
 						{
@@ -30753,13 +30840,13 @@ int32_t main(void)
 					
 					if(msg.param0 == 0x20)
 					{
-						Cmd_Send2FourG(0x20,0x0,0x3);  
+						Cmd_Send2FourG(0x20,0x0,0x4);  
 					}
 	            break;
 
 			 	case MSG_MCU1_SYS_STATE_IND:
 
-				    if((msg.param0 == 0x03) && (msg.param1 == 0x55)) 
+				    if((msg.param0 == 0x03) && ((msg.param1 == 0x55) || (msg.param1 == 0x02) || (msg.param1 == 0x03))) 
 					{
 						
 					}
@@ -30781,6 +30868,7 @@ int32_t main(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0x03))
 					{
+						
 						if (Global_datas.volume > 0)
 						{
 							Global_datas.volume--;
@@ -30790,18 +30878,20 @@ int32_t main(void)
 								Global_datas.mute = 1;
 								drv_5825_mute_pin_set(0); 
 							}
+							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0); 
 							
 						}
 					}
 					
 					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 					{
-
+						
 						Global_datas.mute = 0;
 						if (Global_datas.volume < 16)
 						{
 							Global_datas.volume++;
 							Drv_Dap_vol_set(Global_datas.volume);
+							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0);
 							
 						}
 					}
@@ -30875,9 +30965,13 @@ int32_t main(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) 
 					{
+						if(Global_datas.subboard_online == 0)  
+						{
+						 	drv_SendAllstateToSubboard();
+						}
 						Global_datas.subboard_online = 1;
 						TimeOutSet(&SubBoardHandshakeTimer, 4000);
-						drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);
+						
 					}					
 					
 	            break;

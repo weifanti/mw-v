@@ -53302,13 +53302,14 @@ N	uint8_t volume;
 N	uint8_t subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;
+N	uint8_t volume_resume;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N

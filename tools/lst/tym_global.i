@@ -29443,6 +29443,7 @@ typedef struct
 	uint8_t subboard_online;
 	uint8_t mode_switching;  
 	uint8_t mute;
+	uint8_t volume_resume;
 	
 
 }sGlobalData;

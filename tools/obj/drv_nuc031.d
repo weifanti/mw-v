@@ -34,3 +34,4 @@
 .\obj\drv_nuc031.o: ..\lib\StdDriver\inc\usci_uart.h
 .\obj\drv_nuc031.o: ..\lib\StdDriver\inc\usci_i2c.h
 .\obj\drv_nuc031.o: ..\src\driver\include\drv_nuc031.h
+.\obj\drv_nuc031.o: ..\src\global\tym_global.h

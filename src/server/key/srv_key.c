@@ -212,6 +212,13 @@ void srv_key_handler(void)
 		}
 		break;
 
+
+		case IR_KEY_POWER_CP:
+		{
+			//PowerDown_deepsleep();
+		}
+		break;
+
 		case IR_KEY_MODE:
 			
 			Global_datas.key_led_blink = 1;

@@ -50364,6 +50364,7 @@ Nvoid TYM_sys_PowerManger_init(void);
 N
 Nvoid drv_power_status_updata(void);
 Nvoid TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
+Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on);
 N
 N#endif
 N
@@ -50483,13 +50484,14 @@ N	uint8_t volume;
 N	uint8_t subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;
+N	uint8_t volume_resume;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
@@ -50509,6 +50511,21 @@ X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40
 N	else 
 N		PC2 = 0;
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((2)<<2)))) = 0;
+N}
+N
+N
+Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on)
+N{
+N		if(on)
+N		{
+N			PB14 = 1; //sys pw on
+X			(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 1; 
+N		}
+N		else
+N		{
+N			PB14 = 0; //sys pw off
+X			(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 0; 
+N		}
 N}
 N
 Nvoid TYM_power_gpio_init(void)
@@ -50531,24 +50548,16 @@ N	GPIO_SetMode(PB, BIT10, GPIO_MODE_INPUT); // STAT1
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000400, 0x0UL); 
 N	GPIO_SetMode(PB, BIT11, GPIO_MODE_INPUT); // STAT2   
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000800, 0x0UL); 
-N	GPIO_SetMode(PD, BIT14, GPIO_MODE_OUTPUT); //charger enable  high en, low dis
-X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00004000, 0x1UL); 
-N	GPIO_SetMode(PD, BIT7, GPIO_MODE_INPUT); // PG low VCC valid, hig VCC invalid
-X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000080, 0x0UL); 
+N
 N
 N	//power on/off
 N	GPIO_SetMode(PC, BIT2, GPIO_MODE_OUTPUT); // SYS power keep on
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000004, 0x1UL); 
 N	
 N	//system power 
-N	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis
+N	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis  +12V(TAS5825) ,3.3V EN(AMP and other 3.3v , not mcu 3.3V)
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00004000, 0x1UL); 
 N
-N	//
-N	GPIO_SetMode(PC, BIT1, GPIO_MODE_OUTPUT); //+34V/BAT_POWER_EN
-X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000002, 0x1UL); 
-N
-N//	GPIO_SetMode(PC, BIT6, GPIO_MODE_OUTPUT); //WF_BATTERY_POWER_EN
 N}
 N
 N/*---------------------------------------------------------------------------------------------------------*/
@@ -50571,18 +50580,13 @@ N/*-----------------------------------------------------------------------------
 Nvoid TYM_drv_SysPower_init(void)
 N{  
 N	TYM_drv_powerkeepon(0); // first off, wait 1 second than keep on
-N	PB14 = 1; //sys pw
-X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 1; 
-N	PA8 = 0; //enter bat 
+N	PB14 = 0; //sys pw
+X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 0; 
+N	PA8 = 0; // internal bat 
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((8)<<2)))) = 0; 
-N	PD14 = 0; //charge en
-X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(3))) + ((14)<<2)))) = 0; 
-N	PC1 = 0; //+34V/BAT keep low unless AC en
-X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((1)<<2)))) = 0; 
-N//	PC6 = 1; //WF_BATTERY when power on set high
+N
 N	TYM_drv_BQ24610_charge_current_Set(GPIO_HIGH);
 X	TYM_drv_BQ24610_charge_current_Set(1);
-N	//TYM_drv_BQ24610_charge_current_Set(GPIO_LOW);
 N}
 N#if 1
 N/*---------------------------------------------------------------------------------------------------------*/
@@ -50682,7 +50686,9 @@ N	TYM_gpio_adc_get(ADC_CHANNEL_12|ADC_CHANNEL_15);
 N	TYM_drv_In_bat_status_updata();
 N	TYM_drv_ex_bat_status_updata();
 N	TYM_drv_ac_status_updata();
-N//	printf("bat in vol: %x, bat ex vol: %x,ac \n",Global_datas.ADC_ChannelValue[15],Global_datas.ADC_ChannelValue[12]);
+N//	printf("bat in val: %d \n",Global_datas.ADC_ChannelValue[15]);
+N//	printf("bat ex val: %d \n",Global_datas.ADC_ChannelValue[12]);
+N	
 N//	printf("bat in sta: %x, bat ex sta: %x,ac sta: %x\n",Global_datas.g_PowerStatus.PowerBatInStatus,Global_datas.g_PowerStatus.PowerBatExStatus,Global_datas.g_PowerStatus.PowerAcStatus);
 N	
 N}

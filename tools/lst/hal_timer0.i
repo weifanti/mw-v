@@ -29476,6 +29476,7 @@ typedef struct
 	unsigned char subboard_online;
 	unsigned char mode_switching;  
 	unsigned char mute;
+	unsigned char volume_resume;
 	
 
 }sGlobalData;
@@ -29509,6 +29510,7 @@ typedef enum _IR_KEY
 {
 	IR_KEY_NONE = 0,
 	IR_KEY_POWER,
+	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
 	IR_KEY_VOLUME_UP_CP,
@@ -29548,7 +29550,7 @@ typedef enum _IR_KEY
 
 static unsigned char IrKeyMap[12][3] = 
 {
-	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+	{IR_KEY_POWER,			0x20,	IR_KEY_POWER_CP},
 	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
 	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
 	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	

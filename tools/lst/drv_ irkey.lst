@@ -50335,6 +50335,7 @@ Ntypedef enum _IR_KEY
 N{
 N	IR_KEY_NONE = 0,
 N	IR_KEY_POWER,
+N	IR_KEY_POWER_CP,
 N	IR_KEY_MODE,
 N	IR_KEY_VOLUME_UP,
 N	IR_KEY_VOLUME_UP_CP,
@@ -50374,7 +50375,7 @@ N
 N
 Nstatic uint8_t IrKeyMap[12][3] = 
 N{
-N	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+N	{IR_KEY_POWER,			0x20,	IR_KEY_POWER_CP},
 N	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
 N	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
 N	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	
@@ -50546,13 +50547,14 @@ N	uint8_t volume;
 N	uint8_t subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;
+N	uint8_t volume_resume;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
@@ -50597,7 +50599,7 @@ N			{
 N				IrTimerCount = 0;
 N				//printf("REPPPPPPPPPPPPPPP\n");
 N
-N				if(key_value_bak == IR_KEY_PLAY_PAUSE)
+N				if((key_value_bak == IR_KEY_PLAY_PAUSE) || (key_value_bak == IR_KEY_POWER))
 N				{
 N					if(repeat_time < 15)
 N					{
@@ -50754,7 +50756,7 @@ N
 N		// shoutting down cann't respond any key. idle state only respond power key
 N		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
 N		{
-N			//ir_key_value = IR_KEY_NONE;
+N			ir_key_value = IR_KEY_NONE;
 N		}
 N		return ir_key_value;
 N	}
@@ -50767,6 +50769,10 @@ N		switch(key_value_bak)
 N		{
 N			case IR_KEY_PLAY_PAUSE:
 N				ir_key_hold = IR_KEY_PLAY_PAUSE_CP;
+N				break;
+N			
+N			case IR_KEY_POWER:
+N				ir_key_hold = IR_KEY_POWER_CP;
 N				break;
 N			case IR_KEY_VOLUME_DOWN:
 N				ir_key_hold = IR_KEY_VOLUME_DOWN_CP;

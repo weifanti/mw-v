@@ -18,6 +18,7 @@ typedef enum _IR_KEY
 {
 	IR_KEY_NONE = 0,
 	IR_KEY_POWER,
+	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
 	IR_KEY_VOLUME_UP_CP,
@@ -57,7 +58,7 @@ static uint8_t IrKeyMap[11][2] =
 
 static uint8_t IrKeyMap[12][3] = 
 {
-	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+	{IR_KEY_POWER,			0x20,	IR_KEY_POWER_CP},
 	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
 	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
 	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	

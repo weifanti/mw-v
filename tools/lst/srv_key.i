@@ -29436,6 +29436,7 @@ typedef struct
 	uint8_t subboard_online;
 	uint8_t mode_switching;  
 	uint8_t mute;
+	uint8_t volume_resume;
 	
 
 }sGlobalData;
@@ -29469,6 +29470,7 @@ typedef enum _IR_KEY
 {
 	IR_KEY_NONE = 0,
 	IR_KEY_POWER,
+	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
 	IR_KEY_VOLUME_UP_CP,
@@ -29508,7 +29510,7 @@ typedef enum _IR_KEY
 
 static uint8_t IrKeyMap[12][3] = 
 {
-	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+	{IR_KEY_POWER,			0x20,	IR_KEY_POWER_CP},
 	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
 	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
 	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	
@@ -29682,6 +29684,9 @@ void drv_Cmd_Send2NCU031(uint8_t cmd, uint8_t param0, uint8_t param1);
  
  
 void drv_FM_on_NCU031_reset(void);
+
+void drv_SendAllstateToSubboard(void);
+
 
 
 #line 21 "..\\src\\server\\key\\srv_key.c"
@@ -29928,6 +29933,13 @@ void srv_key_handler(void)
 		{
 			PowerOff();
 			SysIdle();
+		}
+		break;
+
+
+		case IR_KEY_POWER_CP:
+		{
+			
 		}
 		break;
 

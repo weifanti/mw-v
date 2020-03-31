@@ -29406,6 +29406,7 @@ void TYM_sys_PowerManger_init(void);
 
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
+void TYM_SysPower12V_3V3_onoff(uint8_t on);
 
 
 
@@ -29523,6 +29524,7 @@ typedef struct
 	uint8_t subboard_online;
 	uint8_t mode_switching;  
 	uint8_t mute;
+	uint8_t volume_resume;
 	
 
 }sGlobalData;
@@ -29554,6 +29556,9 @@ void drv_Cmd_Send2NCU031(uint8_t cmd, uint8_t param0, uint8_t param1);
  
  
 void drv_FM_on_NCU031_reset(void);
+
+void drv_SendAllstateToSubboard(void);
+
 
 
 #line 19 "..\\src\\server\\battery\\srv_battery.c"

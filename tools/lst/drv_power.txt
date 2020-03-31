@@ -2,81 +2,109 @@
 ; commandline ArmCC [--list --split_sections --debug -c --asm --interleave -o.\obj\drv_power.o --asm_dir=.\lst\ --list_dir=.\lst\ --depend=.\obj\drv_power.d --cpu=Cortex-M0 --apcs=interwork --diag_suppress=9931 -I..\lib\CMSIS\Include -I..\lib\Device\Nuvoton\NUC029xGE\Include -I..\lib\StdDriver\inc -I..\src\core\include -I..\src\driver\include -I..\src\io\include -I..\src\global -I..\src\server\include -I..\src\driver\audio -D__UVISION_VERSION=522 --omf_browse=.\obj\drv_power.crf ..\src\driver\drv_power.c]
                           THUMB
 
+                          AREA ||i.TYM_SysPower12V_3V3_onoff||, CODE, READONLY, ALIGN=2
+
+                  TYM_SysPower12V_3V3_onoff PROC
+;;;31     
+;;;32     void TYM_SysPower12V_3V3_onoff(uint8_t on)
+000000  4902              LDR      r1,|L1.12|
+;;;33     {
+;;;34     		if(on)
+000002  2800              CMP      r0,#0
+000004  d000              BEQ      |L1.8|
+;;;35     		{
+;;;36     			PB14 = 1; //sys pw on
+000006  2001              MOVS     r0,#1
+                  |L1.8|
+000008  6388              STR      r0,[r1,#0x38]
+;;;37     		}
+;;;38     		else
+;;;39     		{
+;;;40     			PB14 = 0; //sys pw off
+;;;41     		}
+;;;42     }
+00000a  4770              BX       lr
+;;;43     
+                          ENDP
+
+                  |L1.12|
+                          DCD      0x50004240
+
                           AREA ||i.TYM_drv_BQ24610_charge_current_Set||, CODE, READONLY, ALIGN=2
 
                   TYM_drv_BQ24610_charge_current_Set PROC
-;;;65     /*---------------------------------------------------------------------------------------------------------*/
-;;;66     void TYM_drv_BQ24610_charge_current_Set(int val)  
+;;;73     /*---------------------------------------------------------------------------------------------------------*/
+;;;74     void TYM_drv_BQ24610_charge_current_Set(int val)  
 000000  b510              PUSH     {r4,lr}
-;;;67     {
+;;;75     {
 000002  4604              MOV      r4,r0
-;;;68     	
-;;;69     	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  
+;;;76     	
+;;;77     	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  
 000004  2201              MOVS     r2,#1
 000006  0211              LSLS     r1,r2,#8
-000008  4802              LDR      r0,|L1.20|
+000008  4802              LDR      r0,|L2.20|
 00000a  f7fffffe          BL       GPIO_SetMode
-;;;70     	PD8 = val;
-00000e  4802              LDR      r0,|L1.24|
+;;;78     	PD8 = val;
+00000e  4802              LDR      r0,|L2.24|
 000010  6204              STR      r4,[r0,#0x20]
-;;;71     }
+;;;79     }
 000012  bd10              POP      {r4,pc}
-;;;72     
+;;;80     
                           ENDP
 
-                  |L1.20|
+                  |L2.20|
                           DCD      0x500040c0
-                  |L1.24|
+                  |L2.24|
                           DCD      0x500042c0
 
                           AREA ||i.TYM_drv_In_bat_status_updata||, CODE, READONLY, ALIGN=2
 
                   TYM_drv_In_bat_status_updata PROC
-;;;90     /*---------------------------------------------------------------------------------------------------------*/
-;;;91     void TYM_drv_In_bat_status_updata(void)
+;;;95     /*---------------------------------------------------------------------------------------------------------*/
+;;;96     void TYM_drv_In_bat_status_updata(void)
 000000  b570              PUSH     {r4-r6,lr}
-;;;92     {
-;;;93     	
-;;;94     	if(Global_datas.ADC_ChannelValue[15] < 0x22)
-000002  4816              LDR      r0,|L2.92|
+;;;97     {
+;;;98     	
+;;;99     	if(Global_datas.ADC_ChannelValue[15] < 0x22)
+000002  4816              LDR      r0,|L3.92|
 000004  251e              MOVS     r5,#0x1e
 000006  4604              MOV      r4,r0
 000008  5f45              LDRSH    r5,[r0,r5]  ; Global_datas
 00000a  3420              ADDS     r4,r4,#0x20
-;;;95     	{
-;;;96     		Global_datas.g_PowerStatus.PowerBatInStatus = POWER_BAT_IN_FALSE;
-00000c  2101              MOVS     r1,#1
-;;;97     		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~INTERNAL_BAT_EN);
-00000e  78e0              LDRB     r0,[r4,#3]
-000010  2d22              CMP      r5,#0x22              ;94
-000012  da02              BGE      |L2.26|
-000014  7021              STRB     r1,[r4,#0]            ;96
-000016  4388              BICS     r0,r0,r1
-000018  e01d              B        |L2.86|
-                  |L2.26|
-;;;98     	}
-;;;99     	else
 ;;;100    	{
-;;;101    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | INTERNAL_BAT_EN;
+;;;101    		Global_datas.g_PowerStatus.PowerBatInStatus = POWER_BAT_IN_FALSE;
+00000c  2101              MOVS     r1,#1
+;;;102    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~INTERNAL_BAT_EN);
+00000e  78e0              LDRB     r0,[r4,#3]
+000010  2d22              CMP      r5,#0x22              ;99
+000012  da02              BGE      |L3.26|
+000014  7021              STRB     r1,[r4,#0]            ;101
+000016  4388              BICS     r0,r0,r1
+000018  e01d              B        |L3.86|
+                  |L3.26|
+;;;103    	}
+;;;104    	else
+;;;105    	{
+;;;106    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | INTERNAL_BAT_EN;
 00001a  4308              ORRS     r0,r0,r1
-;;;102    	
-;;;103    		if((Global_datas.ADC_ChannelValue[15] >= 0x22) && (Global_datas.ADC_ChannelValue[15] <= 0x7C0))
+;;;107    	
+;;;108    		if((Global_datas.ADC_ChannelValue[15] >= 0x22) && (Global_datas.ADC_ChannelValue[15] <= 0x7C0))
 00001c  4629              MOV      r1,r5
-00001e  4a10              LDR      r2,|L2.96|
+00001e  4a10              LDR      r2,|L3.96|
 000020  3922              SUBS     r1,r1,#0x22
-000022  70e0              STRB     r0,[r4,#3]            ;101
+000022  70e0              STRB     r0,[r4,#3]            ;106
 000024  4291              CMP      r1,r2
-000026  d80d              BHI      |L2.68|
-;;;104    		{
-;;;105    			Global_datas.g_PowerStatus.PowerBatInStatus = STAT_BAT_IN_UNFILL;
+000026  d80d              BHI      |L3.68|
+;;;109    		{
+;;;110    			Global_datas.g_PowerStatus.PowerBatInStatus = STAT_BAT_IN_UNFILL;
 000028  2107              MOVS     r1,#7
 00002a  7021              STRB     r1,[r4,#0]
-;;;106    			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~INTERNAL_CHG_CP);
+;;;111    			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~INTERNAL_CHG_CP);
 00002c  21df              MOVS     r1,#0xdf
 00002e  4008              ANDS     r0,r0,r1
 000030  70e0              STRB     r0,[r4,#3]
 000032  4628              MOV      r0,r5
-;;;107    			Global_datas.g_PowerStatus.bat_value = (Global_datas.g_PowerStatus.bat_value & 0xf0) | Global_datas.ADC_ChannelValue[15]/0x79;		
+;;;112    			Global_datas.g_PowerStatus.bat_value = (Global_datas.g_PowerStatus.bat_value & 0xf0) | Global_datas.ADC_ChannelValue[15]/0x79;		
 000034  2179              MOVS     r1,#0x79
 000036  f7fffffe          BL       __aeabi_idivmod
 00003a  7921              LDRB     r1,[r4,#4]  ; Global_datas
@@ -84,206 +112,195 @@
 00003e  0109              LSLS     r1,r1,#4
 000040  4308              ORRS     r0,r0,r1
 000042  7120              STRB     r0,[r4,#4]
-                  |L2.68|
-;;;108    		}
-;;;109    		if(Global_datas.ADC_ChannelValue[15] > 0x7C0)
+                  |L3.68|
+;;;113    		}
+;;;114    		if(Global_datas.ADC_ChannelValue[15] > 0x7C0)
 000044  201f              MOVS     r0,#0x1f
 000046  0180              LSLS     r0,r0,#6
 000048  4285              CMP      r5,r0
-00004a  dd05              BLE      |L2.88|
-;;;110    		{
-;;;111    			Global_datas.g_PowerStatus.PowerBatInStatus = STAT_BAT_IN_FULL;
+00004a  dd05              BLE      |L3.88|
+;;;115    		{
+;;;116    			Global_datas.g_PowerStatus.PowerBatInStatus = STAT_BAT_IN_FULL;
 00004c  2006              MOVS     r0,#6
 00004e  7020              STRB     r0,[r4,#0]
-;;;112    			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | INTERNAL_CHG_CP;
+;;;117    			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | INTERNAL_CHG_CP;
 000050  78e0              LDRB     r0,[r4,#3]  ; Global_datas
 000052  2120              MOVS     r1,#0x20
 000054  4308              ORRS     r0,r0,r1
-                  |L2.86|
-000056  70e0              STRB     r0,[r4,#3]            ;97
-                  |L2.88|
-;;;113    		}
-;;;114    	}
-;;;115    }
+                  |L3.86|
+000056  70e0              STRB     r0,[r4,#3]            ;102
+                  |L3.88|
+;;;118    		}
+;;;119    	}
+;;;120    }
 000058  bd70              POP      {r4-r6,pc}
-;;;116    
+;;;121    
                           ENDP
 
 00005a  0000              DCW      0x0000
-                  |L2.92|
+                  |L3.92|
                           DCD      Global_datas
-                  |L2.96|
+                  |L3.96|
                           DCD      0x0000079e
 
                           AREA ||i.TYM_drv_SysPower_init||, CODE, READONLY, ALIGN=2
 
                   TYM_drv_SysPower_init PROC
-;;;75     /*---------------------------------------------------------------------------------------------------------*/
-;;;76     void TYM_drv_SysPower_init(void)
+;;;83     /*---------------------------------------------------------------------------------------------------------*/
+;;;84     void TYM_drv_SysPower_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;77     {  
-;;;78     	TYM_drv_powerkeepon(0); // first off, wait 1 second than keep on
+;;;85     {  
+;;;86     	TYM_drv_powerkeepon(0); // first off, wait 1 second than keep on
 000002  2000              MOVS     r0,#0
 000004  f7fffffe          BL       TYM_drv_powerkeepon
-;;;79     	PB14 = 1; //sys pw
-000008  4908              LDR      r1,|L3.44|
-00000a  2001              MOVS     r0,#1
+;;;87     	PB14 = 0; //sys pw
+000008  4904              LDR      r1,|L4.28|
+00000a  2000              MOVS     r0,#0
 00000c  6388              STR      r0,[r1,#0x38]
-;;;80     	PA8 = 0; //enter bat 
-00000e  4907              LDR      r1,|L3.44|
-000010  2000              MOVS     r0,#0
-000012  3940              SUBS     r1,r1,#0x40
-000014  6208              STR      r0,[r1,#0x20]
-;;;81     	PD14 = 0; //charge en
-000016  4905              LDR      r1,|L3.44|
-000018  3180              ADDS     r1,r1,#0x80
-00001a  6388              STR      r0,[r1,#0x38]
-;;;82     	PC1 = 0; //+34V/BAT keep low unless AC en
-00001c  4903              LDR      r1,|L3.44|
-00001e  3140              ADDS     r1,r1,#0x40
-000020  6048              STR      r0,[r1,#4]
-;;;83     //	PC6 = 1; //WF_BATTERY when power on set high
-;;;84     	TYM_drv_BQ24610_charge_current_Set(GPIO_HIGH);
-000022  2001              MOVS     r0,#1
-000024  f7fffffe          BL       TYM_drv_BQ24610_charge_current_Set
-;;;85     	//TYM_drv_BQ24610_charge_current_Set(GPIO_LOW);
-;;;86     }
-000028  bd10              POP      {r4,pc}
-;;;87     #if 1
+;;;88     	PA8 = 0; // internal bat 
+00000e  4903              LDR      r1,|L4.28|
+000010  3940              SUBS     r1,r1,#0x40
+000012  6208              STR      r0,[r1,#0x20]
+;;;89     
+;;;90     	TYM_drv_BQ24610_charge_current_Set(GPIO_HIGH);
+000014  2001              MOVS     r0,#1
+000016  f7fffffe          BL       TYM_drv_BQ24610_charge_current_Set
+;;;91     }
+00001a  bd10              POP      {r4,pc}
+;;;92     #if 1
                           ENDP
 
-00002a  0000              DCW      0x0000
-                  |L3.44|
+                  |L4.28|
                           DCD      0x50004240
 
                           AREA ||i.TYM_drv_ac_status_updata||, CODE, READONLY, ALIGN=2
 
                   TYM_drv_ac_status_updata PROC
-;;;148    /*---------------------------------------------------------------------------------------------------------*/
-;;;149    void TYM_drv_ac_status_updata(void)
-000000  4a09              LDR      r2,|L4.40|
-;;;150    {
-;;;151    	if(PC4)
+;;;153    /*---------------------------------------------------------------------------------------------------------*/
+;;;154    void TYM_drv_ac_status_updata(void)
+000000  4a09              LDR      r2,|L5.40|
+;;;155    {
+;;;156    	if(PC4)
 000002  6913              LDR      r3,[r2,#0x10]
-;;;152    	{
-;;;153    		Global_datas.g_PowerStatus.PowerAcStatus = POWER_AC_FALSE;
-000004  4809              LDR      r0,|L4.44|
-000006  2b00              CMP      r3,#0                 ;151
-;;;154    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~DC_EN);
+;;;157    	{
+;;;158    		Global_datas.g_PowerStatus.PowerAcStatus = POWER_AC_FALSE;
+000004  4809              LDR      r0,|L5.44|
+000006  2b00              CMP      r3,#0                 ;156
+;;;159    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~DC_EN);
 000008  78c1              LDRB     r1,[r0,#3]
-00000a  d006              BEQ      |L4.26|
-00000c  2305              MOVS     r3,#5                 ;153
-00000e  7083              STRB     r3,[r0,#2]            ;153
+00000a  d006              BEQ      |L5.26|
+00000c  2305              MOVS     r3,#5                 ;158
+00000e  7083              STRB     r3,[r0,#2]            ;158
 000010  23fb              MOVS     r3,#0xfb
 000012  4019              ANDS     r1,r1,r3
 000014  70c1              STRB     r1,[r0,#3]
-;;;155    		PC1 = 0;  //+34V
+;;;160    		PC1 = 0;  //+34V
 000016  2000              MOVS     r0,#0
-000018  e004              B        |L4.36|
-                  |L4.26|
-;;;156    	}					
-;;;157    	else
-;;;158    	{
-;;;159    		Global_datas.g_PowerStatus.PowerAcStatus = POWER_AC_EN;
+000018  e004              B        |L5.36|
+                  |L5.26|
+;;;161    	}					
+;;;162    	else
+;;;163    	{
+;;;164    		Global_datas.g_PowerStatus.PowerAcStatus = POWER_AC_EN;
 00001a  2304              MOVS     r3,#4
 00001c  7083              STRB     r3,[r0,#2]
-;;;160    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | DC_EN;
+;;;165    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | DC_EN;
 00001e  4319              ORRS     r1,r1,r3
 000020  70c1              STRB     r1,[r0,#3]
-;;;161    		PC1 = 1;   //+34V
+;;;166    		PC1 = 1;   //+34V
 000022  2001              MOVS     r0,#1
-                  |L4.36|
-000024  6050              STR      r0,[r2,#4]            ;155
-;;;162    	}
-;;;163    }
+                  |L5.36|
+000024  6050              STR      r0,[r2,#4]            ;160
+;;;167    	}
+;;;168    }
 000026  4770              BX       lr
-;;;164    
+;;;169    
                           ENDP
 
-                  |L4.40|
+                  |L5.40|
                           DCD      0x50004280
-                  |L4.44|
+                  |L5.44|
                           DCD      Global_datas+0x20
 
                           AREA ||i.TYM_drv_ex_bat_status_updata||, CODE, READONLY, ALIGN=2
 
                   TYM_drv_ex_bat_status_updata PROC
-;;;119    /*---------------------------------------------------------------------------------------------------------*/
-;;;120    void TYM_drv_ex_bat_status_updata(void)
-000000  4b14              LDR      r3,|L5.84|
-;;;121    {
+;;;124    /*---------------------------------------------------------------------------------------------------------*/
+;;;125    void TYM_drv_ex_bat_status_updata(void)
+000000  4b14              LDR      r3,|L6.84|
+;;;126    {
 000002  b510              PUSH     {r4,lr}
-;;;122    	if(Global_datas.ADC_ChannelValue[12] < 0x22)
+;;;127    	if(Global_datas.ADC_ChannelValue[12] < 0x22)
 000004  2218              MOVS     r2,#0x18
 000006  4618              MOV      r0,r3
 000008  5e9a              LDRSH    r2,[r3,r2]  ; Global_datas
 00000a  3020              ADDS     r0,r0,#0x20
-;;;123    	{
-;;;124    		Global_datas.g_PowerStatus.PowerBatExStatus = POWER_BAT_EX_FALSE;
-;;;125    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~EXTERNAL_BAT_EN);
+;;;128    	{
+;;;129    		Global_datas.g_PowerStatus.PowerBatExStatus = POWER_BAT_EX_FALSE;
+;;;130    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~EXTERNAL_BAT_EN);
 00000c  78c1              LDRB     r1,[r0,#3]
-00000e  2a22              CMP      r2,#0x22              ;122
-000010  da04              BGE      |L5.28|
-000012  2203              MOVS     r2,#3                 ;124
-000014  7042              STRB     r2,[r0,#1]            ;124
+00000e  2a22              CMP      r2,#0x22              ;127
+000010  da04              BGE      |L6.28|
+000012  2203              MOVS     r2,#3                 ;129
+000014  7042              STRB     r2,[r0,#1]            ;129
 000016  22fd              MOVS     r2,#0xfd
 000018  4011              ANDS     r1,r1,r2
-00001a  e018              B        |L5.78|
-                  |L5.28|
-;;;126    	}
-;;;127    	else
-;;;128    	{	
-;;;129    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | EXTERNAL_BAT_EN;
+00001a  e018              B        |L6.78|
+                  |L6.28|
+;;;131    	}
+;;;132    	else
+;;;133    	{	
+;;;134    		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | EXTERNAL_BAT_EN;
 00001c  2402              MOVS     r4,#2
 00001e  4321              ORRS     r1,r1,r4
 000020  70c1              STRB     r1,[r0,#3]
-;;;130    		
-;;;131    		if((Global_datas.ADC_ChannelValue[12] >= 0x22) && (Global_datas.ADC_ChannelValue[15] <= 0x7C0))
+;;;135    		
+;;;136    		if((Global_datas.ADC_ChannelValue[12] >= 0x22) && (Global_datas.ADC_ChannelValue[15] <= 0x7C0))
 000022  241e              MOVS     r4,#0x1e
 000024  5f1c              LDRSH    r4,[r3,r4]  ; Global_datas
 000026  231f              MOVS     r3,#0x1f
 000028  019b              LSLS     r3,r3,#6
 00002a  429c              CMP      r4,r3
-00002c  dc08              BGT      |L5.64|
-;;;132    		{
-;;;133    			Global_datas.g_PowerStatus.PowerBatExStatus = STAT_BAT_EX_UNFILL;
+00002c  dc08              BGT      |L6.64|
+;;;137    		{
+;;;138    			Global_datas.g_PowerStatus.PowerBatExStatus = STAT_BAT_EX_UNFILL;
 00002e  240a              MOVS     r4,#0xa
 000030  7044              STRB     r4,[r0,#1]
-;;;134    			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~EXTERNAL_CHG_CP);
+;;;139    			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~EXTERNAL_CHG_CP);
 000032  24bf              MOVS     r4,#0xbf
 000034  4021              ANDS     r1,r1,r4
 000036  70c1              STRB     r1,[r0,#3]
-;;;135    			Global_datas.g_PowerStatus.bat_value = (Global_datas.g_PowerStatus.bat_value & 0x0f) | ((Global_datas.ADC_ChannelValue[12]/0x79) << 8);
+;;;140    			Global_datas.g_PowerStatus.bat_value = (Global_datas.g_PowerStatus.bat_value & 0x0f) | ((Global_datas.ADC_ChannelValue[12]/0x79) << 8);
 000038  7901              LDRB     r1,[r0,#4]  ; Global_datas
 00003a  0709              LSLS     r1,r1,#28
 00003c  0f09              LSRS     r1,r1,#28
 00003e  7101              STRB     r1,[r0,#4]
-                  |L5.64|
-;;;136    		}
-;;;137    		if(Global_datas.ADC_ChannelValue[12] > 0x7C0)
+                  |L6.64|
+;;;141    		}
+;;;142    		if(Global_datas.ADC_ChannelValue[12] > 0x7C0)
 000040  429a              CMP      r2,r3
-000042  dd05              BLE      |L5.80|
-;;;138    		{
-;;;139    			Global_datas.g_PowerStatus.PowerBatExStatus = STAT_BAT_EX_FULL;
+000042  dd05              BLE      |L6.80|
+;;;143    		{
+;;;144    			Global_datas.g_PowerStatus.PowerBatExStatus = STAT_BAT_EX_FULL;
 000044  2109              MOVS     r1,#9
 000046  7041              STRB     r1,[r0,#1]
-;;;140    			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | EXTERNAL_CHG_CP;
+;;;145    			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | EXTERNAL_CHG_CP;
 000048  78c1              LDRB     r1,[r0,#3]  ; Global_datas
 00004a  2240              MOVS     r2,#0x40
 00004c  4311              ORRS     r1,r1,r2
-                  |L5.78|
-00004e  70c1              STRB     r1,[r0,#3]            ;125
-                  |L5.80|
-;;;141    		}
-;;;142    	}
-;;;143    	
-;;;144    }
+                  |L6.78|
+00004e  70c1              STRB     r1,[r0,#3]            ;130
+                  |L6.80|
+;;;146    		}
+;;;147    	}
+;;;148    	
+;;;149    }
 000050  bd10              POP      {r4,pc}
-;;;145    
+;;;150    
                           ENDP
 
 000052  0000              DCW      0x0000
-                  |L5.84|
+                  |L6.84|
                           DCD      Global_datas
 
                           AREA ||i.TYM_drv_powerkeepon||, CODE, READONLY, ALIGN=2
@@ -291,14 +308,14 @@
                   TYM_drv_powerkeepon PROC
 ;;;22     
 ;;;23     void TYM_drv_powerkeepon(uint8_t onoff) // 1 0n, 0 off
-000000  4902              LDR      r1,|L6.12|
+000000  4902              LDR      r1,|L7.12|
 ;;;24     {
 ;;;25     	if(onoff)
 000002  2800              CMP      r0,#0
-000004  d000              BEQ      |L6.8|
+000004  d000              BEQ      |L7.8|
 ;;;26     		PC2 = 1;
 000006  2001              MOVS     r0,#1
-                  |L6.8|
+                  |L7.8|
 000008  6088              STR      r0,[r1,#8]
 ;;;27     	else 
 ;;;28     		PC2 = 0;
@@ -307,151 +324,133 @@
 ;;;30     
                           ENDP
 
-                  |L6.12|
+                  |L7.12|
                           DCD      0x50004280
 
                           AREA ||i.TYM_power_gpio_init||, CODE, READONLY, ALIGN=2
 
                   TYM_power_gpio_init PROC
-;;;30     
-;;;31     void TYM_power_gpio_init(void)
-000000  b5f8              PUSH     {r3-r7,lr}
-;;;32     {
-;;;33     	//battery 
-;;;34     	GPIO_SetMode(PA, BIT8, GPIO_MODE_OUTPUT); //VBAT IN EN   low internal bat, hi external bat
+;;;43     
+;;;44     void TYM_power_gpio_init(void)
+000000  b570              PUSH     {r4-r6,lr}
+;;;45     {
+;;;46     	//battery 
+;;;47     	GPIO_SetMode(PA, BIT8, GPIO_MODE_OUTPUT); //VBAT IN EN   low internal bat, hi external bat
 000002  2201              MOVS     r2,#1
 000004  0215              LSLS     r5,r2,#8
 000006  4629              MOV      r1,r5
-000008  481c              LDR      r0,|L7.124|
+000008  4813              LDR      r0,|L8.88|
 00000a  f7fffffe          BL       GPIO_SetMode
-;;;35     	GPIO_SetMode(PC, BIT4, GPIO_MODE_INPUT); //+24V IN EN   high
-00000e  4c1b              LDR      r4,|L7.124|
+;;;48     	GPIO_SetMode(PC, BIT4, GPIO_MODE_INPUT); //+24V IN EN   high
+00000e  4c12              LDR      r4,|L8.88|
 000010  2200              MOVS     r2,#0
 000012  3480              ADDS     r4,r4,#0x80
 000014  2110              MOVS     r1,#0x10
 000016  4620              MOV      r0,r4
 000018  f7fffffe          BL       GPIO_SetMode
-;;;36     	
-;;;37     	//battery charger
-;;;38     	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  high 1A ,low 2A
-00001c  4629              MOV      r1,r5
-00001e  4d17              LDR      r5,|L7.124|
-000020  2201              MOVS     r2,#1
-000022  35c0              ADDS     r5,r5,#0xc0
-000024  4628              MOV      r0,r5
-000026  f7fffffe          BL       GPIO_SetMode
-;;;39     	/***
-;;;40     	*STAT1:1,STAT2:0  charge in
-;;;41     	*STAT1:0,STAT2:1  charge complate
-;;;42     	*STAT1:1,STAT2:0  charge suspend
-;;;43     	***/
-;;;44     	GPIO_SetMode(PB, BIT10, GPIO_MODE_INPUT); // STAT1
-00002a  4e14              LDR      r6,|L7.124|
-00002c  2101              MOVS     r1,#1
-00002e  3640              ADDS     r6,r6,#0x40
-000030  2200              MOVS     r2,#0
-000032  0289              LSLS     r1,r1,#10
-000034  4630              MOV      r0,r6
-000036  f7fffffe          BL       GPIO_SetMode
-;;;45     	GPIO_SetMode(PB, BIT11, GPIO_MODE_INPUT); // STAT2   
-00003a  2101              MOVS     r1,#1
-00003c  2200              MOVS     r2,#0
-00003e  02c9              LSLS     r1,r1,#11
-000040  4630              MOV      r0,r6
-000042  f7fffffe          BL       GPIO_SetMode
-;;;46     	GPIO_SetMode(PD, BIT14, GPIO_MODE_OUTPUT); //charger enable  high en, low dis
-000046  2201              MOVS     r2,#1
-000048  0397              LSLS     r7,r2,#14
-00004a  4639              MOV      r1,r7
-00004c  4628              MOV      r0,r5
-00004e  f7fffffe          BL       GPIO_SetMode
-;;;47     	GPIO_SetMode(PD, BIT7, GPIO_MODE_INPUT); // PG low VCC valid, hig VCC invalid
-000052  2200              MOVS     r2,#0
-000054  2180              MOVS     r1,#0x80
-000056  4628              MOV      r0,r5
-000058  f7fffffe          BL       GPIO_SetMode
-;;;48     
-;;;49     	//power on/off
-;;;50     	GPIO_SetMode(PC, BIT2, GPIO_MODE_OUTPUT); // SYS power keep on
-00005c  2201              MOVS     r2,#1
-00005e  2104              MOVS     r1,#4
-000060  4620              MOV      r0,r4
-000062  f7fffffe          BL       GPIO_SetMode
-;;;51     	
-;;;52     	//system power 
-;;;53     	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis
-000066  2201              MOVS     r2,#1
-000068  4639              MOV      r1,r7
-00006a  4630              MOV      r0,r6
-00006c  f7fffffe          BL       GPIO_SetMode
-;;;54     
-;;;55     	//
-;;;56     	GPIO_SetMode(PC, BIT1, GPIO_MODE_OUTPUT); //+34V/BAT_POWER_EN
-000070  2201              MOVS     r2,#1
-000072  2102              MOVS     r1,#2
-000074  4620              MOV      r0,r4
-000076  f7fffffe          BL       GPIO_SetMode
-;;;57     
-;;;58     //	GPIO_SetMode(PC, BIT6, GPIO_MODE_OUTPUT); //WF_BATTERY_POWER_EN
-;;;59     }
-00007a  bdf8              POP      {r3-r7,pc}
+;;;49     	
+;;;50     	//battery charger
+;;;51     	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  high 1A ,low 2A
+00001c  480e              LDR      r0,|L8.88|
+00001e  2201              MOVS     r2,#1
+000020  4629              MOV      r1,r5
+000022  30c0              ADDS     r0,r0,#0xc0
+000024  f7fffffe          BL       GPIO_SetMode
+;;;52     	/***
+;;;53     	*STAT1:1,STAT2:0  charge in
+;;;54     	*STAT1:0,STAT2:1  charge complate
+;;;55     	*STAT1:1,STAT2:0  charge suspend
+;;;56     	***/
+;;;57     	GPIO_SetMode(PB, BIT10, GPIO_MODE_INPUT); // STAT1
+000028  00a9              LSLS     r1,r5,#2
+00002a  4d0b              LDR      r5,|L8.88|
+00002c  2200              MOVS     r2,#0
+00002e  3540              ADDS     r5,r5,#0x40
+000030  4628              MOV      r0,r5
+000032  f7fffffe          BL       GPIO_SetMode
+;;;58     	GPIO_SetMode(PB, BIT11, GPIO_MODE_INPUT); // STAT2   
+000036  2101              MOVS     r1,#1
+000038  2200              MOVS     r2,#0
+00003a  02c9              LSLS     r1,r1,#11
+00003c  4628              MOV      r0,r5
+00003e  f7fffffe          BL       GPIO_SetMode
+;;;59     
 ;;;60     
+;;;61     	//power on/off
+;;;62     	GPIO_SetMode(PC, BIT2, GPIO_MODE_OUTPUT); // SYS power keep on
+000042  2201              MOVS     r2,#1
+000044  2104              MOVS     r1,#4
+000046  4620              MOV      r0,r4
+000048  f7fffffe          BL       GPIO_SetMode
+;;;63     	
+;;;64     	//system power 
+;;;65     	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis  +12V(TAS5825) ,3.3V EN(AMP and other 3.3v , not mcu 3.3V)
+00004c  2201              MOVS     r2,#1
+00004e  0391              LSLS     r1,r2,#14
+000050  4628              MOV      r0,r5
+000052  f7fffffe          BL       GPIO_SetMode
+;;;66     
+;;;67     }
+000056  bd70              POP      {r4-r6,pc}
+;;;68     
                           ENDP
 
-                  |L7.124|
+                  |L8.88|
                           DCD      0x50004000
 
                           AREA ||i.TYM_sys_PowerManger_init||, CODE, READONLY, ALIGN=2
 
                   TYM_sys_PowerManger_init PROC
-;;;182    /*---------------------------------------------------------------------------------------------------------*/
-;;;183    void TYM_sys_PowerManger_init(void)
+;;;189    /*---------------------------------------------------------------------------------------------------------*/
+;;;190    void TYM_sys_PowerManger_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;184    {
-;;;185    	TYM_power_gpio_init();
+;;;191    {
+;;;192    	TYM_power_gpio_init();
 000002  f7fffffe          BL       TYM_power_gpio_init
-;;;186    	TYM_drv_SysPower_init();
+;;;193    	TYM_drv_SysPower_init();
 000006  f7fffffe          BL       TYM_drv_SysPower_init
-;;;187    	drv_power_status_updata();
+;;;194    	drv_power_status_updata();
 00000a  f7fffffe          BL       drv_power_status_updata
-;;;188    	Global_datas.g_PowerStatus.bat_status = 0;
-00000e  4802              LDR      r0,|L8.24|
+;;;195    	Global_datas.g_PowerStatus.bat_status = 0;
+00000e  4802              LDR      r0,|L9.24|
 000010  2100              MOVS     r1,#0
 000012  70c1              STRB     r1,[r0,#3]
-;;;189    	Global_datas.g_PowerStatus.bat_value = 0;
+;;;196    	Global_datas.g_PowerStatus.bat_value = 0;
 000014  7101              STRB     r1,[r0,#4]
-;;;190    }
+;;;197    }
 000016  bd10              POP      {r4,pc}
-;;;191    
+;;;198    
                           ENDP
 
-                  |L8.24|
+                  |L9.24|
                           DCD      Global_datas+0x20
 
                           AREA ||i.drv_power_status_updata||, CODE, READONLY, ALIGN=1
 
                   drv_power_status_updata PROC
-;;;164    
-;;;165    void drv_power_status_updata(void)
+;;;169    
+;;;170    void drv_power_status_updata(void)
 000000  b510              PUSH     {r4,lr}
-;;;166    {
-;;;167    
-;;;168    	TYM_gpio_adc_get(ADC_CHANNEL_12|ADC_CHANNEL_15);
+;;;171    {
+;;;172    
+;;;173    	TYM_gpio_adc_get(ADC_CHANNEL_12|ADC_CHANNEL_15);
 000002  2009              MOVS     r0,#9
 000004  0300              LSLS     r0,r0,#12
 000006  f7fffffe          BL       TYM_gpio_adc_get
-;;;169    	TYM_drv_In_bat_status_updata();
+;;;174    	TYM_drv_In_bat_status_updata();
 00000a  f7fffffe          BL       TYM_drv_In_bat_status_updata
-;;;170    	TYM_drv_ex_bat_status_updata();
+;;;175    	TYM_drv_ex_bat_status_updata();
 00000e  f7fffffe          BL       TYM_drv_ex_bat_status_updata
-;;;171    	TYM_drv_ac_status_updata();
+;;;176    	TYM_drv_ac_status_updata();
 000012  f7fffffe          BL       TYM_drv_ac_status_updata
-;;;172    //	printf("bat in vol: %x, bat ex vol: %x,ac \n",Global_datas.ADC_ChannelValue[15],Global_datas.ADC_ChannelValue[12]);
-;;;173    //	printf("bat in sta: %x, bat ex sta: %x,ac sta: %x\n",Global_datas.g_PowerStatus.PowerBatInStatus,Global_datas.g_PowerStatus.PowerBatExStatus,Global_datas.g_PowerStatus.PowerAcStatus);
-;;;174    	
-;;;175    }
+;;;177    //	printf("bat in val: %d \n",Global_datas.ADC_ChannelValue[15]);
+;;;178    //	printf("bat ex val: %d \n",Global_datas.ADC_ChannelValue[12]);
+;;;179    	
+;;;180    //	printf("bat in sta: %x, bat ex sta: %x,ac sta: %x\n",Global_datas.g_PowerStatus.PowerBatInStatus,Global_datas.g_PowerStatus.PowerBatExStatus,Global_datas.g_PowerStatus.PowerAcStatus);
+;;;181    	
+;;;182    }
 000016  bd10              POP      {r4,pc}
-;;;176    
+;;;183    
                           ENDP
 
 

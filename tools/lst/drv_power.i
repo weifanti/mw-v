@@ -29406,6 +29406,7 @@ void TYM_sys_PowerManger_init(void);
 
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
+void TYM_SysPower12V_3V3_onoff(uint8_t on);
 
 
 
@@ -29523,6 +29524,7 @@ typedef struct
 	uint8_t subboard_online;
 	uint8_t mode_switching;  
 	uint8_t mute;
+	uint8_t volume_resume;
 	
 
 }sGlobalData;
@@ -29548,6 +29550,19 @@ void TYM_drv_powerkeepon(uint8_t onoff)
 		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((2)<<2)))) = 0;
 }
 
+
+void TYM_SysPower12V_3V3_onoff(uint8_t on)
+{
+		if(on)
+		{
+			(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 1; 
+		}
+		else
+		{
+			(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 0; 
+		}
+}
+
 void TYM_power_gpio_init(void)
 {
 	
@@ -29563,18 +29578,13 @@ void TYM_power_gpio_init(void)
  
 	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000400, 0x0UL); 
 	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000800, 0x0UL); 
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00004000, 0x1UL); 
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000080, 0x0UL); 
+
 
 	
 	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000004, 0x1UL); 
 	
 	
 	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00004000, 0x1UL); 
-
-	
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000002, 0x1UL); 
-
 
 }
 
@@ -29596,13 +29606,10 @@ void TYM_drv_BQ24610_charge_current_Set(int val)
 void TYM_drv_SysPower_init(void)
 {  
 	TYM_drv_powerkeepon(0); 
-	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 1; 
+	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 0; 
 	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((8)<<2)))) = 0; 
-	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(3))) + ((14)<<2)))) = 0; 
-	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((1)<<2)))) = 0; 
 
 	TYM_drv_BQ24610_charge_current_Set(1);
-	
 }
 
  
@@ -29690,6 +29697,8 @@ void drv_power_status_updata(void)
 	TYM_drv_ex_bat_status_updata();
 	TYM_drv_ac_status_updata();
 
+
+	
 
 	
 }

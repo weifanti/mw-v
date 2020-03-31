@@ -1,3 +1,6 @@
----- SYS_LOW_POWER Matches (2 in 2 files) ----
-main in main.c : 		                	Global_datas.g_mode_status = SYS_LOW_POWER;
-tym_global.h (src\global) line 62 :     SYS_LOW_POWER,
+---- Global_datas.mute Matches (5 in 1 files) ----
+SysIdle in main.c : 	Global_datas.mute = 0;
+main in main.c : 			if(Global_datas.mute == 0)
+main in main.c : 							Global_datas.mute = 1;
+main in main.c : 								Global_datas.mute = 1;
+main in main.c : 						Global_datas.mute = 0;

@@ -29571,6 +29571,7 @@ typedef struct
 	unsigned char subboard_online;
 	unsigned char mode_switching;  
 	unsigned char mute;
+	unsigned char volume_resume;
 	
 
 }sGlobalData;

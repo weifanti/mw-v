@@ -50561,13 +50561,15 @@ N	uint8_t mode_switching;  // during mode switching , need to mute amp
 X	unsigned char mode_switching;  
 N	uint8_t mute;
 X	unsigned char mute;
+N	uint8_t volume_resume;
+X	unsigned char volume_resume;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N

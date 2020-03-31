@@ -50388,13 +50388,14 @@ N	uint8_t volume;
 N	uint8_t subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;
+N	uint8_t volume_resume;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
@@ -50423,6 +50424,7 @@ Ntypedef enum _IR_KEY
 N{
 N	IR_KEY_NONE = 0,
 N	IR_KEY_POWER,
+N	IR_KEY_POWER_CP,
 N	IR_KEY_MODE,
 N	IR_KEY_VOLUME_UP,
 N	IR_KEY_VOLUME_UP_CP,
@@ -50462,7 +50464,7 @@ N
 N
 Nstatic uint8_t IrKeyMap[12][3] = 
 N{
-N	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+N	{IR_KEY_POWER,			0x20,	IR_KEY_POWER_CP},
 N	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
 N	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
 N	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	
@@ -50657,6 +50659,9 @@ N/* FM reset control
 N*/
 N/*---------------------------------------------------------------------------------------------------------*/
 Nvoid drv_FM_on_NCU031_reset(void);
+N
+Nvoid drv_SendAllstateToSubboard(void);
+N
 N#endif
 N
 L 21 "..\src\server\key\srv_key.c" 2
@@ -50910,11 +50915,18 @@ N			SysIdle();
 N		}
 N		break;
 N
+N
+N		case IR_KEY_POWER_CP:
+N		{
+N			//PowerDown_deepsleep();
+N		}
+N		break;
+N
 N		case IR_KEY_MODE:
 N			
 N			Global_datas.key_led_blink = 1;
 N			Global_datas.mode_switching = 1;
-W "..\src\server\key\srv_key.c" 219 4 function "drv_5825_mute_pin_set" declared implicitly
+W "..\src\server\key\srv_key.c" 226 4 function "drv_5825_mute_pin_set" declared implicitly
 N			drv_5825_mute_pin_set(0);  // mute
 N			srv_key_mode_handler();
 N		break;

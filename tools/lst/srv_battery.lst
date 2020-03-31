@@ -50364,6 +50364,7 @@ Nvoid TYM_sys_PowerManger_init(void);
 N
 Nvoid drv_power_status_updata(void);
 Nvoid TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
+Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on);
 N
 N#endif
 N
@@ -50483,13 +50484,14 @@ N	uint8_t volume;
 N	uint8_t subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;
+N	uint8_t volume_resume;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
@@ -50516,6 +50518,9 @@ N/* FM reset control
 N*/
 N/*---------------------------------------------------------------------------------------------------------*/
 Nvoid drv_FM_on_NCU031_reset(void);
+N
+Nvoid drv_SendAllstateToSubboard(void);
+N
 N#endif
 N
 L 19 "..\src\server\battery\srv_battery.c" 2

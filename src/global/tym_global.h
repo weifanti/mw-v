@@ -110,13 +110,14 @@ typedef struct
 	uint8_t subboard_online;
 	uint8_t mode_switching;  // during mode switching , need to mute amp
 	uint8_t mute;
+	uint8_t volume_resume;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
 
-#define VOLUME_DEFAULT  8
+#define VOLUME_DEFAULT  5
 #define VOLUME_MAX		16
 #define VOLUME_MIN		0
 

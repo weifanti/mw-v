@@ -51,7 +51,7 @@ void GPCDEF_IRQHandler(void)
 				IrTimerCount = 0;
 				//printf("REPPPPPPPPPPPPPPP\n");
 
-				if(key_value_bak == IR_KEY_PLAY_PAUSE)
+				if((key_value_bak == IR_KEY_PLAY_PAUSE) || (key_value_bak == IR_KEY_POWER))
 				{
 					if(repeat_time < 15)
 					{
@@ -205,7 +205,7 @@ uint8_t GetIrKey(void)
 		// shoutting down cann't respond any key. idle state only respond power key
 		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
 		{
-			//ir_key_value = IR_KEY_NONE;
+			ir_key_value = IR_KEY_NONE;
 		}
 		return ir_key_value;
 	}
@@ -218,6 +218,10 @@ uint8_t GetIrKey(void)
 		{
 			case IR_KEY_PLAY_PAUSE:
 				ir_key_hold = IR_KEY_PLAY_PAUSE_CP;
+				break;
+			
+			case IR_KEY_POWER:
+				ir_key_hold = IR_KEY_POWER_CP;
 				break;
 			case IR_KEY_VOLUME_DOWN:
 				ir_key_hold = IR_KEY_VOLUME_DOWN_CP;

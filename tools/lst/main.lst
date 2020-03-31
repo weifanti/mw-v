@@ -50601,6 +50601,7 @@ Nvoid TYM_sys_PowerManger_init(void);
 N
 Nvoid drv_power_status_updata(void);
 Nvoid TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
+Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on);
 N
 N#endif
 N
@@ -50720,13 +50721,14 @@ N	uint8_t volume;
 N	uint8_t subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;
+N	uint8_t volume_resume;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
@@ -50753,6 +50755,9 @@ N/* FM reset control
 N*/
 N/*---------------------------------------------------------------------------------------------------------*/
 Nvoid drv_FM_on_NCU031_reset(void);
+N
+Nvoid drv_SendAllstateToSubboard(void);
+N
 N#endif
 N
 L 24 "..\main.c" 2
@@ -50975,6 +50980,7 @@ Ntypedef enum _IR_KEY
 N{
 N	IR_KEY_NONE = 0,
 N	IR_KEY_POWER,
+N	IR_KEY_POWER_CP,
 N	IR_KEY_MODE,
 N	IR_KEY_VOLUME_UP,
 N	IR_KEY_VOLUME_UP_CP,
@@ -51015,7 +51021,7 @@ N
 Nstatic uint8_t IrKeyMap[12][3] = 
 Xstatic unsigned char IrKeyMap[12][3] = 
 N{
-N	{IR_KEY_POWER,			0x20,	IR_KEY_NONE},
+N	{IR_KEY_POWER,			0x20,	IR_KEY_POWER_CP},
 N	{IR_KEY_MODE,			0x24,	IR_KEY_NONE},
 N	{IR_KEY_VOLUME_UP,		0x22,	IR_KEY_VOLUME_UP_CP},
 N	{IR_KEY_VOLUME_DOWN,	0x21,	IR_KEY_VOLUME_DOWN_CP},	
@@ -51417,20 +51423,22 @@ N	Global_datas.g_mode_status = POWER_IDLE_MODE;
 N	Global_datas.g_4g_initing = 0;
 N	Global_datas.mode_switching = 0;
 N	Global_datas.mute = 0;
+N	Global_datas.volume_resume = 0;
 N	
 N	drv_FourGmodel_power_key_SetLow();
 N	TimeOutSet(&SysTimer_1s,1000);
 N	Global_datas.subboard_online = 0;	
-N
+N	
 N}
 N
 Nvoid SYS_Status(void)
 N{
+N	TYM_SysPower12V_3V3_onoff(1);
 N	Global_datas.g_mode_status = POWER_ON_MODE;	
 N	Global_datas.g_4g_initing = 1;
 N	Global_datas.eq_mode = EQ_MODE_INDOOR;
 N	Global_datas.volume = VOLUME_DEFAULT;
-X	Global_datas.volume = 8;
+X	Global_datas.volume = 5;
 N	TYM_drv_powerkeepon(1);
 N	Drv_4GMoudle_PowerUp(1);
 N	drv_FourGmodel_power_key_SetHi();
@@ -51452,11 +51460,59 @@ N
 N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N	drv_led_init();// led all off
-W "..\main.c" 215 2 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 217 2 function "Drv_audio_powerdown" declared implicitly
+N	Drv_audio_powerdown();
+N	Global_datas.shoutting_down = 1;
+N	TimeOutSet(&PoweroffLedTimer, 3000);
+N}
+N
+N
+N/*---------------------------------------------------------------------------------------------------------*/
+N/*  Function for System Entry to Power Down Mode                                                           */
+N/*---------------------------------------------------------------------------------------------------------*/
+Nvoid PowerDownFunction(void)
+N{
+N    /* Check if all the debug messages are finished */
+N    UART_WAIT_TX_EMPTY(UART0);
+X    while(!((((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->FIFOSTS) & (0x1ul << (28))) >> (28)));
+N
+N    /* Enter to Power-down mode */
+N    CLK_PowerDown();
+N}
+N
+N
+N
+Nvoid PowerDown_deepsleep(void)
+N{
+N	drv_Cmd_Send2NCU031(0x70, 0x15,0x00);// power off cmd to LCD board
+N	
+N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
+N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
+N	drv_led_init();// led all off
+W "..\main.c" 244 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
 N	Global_datas.shoutting_down = 1;
 N	TimeOutSet(&PoweroffLedTimer, 5000);
+N
+N
+N
+N	Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
+N	TYM_drv_powerkeepon(0); 		
+N	TYM_SysPower12V_3V3_onoff(0);
+N
+N
+N	//Unlock protected registers before entering Power-down mode 
+N    SYS_UnlockReg();
+N	printf("Enter to Power-Down ......\n");
+N    /* Enter to Power-down mode */
+N	
+N    PowerDownFunction();
+N	
+N    printf("System waken-up done.\n\n");
+N
+N	
 N}
+N
 N
 N
 Nvoid IoKeyProcess(void)
@@ -51525,6 +51581,8 @@ N  	uint8_t bat_val[2];
 X  	unsigned char bat_val[2];
 N	uint8_t ledtimecount = 0;
 X	unsigned char ledtimecount = 0;
+N	uint8_t resume_timecount = 0;
+X	unsigned char resume_timecount = 0;
 N	
 N//	uint8_t autoside = 0;
 N//    S_RTC_TIME_DATA_T sReadRTC;
@@ -51544,6 +51602,18 @@ N
 N		if(IsTimeOut(&SysTimer_1s))
 N		{
 N			TimeOutSet(&SysTimer_1s, 500);
+N
+N			if(Global_datas.volume_resume)
+N			{
+N				resume_timecount++;
+N				if(resume_timecount >8)
+N				{
+N					Global_datas.volume_resume = 0;
+N					resume_timecount = 0;
+N					Drv_Dap_vol_set(Global_datas.volume);
+N					
+N				}
+N			}
 N			
 N	        if(Global_datas.g_4g_initing)
 N			{
@@ -51594,6 +51664,7 @@ N					PA1 = 1;
 X					(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2)))) = 1;
 N					Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
 N					TYM_drv_powerkeepon(0); 
+N					TYM_SysPower12V_3V3_onoff(0);
 N
 N					Global_datas.shoutting_down = 0;
 N				}
@@ -51675,8 +51746,24 @@ N
 N					if(msg.param0 == 0x07)
 N	        		{
 N	                	// vol
-N	                	//Drv_Dap_vol_set(msg.param1);
+N	                	
 N						printf("0x07, msg.param1 = %x \n",msg.param1);
+N						
+N					/*	if(msg.param1)
+N						{
+N							Global_datas.volume = msg.param1;
+N							Drv_Dap_vol_set(Global_datas.volume);
+N							Global_datas.mute = 0;
+N							drv_5825_mute_pin_set(1);
+N						}
+N						else
+N						{
+N							Global_datas.volume = 0;
+N							Drv_Dap_vol_set(Global_datas.volume);
+N							Global_datas.mute = 1;
+N							drv_5825_mute_pin_set(0);
+N						}*/
+N						
 N					}
 N					if(msg.param0 == 0x04 )
 N					{
@@ -51705,6 +51792,7 @@ N					if(msg.param0 == 0x0d)  // 4G GO TO POWER OFF , NEED TO POWER DOWN 4G VCC
 N					{
 N						Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
 N						TYM_drv_powerkeepon(0); 
+N						TYM_SysPower12V_3V3_onoff(0);
 N					}
 N
 N					if(msg.param0 == 0x06)  // sys status
@@ -51713,13 +51801,16 @@ N						if(msg.param1 == 0x06)
 N						{
 N		                	Global_datas.g_mode_status = BT_MODE;
 N							printf("0x06, msg.param1 = %x \n",msg.param1);
+N							Drv_Dap_vol_set(VOLUME_DEFAULT);
+X							Drv_Dap_vol_set(5);
+N							
 N						}
 N					
 N						if (msg.param1 == 0x07)
 N						{
 N		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
-N		                	
-N						printf("0x06, msg.param1 = %x \n",msg.param1);
+N							Global_datas.volume_resume = 1;
+N							printf("0x06, msg.param1 = %x \n",msg.param1);
 N						}
 N						if (msg.param1 == 0x02)
 N						{
@@ -51816,13 +51907,13 @@ N					}
 N					
 N					if(msg.param0 == 0x20)
 N					{
-N						Cmd_Send2FourG(0x20,0x0,0x3);  //version 0.0.3
+N						Cmd_Send2FourG(0x20,0x0,0x4);  //version 0.0.4
 N					}
 N	            break;
 N
 N			 	case MSG_MCU1_SYS_STATE_IND:
 N
-N				    if((msg.param0 == 0x03) && (msg.param1 == 0x55)) //power off mode
+N				    if((msg.param0 == 0x03) && ((msg.param1 == 0x55) || (msg.param1 == 0x02) || (msg.param1 == 0x03))) //power off mode  , v+ v- do not send to 4G
 N					{
 N						//Global_datas.g_mode_status = POWER_OFF_MODE;
 N					}
@@ -51844,6 +51935,7 @@ N					}
 N
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x03))
 N					{
+N						
 N						if (Global_datas.volume > VOLUME_MIN)
 X						if (Global_datas.volume > 0)
 N						{
@@ -51854,19 +51946,21 @@ N							{
 N								Global_datas.mute = 1;
 N								drv_5825_mute_pin_set(0); 
 N							}
+N							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0); // send volume  to 4G moudle
 N							//printf("Hal_Dap_Load_vol_reduce\n");
 N						}
 N					}
 N					
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 N					{
-N
+N						
 N						Global_datas.mute = 0;
 N						if (Global_datas.volume < VOLUME_MAX)
 X						if (Global_datas.volume < 16)
 N						{
 N							Global_datas.volume++;
 N							Drv_Dap_vol_set(Global_datas.volume);
+N							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0);
 N							//printf("Hal_Dap_Load_vol_add\n");
 N						}
 N					}
@@ -51940,9 +52034,13 @@ N					}
 N
 N					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) // handshake
 N					{
+N						if(Global_datas.subboard_online == 0)  // first in
+N						{
+N						 	drv_SendAllstateToSubboard();
+N						}
 N						Global_datas.subboard_online = 1;
 N						TimeOutSet(&SubBoardHandshakeTimer, 4000);
-N						drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);//
+N						//drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);//
 N					}					
 N					
 N	            break;
@@ -51981,7 +52079,7 @@ N		}
 N		count++;
 N	}
 N
-W "..\main.c" 278 10 variable "refcount2"  was declared but never referenced
+W "..\main.c" 326 10 variable "refcount2"  was declared but never referenced
 N}
 N
 N

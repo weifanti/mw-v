@@ -29562,6 +29562,7 @@ void drv_5825_gpio012_config(void);
 
 
 
+
 void drv_pcm1862_input_channel(uint8_t pcm_channel);
 
 
@@ -29740,6 +29741,7 @@ typedef struct
 	uint8_t subboard_online;
 	uint8_t mode_switching;  
 	uint8_t mute;
+	uint8_t volume_resume;
 	
 
 }sGlobalData;
@@ -29811,7 +29813,7 @@ void drv_audio_AuxIn_Channel(void)
 
 void drv_audio_4G_Channel(void)
 {
-	drv_pcm1862_PGA_VAL_SET(0xe8);
+	drv_pcm1862_PGA_VAL_SET(0x00);
 	drv_pcm1862_input_channel((1 << (3-1)));
 
 }
@@ -29825,7 +29827,7 @@ void drv_audio_FM_Channel(void)
 
 void drv_audio_Null_Channel(void) 
 {
-	drv_pcm1862_PGA_VAL_SET(0xe8);
+	drv_pcm1862_PGA_VAL_SET(0x00);
 	drv_pcm1862_input_channel((1 << (4-1)));
 
 }

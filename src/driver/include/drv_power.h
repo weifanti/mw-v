@@ -47,6 +47,7 @@ void TYM_sys_PowerManger_init(void);
 
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
+void TYM_SysPower12V_3V3_onoff(uint8_t on);
 
 #endif
 

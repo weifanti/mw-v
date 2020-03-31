@@ -16,5 +16,8 @@ void drv_Cmd_Send2NCU031(uint8_t cmd, uint8_t param0, uint8_t param1);
 */
 /*---------------------------------------------------------------------------------------------------------*/
 void drv_FM_on_NCU031_reset(void);
+
+void drv_SendAllstateToSubboard(void);
+
 #endif
 

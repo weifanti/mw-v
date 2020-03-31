@@ -178,15 +178,17 @@ void SysIdle(void)
 	Global_datas.g_4g_initing = 0;
 	Global_datas.mode_switching = 0;
 	Global_datas.mute = 0;
+	Global_datas.volume_resume = 0;
 	
 	drv_FourGmodel_power_key_SetLow();
 	TimeOutSet(&SysTimer_1s,1000);
 	Global_datas.subboard_online = 0;	
-
+	
 }
 
 void SYS_Status(void)
 {
+	TYM_SysPower12V_3V3_onoff(1);
 	Global_datas.g_mode_status = POWER_ON_MODE;	
 	Global_datas.g_4g_initing = 1;
 	Global_datas.eq_mode = EQ_MODE_INDOOR;
@@ -214,8 +216,54 @@ void PowerOff(void)
 	drv_led_init();// led all off
 	Drv_audio_powerdown();
 	Global_datas.shoutting_down = 1;
-	TimeOutSet(&PoweroffLedTimer, 5000);
+	TimeOutSet(&PoweroffLedTimer, 3000);
 }
+
+
+/*---------------------------------------------------------------------------------------------------------*/
+/*  Function for System Entry to Power Down Mode                                                           */
+/*---------------------------------------------------------------------------------------------------------*/
+void PowerDownFunction(void)
+{
+    /* Check if all the debug messages are finished */
+    UART_WAIT_TX_EMPTY(UART0);
+
+    /* Enter to Power-down mode */
+    CLK_PowerDown();
+}
+
+
+
+void PowerDown_deepsleep(void)
+{
+	drv_Cmd_Send2NCU031(0x70, 0x15,0x00);// power off cmd to LCD board
+	
+	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
+	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
+	drv_led_init();// led all off
+	Drv_audio_powerdown();
+	Global_datas.shoutting_down = 1;
+	TimeOutSet(&PoweroffLedTimer, 5000);
+
+
+
+	Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
+	TYM_drv_powerkeepon(0); 		
+	TYM_SysPower12V_3V3_onoff(0);
+
+
+	//Unlock protected registers before entering Power-down mode 
+    SYS_UnlockReg();
+	printf("Enter to Power-Down ......\n");
+    /* Enter to Power-down mode */
+	
+    PowerDownFunction();
+	
+    printf("System waken-up done.\n\n");
+
+	
+}
+
 
 
 void IoKeyProcess(void)
@@ -278,6 +326,7 @@ int32_t main(void)
 	uint8_t refcount2=1;
   	uint8_t bat_val[2];
 	uint8_t ledtimecount = 0;
+	uint8_t resume_timecount = 0;
 	
 //	uint8_t autoside = 0;
 //    S_RTC_TIME_DATA_T sReadRTC;
@@ -297,6 +346,18 @@ int32_t main(void)
 		if(IsTimeOut(&SysTimer_1s))
 		{
 			TimeOutSet(&SysTimer_1s, 500);
+
+			if(Global_datas.volume_resume)
+			{
+				resume_timecount++;
+				if(resume_timecount >8)
+				{
+					Global_datas.volume_resume = 0;
+					resume_timecount = 0;
+					Drv_Dap_vol_set(Global_datas.volume);
+					
+				}
+			}
 			
 	        if(Global_datas.g_4g_initing)
 			{
@@ -338,6 +399,7 @@ int32_t main(void)
 					PA1 = 1;
 					Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
 					TYM_drv_powerkeepon(0); 
+					TYM_SysPower12V_3V3_onoff(0);
 
 					Global_datas.shoutting_down = 0;
 				}
@@ -419,8 +481,24 @@ int32_t main(void)
 					if(msg.param0 == 0x07)
 	        		{
 	                	// vol
-	                	//Drv_Dap_vol_set(msg.param1);
+	                	
 						printf("0x07, msg.param1 = %x \n",msg.param1);
+						
+					/*	if(msg.param1)
+						{
+							Global_datas.volume = msg.param1;
+							Drv_Dap_vol_set(Global_datas.volume);
+							Global_datas.mute = 0;
+							drv_5825_mute_pin_set(1);
+						}
+						else
+						{
+							Global_datas.volume = 0;
+							Drv_Dap_vol_set(Global_datas.volume);
+							Global_datas.mute = 1;
+							drv_5825_mute_pin_set(0);
+						}*/
+						
 					}
 					if(msg.param0 == 0x04 )
 					{
@@ -449,6 +527,7 @@ int32_t main(void)
 					{
 						Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
 						TYM_drv_powerkeepon(0); 
+						TYM_SysPower12V_3V3_onoff(0);
 					}
 
 					if(msg.param0 == 0x06)  // sys status
@@ -457,13 +536,15 @@ int32_t main(void)
 						{
 		                	Global_datas.g_mode_status = BT_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
+							Drv_Dap_vol_set(VOLUME_DEFAULT);
+							
 						}
 					
 						if (msg.param1 == 0x07)
 						{
 		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
-		                	
-						printf("0x06, msg.param1 = %x \n",msg.param1);
+							Global_datas.volume_resume = 1;
+							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x02)
 						{
@@ -560,13 +641,13 @@ int32_t main(void)
 					
 					if(msg.param0 == 0x20)
 					{
-						Cmd_Send2FourG(0x20,0x0,0x3);  //version 0.0.3
+						Cmd_Send2FourG(0x20,0x0,0x4);  //version 0.0.4
 					}
 	            break;
 
 			 	case MSG_MCU1_SYS_STATE_IND:
 
-				    if((msg.param0 == 0x03) && (msg.param1 == 0x55)) //power off mode
+				    if((msg.param0 == 0x03) && ((msg.param1 == 0x55) || (msg.param1 == 0x02) || (msg.param1 == 0x03))) //power off mode  , v+ v- do not send to 4G
 					{
 						//Global_datas.g_mode_status = POWER_OFF_MODE;
 					}
@@ -588,6 +669,7 @@ int32_t main(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0x03))
 					{
+						
 						if (Global_datas.volume > VOLUME_MIN)
 						{
 							Global_datas.volume--;
@@ -597,18 +679,20 @@ int32_t main(void)
 								Global_datas.mute = 1;
 								drv_5825_mute_pin_set(0); 
 							}
+							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0); // send volume  to 4G moudle
 							//printf("Hal_Dap_Load_vol_reduce\n");
 						}
 					}
 					
 					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
 					{
-
+						
 						Global_datas.mute = 0;
 						if (Global_datas.volume < VOLUME_MAX)
 						{
 							Global_datas.volume++;
 							Drv_Dap_vol_set(Global_datas.volume);
+							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0);
 							//printf("Hal_Dap_Load_vol_add\n");
 						}
 					}
@@ -682,9 +766,13 @@ int32_t main(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) // handshake
 					{
+						if(Global_datas.subboard_online == 0)  // first in
+						{
+						 	drv_SendAllstateToSubboard();
+						}
 						Global_datas.subboard_online = 1;
 						TimeOutSet(&SubBoardHandshakeTimer, 4000);
-						drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);//
+						//drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);//
 					}					
 					
 	            break;
