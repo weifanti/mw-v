@@ -51801,15 +51801,14 @@ N						if(msg.param1 == 0x06)
 N						{
 N		                	Global_datas.g_mode_status = BT_MODE;
 N							printf("0x06, msg.param1 = %x \n",msg.param1);
-N							Drv_Dap_vol_set(VOLUME_DEFAULT);
-X							Drv_Dap_vol_set(5);
+N							//Drv_Dap_vol_set(VOLUME_DEFAULT);
 N							
 N						}
 N					
 N						if (msg.param1 == 0x07)
 N						{
 N		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
-N							Global_datas.volume_resume = 1;
+N							//Global_datas.volume_resume = 1;
 N							printf("0x06, msg.param1 = %x \n",msg.param1);
 N						}
 N						if (msg.param1 == 0x02)

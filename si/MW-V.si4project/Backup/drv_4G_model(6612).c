@@ -44,7 +44,6 @@ void Cmd_Send2FourG(uint8_t cmd, uint8_t param0, uint8_t param1)
 	TIMER_Delay(TIMER0, 1000);
 	checksum = 0 - (0x03 + 0x80 + cmd + param0 + param1);
 	UART_WRITE(UART1,checksum);
-
 }
 
 void Drv_4GMoudle_PowerUp(uint8_t onoff)

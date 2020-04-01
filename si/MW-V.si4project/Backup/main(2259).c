@@ -536,14 +536,14 @@ int32_t main(void)
 						{
 		                	Global_datas.g_mode_status = BT_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
-							//Drv_Dap_vol_set(VOLUME_DEFAULT);
+							Drv_Dap_vol_set(VOLUME_DEFAULT);
 							
 						}
 					
 						if (msg.param1 == 0x07)
 						{
 		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
-							//Global_datas.volume_resume = 1;
+							Global_datas.volume_resume = 1;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x02)

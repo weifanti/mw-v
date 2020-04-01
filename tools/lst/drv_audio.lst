@@ -50522,8 +50522,8 @@ N    FM_CHANNEL,
 N} sSN74LVC157;
 N*/
 N#define PCM1862_IN_CHANNEL(x)  (1 << (x-1)) 
-N//#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
-N#define BT_WIFI_PCM1862_GAIN	0x00 // 0db
+N#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
+N//#define BT_WIFI_PCM1862_GAIN	0x00 // 0db
 N#define FM_PCM1862_GAIN	0x00 // 0db
 N#define AUX_PCM1862_GAIN	0x00 // 0db
 N
@@ -50948,7 +50948,7 @@ N
 Nvoid drv_audio_4G_Channel(void)
 N{
 N	drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
-X	drv_pcm1862_PGA_VAL_SET(0x00);
+X	drv_pcm1862_PGA_VAL_SET(0xe8);
 N	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3));
 X	drv_pcm1862_input_channel((1 << (3-1)));
 N
@@ -50966,7 +50966,7 @@ N
 Nvoid drv_audio_Null_Channel(void) // channel 4 no use
 N{
 N	drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
-X	drv_pcm1862_PGA_VAL_SET(0x00);
+X	drv_pcm1862_PGA_VAL_SET(0xe8);
 N	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(4));
 X	drv_pcm1862_input_channel((1 << (4-1)));
 N

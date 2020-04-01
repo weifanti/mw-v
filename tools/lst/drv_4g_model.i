@@ -29376,6 +29376,7 @@ void Cmd_Send2FourG(uint8_t cmd, uint8_t param0, uint8_t param1)
 	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)), 1000);
 	checksum = 0 - (0x03 + 0x80 + cmd + param0 + param1);
 	((((UART_T *) ((( uint32_t)0x40100000) + 0x50000)))->DAT = (checksum));
+
 }
 
 void Drv_4GMoudle_PowerUp(uint8_t onoff)

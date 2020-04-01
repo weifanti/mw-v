@@ -50438,8 +50438,8 @@ N    FM_CHANNEL,
 N} sSN74LVC157;
 N*/
 N#define PCM1862_IN_CHANNEL(x)  (1 << (x-1)) 
-N//#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
-N#define BT_WIFI_PCM1862_GAIN	0x00 // 0db
+N#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
+N//#define BT_WIFI_PCM1862_GAIN	0x00 // 0db
 N#define FM_PCM1862_GAIN	0x00 // 0db
 N#define AUX_PCM1862_GAIN	0x00 // 0db
 N

@@ -214,7 +214,7 @@
 000000  b510              PUSH     {r4,lr}
 ;;;75     {
 ;;;76     	drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
-000002  2000              MOVS     r0,#0
+000002  20e8              MOVS     r0,#0xe8
 000004  f7fffffe          BL       drv_pcm1862_PGA_VAL_SET
 ;;;77     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3));
 000008  2004              MOVS     r0,#4
@@ -275,7 +275,7 @@
 000000  b510              PUSH     {r4,lr}
 ;;;89     {
 ;;;90     	drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
-000002  2000              MOVS     r0,#0
+000002  20e8              MOVS     r0,#0xe8
 000004  f7fffffe          BL       drv_pcm1862_PGA_VAL_SET
 ;;;91     	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(4));
 000008  2008              MOVS     r0,#8

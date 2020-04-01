@@ -29813,7 +29813,7 @@ void drv_audio_AuxIn_Channel(void)
 
 void drv_audio_4G_Channel(void)
 {
-	drv_pcm1862_PGA_VAL_SET(0x00);
+	drv_pcm1862_PGA_VAL_SET(0xe8);
 	drv_pcm1862_input_channel((1 << (3-1)));
 
 }
@@ -29827,7 +29827,7 @@ void drv_audio_FM_Channel(void)
 
 void drv_audio_Null_Channel(void) 
 {
-	drv_pcm1862_PGA_VAL_SET(0x00);
+	drv_pcm1862_PGA_VAL_SET(0xe8);
 	drv_pcm1862_input_channel((1 << (4-1)));
 
 }
