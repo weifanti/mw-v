@@ -605,7 +605,7 @@
 ;;;194    	Global_datas.eq_mode = EQ_MODE_INDOOR;
 000012  73a0              STRB     r0,[r4,#0xe]
 ;;;195    	Global_datas.volume = VOLUME_DEFAULT;
-000014  2005              MOVS     r0,#5
+000014  2008              MOVS     r0,#8
 000016  73e0              STRB     r0,[r4,#0xf]
 ;;;196    	TYM_drv_powerkeepon(1);
 000018  2001              MOVS     r0,#1
@@ -1258,7 +1258,7 @@
 000250  a0a8              ADR      r0,|L13.1268|
 000252  f7fffffe          BL       __2printf
 ;;;539    							Drv_Dap_vol_set(VOLUME_DEFAULT);
-000256  2005              MOVS     r0,#5
+000256  2008              MOVS     r0,#8
 000258  f7fffffe          BL       Drv_Dap_vol_set
                   |L13.604|
 ;;;540    							
@@ -1712,11 +1712,11 @@
 00050c  f7fffffe          BL       drv_5825_mute_pin_set
                   |L13.1296|
 ;;;681    							}
-;;;682    							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0); // send volume  to 4G moudle
-000510  7be1              LDRB     r1,[r4,#0xf]  ; Global_datas
-000512  2200              MOVS     r2,#0
-000514  2004              MOVS     r0,#4
-000516  f7fffffe          BL       drv_Cmd_Send2NCU031
+;;;682    							Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
+000510  7be2              LDRB     r2,[r4,#0xf]  ; Global_datas
+000512  2104              MOVS     r1,#4
+000514  2003              MOVS     r0,#3
+000516  f7fffffe          BL       Cmd_Send2FourG
 ;;;683    							//printf("Hal_Dap_Load_vol_reduce\n");
 ;;;684    						}
 ;;;685    					}
@@ -1746,11 +1746,11 @@
 000534  73e0              STRB     r0,[r4,#0xf]
 ;;;694    							Drv_Dap_vol_set(Global_datas.volume);
 000536  f7fffffe          BL       Drv_Dap_vol_set
-;;;695    							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0);
-00053a  7be1              LDRB     r1,[r4,#0xf]  ; Global_datas
-00053c  2200              MOVS     r2,#0
-00053e  2004              MOVS     r0,#4
-000540  f7fffffe          BL       drv_Cmd_Send2NCU031
+;;;695    							Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
+00053a  7be2              LDRB     r2,[r4,#0xf]  ; Global_datas
+00053c  2104              MOVS     r1,#4
+00053e  2003              MOVS     r0,#3
+000540  f7fffffe          BL       Cmd_Send2FourG
 ;;;696    							//printf("Hal_Dap_Load_vol_add\n");
 ;;;697    						}
 ;;;698    					}

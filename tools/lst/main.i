@@ -30391,7 +30391,7 @@ void SYS_Status(void)
 	Global_datas.g_mode_status = POWER_ON_MODE;	
 	Global_datas.g_4g_initing = 1;
 	Global_datas.eq_mode = EQ_MODE_INDOOR;
-	Global_datas.volume = 5;
+	Global_datas.volume = 8;
 	TYM_drv_powerkeepon(1);
 	Drv_4GMoudle_PowerUp(1);
 	drv_FourGmodel_power_key_SetHi();
@@ -30735,7 +30735,7 @@ int32_t main(void)
 						{
 		                	Global_datas.g_mode_status = BT_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
-							Drv_Dap_vol_set(5);
+							Drv_Dap_vol_set(8);
 							
 						}
 					
@@ -30878,7 +30878,7 @@ int32_t main(void)
 								Global_datas.mute = 1;
 								drv_5825_mute_pin_set(0); 
 							}
-							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0); 
+							Cmd_Send2FourG(0x03,0x04,Global_datas.volume); 
 							
 						}
 					}
@@ -30891,7 +30891,7 @@ int32_t main(void)
 						{
 							Global_datas.volume++;
 							Drv_Dap_vol_set(Global_datas.volume);
-							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0);
+							Cmd_Send2FourG(0x03,0x04,Global_datas.volume); 
 							
 						}
 					}

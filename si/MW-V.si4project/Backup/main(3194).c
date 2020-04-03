@@ -679,7 +679,7 @@ int32_t main(void)
 								Global_datas.mute = 1;
 								drv_5825_mute_pin_set(0); 
 							}
-							Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
+							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0); // send volume  to 4G moudle
 							//printf("Hal_Dap_Load_vol_reduce\n");
 						}
 					}
@@ -692,7 +692,7 @@ int32_t main(void)
 						{
 							Global_datas.volume++;
 							Drv_Dap_vol_set(Global_datas.volume);
-							Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
+							drv_Cmd_Send2NCU031(0x04,Global_datas.volume,0);
 							//printf("Hal_Dap_Load_vol_add\n");
 						}
 					}

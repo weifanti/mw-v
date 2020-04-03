@@ -117,7 +117,7 @@ typedef struct
 
 extern sGlobalData Global_datas;
 
-#define VOLUME_DEFAULT  8
+#define VOLUME_DEFAULT  5
 #define VOLUME_MAX		16
 #define VOLUME_MIN		0
 

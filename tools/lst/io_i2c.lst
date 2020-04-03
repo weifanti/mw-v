@@ -50518,7 +50518,7 @@ N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  5
+N#define VOLUME_DEFAULT  8
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
