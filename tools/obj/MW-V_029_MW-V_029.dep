@@ -639,7 +639,7 @@ I (..\lib\StdDriver\inc\usci_uart.h)(0x5E66DE67)
 I (..\lib\StdDriver\inc\usci_i2c.h)(0x5E66DE67)
 I (..\src\driver\audio\drv_dap_tas3251.h)(0x5E66DE67)
 I (..\src\io\include\hal_i2c.h)(0x5E66DE67)
-I (..\src\driver\audio\drv_dap_tas3251_param.h)(0x5E857D1A)
+I (..\src\driver\audio\drv_dap_tas3251_param.h)(0x5E9D4F0F)
 I (..\src\global\tym_global.h)(0x5E83FFD2)
 F (..\src\driver\audio\drv_dap_tas5825.c)(0x5E74AB1A)(-c --cpu Cortex-M0 -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\lib\CMSIS\Include -I ..\lib\Device\Nuvoton\NUC029xGE\Include -I ..\lib\StdDriver\inc -I ..\src\core\include -I ..\src\driver\include -I ..\src\io\include -I ..\src\global -I ..\src\server\include -I ..\src\driver\audio -D__UVISION_VERSION="522"-o .\obj\drv_dap_tas5825.o --list_dir ".\\lst\\" --list --omf_browse .\obj\drv_dap_tas5825.crf --depend .\obj\drv_dap_tas5825.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x57F606B8)
@@ -678,7 +678,7 @@ I (..\lib\StdDriver\inc\usci_uart.h)(0x5E66DE67)
 I (..\lib\StdDriver\inc\usci_i2c.h)(0x5E66DE67)
 I (..\src\io\include\hal_i2c.h)(0x5E66DE67)
 I (..\src\driver\audio\drv_dap_tas5825.h)(0x5E66DE67)
-I (..\src\driver\audio\drv_dap_tas5825_param.h)(0x5E858956)
+I (..\src\driver\audio\drv_dap_tas5825_param.h)(0x5E9D4FDD)
 I (..\src\global\tym_global.h)(0x5E83FFD2)
 F (..\src\driver\drv_ irkey.c)(0x5E815C87)(-c --cpu Cortex-M0 -g -O2 --apcs=interwork --split_sections --asm --interleave --asm_dir ".\\lst\\" -I ..\lib\CMSIS\Include -I ..\lib\Device\Nuvoton\NUC029xGE\Include -I ..\lib\StdDriver\inc -I ..\src\core\include -I ..\src\driver\include -I ..\src\io\include -I ..\src\global -I ..\src\server\include -I ..\src\driver\audio -D__UVISION_VERSION="522"-o ".\obj\drv_ irkey.o" --list_dir ".\\lst\\" --list --omf_browse ".\obj\drv_ irkey.crf" --depend ".\obj\drv_ irkey.d")
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x57F606B8)
