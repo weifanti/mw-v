@@ -216,7 +216,7 @@ void PowerOff(void)
 	drv_led_init();// led all off
 	Drv_audio_powerdown();
 	Global_datas.shoutting_down = 1;
-	TimeOutSet(&PoweroffLedTimer, 5000);
+	TimeOutSet(&PoweroffLedTimer, 3000);
 }
 
 

@@ -334,7 +334,7 @@
 00001e  4804              LDR      r0,|L5.48|
 000020  2101              MOVS     r1,#1
 000022  7341              STRB     r1,[r0,#0xd]
-;;;219    	TimeOutSet(&PoweroffLedTimer, 3000);
+;;;219    	TimeOutSet(&PoweroffLedTimer, 5000);
 000024  4903              LDR      r1,|L5.52|
 000026  4804              LDR      r0,|L5.56|
 000028  f7fffffe          BL       TimeOutSet
@@ -347,7 +347,7 @@
                   |L5.48|
                           DCD      Global_datas+0x20
                   |L5.52|
-                          DCD      0x00000bb8
+                          DCD      0x00001388
                   |L5.56|
                           DCD      PoweroffLedTimer
 
@@ -1027,7 +1027,7 @@
 000134  2802              CMP      r0,#2
                   |L13.310|
 000136  d179              BNE      |L13.556|
-000138  e133              B        |L13.930|
+000138  e142              B        |L13.960|
                   |L13.314|
 ;;;449    	        {
 ;;;450    	            case MSG_4G_SYS_STATE_IND:
@@ -1143,7 +1143,7 @@
 ;;;481    					if(msg.param0 == 0x07)
 0001de  9802              LDR      r0,[sp,#8]
 0001e0  2807              CMP      r0,#7
-0001e2  d103              BNE      |L13.492|
+0001e2  d116              BNE      |L13.530|
 ;;;482    	        		{
 ;;;483    	                	// vol
 ;;;484    	                	
@@ -1151,434 +1151,449 @@
 0001e4  a0b1              ADR      r0,|L13.1196|
 0001e6  9903              LDR      r1,[sp,#0xc]
 0001e8  f7fffffe          BL       __2printf
-                  |L13.492|
 ;;;486    						
-;;;487    					/*	if(msg.param1)
+;;;487    						if(msg.param1)
+0001ec  9803              LDR      r0,[sp,#0xc]
+0001ee  2800              CMP      r0,#0
+0001f0  d007              BEQ      |L13.514|
 ;;;488    						{
 ;;;489    							Global_datas.volume = msg.param1;
+0001f2  b2c0              UXTB     r0,r0
+0001f4  73e0              STRB     r0,[r4,#0xf]
 ;;;490    							Drv_Dap_vol_set(Global_datas.volume);
+0001f6  f7fffffe          BL       Drv_Dap_vol_set
 ;;;491    							Global_datas.mute = 0;
+0001fa  2000              MOVS     r0,#0
+0001fc  74a0              STRB     r0,[r4,#0x12]
 ;;;492    							drv_5825_mute_pin_set(1);
+0001fe  2001              MOVS     r0,#1
+000200  e005              B        |L13.526|
+                  |L13.514|
 ;;;493    						}
 ;;;494    						else
 ;;;495    						{
 ;;;496    							Global_datas.volume = 0;
+000202  2000              MOVS     r0,#0
+000204  73e0              STRB     r0,[r4,#0xf]
 ;;;497    							Drv_Dap_vol_set(Global_datas.volume);
+000206  f7fffffe          BL       Drv_Dap_vol_set
 ;;;498    							Global_datas.mute = 1;
+00020a  74a7              STRB     r7,[r4,#0x12]
 ;;;499    							drv_5825_mute_pin_set(0);
-;;;500    						}*/
+00020c  2000              MOVS     r0,#0
+                  |L13.526|
+00020e  f7fffffe          BL       drv_5825_mute_pin_set
+                  |L13.530|
+;;;500    						}
 ;;;501    						
 ;;;502    					}
 ;;;503    					if(msg.param0 == 0x04 )
-0001ec  9802              LDR      r0,[sp,#8]
-0001ee  2804              CMP      r0,#4
-0001f0  d103              BNE      |L13.506|
+000212  9802              LDR      r0,[sp,#8]
+000214  2804              CMP      r0,#4
+000216  d103              BNE      |L13.544|
 ;;;504    					{
 ;;;505    	                	//Drv_Dap_vol_mute(msg.param1);
 ;;;506    	                	// vol
 ;;;507    	                	
 ;;;508    					printf("0x04, msg.param1 = %x \n",msg.param1);
-0001f2  a0b4              ADR      r0,|L13.1220|
-0001f4  9903              LDR      r1,[sp,#0xc]
-0001f6  f7fffffe          BL       __2printf
-                  |L13.506|
+000218  a0aa              ADR      r0,|L13.1220|
+00021a  9903              LDR      r1,[sp,#0xc]
+00021c  f7fffffe          BL       __2printf
+                  |L13.544|
 ;;;509    					}
 ;;;510    					
 ;;;511    					if(msg.param0 == 0x0F)
-0001fa  9802              LDR      r0,[sp,#8]
-0001fc  280f              CMP      r0,#0xf
-0001fe  d111              BNE      |L13.548|
+000220  9802              LDR      r0,[sp,#8]
+000222  280f              CMP      r0,#0xf
+000224  d113              BNE      |L13.590|
 ;;;512    					{
 ;;;513    						if(msg.param1 == 0x19)
-000200  9803              LDR      r0,[sp,#0xc]
-000202  2819              CMP      r0,#0x19
-000204  d105              BNE      |L13.530|
+000226  9803              LDR      r0,[sp,#0xc]
+000228  2819              CMP      r0,#0x19
+00022a  e000              B        |L13.558|
+                  |L13.556|
+00022c  e0c7              B        |L13.958|
+                  |L13.558|
+00022e  d105              BNE      |L13.572|
 ;;;514    						{
 ;;;515    							Global_datas.g_mode_status = LOUD_SPEAKER_MODE;
-000206  2009              MOVS     r0,#9
-000208  7160              STRB     r0,[r4,#5]
+000230  2009              MOVS     r0,#9
+000232  7160              STRB     r0,[r4,#5]
 ;;;516    							printf("0x0F, msg.param1 = %x \n",msg.param1);
-00020a  a0b4              ADR      r0,|L13.1244|
-00020c  9903              LDR      r1,[sp,#0xc]
-00020e  f7fffffe          BL       __2printf
-                  |L13.530|
+000234  a0a9              ADR      r0,|L13.1244|
+000236  9903              LDR      r1,[sp,#0xc]
+000238  f7fffffe          BL       __2printf
+                  |L13.572|
 ;;;517    						}
 ;;;518    					
 ;;;519    						if (msg.param1 == 0x17)
-000212  9803              LDR      r0,[sp,#0xc]
-000214  2817              CMP      r0,#0x17
-000216  d105              BNE      |L13.548|
+00023c  9803              LDR      r0,[sp,#0xc]
+00023e  2817              CMP      r0,#0x17
+000240  d105              BNE      |L13.590|
 ;;;520    						{
 ;;;521    		                	Global_datas.g_mode_status = AUX_MODE;
-000218  2008              MOVS     r0,#8
-00021a  7160              STRB     r0,[r4,#5]
+000242  2008              MOVS     r0,#8
+000244  7160              STRB     r0,[r4,#5]
 ;;;522    						printf("0x0F, msg.param1 = %x \n",msg.param1);
-00021c  a0af              ADR      r0,|L13.1244|
-00021e  9903              LDR      r1,[sp,#0xc]
-000220  f7fffffe          BL       __2printf
-                  |L13.548|
+000246  a0a5              ADR      r0,|L13.1244|
+000248  9903              LDR      r1,[sp,#0xc]
+00024a  f7fffffe          BL       __2printf
+                  |L13.590|
 ;;;523    						}
 ;;;524    					}
 ;;;525    
 ;;;526    					if(msg.param0 == 0x0d)  // 4G GO TO POWER OFF , NEED TO POWER DOWN 4G VCC
-000224  9802              LDR      r0,[sp,#8]
-000226  280d              CMP      r0,#0xd
-000228  d10a              BNE      |L13.576|
+00024e  9802              LDR      r0,[sp,#8]
+000250  280d              CMP      r0,#0xd
+000252  d108              BNE      |L13.614|
 ;;;527    					{
 ;;;528    						Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
-00022a  e000              B        |L13.558|
-                  |L13.556|
-00022c  e0b8              B        |L13.928|
-                  |L13.558|
-00022e  2000              MOVS     r0,#0
-000230  f7fffffe          BL       Drv_4GMoudle_PowerUp
+000254  2000              MOVS     r0,#0
+000256  f7fffffe          BL       Drv_4GMoudle_PowerUp
 ;;;529    						TYM_drv_powerkeepon(0); 
-000234  2000              MOVS     r0,#0
-000236  f7fffffe          BL       TYM_drv_powerkeepon
+00025a  2000              MOVS     r0,#0
+00025c  f7fffffe          BL       TYM_drv_powerkeepon
 ;;;530    						TYM_SysPower12V_3V3_onoff(0);
-00023a  2000              MOVS     r0,#0
-00023c  f7fffffe          BL       TYM_SysPower12V_3V3_onoff
-                  |L13.576|
+000260  2000              MOVS     r0,#0
+000262  f7fffffe          BL       TYM_SysPower12V_3V3_onoff
+                  |L13.614|
 ;;;531    					}
 ;;;532    
 ;;;533    					if(msg.param0 == 0x06)  // sys status
-000240  9802              LDR      r0,[sp,#8]
-000242  2806              CMP      r0,#6
-000244  d153              BNE      |L13.750|
+000266  9802              LDR      r0,[sp,#8]
+000268  2806              CMP      r0,#6
+00026a  d14f              BNE      |L13.780|
 ;;;534    					{
 ;;;535    						if(msg.param1 == 0x06)
-000246  9803              LDR      r0,[sp,#0xc]
-000248  2806              CMP      r0,#6
-00024a  d107              BNE      |L13.604|
+00026c  9803              LDR      r0,[sp,#0xc]
+00026e  2806              CMP      r0,#6
+000270  d104              BNE      |L13.636|
 ;;;536    						{
 ;;;537    		                	Global_datas.g_mode_status = BT_MODE;
-00024c  2106              MOVS     r1,#6
-00024e  7161              STRB     r1,[r4,#5]
+000272  2106              MOVS     r1,#6
+000274  7161              STRB     r1,[r4,#5]
 ;;;538    							printf("0x06, msg.param1 = %x \n",msg.param1);
-000250  a0a8              ADR      r0,|L13.1268|
-000252  f7fffffe          BL       __2printf
-;;;539    							Drv_Dap_vol_set(VOLUME_DEFAULT);
-000256  2008              MOVS     r0,#8
-000258  f7fffffe          BL       Drv_Dap_vol_set
-                  |L13.604|
+000276  a09f              ADR      r0,|L13.1268|
+000278  f7fffffe          BL       __2printf
+                  |L13.636|
+;;;539    							//Drv_Dap_vol_set(VOLUME_DEFAULT);
 ;;;540    							
 ;;;541    						}
 ;;;542    					
 ;;;543    						if (msg.param1 == 0x07)
-00025c  9803              LDR      r0,[sp,#0xc]
-00025e  2807              CMP      r0,#7
-000260  d105              BNE      |L13.622|
+00027c  9803              LDR      r0,[sp,#0xc]
+00027e  2807              CMP      r0,#7
+000280  d104              BNE      |L13.652|
 ;;;544    						{
 ;;;545    		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
-000262  2107              MOVS     r1,#7
-000264  7161              STRB     r1,[r4,#5]
-;;;546    							Global_datas.volume_resume = 1;
-000266  74e7              STRB     r7,[r4,#0x13]
+000282  2107              MOVS     r1,#7
+000284  7161              STRB     r1,[r4,#5]
+;;;546    							//Global_datas.volume_resume = 1;
 ;;;547    							printf("0x06, msg.param1 = %x \n",msg.param1);
-000268  a0a2              ADR      r0,|L13.1268|
-00026a  f7fffffe          BL       __2printf
-                  |L13.622|
+000286  a09b              ADR      r0,|L13.1268|
+000288  f7fffffe          BL       __2printf
+                  |L13.652|
 ;;;548    						}
 ;;;549    						if (msg.param1 == 0x02)
-00026e  9803              LDR      r0,[sp,#0xc]
-000270  2802              CMP      r0,#2
-000272  d104              BNE      |L13.638|
+00028c  9803              LDR      r0,[sp,#0xc]
+00028e  2802              CMP      r0,#2
+000290  d104              BNE      |L13.668|
 ;;;550    						{
 ;;;551    		                	Global_datas.g_mode_status = WIFI_CONNECTED_MODE;
-000274  2102              MOVS     r1,#2
-000276  7161              STRB     r1,[r4,#5]
+000292  2102              MOVS     r1,#2
+000294  7161              STRB     r1,[r4,#5]
 ;;;552    		                	
 ;;;553    						printf("0x06, msg.param1 = %x \n",msg.param1);
-000278  a09e              ADR      r0,|L13.1268|
-00027a  f7fffffe          BL       __2printf
-                  |L13.638|
+000296  a097              ADR      r0,|L13.1268|
+000298  f7fffffe          BL       __2printf
+                  |L13.668|
 ;;;554    						}
 ;;;555    						if (msg.param1 == 0x04)
-00027e  9803              LDR      r0,[sp,#0xc]
-000280  2804              CMP      r0,#4
-000282  d104              BNE      |L13.654|
+00029c  9803              LDR      r0,[sp,#0xc]
+00029e  2804              CMP      r0,#4
+0002a0  d104              BNE      |L13.684|
 ;;;556    						{
 ;;;557    		                	Global_datas.g_mode_status = WIFI_MODE;
 ;;;558    		                	
 ;;;559    						printf("0x06, msg.param1 = %x \n",msg.param1);
-000284  4601              MOV      r1,r0
-000286  7167              STRB     r7,[r4,#5]            ;557
-000288  a09a              ADR      r0,|L13.1268|
-00028a  f7fffffe          BL       __2printf
-                  |L13.654|
+0002a2  4601              MOV      r1,r0
+0002a4  7167              STRB     r7,[r4,#5]            ;557
+0002a6  a093              ADR      r0,|L13.1268|
+0002a8  f7fffffe          BL       __2printf
+                  |L13.684|
 ;;;560    						}
 ;;;561    						if (msg.param1 == 0x05)
-00028e  9803              LDR      r0,[sp,#0xc]
-000290  2805              CMP      r0,#5
-000292  d105              BNE      |L13.672|
+0002ac  9803              LDR      r0,[sp,#0xc]
+0002ae  2805              CMP      r0,#5
+0002b0  d105              BNE      |L13.702|
 ;;;562    						{
 ;;;563    		                	Global_datas.g_mode_status = WIFI_CONNECTING_MODE;
-000294  2003              MOVS     r0,#3
-000296  7160              STRB     r0,[r4,#5]
+0002b2  2003              MOVS     r0,#3
+0002b4  7160              STRB     r0,[r4,#5]
 ;;;564    		                	
 ;;;565    						printf("0x06, msg.param1 = %x \n",msg.param1);
-000298  a096              ADR      r0,|L13.1268|
-00029a  9903              LDR      r1,[sp,#0xc]
-00029c  f7fffffe          BL       __2printf
-                  |L13.672|
+0002b6  a08f              ADR      r0,|L13.1268|
+0002b8  9903              LDR      r1,[sp,#0xc]
+0002ba  f7fffffe          BL       __2printf
+                  |L13.702|
 ;;;566    						}
 ;;;567    						if (msg.param1 == 0x011)
-0002a0  9803              LDR      r0,[sp,#0xc]
-0002a2  2811              CMP      r0,#0x11
-0002a4  d105              BNE      |L13.690|
+0002be  9803              LDR      r0,[sp,#0xc]
+0002c0  2811              CMP      r0,#0x11
+0002c2  d105              BNE      |L13.720|
 ;;;568    						{
 ;;;569    		                	Global_datas.g_mode_status = FOURG_CONNECTED_MODE;
-0002a6  2005              MOVS     r0,#5
-0002a8  7160              STRB     r0,[r4,#5]
+0002c4  2005              MOVS     r0,#5
+0002c6  7160              STRB     r0,[r4,#5]
 ;;;570    		                	
 ;;;571    						printf("0x06, msg.param1 = %x \n",msg.param1);
-0002aa  a092              ADR      r0,|L13.1268|
-0002ac  9903              LDR      r1,[sp,#0xc]
-0002ae  f7fffffe          BL       __2printf
-                  |L13.690|
+0002c8  a08a              ADR      r0,|L13.1268|
+0002ca  9903              LDR      r1,[sp,#0xc]
+0002cc  f7fffffe          BL       __2printf
+                  |L13.720|
 ;;;572    						}
 ;;;573    						if (msg.param1 == 0x012)
-0002b2  9803              LDR      r0,[sp,#0xc]
-0002b4  2812              CMP      r0,#0x12
-0002b6  d105              BNE      |L13.708|
+0002d0  9803              LDR      r0,[sp,#0xc]
+0002d2  2812              CMP      r0,#0x12
+0002d4  d105              BNE      |L13.738|
 ;;;574    						{
 ;;;575    		                	Global_datas.g_mode_status = FOURG_MODE;
-0002b8  2004              MOVS     r0,#4
-0002ba  7160              STRB     r0,[r4,#5]
+0002d6  2004              MOVS     r0,#4
+0002d8  7160              STRB     r0,[r4,#5]
 ;;;576    		                	
 ;;;577    						printf("0x06, msg.param1 = %x \n",msg.param1);
-0002bc  a08d              ADR      r0,|L13.1268|
-0002be  9903              LDR      r1,[sp,#0xc]
-0002c0  f7fffffe          BL       __2printf
-                  |L13.708|
+0002da  a086              ADR      r0,|L13.1268|
+0002dc  9903              LDR      r1,[sp,#0xc]
+0002de  f7fffffe          BL       __2printf
+                  |L13.738|
 ;;;578    						}
 ;;;579    						if (msg.param1 == 0x0B)
-0002c4  9803              LDR      r0,[sp,#0xc]
-0002c6  280b              CMP      r0,#0xb
-0002c8  d104              BNE      |L13.724|
+0002e2  9803              LDR      r0,[sp,#0xc]
+0002e4  280b              CMP      r0,#0xb
+0002e6  d104              BNE      |L13.754|
 ;;;580    						{
 ;;;581    		                	Global_datas.g_mode_status = SYSTEM_UPDATING;
-0002ca  210b              MOVS     r1,#0xb
-0002cc  7161              STRB     r1,[r4,#5]
+0002e8  210b              MOVS     r1,#0xb
+0002ea  7161              STRB     r1,[r4,#5]
 ;;;582    		                	
 ;;;583    						printf("0x06, msg.param1 = %x \n",msg.param1);
-0002ce  a089              ADR      r0,|L13.1268|
-0002d0  f7fffffe          BL       __2printf
-                  |L13.724|
+0002ec  a081              ADR      r0,|L13.1268|
+0002ee  f7fffffe          BL       __2printf
+                  |L13.754|
 ;;;584    						}
 ;;;585    						if ((msg.param1 == 0x09) || (msg.param1 == 0x08) || (msg.param1 == 0x16))
-0002d4  9803              LDR      r0,[sp,#0xc]
-0002d6  2809              CMP      r0,#9
-0002d8  d003              BEQ      |L13.738|
-0002da  2808              CMP      r0,#8
-0002dc  d001              BEQ      |L13.738|
-0002de  2816              CMP      r0,#0x16
-0002e0  d105              BNE      |L13.750|
-                  |L13.738|
+0002f2  9803              LDR      r0,[sp,#0xc]
+0002f4  2809              CMP      r0,#9
+0002f6  d003              BEQ      |L13.768|
+0002f8  2808              CMP      r0,#8
+0002fa  d001              BEQ      |L13.768|
+0002fc  2816              CMP      r0,#0x16
+0002fe  d105              BNE      |L13.780|
+                  |L13.768|
 ;;;586    						{
 ;;;587    		                	Global_datas.g_mode_status = SYS_LOW_POWER;
-0002e2  200c              MOVS     r0,#0xc
-0002e4  7160              STRB     r0,[r4,#5]
+000300  200c              MOVS     r0,#0xc
+000302  7160              STRB     r0,[r4,#5]
 ;;;588    		                	
 ;;;589    						printf("0x06, msg.param1 = %x \n",msg.param1);
-0002e6  a083              ADR      r0,|L13.1268|
-0002e8  9903              LDR      r1,[sp,#0xc]
-0002ea  f7fffffe          BL       __2printf
-                  |L13.750|
+000304  a07b              ADR      r0,|L13.1268|
+000306  9903              LDR      r1,[sp,#0xc]
+000308  f7fffffe          BL       __2printf
+                  |L13.780|
 ;;;590    						}
 ;;;591    						
 ;;;592    					}
 ;;;593    				//rtc time	
 ;;;594    					if(msg.param0 == 0x11)
-0002ee  9802              LDR      r0,[sp,#8]
-0002f0  2811              CMP      r0,#0x11
-0002f2  d105              BNE      |L13.768|
+00030c  9802              LDR      r0,[sp,#8]
+00030e  2811              CMP      r0,#0x11
+000310  d105              BNE      |L13.798|
 ;;;595    					{
 ;;;596    						srv_rtc_set_ym(msg.param1,msg.param2);
-0002f4  9804              LDR      r0,[sp,#0x10]
-0002f6  b2c1              UXTB     r1,r0
-0002f8  9803              LDR      r0,[sp,#0xc]
-0002fa  b2c0              UXTB     r0,r0
-0002fc  f7fffffe          BL       srv_rtc_set_ym
-                  |L13.768|
+000312  9804              LDR      r0,[sp,#0x10]
+000314  b2c1              UXTB     r1,r0
+000316  9803              LDR      r0,[sp,#0xc]
+000318  b2c0              UXTB     r0,r0
+00031a  f7fffffe          BL       srv_rtc_set_ym
+                  |L13.798|
 ;;;597    					}
 ;;;598    					
 ;;;599    					if(msg.param0 == 0x12)
-000300  9802              LDR      r0,[sp,#8]
-000302  2812              CMP      r0,#0x12
-000304  d105              BNE      |L13.786|
+00031e  9802              LDR      r0,[sp,#8]
+000320  2812              CMP      r0,#0x12
+000322  d105              BNE      |L13.816|
 ;;;600    					{
 ;;;601    						srv_rtc_set_dw(msg.param1,msg.param2);
-000306  9804              LDR      r0,[sp,#0x10]
-000308  b2c1              UXTB     r1,r0
-00030a  9803              LDR      r0,[sp,#0xc]
-00030c  b2c0              UXTB     r0,r0
-00030e  f7fffffe          BL       srv_rtc_set_dw
-                  |L13.786|
+000324  9804              LDR      r0,[sp,#0x10]
+000326  b2c1              UXTB     r1,r0
+000328  9803              LDR      r0,[sp,#0xc]
+00032a  b2c0              UXTB     r0,r0
+00032c  f7fffffe          BL       srv_rtc_set_dw
+                  |L13.816|
 ;;;602    					}
 ;;;603    					
 ;;;604    					if(msg.param0 == 0x13)
-000312  9802              LDR      r0,[sp,#8]
-000314  2813              CMP      r0,#0x13
-000316  d105              BNE      |L13.804|
+000330  9802              LDR      r0,[sp,#8]
+000332  2813              CMP      r0,#0x13
+000334  d105              BNE      |L13.834|
 ;;;605    					{
 ;;;606    						srv_rtc_set_hm(msg.param1,msg.param2);
-000318  9804              LDR      r0,[sp,#0x10]
-00031a  b2c1              UXTB     r1,r0
-00031c  9803              LDR      r0,[sp,#0xc]
-00031e  b2c0              UXTB     r0,r0
-000320  f7fffffe          BL       srv_rtc_set_hm
-                  |L13.804|
+000336  9804              LDR      r0,[sp,#0x10]
+000338  b2c1              UXTB     r1,r0
+00033a  9803              LDR      r0,[sp,#0xc]
+00033c  b2c0              UXTB     r0,r0
+00033e  f7fffffe          BL       srv_rtc_set_hm
+                  |L13.834|
 ;;;607    					}
 ;;;608    					
 ;;;609    					if(msg.param0 == 0x14)
-000324  9802              LDR      r0,[sp,#8]
-000326  2814              CMP      r0,#0x14
-000328  d105              BNE      |L13.822|
+000342  9802              LDR      r0,[sp,#8]
+000344  2814              CMP      r0,#0x14
+000346  d105              BNE      |L13.852|
 ;;;610    					{
 ;;;611    						srv_rtc_set_st(msg.param1,msg.param2);
-00032a  9804              LDR      r0,[sp,#0x10]
-00032c  b2c1              UXTB     r1,r0
-00032e  9803              LDR      r0,[sp,#0xc]
-000330  b2c0              UXTB     r0,r0
-000332  f7fffffe          BL       srv_rtc_set_st
-                  |L13.822|
+000348  9804              LDR      r0,[sp,#0x10]
+00034a  b2c1              UXTB     r1,r0
+00034c  9803              LDR      r0,[sp,#0xc]
+00034e  b2c0              UXTB     r0,r0
+000350  f7fffffe          BL       srv_rtc_set_st
+                  |L13.852|
 ;;;612    					}
 ;;;613    					//rtc alarm
 ;;;614    					if(msg.param0 == 0x15)
-000336  9802              LDR      r0,[sp,#8]
-000338  2815              CMP      r0,#0x15
-00033a  d105              BNE      |L13.840|
+000354  9802              LDR      r0,[sp,#8]
+000356  2815              CMP      r0,#0x15
+000358  d105              BNE      |L13.870|
 ;;;615    					{
 ;;;616    						srv_rtc_alarm_set_ym(msg.param1,msg.param2);
-00033c  9804              LDR      r0,[sp,#0x10]
-00033e  b2c1              UXTB     r1,r0
-000340  9803              LDR      r0,[sp,#0xc]
-000342  b2c0              UXTB     r0,r0
-000344  f7fffffe          BL       srv_rtc_alarm_set_ym
-                  |L13.840|
+00035a  9804              LDR      r0,[sp,#0x10]
+00035c  b2c1              UXTB     r1,r0
+00035e  9803              LDR      r0,[sp,#0xc]
+000360  b2c0              UXTB     r0,r0
+000362  f7fffffe          BL       srv_rtc_alarm_set_ym
+                  |L13.870|
 ;;;617    					}
 ;;;618    					
 ;;;619    					if(msg.param0 == 0x16)
-000348  9802              LDR      r0,[sp,#8]
-00034a  2816              CMP      r0,#0x16
-00034c  d105              BNE      |L13.858|
+000366  9802              LDR      r0,[sp,#8]
+000368  2816              CMP      r0,#0x16
+00036a  d105              BNE      |L13.888|
 ;;;620    					{
 ;;;621    						srv_rtc_alarm_set_dw(msg.param1,msg.param2);
-00034e  9804              LDR      r0,[sp,#0x10]
-000350  b2c1              UXTB     r1,r0
-000352  9803              LDR      r0,[sp,#0xc]
-000354  b2c0              UXTB     r0,r0
-000356  f7fffffe          BL       srv_rtc_alarm_set_dw
-                  |L13.858|
+00036c  9804              LDR      r0,[sp,#0x10]
+00036e  b2c1              UXTB     r1,r0
+000370  9803              LDR      r0,[sp,#0xc]
+000372  b2c0              UXTB     r0,r0
+000374  f7fffffe          BL       srv_rtc_alarm_set_dw
+                  |L13.888|
 ;;;622    					}
 ;;;623    					
 ;;;624    					if(msg.param0 == 0x17)
-00035a  9802              LDR      r0,[sp,#8]
-00035c  2817              CMP      r0,#0x17
-00035e  d105              BNE      |L13.876|
+000378  9802              LDR      r0,[sp,#8]
+00037a  2817              CMP      r0,#0x17
+00037c  d105              BNE      |L13.906|
 ;;;625    					{
 ;;;626    						srv_rtc_alarm_set_hm(msg.param1,msg.param2);
-000360  9804              LDR      r0,[sp,#0x10]
-000362  b2c1              UXTB     r1,r0
-000364  9803              LDR      r0,[sp,#0xc]
-000366  b2c0              UXTB     r0,r0
-000368  f7fffffe          BL       srv_rtc_alarm_set_hm
-                  |L13.876|
+00037e  9804              LDR      r0,[sp,#0x10]
+000380  b2c1              UXTB     r1,r0
+000382  9803              LDR      r0,[sp,#0xc]
+000384  b2c0              UXTB     r0,r0
+000386  f7fffffe          BL       srv_rtc_alarm_set_hm
+                  |L13.906|
 ;;;627    					}
 ;;;628    					
 ;;;629    					if(msg.param0 == 0x18)
-00036c  9802              LDR      r0,[sp,#8]
-00036e  2818              CMP      r0,#0x18
-000370  d105              BNE      |L13.894|
+00038a  9802              LDR      r0,[sp,#8]
+00038c  2818              CMP      r0,#0x18
+00038e  d105              BNE      |L13.924|
 ;;;630    					{
 ;;;631    						srv_rtc_alarm_set_st(msg.param1,msg.param2);
-000372  9804              LDR      r0,[sp,#0x10]
-000374  b2c1              UXTB     r1,r0
-000376  9803              LDR      r0,[sp,#0xc]
-000378  b2c0              UXTB     r0,r0
-00037a  f7fffffe          BL       srv_rtc_alarm_set_st
-                  |L13.894|
+000390  9804              LDR      r0,[sp,#0x10]
+000392  b2c1              UXTB     r1,r0
+000394  9803              LDR      r0,[sp,#0xc]
+000396  b2c0              UXTB     r0,r0
+000398  f7fffffe          BL       srv_rtc_alarm_set_st
+                  |L13.924|
 ;;;632    					}
 ;;;633    					if(msg.param0 == 0x19)
-00037e  9802              LDR      r0,[sp,#8]
-000380  2819              CMP      r0,#0x19
-000382  d101              BNE      |L13.904|
+00039c  9802              LDR      r0,[sp,#8]
+00039e  2819              CMP      r0,#0x19
+0003a0  d101              BNE      |L13.934|
 ;;;634    					{
 ;;;635    						srv_rtc_get();
-000384  f7fffffe          BL       srv_rtc_get
-                  |L13.904|
+0003a2  f7fffffe          BL       srv_rtc_get
+                  |L13.934|
 ;;;636    					}
 ;;;637    					if(msg.param0 == 0x1a)
-000388  9802              LDR      r0,[sp,#8]
-00038a  281a              CMP      r0,#0x1a
-00038c  d101              BNE      |L13.914|
+0003a6  9802              LDR      r0,[sp,#8]
+0003a8  281a              CMP      r0,#0x1a
+0003aa  d101              BNE      |L13.944|
 ;;;638    					{
 ;;;639    						srv_rtc_alarm_get();
-00038e  f7fffffe          BL       srv_rtc_alarm_get
-                  |L13.914|
+0003ac  f7fffffe          BL       srv_rtc_alarm_get
+                  |L13.944|
 ;;;640    					}
 ;;;641    					
 ;;;642    					if(msg.param0 == 0x20)
-000392  9802              LDR      r0,[sp,#8]
-000394  2820              CMP      r0,#0x20
-000396  d103              BNE      |L13.928|
+0003b0  9802              LDR      r0,[sp,#8]
+0003b2  2820              CMP      r0,#0x20
+0003b4  d103              BNE      |L13.958|
 ;;;643    					{
 ;;;644    						Cmd_Send2FourG(0x20,0x0,0x4);  //version 0.0.4
-000398  2204              MOVS     r2,#4
-00039a  2100              MOVS     r1,#0
-00039c  f7fffffe          BL       Cmd_Send2FourG
-                  |L13.928|
-0003a0  e14c              B        |L13.1596|
-                  |L13.930|
+0003b6  2204              MOVS     r2,#4
+0003b8  2100              MOVS     r1,#0
+0003ba  f7fffffe          BL       Cmd_Send2FourG
+                  |L13.958|
+0003be  e14a              B        |L13.1622|
+                  |L13.960|
 ;;;645    					}
 ;;;646    	            break;
 ;;;647    
 ;;;648    			 	case MSG_MCU1_SYS_STATE_IND:
 ;;;649    
 ;;;650    				    if((msg.param0 == 0x03) && ((msg.param1 == 0x55) || (msg.param1 == 0x02) || (msg.param1 == 0x03))) //power off mode  , v+ v- do not send to 4G
-0003a2  9802              LDR      r0,[sp,#8]
-0003a4  2803              CMP      r0,#3
-0003a6  d106              BNE      |L13.950|
-0003a8  9803              LDR      r0,[sp,#0xc]
-0003aa  2855              CMP      r0,#0x55
-0003ac  d0f8              BEQ      |L13.928|
-0003ae  2802              CMP      r0,#2
-0003b0  d027              BEQ      |L13.1026|
-0003b2  2803              CMP      r0,#3
-0003b4  d018              BEQ      |L13.1000|
-                  |L13.950|
+0003c0  9802              LDR      r0,[sp,#8]
+0003c2  2803              CMP      r0,#3
+0003c4  d106              BNE      |L13.980|
+0003c6  9803              LDR      r0,[sp,#0xc]
+0003c8  2855              CMP      r0,#0x55
+0003ca  d0f8              BEQ      |L13.958|
+0003cc  2802              CMP      r0,#2
+0003ce  d01a              BEQ      |L13.1030|
+0003d0  2803              CMP      r0,#3
+0003d2  d019              BEQ      |L13.1032|
+                  |L13.980|
 ;;;651    					{
 ;;;652    						//Global_datas.g_mode_status = POWER_OFF_MODE;
 ;;;653    					}
 ;;;654    					else
 ;;;655    					{
 ;;;656    						Cmd_Send2FourG( msg.param0,msg.param1,msg.param2);
-0003b6  9804              LDR      r0,[sp,#0x10]
-0003b8  b2c2              UXTB     r2,r0
-0003ba  9803              LDR      r0,[sp,#0xc]
-0003bc  b2c1              UXTB     r1,r0
-0003be  9802              LDR      r0,[sp,#8]
-0003c0  b2c0              UXTB     r0,r0
-0003c2  f7fffffe          BL       Cmd_Send2FourG
+0003d4  9804              LDR      r0,[sp,#0x10]
+0003d6  b2c2              UXTB     r2,r0
+0003d8  9803              LDR      r0,[sp,#0xc]
+0003da  b2c1              UXTB     r1,r0
+0003dc  9802              LDR      r0,[sp,#8]
+0003de  b2c0              UXTB     r0,r0
+0003e0  f7fffffe          BL       Cmd_Send2FourG
 ;;;657    					}
 ;;;658    					
 ;;;659    					
 ;;;660    					//printf("MSG_MCU1_SYS_STATE_IND:msg.param0 = %x, msg.param1 = %x \n",msg.param0,msg.param1);
 ;;;661    					if((msg.param0 == 0x01) && (msg.param1 == 0x00))
-0003c6  9802              LDR      r0,[sp,#8]
-0003c8  2801              CMP      r0,#1
-0003ca  d107              BNE      |L13.988|
-0003cc  9803              LDR      r0,[sp,#0xc]
-0003ce  2800              CMP      r0,#0
-0003d0  d1e6              BNE      |L13.928|
+0003e4  9802              LDR      r0,[sp,#8]
+0003e6  2801              CMP      r0,#1
+0003e8  d107              BNE      |L13.1018|
+0003ea  9803              LDR      r0,[sp,#0xc]
+0003ec  2800              CMP      r0,#0
+0003ee  d1e6              BNE      |L13.958|
 ;;;662    					{
 ;;;663    						drv_Cmd_Send2NCU031(0x01,Global_datas.g_PowerStatus.bat_status,Global_datas.g_PowerStatus.bat_value);
-0003d2  7922              LDRB     r2,[r4,#4]  ; Global_datas
-0003d4  78e1              LDRB     r1,[r4,#3]  ; Global_datas
-0003d6  2001              MOVS     r0,#1
-0003d8  f7fffffe          BL       drv_Cmd_Send2NCU031
-                  |L13.988|
+0003f0  7922              LDRB     r2,[r4,#4]  ; Global_datas
+0003f2  78e1              LDRB     r1,[r4,#3]  ; Global_datas
+0003f4  2001              MOVS     r0,#1
+0003f6  f7fffffe          BL       drv_Cmd_Send2NCU031
+                  |L13.1018|
 ;;;664    					}
 ;;;665    					if(msg.param0 == 0x02) // MIC VOLUNE ,NO USE 
 ;;;666    					{
@@ -1586,43 +1601,16 @@
 ;;;668    					}
 ;;;669    
 ;;;670    					if((msg.param0 == 0x03) && (msg.param1 == 0x03))
-0003dc  9802              LDR      r0,[sp,#8]
-0003de  2803              CMP      r0,#3
-0003e0  d1de              BNE      |L13.928|
-0003e2  9803              LDR      r0,[sp,#0xc]
-0003e4  2803              CMP      r0,#3
-0003e6  d10d              BNE      |L13.1028|
-                  |L13.1000|
-;;;671    					{
-;;;672    						
-;;;673    						if (Global_datas.volume > VOLUME_MIN)
-0003e8  7be0              LDRB     r0,[r4,#0xf]  ; Global_datas
-0003ea  2800              CMP      r0,#0
-0003ec  d00b              BEQ      |L13.1030|
-0003ee  1e40              SUBS     r0,r0,#1
-;;;674    						{
-;;;675    							Global_datas.volume--;
-0003f0  b2c0              UXTB     r0,r0
-0003f2  73e0              STRB     r0,[r4,#0xf]
-;;;676    							Drv_Dap_vol_set(Global_datas.volume);
-0003f4  f7fffffe          BL       Drv_Dap_vol_set
-;;;677    							if(Global_datas.volume == 0)
-0003f8  7be0              LDRB     r0,[r4,#0xf]  ; Global_datas
-0003fa  2800              CMP      r0,#0
-0003fc  d104              BNE      |L13.1032|
-;;;678    							{
-;;;679    								Global_datas.mute = 1;
-0003fe  74a7              STRB     r7,[r4,#0x12]
-;;;680    								drv_5825_mute_pin_set(0); 
-000400  e084              B        |L13.1292|
-                  |L13.1026|
-000402  e090              B        |L13.1318|
-                  |L13.1028|
-000404  e08c              B        |L13.1312|
+0003fa  9802              LDR      r0,[sp,#8]
+0003fc  2803              CMP      r0,#3
+0003fe  d1de              BNE      |L13.958|
+000400  9803              LDR      r0,[sp,#0xc]
+000402  2803              CMP      r0,#3
+000404  e082              B        |L13.1292|
                   |L13.1030|
-000406  e109              B        |L13.1564|
+000406  e09b              B        |L13.1344|
                   |L13.1032|
-000408  e082              B        |L13.1296|
+000408  e081              B        |L13.1294|
 00040a  0000              DCW      0x0000
                   |L13.1036|
 00040c  0a6d6169          DCB      "\nmain\n",0
@@ -1709,144 +1697,167 @@
 000504  203d2025
 000508  78200a00
                   |L13.1292|
-00050c  f7fffffe          BL       drv_5825_mute_pin_set
-                  |L13.1296|
+00050c  d115              BNE      |L13.1338|
+                  |L13.1294|
+;;;671    					{
+;;;672    						
+;;;673    						if (Global_datas.volume > VOLUME_MIN)
+00050e  7be0              LDRB     r0,[r4,#0xf]  ; Global_datas
+000510  2800              CMP      r0,#0
+000512  d07d              BEQ      |L13.1552|
+000514  1e40              SUBS     r0,r0,#1
+;;;674    						{
+;;;675    							Global_datas.volume--;
+000516  b2c0              UXTB     r0,r0
+000518  73e0              STRB     r0,[r4,#0xf]
+;;;676    							Drv_Dap_vol_set(Global_datas.volume);
+00051a  f7fffffe          BL       Drv_Dap_vol_set
+;;;677    							if(Global_datas.volume == 0)
+00051e  7be0              LDRB     r0,[r4,#0xf]  ; Global_datas
+000520  2800              CMP      r0,#0
+000522  d102              BNE      |L13.1322|
+;;;678    							{
+;;;679    								Global_datas.mute = 1;
+000524  74a7              STRB     r7,[r4,#0x12]
+;;;680    								drv_5825_mute_pin_set(0); 
+000526  f7fffffe          BL       drv_5825_mute_pin_set
+                  |L13.1322|
 ;;;681    							}
 ;;;682    							Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
-000510  7be2              LDRB     r2,[r4,#0xf]  ; Global_datas
-000512  2104              MOVS     r1,#4
-000514  2003              MOVS     r0,#3
-000516  f7fffffe          BL       Cmd_Send2FourG
+00052a  7be2              LDRB     r2,[r4,#0xf]  ; Global_datas
+00052c  2104              MOVS     r1,#4
+00052e  2003              MOVS     r0,#3
+000530  f7fffffe          BL       Cmd_Send2FourG
 ;;;683    							//printf("Hal_Dap_Load_vol_reduce\n");
 ;;;684    						}
 ;;;685    					}
 ;;;686    					
 ;;;687    					if((msg.param0 == 0x03) && (msg.param1 == 0x02))
-00051a  9802              LDR      r0,[sp,#8]
-00051c  2803              CMP      r0,#3
-00051e  d17d              BNE      |L13.1564|
-                  |L13.1312|
-000520  9803              LDR      r0,[sp,#0xc]
-000522  2802              CMP      r0,#2
-000524  d111              BNE      |L13.1354|
-                  |L13.1318|
+000534  9802              LDR      r0,[sp,#8]
+000536  2803              CMP      r0,#3
+000538  d16a              BNE      |L13.1552|
+                  |L13.1338|
+00053a  9803              LDR      r0,[sp,#0xc]
+00053c  2802              CMP      r0,#2
+00053e  d111              BNE      |L13.1380|
+                  |L13.1344|
 ;;;688    					{
 ;;;689    						
 ;;;690    						Global_datas.mute = 0;
-000526  2000              MOVS     r0,#0
-000528  74a0              STRB     r0,[r4,#0x12]
+000540  2000              MOVS     r0,#0
+000542  74a0              STRB     r0,[r4,#0x12]
 ;;;691    						if (Global_datas.volume < VOLUME_MAX)
-00052a  7be0              LDRB     r0,[r4,#0xf]  ; Global_datas
-00052c  2810              CMP      r0,#0x10
-00052e  d275              BCS      |L13.1564|
-000530  1c40              ADDS     r0,r0,#1
+000544  7be0              LDRB     r0,[r4,#0xf]  ; Global_datas
+000546  2810              CMP      r0,#0x10
+000548  d262              BCS      |L13.1552|
+00054a  1c40              ADDS     r0,r0,#1
 ;;;692    						{
 ;;;693    							Global_datas.volume++;
-000532  b2c0              UXTB     r0,r0
-000534  73e0              STRB     r0,[r4,#0xf]
+00054c  b2c0              UXTB     r0,r0
+00054e  73e0              STRB     r0,[r4,#0xf]
 ;;;694    							Drv_Dap_vol_set(Global_datas.volume);
-000536  f7fffffe          BL       Drv_Dap_vol_set
+000550  f7fffffe          BL       Drv_Dap_vol_set
 ;;;695    							Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
-00053a  7be2              LDRB     r2,[r4,#0xf]  ; Global_datas
-00053c  2104              MOVS     r1,#4
-00053e  2003              MOVS     r0,#3
-000540  f7fffffe          BL       Cmd_Send2FourG
+000554  7be2              LDRB     r2,[r4,#0xf]  ; Global_datas
+000556  2104              MOVS     r1,#4
+000558  2003              MOVS     r0,#3
+00055a  f7fffffe          BL       Cmd_Send2FourG
 ;;;696    							//printf("Hal_Dap_Load_vol_add\n");
 ;;;697    						}
 ;;;698    					}
 ;;;699    
 ;;;700    					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) //wifi mode
-000544  9802              LDR      r0,[sp,#8]
-000546  2803              CMP      r0,#3
-000548  d178              BNE      |L13.1596|
-                  |L13.1354|
-00054a  9803              LDR      r0,[sp,#0xc]
-00054c  2815              CMP      r0,#0x15
-00054e  d10c              BNE      |L13.1386|
+00055e  9802              LDR      r0,[sp,#8]
+000560  2803              CMP      r0,#3
+000562  d178              BNE      |L13.1622|
+                  |L13.1380|
+000564  9803              LDR      r0,[sp,#0xc]
+000566  2815              CMP      r0,#0x15
+000568  d10c              BNE      |L13.1412|
 ;;;701    					{
 ;;;702    
 ;;;703    						drv_5825_mute_pin_set(0); 
-000550  2000              MOVS     r0,#0
-000552  f7fffffe          BL       drv_5825_mute_pin_set
+00056a  2000              MOVS     r0,#0
+00056c  f7fffffe          BL       drv_5825_mute_pin_set
 ;;;704    						Global_datas.mode_switching = 1;
-000556  7467              STRB     r7,[r4,#0x11]
+000570  7467              STRB     r7,[r4,#0x11]
 ;;;705    						Global_datas.g_mode_status = WIFI_MODE;
-000558  7167              STRB     r7,[r4,#5]
+000572  7167              STRB     r7,[r4,#5]
 ;;;706    						drv_audio_4G_Channel();
-00055a  f7fffffe          BL       drv_audio_4G_Channel
+000574  f7fffffe          BL       drv_audio_4G_Channel
 ;;;707    						
 ;;;708    						printf("FourG_WIFI_CHANNEL\n");
-00055e  a049              ADR      r0,|L13.1668|
-000560  f7fffffe          BL       __2printf
+000578  a049              ADR      r0,|L13.1696|
+00057a  f7fffffe          BL       __2printf
 ;;;709    					}
 ;;;710    					if((msg.param0 == 0x03) && (msg.param1 == 0x16)) //BT mode
-000564  9802              LDR      r0,[sp,#8]
-000566  2803              CMP      r0,#3
-000568  d168              BNE      |L13.1596|
-                  |L13.1386|
-00056a  9803              LDR      r0,[sp,#0xc]
-00056c  2816              CMP      r0,#0x16
-00056e  d10d              BNE      |L13.1420|
+00057e  9802              LDR      r0,[sp,#8]
+000580  2803              CMP      r0,#3
+000582  d168              BNE      |L13.1622|
+                  |L13.1412|
+000584  9803              LDR      r0,[sp,#0xc]
+000586  2816              CMP      r0,#0x16
+000588  d10d              BNE      |L13.1446|
 ;;;711    					{
 ;;;712    						drv_5825_mute_pin_set(0); 
-000570  2000              MOVS     r0,#0
-000572  f7fffffe          BL       drv_5825_mute_pin_set
+00058a  2000              MOVS     r0,#0
+00058c  f7fffffe          BL       drv_5825_mute_pin_set
 ;;;713    						Global_datas.mode_switching = 1;
-000576  7467              STRB     r7,[r4,#0x11]
+000590  7467              STRB     r7,[r4,#0x11]
 ;;;714    						Global_datas.g_mode_status = BT_MODE;
-000578  2006              MOVS     r0,#6
-00057a  7160              STRB     r0,[r4,#5]
+000592  2006              MOVS     r0,#6
+000594  7160              STRB     r0,[r4,#5]
 ;;;715    						drv_audio_4G_Channel();  	// bt wifi use the same mode
-00057c  f7fffffe          BL       drv_audio_4G_Channel
+000596  f7fffffe          BL       drv_audio_4G_Channel
 ;;;716    						printf("BT_CHANNEL\n");
-000580  a045              ADR      r0,|L13.1688|
-000582  f7fffffe          BL       __2printf
+00059a  a046              ADR      r0,|L13.1716|
+00059c  f7fffffe          BL       __2printf
 ;;;717    					}
 ;;;718    					if((msg.param0 == 0x03) && (msg.param1 == 0x17)) //AUX mode
-000586  9802              LDR      r0,[sp,#8]
-000588  2803              CMP      r0,#3
-00058a  d157              BNE      |L13.1596|
-                  |L13.1420|
-00058c  9803              LDR      r0,[sp,#0xc]
-00058e  2817              CMP      r0,#0x17
-000590  d10d              BNE      |L13.1454|
+0005a0  9802              LDR      r0,[sp,#8]
+0005a2  2803              CMP      r0,#3
+0005a4  d157              BNE      |L13.1622|
+                  |L13.1446|
+0005a6  9803              LDR      r0,[sp,#0xc]
+0005a8  2817              CMP      r0,#0x17
+0005aa  d10d              BNE      |L13.1480|
 ;;;719    					{
 ;;;720    						drv_5825_mute_pin_set(0); 
-000592  2000              MOVS     r0,#0
-000594  f7fffffe          BL       drv_5825_mute_pin_set
+0005ac  2000              MOVS     r0,#0
+0005ae  f7fffffe          BL       drv_5825_mute_pin_set
 ;;;721    						Global_datas.mode_switching = 1;
-000598  7467              STRB     r7,[r4,#0x11]
+0005b2  7467              STRB     r7,[r4,#0x11]
 ;;;722    						Global_datas.g_mode_status = AUX_MODE;
-00059a  2008              MOVS     r0,#8
-00059c  7160              STRB     r0,[r4,#5]
+0005b4  2008              MOVS     r0,#8
+0005b6  7160              STRB     r0,[r4,#5]
 ;;;723    						drv_audio_AuxIn_Channel(); 
-00059e  f7fffffe          BL       drv_audio_AuxIn_Channel
+0005b8  f7fffffe          BL       drv_audio_AuxIn_Channel
 ;;;724    						printf("AUXIN_CHANNEL\n");
-0005a2  a040              ADR      r0,|L13.1700|
-0005a4  f7fffffe          BL       __2printf
+0005bc  a040              ADR      r0,|L13.1728|
+0005be  f7fffffe          BL       __2printf
 ;;;725    					}
 ;;;726    					if((msg.param0 == 0x03) && (msg.param1 == 0x18)) //FM mode
-0005a8  9802              LDR      r0,[sp,#8]
-0005aa  2803              CMP      r0,#3
-0005ac  d146              BNE      |L13.1596|
-                  |L13.1454|
-0005ae  9803              LDR      r0,[sp,#0xc]
-0005b0  2818              CMP      r0,#0x18
-0005b2  d10d              BNE      |L13.1488|
+0005c2  9802              LDR      r0,[sp,#8]
+0005c4  2803              CMP      r0,#3
+0005c6  d146              BNE      |L13.1622|
+                  |L13.1480|
+0005c8  9803              LDR      r0,[sp,#0xc]
+0005ca  2818              CMP      r0,#0x18
+0005cc  d10d              BNE      |L13.1514|
 ;;;727    					{
 ;;;728    						drv_5825_mute_pin_set(0); 
-0005b4  2000              MOVS     r0,#0
-0005b6  f7fffffe          BL       drv_5825_mute_pin_set
+0005ce  2000              MOVS     r0,#0
+0005d0  f7fffffe          BL       drv_5825_mute_pin_set
 ;;;729    						Global_datas.mode_switching = 1;
-0005ba  7467              STRB     r7,[r4,#0x11]
+0005d4  7467              STRB     r7,[r4,#0x11]
 ;;;730    						Global_datas.g_mode_status = FM_MODE;
-0005bc  200a              MOVS     r0,#0xa
-0005be  7160              STRB     r0,[r4,#5]
+0005d6  200a              MOVS     r0,#0xa
+0005d8  7160              STRB     r0,[r4,#5]
 ;;;731    						drv_audio_FM_Channel(); 
-0005c0  f7fffffe          BL       drv_audio_FM_Channel
+0005da  f7fffffe          BL       drv_audio_FM_Channel
 ;;;732    						printf("FM_CHANNEL\n");
-0005c4  a03b              ADR      r0,|L13.1716|
-0005c6  f7fffffe          BL       __2printf
+0005de  a03c              ADR      r0,|L13.1744|
+0005e0  f7fffffe          BL       __2printf
 ;;;733    					}
 ;;;734    					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) // NEXT CHANNEL
 ;;;735    					{
@@ -1861,93 +1872,93 @@
 ;;;744    
 ;;;745    					}
 ;;;746    					if((msg.param0 == 0x03) && (msg.param1 == 0xC0)) //FM reset
-0005ca  9802              LDR      r0,[sp,#8]
-0005cc  2803              CMP      r0,#3
-0005ce  d135              BNE      |L13.1596|
-                  |L13.1488|
-0005d0  9803              LDR      r0,[sp,#0xc]
-0005d2  28c0              CMP      r0,#0xc0
-0005d4  d107              BNE      |L13.1510|
+0005e4  9802              LDR      r0,[sp,#8]
+0005e6  2803              CMP      r0,#3
+0005e8  d135              BNE      |L13.1622|
+                  |L13.1514|
+0005ea  9803              LDR      r0,[sp,#0xc]
+0005ec  28c0              CMP      r0,#0xc0
+0005ee  d107              BNE      |L13.1536|
 ;;;747    					{
 ;;;748    						
 ;;;749    						drv_FM_on_NCU031_reset();
-0005d6  f7fffffe          BL       drv_FM_on_NCU031_reset
+0005f0  f7fffffe          BL       drv_FM_on_NCU031_reset
 ;;;750    						printf("fm reset\n");
-0005da  a039              ADR      r0,|L13.1728|
-0005dc  f7fffffe          BL       __2printf
+0005f4  a039              ADR      r0,|L13.1756|
+0005f6  f7fffffe          BL       __2printf
 ;;;751    						
 ;;;752    					}
 ;;;753    					if((msg.param0 == 0x03) && (msg.param1 == 0xC1)) //inside
-0005e0  9802              LDR      r0,[sp,#8]
-0005e2  2803              CMP      r0,#3
-0005e4  d12a              BNE      |L13.1596|
-                  |L13.1510|
-0005e6  9803              LDR      r0,[sp,#0xc]
-0005e8  28c1              CMP      r0,#0xc1
-0005ea  d105              BNE      |L13.1528|
+0005fa  9802              LDR      r0,[sp,#8]
+0005fc  2803              CMP      r0,#3
+0005fe  d12a              BNE      |L13.1622|
+                  |L13.1536|
+000600  9803              LDR      r0,[sp,#0xc]
+000602  28c1              CMP      r0,#0xc1
+000604  d107              BNE      |L13.1558|
 ;;;754    					{
 ;;;755    						printf("inside\n");
-0005ec  a037              ADR      r0,|L13.1740|
-0005ee  f7fffffe          BL       __2printf
+000606  a038              ADR      r0,|L13.1768|
+000608  f7fffffe          BL       __2printf
 ;;;756    					}
 ;;;757    					if((msg.param0 == 0x03) && (msg.param1 == 0xC2)) //outside
-0005f2  9802              LDR      r0,[sp,#8]
-0005f4  2803              CMP      r0,#3
-0005f6  d121              BNE      |L13.1596|
-                  |L13.1528|
-0005f8  9803              LDR      r0,[sp,#0xc]
-0005fa  28c2              CMP      r0,#0xc2
-0005fc  d105              BNE      |L13.1546|
+00060c  9802              LDR      r0,[sp,#8]
+00060e  e000              B        |L13.1554|
+                  |L13.1552|
+000610  e021              B        |L13.1622|
+                  |L13.1554|
+000612  2803              CMP      r0,#3
+000614  d11f              BNE      |L13.1622|
+                  |L13.1558|
+000616  9803              LDR      r0,[sp,#0xc]
+000618  28c2              CMP      r0,#0xc2
+00061a  d105              BNE      |L13.1576|
 ;;;758    					{
 ;;;759    
 ;;;760    						printf("outside\n");
-0005fe  a035              ADR      r0,|L13.1748|
-000600  f7fffffe          BL       __2printf
+00061c  a034              ADR      r0,|L13.1776|
+00061e  f7fffffe          BL       __2printf
 ;;;761    					}
 ;;;762    					if((msg.param0 == 0x03) && (msg.param1 == 0xC3)) //autoside
-000604  9802              LDR      r0,[sp,#8]
-000606  2803              CMP      r0,#3
-000608  d118              BNE      |L13.1596|
-                  |L13.1546|
-00060a  9803              LDR      r0,[sp,#0xc]
-00060c  28c3              CMP      r0,#0xc3
-00060e  d107              BNE      |L13.1568|
+000622  9802              LDR      r0,[sp,#8]
+000624  2803              CMP      r0,#3
+000626  d116              BNE      |L13.1622|
+                  |L13.1576|
+000628  9803              LDR      r0,[sp,#0xc]
+00062a  28c3              CMP      r0,#0xc3
+00062c  d105              BNE      |L13.1594|
 ;;;763    					{
 ;;;764    						printf("autoside\n");
-000610  a033              ADR      r0,|L13.1760|
-000612  f7fffffe          BL       __2printf
+00062e  a033              ADR      r0,|L13.1788|
+000630  f7fffffe          BL       __2printf
 ;;;765    					}
 ;;;766    
 ;;;767    					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) // handshake
-000616  9802              LDR      r0,[sp,#8]
-000618  2803              CMP      r0,#3
-00061a  e000              B        |L13.1566|
-                  |L13.1564|
-00061c  e00e              B        |L13.1596|
-                  |L13.1566|
-00061e  d10d              BNE      |L13.1596|
-                  |L13.1568|
-000620  9803              LDR      r0,[sp,#0xc]
-000622  28ca              CMP      r0,#0xca
-000624  d10a              BNE      |L13.1596|
+000634  9802              LDR      r0,[sp,#8]
+000636  2803              CMP      r0,#3
+000638  d10d              BNE      |L13.1622|
+                  |L13.1594|
+00063a  9803              LDR      r0,[sp,#0xc]
+00063c  28ca              CMP      r0,#0xca
+00063e  d10a              BNE      |L13.1622|
 ;;;768    					{
 ;;;769    						if(Global_datas.subboard_online == 0)  // first in
-000626  7c20              LDRB     r0,[r4,#0x10]  ; Global_datas
-000628  2800              CMP      r0,#0
-00062a  d101              BNE      |L13.1584|
+000640  7c20              LDRB     r0,[r4,#0x10]  ; Global_datas
+000642  2800              CMP      r0,#0
+000644  d101              BNE      |L13.1610|
 ;;;770    						{
 ;;;771    						 	drv_SendAllstateToSubboard();
-00062c  f7fffffe          BL       drv_SendAllstateToSubboard
-                  |L13.1584|
+000646  f7fffffe          BL       drv_SendAllstateToSubboard
+                  |L13.1610|
 ;;;772    						}
 ;;;773    						Global_datas.subboard_online = 1;
 ;;;774    						TimeOutSet(&SubBoardHandshakeTimer, 4000);
-000630  217d              MOVS     r1,#0x7d
-000632  7427              STRB     r7,[r4,#0x10]         ;773
-000634  0149              LSLS     r1,r1,#5
-000636  482d              LDR      r0,|L13.1772|
-000638  f7fffffe          BL       TimeOutSet
-                  |L13.1596|
+00064a  217d              MOVS     r1,#0x7d
+00064c  7427              STRB     r7,[r4,#0x10]         ;773
+00064e  0149              LSLS     r1,r1,#5
+000650  482d              LDR      r0,|L13.1800|
+000652  f7fffffe          BL       TimeOutSet
+                  |L13.1622|
 ;;;775    						//drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);//
 ;;;776    					}					
 ;;;777    					
@@ -1959,118 +1970,119 @@
 ;;;783        	}
 ;;;784    	
 ;;;785    		srv_key_handler();
-00063c  f7fffffe          BL       srv_key_handler
+000656  f7fffffe          BL       srv_key_handler
 ;;;786    		GetKeyEvent();
-000640  f7fffffe          BL       GetKeyEvent
+00065a  f7fffffe          BL       GetKeyEvent
 ;;;787    		IoKeyProcess();
-000644  f7fffffe          BL       IoKeyProcess
+00065e  f7fffffe          BL       IoKeyProcess
 ;;;788    
 ;;;789    
 ;;;790    		
 ;;;791    		if (((count>>16)&0xF) == refcount0)	
-000648  9807              LDR      r0,[sp,#0x1c]
-00064a  0300              LSLS     r0,r0,#12
-00064c  0f00              LSRS     r0,r0,#28
-00064e  42b0              CMP      r0,r6
-000650  d107              BNE      |L13.1634|
+000662  9807              LDR      r0,[sp,#0x1c]
+000664  0300              LSLS     r0,r0,#12
+000666  0f00              LSRS     r0,r0,#28
+000668  42b0              CMP      r0,r6
+00066a  d107              BNE      |L13.1660|
 ;;;792    		{
 ;;;793    			
 ;;;794    			if(refcount0 <0xF)
-000652  2e0f              CMP      r6,#0xf
-000654  d202              BCS      |L13.1628|
-000656  1c76              ADDS     r6,r6,#1
+00066c  2e0f              CMP      r6,#0xf
+00066e  d202              BCS      |L13.1654|
+000670  1c76              ADDS     r6,r6,#1
 ;;;795    				refcount0++;
-000658  b2f6              UXTB     r6,r6
-00065a  e000              B        |L13.1630|
-                  |L13.1628|
+000672  b2f6              UXTB     r6,r6
+000674  e000              B        |L13.1656|
+                  |L13.1654|
 ;;;796    			else
 ;;;797    				refcount0 = 0;
-00065c  2600              MOVS     r6,#0
-                  |L13.1630|
+000676  2600              MOVS     r6,#0
+                  |L13.1656|
 ;;;798    			srv_bat_charge_handler();	
-00065e  f7fffffe          BL       srv_bat_charge_handler
-                  |L13.1634|
+000678  f7fffffe          BL       srv_bat_charge_handler
+                  |L13.1660|
 ;;;799    		}
 ;;;800    
 ;;;801    		if (((count>>15)&0xF) == refcount1)
-000662  9807              LDR      r0,[sp,#0x1c]
-000664  0340              LSLS     r0,r0,#13
-000666  0f00              LSRS     r0,r0,#28
-000668  42a8              CMP      r0,r5
-00066a  d107              BNE      |L13.1660|
+00067c  9807              LDR      r0,[sp,#0x1c]
+00067e  0340              LSLS     r0,r0,#13
+000680  0f00              LSRS     r0,r0,#28
+000682  42a8              CMP      r0,r5
+000684  d107              BNE      |L13.1686|
 ;;;802    		{	
 ;;;803    			
 ;;;804    			if(refcount1 <0xF)
-00066c  2d0f              CMP      r5,#0xf
-00066e  d202              BCS      |L13.1654|
-000670  1c6d              ADDS     r5,r5,#1
+000686  2d0f              CMP      r5,#0xf
+000688  d202              BCS      |L13.1680|
+00068a  1c6d              ADDS     r5,r5,#1
 ;;;805    				refcount1++;
-000672  b2ed              UXTB     r5,r5
-000674  e000              B        |L13.1656|
-                  |L13.1654|
+00068c  b2ed              UXTB     r5,r5
+00068e  e000              B        |L13.1682|
+                  |L13.1680|
 ;;;806    			else
 ;;;807    				refcount1 = 0;
-000676  2500              MOVS     r5,#0
-                  |L13.1656|
+000690  2500              MOVS     r5,#0
+                  |L13.1682|
 ;;;808    			
 ;;;809    			drv_power_status_updata();
-000678  f7fffffe          BL       drv_power_status_updata
-                  |L13.1660|
+000692  f7fffffe          BL       drv_power_status_updata
+                  |L13.1686|
 ;;;810    		}
 ;;;811    		count++;
-00067c  9807              LDR      r0,[sp,#0x1c]
-00067e  1c40              ADDS     r0,r0,#1
-000680  9007              STR      r0,[sp,#0x1c]         ;343
-000682  e4cc              B        |L13.30|
+000696  9807              LDR      r0,[sp,#0x1c]
+000698  1c40              ADDS     r0,r0,#1
+00069a  9007              STR      r0,[sp,#0x1c]         ;343
+00069c  e4bf              B        |L13.30|
 ;;;812    	}
 ;;;813    
 ;;;814    }
 ;;;815    
                           ENDP
 
-                  |L13.1668|
-000684  466f7572          DCB      "FourG_WIFI_CHANNEL\n",0
-000688  475f5749
-00068c  46495f43
-000690  48414e4e
-000694  454c0a00
-                  |L13.1688|
-000698  42545f43          DCB      "BT_CHANNEL\n",0
-00069c  48414e4e
-0006a0  454c0a00
-                  |L13.1700|
-0006a4  41555849          DCB      "AUXIN_CHANNEL\n",0
-0006a8  4e5f4348
-0006ac  414e4e45
-0006b0  4c0a00  
-0006b3  00                DCB      0
+00069e  0000              DCW      0x0000
+                  |L13.1696|
+0006a0  466f7572          DCB      "FourG_WIFI_CHANNEL\n",0
+0006a4  475f5749
+0006a8  46495f43
+0006ac  48414e4e
+0006b0  454c0a00
                   |L13.1716|
-0006b4  464d5f43          DCB      "FM_CHANNEL\n",0
+0006b4  42545f43          DCB      "BT_CHANNEL\n",0
 0006b8  48414e4e
 0006bc  454c0a00
                   |L13.1728|
-0006c0  666d2072          DCB      "fm reset\n",0
-0006c4  65736574
-0006c8  0a00    
-0006ca  00                DCB      0
-0006cb  00                DCB      0
-                  |L13.1740|
-0006cc  696e7369          DCB      "inside\n",0
-0006d0  64650a00
-                  |L13.1748|
-0006d4  6f757473          DCB      "outside\n",0
-0006d8  6964650a
-0006dc  00      
-0006dd  00                DCB      0
-0006de  00                DCB      0
-0006df  00                DCB      0
-                  |L13.1760|
-0006e0  6175746f          DCB      "autoside\n",0
-0006e4  73696465
-0006e8  0a00    
-0006ea  00                DCB      0
-0006eb  00                DCB      0
-                  |L13.1772|
+0006c0  41555849          DCB      "AUXIN_CHANNEL\n",0
+0006c4  4e5f4348
+0006c8  414e4e45
+0006cc  4c0a00  
+0006cf  00                DCB      0
+                  |L13.1744|
+0006d0  464d5f43          DCB      "FM_CHANNEL\n",0
+0006d4  48414e4e
+0006d8  454c0a00
+                  |L13.1756|
+0006dc  666d2072          DCB      "fm reset\n",0
+0006e0  65736574
+0006e4  0a00    
+0006e6  00                DCB      0
+0006e7  00                DCB      0
+                  |L13.1768|
+0006e8  696e7369          DCB      "inside\n",0
+0006ec  64650a00
+                  |L13.1776|
+0006f0  6f757473          DCB      "outside\n",0
+0006f4  6964650a
+0006f8  00      
+0006f9  00                DCB      0
+0006fa  00                DCB      0
+0006fb  00                DCB      0
+                  |L13.1788|
+0006fc  6175746f          DCB      "autoside\n",0
+000700  73696465
+000704  0a00    
+000706  00                DCB      0
+000707  00                DCB      0
+                  |L13.1800|
                           DCD      SubBoardHandshakeTimer
 
                           AREA ||.data||, DATA, ALIGN=0

@@ -30415,7 +30415,7 @@ void PowerOff(void)
 	drv_led_init();
 	Drv_audio_powerdown();
 	Global_datas.shoutting_down = 1;
-	TimeOutSet(&PoweroffLedTimer, 3000);
+	TimeOutSet(&PoweroffLedTimer, 5000);
 }
 
 
@@ -30683,20 +30683,20 @@ int32_t main(void)
 	                	
 						printf("0x07, msg.param1 = %x \n",msg.param1);
 						
-					
-
-
-
-
-
-
-
-
-
-
-
-
- 
+						if(msg.param1)
+						{
+							Global_datas.volume = msg.param1;
+							Drv_Dap_vol_set(Global_datas.volume);
+							Global_datas.mute = 0;
+							drv_5825_mute_pin_set(1);
+						}
+						else
+						{
+							Global_datas.volume = 0;
+							Drv_Dap_vol_set(Global_datas.volume);
+							Global_datas.mute = 1;
+							drv_5825_mute_pin_set(0);
+						}
 						
 					}
 					if(msg.param0 == 0x04 )
@@ -30735,14 +30735,14 @@ int32_t main(void)
 						{
 		                	Global_datas.g_mode_status = BT_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
-							Drv_Dap_vol_set(8);
+							
 							
 						}
 					
 						if (msg.param1 == 0x07)
 						{
 		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
-							Global_datas.volume_resume = 1;
+							
 							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x02)
