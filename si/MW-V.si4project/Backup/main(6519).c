@@ -729,9 +729,6 @@ int32_t main(void)
 						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = FM_MODE;
 						drv_audio_FM_Channel(); 
-
-						//Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
-						
 						printf("FM_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) // NEXT CHANNEL

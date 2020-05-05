@@ -29407,6 +29407,8 @@ void TYM_sys_PowerManger_init(void);
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
 void TYM_SysPower12V_3V3_onoff(uint8_t on);
+void TYM_power_battery_charge_enable(void);
+void TYM_power_battery_charge_disenable(void);
 
 
 
@@ -29571,6 +29573,9 @@ void TYM_power_gpio_init(void)
 	
 	
 	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000100, 0x1UL); 
+
+	
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000100, 0x1UL); 
 	
 
 
@@ -29587,6 +29592,18 @@ void TYM_power_gpio_init(void)
 	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00004000, 0x1UL); 
 
 }
+
+
+void TYM_power_battery_charge_enable(void)
+{
+	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((8)<<2)))) = 1;
+}
+
+void TYM_power_battery_charge_disenable(void)
+{
+	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((8)<<2)))) = 0;
+}
+
 
  
 
@@ -29716,6 +29733,7 @@ void TYM_sys_PowerManger_init(void)
 	drv_power_status_updata();
 	Global_datas.g_PowerStatus.bat_status = 0;
 	Global_datas.g_PowerStatus.bat_value = 0;
+	TYM_power_battery_charge_enable();
 }
 
 

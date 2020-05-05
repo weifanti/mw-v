@@ -16,6 +16,14 @@
  * @return     None
  *
  */
+void Hal_Dap_Init(void);
+
+void Hal_Dap_Load_vol_add(void);
+void Hal_Dap_Load_vol_reduce(void);
+void Hal_Dap_vol_set(uint8_t value);
+void Hal_Dap_vol_mute(uint8_t value);
+void drv_Dap_Load_out_Param(void);
+void drv_Dap_Load_in_Param(void);
 
 
 

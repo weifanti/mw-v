@@ -50365,6 +50365,8 @@ N
 Nvoid drv_power_status_updata(void);
 Nvoid TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
 Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on);
+Nvoid TYM_power_battery_charge_enable(void);
+Nvoid TYM_power_battery_charge_disenable(void);
 N
 N#endif
 N

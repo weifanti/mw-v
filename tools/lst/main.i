@@ -29635,6 +29635,8 @@ void TYM_sys_PowerManger_init(void);
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
 void TYM_SysPower12V_3V3_onoff(uint8_t on);
+void TYM_power_battery_charge_enable(void);
+void TYM_power_battery_charge_disenable(void);
 
 
 
@@ -30928,6 +30930,9 @@ int32_t main(void)
 						Global_datas.mode_switching = 1;
 						Global_datas.g_mode_status = FM_MODE;
 						drv_audio_FM_Channel(); 
+
+						
+						
 						printf("FM_CHANNEL\n");
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) 

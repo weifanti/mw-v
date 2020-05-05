@@ -50602,6 +50602,8 @@ N
 Nvoid drv_power_status_updata(void);
 Nvoid TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
 Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on);
+Nvoid TYM_power_battery_charge_enable(void);
+Nvoid TYM_power_battery_charge_disenable(void);
 N
 N#endif
 N
@@ -51996,6 +51998,9 @@ N						drv_5825_mute_pin_set(0);
 N						Global_datas.mode_switching = 1;
 N						Global_datas.g_mode_status = FM_MODE;
 N						drv_audio_FM_Channel(); 
+N
+N						//Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
+N						
 N						printf("FM_CHANNEL\n");
 N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) // NEXT CHANNEL

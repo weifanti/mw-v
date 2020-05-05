@@ -1855,23 +1855,26 @@
 0005d8  7160              STRB     r0,[r4,#5]
 ;;;731    						drv_audio_FM_Channel(); 
 0005da  f7fffffe          BL       drv_audio_FM_Channel
-;;;732    						printf("FM_CHANNEL\n");
+;;;732    
+;;;733    						//Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
+;;;734    						
+;;;735    						printf("FM_CHANNEL\n");
 0005de  a03c              ADR      r0,|L13.1744|
 0005e0  f7fffffe          BL       __2printf
-;;;733    					}
-;;;734    					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) // NEXT CHANNEL
-;;;735    					{
-;;;736    								
-;;;737    					}
-;;;738    					if((msg.param0 == 0x03) && (msg.param1 == 0x32))// PRE CHANNEL
-;;;739    					{
-;;;740    					
-;;;741    					}
-;;;742    					if((msg.param0 == 0x03) && (msg.param1 == 0x56)) // PLAY/PAUSE
-;;;743    					{
-;;;744    
-;;;745    					}
-;;;746    					if((msg.param0 == 0x03) && (msg.param1 == 0xC0)) //FM reset
+;;;736    					}
+;;;737    					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) // NEXT CHANNEL
+;;;738    					{
+;;;739    								
+;;;740    					}
+;;;741    					if((msg.param0 == 0x03) && (msg.param1 == 0x32))// PRE CHANNEL
+;;;742    					{
+;;;743    					
+;;;744    					}
+;;;745    					if((msg.param0 == 0x03) && (msg.param1 == 0x56)) // PLAY/PAUSE
+;;;746    					{
+;;;747    
+;;;748    					}
+;;;749    					if((msg.param0 == 0x03) && (msg.param1 == 0xC0)) //FM reset
 0005e4  9802              LDR      r0,[sp,#8]
 0005e6  2803              CMP      r0,#3
 0005e8  d135              BNE      |L13.1622|
@@ -1879,16 +1882,16 @@
 0005ea  9803              LDR      r0,[sp,#0xc]
 0005ec  28c0              CMP      r0,#0xc0
 0005ee  d107              BNE      |L13.1536|
-;;;747    					{
-;;;748    						
-;;;749    						drv_FM_on_NCU031_reset();
+;;;750    					{
+;;;751    						
+;;;752    						drv_FM_on_NCU031_reset();
 0005f0  f7fffffe          BL       drv_FM_on_NCU031_reset
-;;;750    						printf("fm reset\n");
+;;;753    						printf("fm reset\n");
 0005f4  a039              ADR      r0,|L13.1756|
 0005f6  f7fffffe          BL       __2printf
-;;;751    						
-;;;752    					}
-;;;753    					if((msg.param0 == 0x03) && (msg.param1 == 0xC1)) //inside
+;;;754    						
+;;;755    					}
+;;;756    					if((msg.param0 == 0x03) && (msg.param1 == 0xC1)) //inside
 0005fa  9802              LDR      r0,[sp,#8]
 0005fc  2803              CMP      r0,#3
 0005fe  d12a              BNE      |L13.1622|
@@ -1896,12 +1899,12 @@
 000600  9803              LDR      r0,[sp,#0xc]
 000602  28c1              CMP      r0,#0xc1
 000604  d107              BNE      |L13.1558|
-;;;754    					{
-;;;755    						printf("inside\n");
+;;;757    					{
+;;;758    						printf("inside\n");
 000606  a038              ADR      r0,|L13.1768|
 000608  f7fffffe          BL       __2printf
-;;;756    					}
-;;;757    					if((msg.param0 == 0x03) && (msg.param1 == 0xC2)) //outside
+;;;759    					}
+;;;760    					if((msg.param0 == 0x03) && (msg.param1 == 0xC2)) //outside
 00060c  9802              LDR      r0,[sp,#8]
 00060e  e000              B        |L13.1554|
                   |L13.1552|
@@ -1913,13 +1916,13 @@
 000616  9803              LDR      r0,[sp,#0xc]
 000618  28c2              CMP      r0,#0xc2
 00061a  d105              BNE      |L13.1576|
-;;;758    					{
-;;;759    
-;;;760    						printf("outside\n");
+;;;761    					{
+;;;762    
+;;;763    						printf("outside\n");
 00061c  a034              ADR      r0,|L13.1776|
 00061e  f7fffffe          BL       __2printf
-;;;761    					}
-;;;762    					if((msg.param0 == 0x03) && (msg.param1 == 0xC3)) //autoside
+;;;764    					}
+;;;765    					if((msg.param0 == 0x03) && (msg.param1 == 0xC3)) //autoside
 000622  9802              LDR      r0,[sp,#8]
 000624  2803              CMP      r0,#3
 000626  d116              BNE      |L13.1622|
@@ -1927,13 +1930,13 @@
 000628  9803              LDR      r0,[sp,#0xc]
 00062a  28c3              CMP      r0,#0xc3
 00062c  d105              BNE      |L13.1594|
-;;;763    					{
-;;;764    						printf("autoside\n");
+;;;766    					{
+;;;767    						printf("autoside\n");
 00062e  a033              ADR      r0,|L13.1788|
 000630  f7fffffe          BL       __2printf
-;;;765    					}
-;;;766    
-;;;767    					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) // handshake
+;;;768    					}
+;;;769    
+;;;770    					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) // handshake
 000634  9802              LDR      r0,[sp,#8]
 000636  2803              CMP      r0,#3
 000638  d10d              BNE      |L13.1622|
@@ -1941,102 +1944,102 @@
 00063a  9803              LDR      r0,[sp,#0xc]
 00063c  28ca              CMP      r0,#0xca
 00063e  d10a              BNE      |L13.1622|
-;;;768    					{
-;;;769    						if(Global_datas.subboard_online == 0)  // first in
+;;;771    					{
+;;;772    						if(Global_datas.subboard_online == 0)  // first in
 000640  7c20              LDRB     r0,[r4,#0x10]  ; Global_datas
 000642  2800              CMP      r0,#0
 000644  d101              BNE      |L13.1610|
-;;;770    						{
-;;;771    						 	drv_SendAllstateToSubboard();
+;;;773    						{
+;;;774    						 	drv_SendAllstateToSubboard();
 000646  f7fffffe          BL       drv_SendAllstateToSubboard
                   |L13.1610|
-;;;772    						}
-;;;773    						Global_datas.subboard_online = 1;
-;;;774    						TimeOutSet(&SubBoardHandshakeTimer, 4000);
+;;;775    						}
+;;;776    						Global_datas.subboard_online = 1;
+;;;777    						TimeOutSet(&SubBoardHandshakeTimer, 4000);
 00064a  217d              MOVS     r1,#0x7d
-00064c  7427              STRB     r7,[r4,#0x10]         ;773
+00064c  7427              STRB     r7,[r4,#0x10]         ;776
 00064e  0149              LSLS     r1,r1,#5
 000650  482d              LDR      r0,|L13.1800|
 000652  f7fffffe          BL       TimeOutSet
                   |L13.1622|
-;;;775    						//drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);//
-;;;776    					}					
-;;;777    					
-;;;778    	            break;
-;;;779    					
-;;;780    	            default:
-;;;781    	             break;
-;;;782    	        }
-;;;783        	}
-;;;784    	
-;;;785    		srv_key_handler();
+;;;778    						//drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);//
+;;;779    					}					
+;;;780    					
+;;;781    	            break;
+;;;782    					
+;;;783    	            default:
+;;;784    	             break;
+;;;785    	        }
+;;;786        	}
+;;;787    	
+;;;788    		srv_key_handler();
 000656  f7fffffe          BL       srv_key_handler
-;;;786    		GetKeyEvent();
+;;;789    		GetKeyEvent();
 00065a  f7fffffe          BL       GetKeyEvent
-;;;787    		IoKeyProcess();
+;;;790    		IoKeyProcess();
 00065e  f7fffffe          BL       IoKeyProcess
-;;;788    
-;;;789    
-;;;790    		
-;;;791    		if (((count>>16)&0xF) == refcount0)	
+;;;791    
+;;;792    
+;;;793    		
+;;;794    		if (((count>>16)&0xF) == refcount0)	
 000662  9807              LDR      r0,[sp,#0x1c]
 000664  0300              LSLS     r0,r0,#12
 000666  0f00              LSRS     r0,r0,#28
 000668  42b0              CMP      r0,r6
 00066a  d107              BNE      |L13.1660|
-;;;792    		{
-;;;793    			
-;;;794    			if(refcount0 <0xF)
+;;;795    		{
+;;;796    			
+;;;797    			if(refcount0 <0xF)
 00066c  2e0f              CMP      r6,#0xf
 00066e  d202              BCS      |L13.1654|
 000670  1c76              ADDS     r6,r6,#1
-;;;795    				refcount0++;
+;;;798    				refcount0++;
 000672  b2f6              UXTB     r6,r6
 000674  e000              B        |L13.1656|
                   |L13.1654|
-;;;796    			else
-;;;797    				refcount0 = 0;
+;;;799    			else
+;;;800    				refcount0 = 0;
 000676  2600              MOVS     r6,#0
                   |L13.1656|
-;;;798    			srv_bat_charge_handler();	
+;;;801    			srv_bat_charge_handler();	
 000678  f7fffffe          BL       srv_bat_charge_handler
                   |L13.1660|
-;;;799    		}
-;;;800    
-;;;801    		if (((count>>15)&0xF) == refcount1)
+;;;802    		}
+;;;803    
+;;;804    		if (((count>>15)&0xF) == refcount1)
 00067c  9807              LDR      r0,[sp,#0x1c]
 00067e  0340              LSLS     r0,r0,#13
 000680  0f00              LSRS     r0,r0,#28
 000682  42a8              CMP      r0,r5
 000684  d107              BNE      |L13.1686|
-;;;802    		{	
-;;;803    			
-;;;804    			if(refcount1 <0xF)
+;;;805    		{	
+;;;806    			
+;;;807    			if(refcount1 <0xF)
 000686  2d0f              CMP      r5,#0xf
 000688  d202              BCS      |L13.1680|
 00068a  1c6d              ADDS     r5,r5,#1
-;;;805    				refcount1++;
+;;;808    				refcount1++;
 00068c  b2ed              UXTB     r5,r5
 00068e  e000              B        |L13.1682|
                   |L13.1680|
-;;;806    			else
-;;;807    				refcount1 = 0;
+;;;809    			else
+;;;810    				refcount1 = 0;
 000690  2500              MOVS     r5,#0
                   |L13.1682|
-;;;808    			
-;;;809    			drv_power_status_updata();
+;;;811    			
+;;;812    			drv_power_status_updata();
 000692  f7fffffe          BL       drv_power_status_updata
                   |L13.1686|
-;;;810    		}
-;;;811    		count++;
+;;;813    		}
+;;;814    		count++;
 000696  9807              LDR      r0,[sp,#0x1c]
 000698  1c40              ADDS     r0,r0,#1
 00069a  9007              STR      r0,[sp,#0x1c]         ;343
 00069c  e4bf              B        |L13.30|
-;;;812    	}
-;;;813    
-;;;814    }
-;;;815    
+;;;815    	}
+;;;816    
+;;;817    }
+;;;818    
                           ENDP
 
 00069e  0000              DCW      0x0000

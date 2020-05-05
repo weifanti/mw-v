@@ -49,9 +49,6 @@ void TYM_power_gpio_init(void)
 	
 	//battery charger
 	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  high 1A ,low 2A
-
-	//battery charge enable
-	GPIO_SetMode(PC, BIT8, GPIO_MODE_OUTPUT); //Hi enable , low disable
 	/***
 	*STAT1:1,STAT2:0  charge in
 	*STAT1:0,STAT2:1  charge complate
@@ -68,18 +65,6 @@ void TYM_power_gpio_init(void)
 	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis  +12V(TAS5825) ,3.3V EN(AMP and other 3.3v , not mcu 3.3V)
 
 }
-
-
-void TYM_power_battery_charge_enable(void)
-{
-	PC8 = 1;
-}
-
-void TYM_power_battery_charge_disenable(void)
-{
-	PC8 = 0;
-}
-
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* battery charger control  
@@ -209,7 +194,6 @@ void TYM_sys_PowerManger_init(void)
 	drv_power_status_updata();
 	Global_datas.g_PowerStatus.bat_status = 0;
 	Global_datas.g_PowerStatus.bat_value = 0;
-	TYM_power_battery_charge_enable();
 }
 
 

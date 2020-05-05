@@ -1,6 +1,8 @@
----- Global_datas.mute Matches (5 in 1 files) ----
-SysIdle in main.c : 	Global_datas.mute = 0;
-main in main.c : 			if(Global_datas.mute == 0)
-main in main.c : 							Global_datas.mute = 1;
-main in main.c : 								Global_datas.mute = 1;
-main in main.c : 						Global_datas.mute = 0;
+---- drv_FourGmodel_power_key Matches (7 in 3 files) ----
+drv_4G_model.c (src\driver) line 72 : void drv_FourGmodel_power_key_SetHi(void)
+drv_4G_model.c (src\driver) line 76 : void drv_FourGmodel_power_key_SetLow(void)
+drv_4G_model.h (src\driver\include) line 15 : void drv_FourGmodel_power_key_SetLow(void);
+drv_4G_model.h (src\driver\include) line 16 : void drv_FourGmodel_power_key_SetHi(void);
+SysIdle in main.c : 	drv_FourGmodel_power_key_SetLow();
+SYS_Status in main.c : 	drv_FourGmodel_power_key_SetHi();
+main in main.c : 				drv_FourGmodel_power_key_SetLow();

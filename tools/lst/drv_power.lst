@@ -50365,6 +50365,8 @@ N
 Nvoid drv_power_status_updata(void);
 Nvoid TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
 Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on);
+Nvoid TYM_power_battery_charge_enable(void);
+Nvoid TYM_power_battery_charge_disenable(void);
 N
 N#endif
 N
@@ -50539,6 +50541,10 @@ N
 N	//battery charger
 N	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  high 1A ,low 2A
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000100, 0x1UL); 
+N
+N	//battery charge enable
+N	GPIO_SetMode(PC, BIT8, GPIO_MODE_OUTPUT); //Hi enable , low disable
+X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000100, 0x1UL); 
 N	/***
 N	*STAT1:1,STAT2:0  charge in
 N	*STAT1:0,STAT2:1  charge complate
@@ -50559,6 +50565,20 @@ N	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis  +1
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00004000, 0x1UL); 
 N
 N}
+N
+N
+Nvoid TYM_power_battery_charge_enable(void)
+N{
+N	PC8 = 1;
+X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((8)<<2)))) = 1;
+N}
+N
+Nvoid TYM_power_battery_charge_disenable(void)
+N{
+N	PC8 = 0;
+X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((8)<<2)))) = 0;
+N}
+N
 N
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* battery charger control  
@@ -50706,6 +50726,7 @@ N	TYM_drv_SysPower_init();
 N	drv_power_status_updata();
 N	Global_datas.g_PowerStatus.bat_status = 0;
 N	Global_datas.g_PowerStatus.bat_value = 0;
+N	TYM_power_battery_charge_enable();
 N}
 N
 N
