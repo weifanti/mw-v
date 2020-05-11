@@ -271,7 +271,7 @@ void UART_4G_HANDLE(void)
 				break;
 				
 			case 6:  
-				if(u8InChar==0x00) nRxIndex=7;
+				if(u8InChar==0x00) nRxIndex=7;  //
 				else
 				{
 					if(u8InChar==0xff) nRxIndex=1;

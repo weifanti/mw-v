@@ -546,7 +546,7 @@
 ;;;271    				break;
 ;;;272    				
 ;;;273    			case 6:  
-;;;274    				if(u8InChar==0x00) nRxIndex=7;
+;;;274    				if(u8InChar==0x00) nRxIndex=7;  //
 ;;;275    				else
 ;;;276    				{
 ;;;277    					if(u8InChar==0xff) nRxIndex=1;

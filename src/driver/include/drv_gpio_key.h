@@ -37,20 +37,7 @@ uint8_t drv_get_gpio_key_value(void);
 *					GLOBAL DATA TYPE
 **********************************************************
 */
-//
-//define key event.
-//
-typedef enum _KEY_EVENT
-{
-	IN_KEY_NONE = 0x00,
-	IN_KEY_POWER_SP = 0xf0,
-	IN_KEY_POWER_CP,	
-	IN_KEY_POWER_CPR,	
-	IN_KEY_PAIR_SP,
-	IN_KEY_PAIR_CP,
-	IN_KEY_PAIR_CPR
-	
-} KEY_EVENT;
+
 
 
 

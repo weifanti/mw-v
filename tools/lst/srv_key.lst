@@ -50315,11 +50315,9 @@ Ntypedef enum
 N{
 N    MSG_4G_SYS_STATE_IND      = 1,
 N    MSG_MCU1_SYS_STATE_IND,
-N    MSG_BT_STATE_IND,
-N    MSG_EA_DET_IND,
-N    MSG_WIFI_CHANNEL_SET,
-N    MSG_ENCODER_IND,
-N    MSG_VOLUME_SET,
+N    MSG_IO_KEY_IND,
+N    MSG_IR_KEY_IND,
+N
 N} eFourG_Msg;
 N
 Ntypedef enum
@@ -50342,6 +50340,55 @@ N    POWER_IDLE_MODE,
 N
 N} mode_status;
 N
+N
+Ntypedef enum
+N{
+N	SYS_PLAY_STATE_NONE = 0,
+N	SYS_PLAY_STATE_IDLE, 
+N	SYS_PLAY_STATE_POWERUP,
+N	SYS_PLAY_STATE_SHUTTING_DOWN,
+N	SYS_PLAY_STATE_MW_RADIO,
+N	SYS_PLAY_STATE_BT,
+N	SYS_PLAY_STATE_FM,
+N	SYS_PLAY_STATE_AUX
+N
+N} SYS_STATE;
+N
+N
+Ntypedef enum
+N{
+N	SYS_PLAY_EVENT_NONE = 0,
+N	SYS_PLAY_EVENT_POWERING_UP,
+N	SYS_PLAY_EVENT_SHUTTING_DOWN,
+N	SYS_PLAY_EVENT_INIT_FINISH,
+N	SYS_PLAY_EVENT_MODE_SWITCH,
+N	SYS_PLAY_EVENT_VOL_UP,
+N	SYS_PLAY_EVENT_VOL_DOWN,
+N	
+N	SYS_PLAY_EVENT_NEXT_SONG,
+N	SYS_PLAY_EVENT_PREV_SONG,	
+N	SYS_PLAY_EVENT_PLAY_PAUSE,	
+N
+N	SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION,
+N	SYS_PLAY_EVENT_MW_RADIO_PREV_STATION,
+N
+N	
+N	SYS_PLAY_EVENT_EQ_INDOOR_SET,
+N	SYS_PLAY_EVENT_EQ_OUTDOOR_SET,
+N	SYS_PLAY_EVENT_RADIO_NET_SWITCH,
+N	SYS_PLAY_EVENT_RADIO_NET_PAIRING,
+N	SYS_PLAY_EVENT_SW_TO_FM_MODE,
+N	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
+N	SYS_PLAY_EVENT_SW_TO_BT_MODE,
+N	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+N
+N	SYS_PLAY_EVENT_NUM,
+N
+N
+N} SYS_EVENT;
+N
+N
+N
 Ntypedef enum
 N{
 N    MSG_4G_CMD_IND      = 1,
@@ -50361,6 +50408,79 @@ N
 N} EQ_MODE;
 N
 N
+Ntypedef enum
+N{
+N    PLAY_MODE_NONE      = 0,
+N    PLAY_MODE_WIFI,
+N    PLAY_MODE_FM,
+N    PLAY_MODE_BT,
+N    PLAY_MODE_AUX
+N
+N} PLAY_MODE;
+N
+N
+N
+N//
+N//define key event.
+N//
+Ntypedef enum _KEY_EVENT
+N{
+N	IN_KEY_NONE = 0x00,
+N	IN_KEY_POWER_SP,
+N	IN_KEY_POWER_CP,	
+N	IN_KEY_POWER_CPR,	
+N	IN_KEY_PAIR_SP,
+N	IN_KEY_PAIR_CP,
+N	IN_KEY_PAIR_CPR,
+N	
+N	IN_KEY_FM_MODE_S,
+N	IN_KEY_AUX_MODE_S,
+N	IN_KEY_MW_RADIO_MODE_S,
+N	IN_KEY_BT_MODE_S,
+N	IN_KEY_VOL_ADD_S,
+N	IN_KEY_VOL_SUB_S,
+N	IN_KEY_EQ_INDOOR_S,
+N	IN_KEY_EQ_OUTDOOR_S,
+N	IN_KEY_EQ_NORNAL_S,
+N	IN_KEY_PLAY_S,
+N	IN_KEY_NEXT_SONG_S,
+N	IN_KEY_PREV_SONG_S,
+N	IN_KEY_FM_NEXT_S,
+N	IN_KEY_FM_PREV_S,
+N	IN_KEY_AUTO_SEARCH_S,
+N	IN_KEY_RADIO_PREV_S,
+N	IN_KEY_RADIO_NEXT_S,
+N	IN_KEY_RADIO_NET_SWITCH_S,
+N	IN_KEY_RADIO_NET_PARIING_S,
+N	
+N
+N	IR_KEY_POWER,
+N	IR_KEY_POWER_CP,
+N	IR_KEY_MODE,
+N	IR_KEY_VOLUME_UP,
+N	IR_KEY_VOLUME_UP_CP,
+N	IR_KEY_VOLUME_DOWN,
+N	IR_KEY_VOLUME_DOWN_CP,
+N	IR_KEY_PREV_SONG,
+N	IR_KEY_PREV_SONG_CP,
+N	IR_KEY_NEXT_SONG,
+N	IR_KEY_NEXT_SONG_CP,
+N	IR_KEY_PLAY_PAUSE,
+N	IR_KEY_PLAY_PAUSE_CP,
+N	IR_KEY_PREV_STATION,
+N	IR_KEY_NEXT_STATION,
+N	IR_KEY_EQ_INDOOR,
+N	IR_KEY_EQ_OUTDOOR,
+N	IR_KEY_EQ,	
+N
+N
+N	IN_KEY_INIT_FINISH_CMD,
+N	
+N	
+N} KEY_EVENT;
+N
+N
+N
 Ntypedef struct _PowerStatus
 N{
 N	uint8_t PowerBatInStatus;
@@ -50369,6 +50489,15 @@ N	uint8_t PowerAcStatus;
 N	uint8_t bat_status;
 N	uint8_t bat_value;  //0-3 in bat , 4-7 ex bat
 N}sPowerStatus;
+N
+Ntypedef struct _SubBoardStatus
+N{
+N	uint8_t subboard_online;
+N	EQ_MODE eq_mode;
+N	PLAY_MODE playmode;
+N 
+N}SubBoardStatus;
+N
 N
 N#define ADC_CHANNEL_NUM_MAX 16
 N
@@ -50383,12 +50512,15 @@ N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
-N	uint8_t	eq_mode;
+N	uint8_t	eq_mode;				// in door mode and out door mode
 N	uint8_t volume;
-N	uint8_t subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
-N	uint8_t mute;
-N	uint8_t volume_resume;
+N	uint8_t mute;			 // sys mute flag
+N	uint8_t volume_resume;   
+N	uint8_t inputmessage;
+N	SYS_STATE state;
+N	SYS_EVENT event;
+N	SubBoardStatus SubBoard;
 N	
 N
 N}sGlobalData;
@@ -50419,29 +50551,14 @@ N ******************************************************************************
 N#ifndef __DRV_IRKEY_H__
 N#define __DRV_IRKEY_H__
 N
+N#include "tym_global.h"
+N
+N
 N
 Ntypedef enum _IR_KEY
 N{
 N	IR_KEY_NONE = 0,
-N	IR_KEY_POWER,
-N	IR_KEY_POWER_CP,
-N	IR_KEY_MODE,
-N	IR_KEY_VOLUME_UP,
-N	IR_KEY_VOLUME_UP_CP,
-N	IR_KEY_VOLUME_DOWN,
-N	IR_KEY_VOLUME_DOWN_CP,
-N	IR_KEY_PREV_SONG,
-N	IR_KEY_PREV_SONG_CP,
-N	IR_KEY_NEXT_SONG,
-N	IR_KEY_NEXT_SONG_CP,
-N	IR_KEY_PLAY_PAUSE,
-N	IR_KEY_PLAY_PAUSE_CP,
-N	IR_KEY_PREV_STATION,
-N	IR_KEY_NEXT_STATION,
-N	IR_KEY_EQ,	
-N	IR_KEY_EQ_INDOOR,
-N	IR_KEY_EQ_OUTDOOR,
-N	IR_KEY_NET_SET,
+N	
 N	IR_KEY_NUM
 N	
 N} IR_KEY;
@@ -50562,20 +50679,7 @@ N**********************************************************
 N*					GLOBAL DATA TYPE
 N**********************************************************
 N*/
-N//
-N//define key event.
-N//
-Ntypedef enum _KEY_EVENT
-N{
-N	IN_KEY_NONE = 0x00,
-N	IN_KEY_POWER_SP = 0xf0,
-N	IN_KEY_POWER_CP,	
-N	IN_KEY_POWER_CPR,	
-N	IN_KEY_PAIR_SP,
-N	IN_KEY_PAIR_CP,
-N	IN_KEY_PAIR_CPR
-N	
-N} KEY_EVENT;
+N
 N
 N
 N
@@ -50724,23 +50828,25 @@ N
 Nvoid srv_key_mode_handler(void)
 N{
 N
-Nswitch(Global_datas.g_mode_status)
+Nswitch(Global_datas.state)
 N{
-N	case AUX_MODE:
+N	case SYS_PLAY_STATE_AUX:
 N
-N		if(Global_datas.subboard_online) // if subboard online ,turn on fm
+N		if(Global_datas.SubBoard.subboard_online) // if subboard online ,turn on fm
 N		{
-N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x18,0x00); //fm
 N			
-N			Global_datas.g_mode_status = FM_MODE;
-N			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode		
+N			Global_datas.state = SYS_PLAY_STATE_FM;
+N			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode	
+W "..\src\server\key\srv_key.c" 36 4 function "Cmd_Send2FourG" declared implicitly
+N			Cmd_Send2FourG(0x03 ,0x18,0x00);
 N			drv_audio_FM_Channel(); 
 N		}
 N		else
 N		{
-N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
 N			
-N			Global_datas.g_mode_status = WIFI_MODE;
+W "..\src\server\key\srv_key.c" 42 4 function "Cmd_Send2FourG" declared implicitly
+N			Cmd_Send2FourG(0x03 ,0x15,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 N			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
 N			drv_audio_4G_Channel(); 
 N		}
@@ -50748,91 +50854,171 @@ N
 N
 N	break;
 N	
-N	case WIFI_MODE:
-N	case WIFI_CONNECTED_MODE:
-N	case WIFI_CONNECTING_MODE:
-N	case FOURG_MODE:
-N	case FOURG_CONNECTED_MODE:
+N
+N	case SYS_PLAY_STATE_MW_RADIO:
 N		
-N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
-N		
-N		Global_datas.g_mode_status = BT_MODE;
-N		drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
+W "..\src\server\key\srv_key.c" 54 3 function "Cmd_Send2FourG" declared implicitly
+N		Cmd_Send2FourG(0x03 ,0x16,0x00);
+N		Global_datas.state = SYS_PLAY_STATE_BT;
 N		drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
 N		
 N	break;
 N	
-N	case BT_MODE:
-N	case BT_CONNECTED_MODE:
+N	case SYS_PLAY_STATE_BT:
 N
 N
-N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-N		
-N		Global_datas.g_mode_status = AUX_MODE;
+N		Cmd_Send2FourG(0x03 ,0x17,0x00);
+N		Global_datas.state = SYS_PLAY_STATE_AUX;
 N		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
 N		drv_audio_AuxIn_Channel(); 
 N		
 N	break;
 N	
-N	case FM_MODE:
+N	case SYS_PLAY_STATE_FM:
 N		
-N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-N		
-N		Global_datas.g_mode_status = WIFI_MODE;
+N		Cmd_Send2FourG(0x03 ,0x15,0x00);
+N		Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 N		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
 N		drv_audio_4G_Channel(); 
 N	break;
 N	
 N	default:
-N		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-N		
-N		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
-N		Global_datas.g_mode_status = AUX_MODE;
-N		drv_audio_AuxIn_Channel(); 
 N	break;
+N    }
 N}
 N
 N
-N
-N/*
-N	switch(Global_datas.g_mode_status)
+Nvoid srv_key_mode_switch_to(uint8_t mode)
+N{
+N	if(Global_datas.state == mode)
 N	{
-N		case AUX_MODE:
-N		case LOUD_SPEAKER_MODE:
-N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
-N			drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
-N		break;
-N		
-N		case WIFI_MODE:
-N		case WIFI_CONNECTED_MODE:
-N		case WIFI_CONNECTING_MODE:
-N		case FOURG_MODE:
-N		case FOURG_CONNECTED_MODE:
-N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
-N			
-N		break;
-N		
-N	    case BT_MODE:
-N	    case BT_CONNECTED_MODE:
-N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-N			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode
-N		break;
-N		
-N		case FM_MODE:
-N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-N			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
-N		break;
-N		
-N		default:
-N			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
-N			Global_datas.g_mode_status = AUX_MODE;
-N		break;
+N		return;
 N	}
 N
-N	*/
+N	if(Global_datas.state == SYS_PLAY_STATE_AUX)
+N	{
+N		switch(mode)
+N		{
+N			case SYS_PLAY_STATE_BT:
+N				
+W "..\src\server\key\srv_key.c" 97 4 function "Cmd_Send2FourG" declared implicitly
+N			Cmd_Send2FourG(0x03 ,0x16,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_BT;
+N			drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
+N
+N			break;
+N			
+N			case SYS_PLAY_STATE_MW_RADIO:
+N				
+N			Cmd_Send2FourG(0x03 ,0x15,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+N			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+N			drv_audio_4G_Channel(); 
+N
+N			break;		
+N
+N			case SYS_PLAY_STATE_FM:
+N
+N			break;	
+N
+N			default:break;
+N		}
+N	}
+N
+N	else if(Global_datas.state == SYS_PLAY_STATE_BT)
+N	{
+N		switch(mode)
+N		{
+N			case SYS_PLAY_STATE_AUX:
+N				
+W "..\src\server\key\srv_key.c" 126 4 function "Cmd_Send2FourG" declared implicitly
+N			Cmd_Send2FourG(0x03 ,0x17,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_AUX;
+N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+N			drv_audio_AuxIn_Channel();
+N
+N			break;
+N			
+N			case SYS_PLAY_STATE_MW_RADIO:
+N				
+N			Cmd_Send2FourG(0x03 ,0x15,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+N			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+N			drv_audio_4G_Channel(); 
+N
+N			break;		
+N
+N			case SYS_PLAY_STATE_FM:
+N
+N			break;	
+N
+N			default:break;
+N		}
+N	}
+N
+N	else if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+N	{
+N		switch(mode)
+N		{
+N			case SYS_PLAY_STATE_AUX:
+N				
+W "..\src\server\key\srv_key.c" 156 4 function "Cmd_Send2FourG" declared implicitly
+N			Cmd_Send2FourG(0x03 ,0x17,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_AUX;
+N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+N			drv_audio_AuxIn_Channel();
+N
+N			break;
+N			
+N			case SYS_PLAY_STATE_BT:
+N				
+N			Cmd_Send2FourG(0x03 ,0x16,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_BT;
+N			drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
+N
+N
+N			break;		
+N
+N			case SYS_PLAY_STATE_FM:
+N
+N			break;	
+N
+N			default:break;
+N		}
+N	}
+N	else if(Global_datas.state == SYS_PLAY_STATE_FM)
+N	{
+N		switch(mode)
+N		{
+N			case SYS_PLAY_STATE_AUX:
+N				
+W "..\src\server\key\srv_key.c" 185 4 function "Cmd_Send2FourG" declared implicitly
+N			Cmd_Send2FourG(0x03 ,0x17,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_AUX;
+N			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+N			drv_audio_AuxIn_Channel();
+N
+N			break;
+N			
+N			case SYS_PLAY_STATE_BT:
+N				
+N			Cmd_Send2FourG(0x03 ,0x16,0x00);
+N			Global_datas.state = SYS_PLAY_STATE_BT;
+N			drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
+N
+N
+N			break;		
+N
+N			case SYS_PLAY_STATE_MW_RADIO:
+N
+N			break;	
+N
+N			default:break;
+N		}
+N	}
+N
 N}
+N
 N
 Nvoid srv_key_volume_up_handler(void)
 N{
@@ -50902,15 +51088,15 @@ N
 N		Global_datas.key_led_blink = 1;
 N		if(Global_datas.g_mode_status == POWER_IDLE_MODE)
 N		{
-W "..\src\server\key\srv_key.c" 205 4 function "SYS_Status" declared implicitly
+W "..\src\server\key\srv_key.c" 280 4 function "SYS_Status" declared implicitly
 N			SYS_Status();
 N		}
 N		
 N		else
 N		{
-W "..\src\server\key\srv_key.c" 210 4 function "PowerOff" declared implicitly
+W "..\src\server\key\srv_key.c" 285 4 function "PowerOff" declared implicitly
 N			PowerOff();
-W "..\src\server\key\srv_key.c" 211 4 function "SysIdle" declared implicitly
+W "..\src\server\key\srv_key.c" 286 4 function "SysIdle" declared implicitly
 N			SysIdle();
 N		}
 N		break;
@@ -50926,7 +51112,7 @@ N		case IR_KEY_MODE:
 N			
 N			Global_datas.key_led_blink = 1;
 N			Global_datas.mode_switching = 1;
-W "..\src\server\key\srv_key.c" 226 4 function "drv_5825_mute_pin_set" declared implicitly
+W "..\src\server\key\srv_key.c" 301 4 function "drv_5825_mute_pin_set" declared implicitly
 N			drv_5825_mute_pin_set(0);  // mute
 N			srv_key_mode_handler();
 N		break;
@@ -51006,11 +51192,11 @@ N
 N		break;
 N
 N		
-N		case IR_KEY_NET_SET:
+N		//case IR_KEY_NET_SET:
 N			
-N			Global_datas.key_led_blink = 1;
-N			srv_key_net_config_handler();
-N		break;
+N		//	Global_datas.key_led_blink = 1;
+N		//	srv_key_net_config_handler();
+N		//break;
 N		
 N		default:
 N		break;

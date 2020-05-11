@@ -29376,6 +29376,8 @@ void drv_FourGmodel_power_key_SetHi(void);
 void drv_pairing_cmd_send(void);
 void drv_wifi_4g_switch_cmd_send(void);
 void Drv_4GMoudle_PowerUp(uint8_t onoff);
+void Cmd_Send2FourG_ModeSwitch(void);
+
 
 #line 13 "..\\src\\server\\rtc\\srv_rtc.c"
 

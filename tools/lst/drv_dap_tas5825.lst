@@ -66844,11 +66844,9 @@ Ntypedef enum
 N{
 N    MSG_4G_SYS_STATE_IND      = 1,
 N    MSG_MCU1_SYS_STATE_IND,
-N    MSG_BT_STATE_IND,
-N    MSG_EA_DET_IND,
-N    MSG_WIFI_CHANNEL_SET,
-N    MSG_ENCODER_IND,
-N    MSG_VOLUME_SET,
+N    MSG_IO_KEY_IND,
+N    MSG_IR_KEY_IND,
+N
 N} eFourG_Msg;
 N
 Ntypedef enum
@@ -66871,6 +66869,55 @@ N    POWER_IDLE_MODE,
 N
 N} mode_status;
 N
+N
+Ntypedef enum
+N{
+N	SYS_PLAY_STATE_NONE = 0,
+N	SYS_PLAY_STATE_IDLE, 
+N	SYS_PLAY_STATE_POWERUP,
+N	SYS_PLAY_STATE_SHUTTING_DOWN,
+N	SYS_PLAY_STATE_MW_RADIO,
+N	SYS_PLAY_STATE_BT,
+N	SYS_PLAY_STATE_FM,
+N	SYS_PLAY_STATE_AUX
+N
+N} SYS_STATE;
+N
+N
+Ntypedef enum
+N{
+N	SYS_PLAY_EVENT_NONE = 0,
+N	SYS_PLAY_EVENT_POWERING_UP,
+N	SYS_PLAY_EVENT_SHUTTING_DOWN,
+N	SYS_PLAY_EVENT_INIT_FINISH,
+N	SYS_PLAY_EVENT_MODE_SWITCH,
+N	SYS_PLAY_EVENT_VOL_UP,
+N	SYS_PLAY_EVENT_VOL_DOWN,
+N	
+N	SYS_PLAY_EVENT_NEXT_SONG,
+N	SYS_PLAY_EVENT_PREV_SONG,	
+N	SYS_PLAY_EVENT_PLAY_PAUSE,	
+N
+N	SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION,
+N	SYS_PLAY_EVENT_MW_RADIO_PREV_STATION,
+N
+N	
+N	SYS_PLAY_EVENT_EQ_INDOOR_SET,
+N	SYS_PLAY_EVENT_EQ_OUTDOOR_SET,
+N	SYS_PLAY_EVENT_RADIO_NET_SWITCH,
+N	SYS_PLAY_EVENT_RADIO_NET_PAIRING,
+N	SYS_PLAY_EVENT_SW_TO_FM_MODE,
+N	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
+N	SYS_PLAY_EVENT_SW_TO_BT_MODE,
+N	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+N
+N	SYS_PLAY_EVENT_NUM,
+N
+N
+N} SYS_EVENT;
+N
+N
+N
 Ntypedef enum
 N{
 N    MSG_4G_CMD_IND      = 1,
@@ -66890,6 +66937,79 @@ N
 N} EQ_MODE;
 N
 N
+Ntypedef enum
+N{
+N    PLAY_MODE_NONE      = 0,
+N    PLAY_MODE_WIFI,
+N    PLAY_MODE_FM,
+N    PLAY_MODE_BT,
+N    PLAY_MODE_AUX
+N
+N} PLAY_MODE;
+N
+N
+N
+N//
+N//define key event.
+N//
+Ntypedef enum _KEY_EVENT
+N{
+N	IN_KEY_NONE = 0x00,
+N	IN_KEY_POWER_SP,
+N	IN_KEY_POWER_CP,	
+N	IN_KEY_POWER_CPR,	
+N	IN_KEY_PAIR_SP,
+N	IN_KEY_PAIR_CP,
+N	IN_KEY_PAIR_CPR,
+N	
+N	IN_KEY_FM_MODE_S,
+N	IN_KEY_AUX_MODE_S,
+N	IN_KEY_MW_RADIO_MODE_S,
+N	IN_KEY_BT_MODE_S,
+N	IN_KEY_VOL_ADD_S,
+N	IN_KEY_VOL_SUB_S,
+N	IN_KEY_EQ_INDOOR_S,
+N	IN_KEY_EQ_OUTDOOR_S,
+N	IN_KEY_EQ_NORNAL_S,
+N	IN_KEY_PLAY_S,
+N	IN_KEY_NEXT_SONG_S,
+N	IN_KEY_PREV_SONG_S,
+N	IN_KEY_FM_NEXT_S,
+N	IN_KEY_FM_PREV_S,
+N	IN_KEY_AUTO_SEARCH_S,
+N	IN_KEY_RADIO_PREV_S,
+N	IN_KEY_RADIO_NEXT_S,
+N	IN_KEY_RADIO_NET_SWITCH_S,
+N	IN_KEY_RADIO_NET_PARIING_S,
+N	
+N
+N	IR_KEY_POWER,
+N	IR_KEY_POWER_CP,
+N	IR_KEY_MODE,
+N	IR_KEY_VOLUME_UP,
+N	IR_KEY_VOLUME_UP_CP,
+N	IR_KEY_VOLUME_DOWN,
+N	IR_KEY_VOLUME_DOWN_CP,
+N	IR_KEY_PREV_SONG,
+N	IR_KEY_PREV_SONG_CP,
+N	IR_KEY_NEXT_SONG,
+N	IR_KEY_NEXT_SONG_CP,
+N	IR_KEY_PLAY_PAUSE,
+N	IR_KEY_PLAY_PAUSE_CP,
+N	IR_KEY_PREV_STATION,
+N	IR_KEY_NEXT_STATION,
+N	IR_KEY_EQ_INDOOR,
+N	IR_KEY_EQ_OUTDOOR,
+N	IR_KEY_EQ,	
+N
+N
+N	IN_KEY_INIT_FINISH_CMD,
+N	
+N	
+N} KEY_EVENT;
+N
+N
+N
 Ntypedef struct _PowerStatus
 N{
 N	uint8_t PowerBatInStatus;
@@ -66898,6 +67018,15 @@ N	uint8_t PowerAcStatus;
 N	uint8_t bat_status;
 N	uint8_t bat_value;  //0-3 in bat , 4-7 ex bat
 N}sPowerStatus;
+N
+Ntypedef struct _SubBoardStatus
+N{
+N	uint8_t subboard_online;
+N	EQ_MODE eq_mode;
+N	PLAY_MODE playmode;
+N 
+N}SubBoardStatus;
+N
 N
 N#define ADC_CHANNEL_NUM_MAX 16
 N
@@ -66912,12 +67041,15 @@ N	uint8_t g_4g_initing;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
-N	uint8_t	eq_mode;
+N	uint8_t	eq_mode;				// in door mode and out door mode
 N	uint8_t volume;
-N	uint8_t subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
-N	uint8_t mute;
-N	uint8_t volume_resume;
+N	uint8_t mute;			 // sys mute flag
+N	uint8_t volume_resume;   
+N	uint8_t inputmessage;
+N	SYS_STATE state;
+N	SYS_EVENT event;
+N	SubBoardStatus SubBoard;
 N	
 N
 N}sGlobalData;

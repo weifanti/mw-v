@@ -153,11 +153,11 @@ void Drv_audio_channel_switch(void)
 	TIMER_Delay(TIMER0,30000); // 15ms
 
 	
-	if(Global_datas.g_mode_status == FM_MODE)
+	if(Global_datas.state == SYS_PLAY_STATE_FM)
 	{
 		drv_audio_FM_Channel();
 	}
-	else if(Global_datas.g_mode_status == AUX_MODE)
+	else if(Global_datas.state == SYS_PLAY_STATE_AUX)
 	{
 		drv_audio_AuxIn_Channel();
 	}

@@ -93,16 +93,16 @@
 00001a  f7fffffe          BL       TIMER_Delay
 ;;;154    
 ;;;155    	
-;;;156    	if(Global_datas.g_mode_status == FM_MODE)
+;;;156    	if(Global_datas.state == SYS_PLAY_STATE_FM)
 00001e  4809              LDR      r0,|L4.68|
-000020  7940              LDRB     r0,[r0,#5]  ; Global_datas
-000022  280a              CMP      r0,#0xa
+000020  7d00              LDRB     r0,[r0,#0x14]  ; Global_datas
+000022  2806              CMP      r0,#6
 000024  d004              BEQ      |L4.48|
 ;;;157    	{
 ;;;158    		drv_audio_FM_Channel();
 ;;;159    	}
-;;;160    	else if(Global_datas.g_mode_status == AUX_MODE)
-000026  2808              CMP      r0,#8
+;;;160    	else if(Global_datas.state == SYS_PLAY_STATE_AUX)
+000026  2807              CMP      r0,#7
 000028  d005              BEQ      |L4.54|
 ;;;161    	{
 ;;;162    		drv_audio_AuxIn_Channel();

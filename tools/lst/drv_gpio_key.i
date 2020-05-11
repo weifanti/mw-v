@@ -29389,19 +29389,6 @@ typedef enum
 
 
 
-typedef enum _KEY_EVENT
-{
-	IN_KEY_NONE = 0x00,
-	IN_KEY_POWER_SP = 0xf0,
-	IN_KEY_POWER_CP,	
-	IN_KEY_POWER_CPR,	
-	IN_KEY_PAIR_SP,
-	IN_KEY_PAIR_CP,
-	IN_KEY_PAIR_CPR
-	
-} KEY_EVENT;
-
-
 
 
 
@@ -29499,11 +29486,9 @@ typedef enum
 {
     MSG_4G_SYS_STATE_IND      = 1,
     MSG_MCU1_SYS_STATE_IND,
-    MSG_BT_STATE_IND,
-    MSG_EA_DET_IND,
-    MSG_WIFI_CHANNEL_SET,
-    MSG_ENCODER_IND,
-    MSG_VOLUME_SET,
+    MSG_IO_KEY_IND,
+    MSG_IR_KEY_IND,
+
 } eFourG_Msg;
 
 typedef enum
@@ -29526,6 +29511,55 @@ typedef enum
 
 } mode_status;
 
+
+typedef enum
+{
+	SYS_PLAY_STATE_NONE = 0,
+	SYS_PLAY_STATE_IDLE, 
+	SYS_PLAY_STATE_POWERUP,
+	SYS_PLAY_STATE_SHUTTING_DOWN,
+	SYS_PLAY_STATE_MW_RADIO,
+	SYS_PLAY_STATE_BT,
+	SYS_PLAY_STATE_FM,
+	SYS_PLAY_STATE_AUX
+
+} SYS_STATE;
+
+
+typedef enum
+{
+	SYS_PLAY_EVENT_NONE = 0,
+	SYS_PLAY_EVENT_POWERING_UP,
+	SYS_PLAY_EVENT_SHUTTING_DOWN,
+	SYS_PLAY_EVENT_INIT_FINISH,
+	SYS_PLAY_EVENT_MODE_SWITCH,
+	SYS_PLAY_EVENT_VOL_UP,
+	SYS_PLAY_EVENT_VOL_DOWN,
+	
+	SYS_PLAY_EVENT_NEXT_SONG,
+	SYS_PLAY_EVENT_PREV_SONG,	
+	SYS_PLAY_EVENT_PLAY_PAUSE,	
+
+	SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION,
+	SYS_PLAY_EVENT_MW_RADIO_PREV_STATION,
+
+	
+	SYS_PLAY_EVENT_EQ_INDOOR_SET,
+	SYS_PLAY_EVENT_EQ_OUTDOOR_SET,
+	SYS_PLAY_EVENT_RADIO_NET_SWITCH,
+	SYS_PLAY_EVENT_RADIO_NET_PAIRING,
+	SYS_PLAY_EVENT_SW_TO_FM_MODE,
+	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
+	SYS_PLAY_EVENT_SW_TO_BT_MODE,
+	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+
+	SYS_PLAY_EVENT_NUM,
+
+
+} SYS_EVENT;
+
+
+
 typedef enum
 {
     MSG_4G_CMD_IND      = 1,
@@ -29545,6 +29579,79 @@ typedef enum
 } EQ_MODE;
 
 
+typedef enum
+{
+    PLAY_MODE_NONE      = 0,
+    PLAY_MODE_WIFI,
+    PLAY_MODE_FM,
+    PLAY_MODE_BT,
+    PLAY_MODE_AUX
+
+} PLAY_MODE;
+
+
+
+
+
+
+typedef enum _KEY_EVENT
+{
+	IN_KEY_NONE = 0x00,
+	IN_KEY_POWER_SP,
+	IN_KEY_POWER_CP,	
+	IN_KEY_POWER_CPR,	
+	IN_KEY_PAIR_SP,
+	IN_KEY_PAIR_CP,
+	IN_KEY_PAIR_CPR,
+	
+	IN_KEY_FM_MODE_S,
+	IN_KEY_AUX_MODE_S,
+	IN_KEY_MW_RADIO_MODE_S,
+	IN_KEY_BT_MODE_S,
+	IN_KEY_VOL_ADD_S,
+	IN_KEY_VOL_SUB_S,
+	IN_KEY_EQ_INDOOR_S,
+	IN_KEY_EQ_OUTDOOR_S,
+	IN_KEY_EQ_NORNAL_S,
+	IN_KEY_PLAY_S,
+	IN_KEY_NEXT_SONG_S,
+	IN_KEY_PREV_SONG_S,
+	IN_KEY_FM_NEXT_S,
+	IN_KEY_FM_PREV_S,
+	IN_KEY_AUTO_SEARCH_S,
+	IN_KEY_RADIO_PREV_S,
+	IN_KEY_RADIO_NEXT_S,
+	IN_KEY_RADIO_NET_SWITCH_S,
+	IN_KEY_RADIO_NET_PARIING_S,
+	
+
+	IR_KEY_POWER,
+	IR_KEY_POWER_CP,
+	IR_KEY_MODE,
+	IR_KEY_VOLUME_UP,
+	IR_KEY_VOLUME_UP_CP,
+	IR_KEY_VOLUME_DOWN,
+	IR_KEY_VOLUME_DOWN_CP,
+	IR_KEY_PREV_SONG,
+	IR_KEY_PREV_SONG_CP,
+	IR_KEY_NEXT_SONG,
+	IR_KEY_NEXT_SONG_CP,
+	IR_KEY_PLAY_PAUSE,
+	IR_KEY_PLAY_PAUSE_CP,
+	IR_KEY_PREV_STATION,
+	IR_KEY_NEXT_STATION,
+	IR_KEY_EQ_INDOOR,
+	IR_KEY_EQ_OUTDOOR,
+	IR_KEY_EQ,	
+
+
+	IN_KEY_INIT_FINISH_CMD,
+	
+	
+} KEY_EVENT;
+
+
+
 typedef struct _PowerStatus
 {
 	unsigned char PowerBatInStatus;
@@ -29553,6 +29660,15 @@ typedef struct _PowerStatus
 	unsigned char bat_status;
 	unsigned char bat_value;  
 }sPowerStatus;
+
+typedef struct _SubBoardStatus
+{
+	unsigned char subboard_online;
+	EQ_MODE eq_mode;
+	PLAY_MODE playmode;
+ 
+}SubBoardStatus;
+
 
 
 
@@ -29566,12 +29682,15 @@ typedef struct
 	unsigned int systick;
 	unsigned char key_led_blink;
 	unsigned char shoutting_down;
-	unsigned char	eq_mode;
+	unsigned char	eq_mode;				
 	unsigned char volume;
-	unsigned char subboard_online;
 	unsigned char mode_switching;  
-	unsigned char mute;
-	unsigned char volume_resume;
+	unsigned char mute;			 
+	unsigned char volume_resume;   
+	unsigned char inputmessage;
+	SYS_STATE state;
+	SYS_EVENT event;
+	SubBoardStatus SubBoard;
 	
 
 }sGlobalData;
@@ -29664,7 +29783,6 @@ void GetKeyEvent(void)
 	unsigned char			KeyIndex = 0;
 
 
-
 	if (!IsTimeOut(&SoftwareKeyScanTimer))
 	{
 	    
@@ -29719,7 +29837,7 @@ void GetKeyEvent(void)
 			if(PreKeyIndex != KeyIndex)
 			{
 
-				IoKeyInputmessage = SoftwareKeyEvent[PreKeyIndex][SoftwareKeyState - SOFTWARE_KEY_STATE_PRESS_DOWN];
+				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][SoftwareKeyState - SOFTWARE_KEY_STATE_PRESS_DOWN];
 				
 				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 				return;
@@ -29732,7 +29850,7 @@ void GetKeyEvent(void)
 				
 				SoftwareKeyState = SOFTWARE_KEY_STATE_CP;
 				
-				IoKeyInputmessage = SoftwareKeyEvent[PreKeyIndex][1];
+				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][1];
 				Global_datas.key_led_blink = 1;	
 				return;
 			}
@@ -29743,7 +29861,7 @@ void GetKeyEvent(void)
 			{
 				
 				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
-				IoKeyInputmessage = SoftwareKeyEvent[PreKeyIndex][2];
+				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][2];
 				Global_datas.key_led_blink = 1;
 				return;
 			}
@@ -29755,7 +29873,7 @@ void GetKeyEvent(void)
 				SoftwareKeyState = SOFTWARE_KEY_STATE_CP;
 				if((KeyIndex == 4) || (KeyIndex ==5))
 				{
-					IoKeyInputmessage = SoftwareKeyEvent[PreKeyIndex][1];
+					Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][1];
 				}
 				
 				return;
@@ -29766,12 +29884,8 @@ void GetKeyEvent(void)
 			SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 			break;
 	}
-
-
 }
 
-
-#line 409 "..\\src\\driver\\drv_gpio_key.c"
 
 
 

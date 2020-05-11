@@ -24,23 +24,23 @@
 void srv_key_mode_handler(void)
 {
 
-switch(Global_datas.g_mode_status)
+switch(Global_datas.state)
 {
-	case AUX_MODE:
+	case SYS_PLAY_STATE_AUX:
 
-		if(Global_datas.subboard_online) // if subboard online ,turn on fm
+		if(Global_datas.SubBoard.subboard_online) // if subboard online ,turn on fm
 		{
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x18,0x00); //fm
 			
-			Global_datas.g_mode_status = FM_MODE;
-			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode		
+			Global_datas.state = SYS_PLAY_STATE_FM;
+			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode	
+			Cmd_Send2FourG(0x03 ,0x18,0x00);
 			drv_audio_FM_Channel(); 
 		}
 		else
 		{
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
 			
-			Global_datas.g_mode_status = WIFI_MODE;
+			Cmd_Send2FourG(0x03 ,0x15,0x00);
+			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
 			drv_audio_4G_Channel(); 
 		}
@@ -48,91 +48,166 @@ switch(Global_datas.g_mode_status)
 
 	break;
 	
-	case WIFI_MODE:
-	case WIFI_CONNECTED_MODE:
-	case WIFI_CONNECTING_MODE:
-	case FOURG_MODE:
-	case FOURG_CONNECTED_MODE:
+
+	case SYS_PLAY_STATE_MW_RADIO:
 		
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
-		
-		Global_datas.g_mode_status = BT_MODE;
-		drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
+		Cmd_Send2FourG(0x03 ,0x16,0x00);
+		Global_datas.state = SYS_PLAY_STATE_BT;
 		drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
 		
 	break;
 	
-	case BT_MODE:
-	case BT_CONNECTED_MODE:
+	case SYS_PLAY_STATE_BT:
 
 
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-		
-		Global_datas.g_mode_status = AUX_MODE;
+		Cmd_Send2FourG(0x03 ,0x17,0x00);
+		Global_datas.state = SYS_PLAY_STATE_AUX;
 		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
 		drv_audio_AuxIn_Channel(); 
 		
 	break;
 	
-	case FM_MODE:
+	case SYS_PLAY_STATE_FM:
 		
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-		
-		Global_datas.g_mode_status = WIFI_MODE;
+		Cmd_Send2FourG(0x03 ,0x15,0x00);
+		Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
 		drv_audio_4G_Channel(); 
 	break;
 	
 	default:
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-		
-		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
-		Global_datas.g_mode_status = AUX_MODE;
-		drv_audio_AuxIn_Channel(); 
 	break;
+    }
 }
 
 
-
-/*
-	switch(Global_datas.g_mode_status)
+void srv_key_mode_switch_to(uint8_t mode)
+{
+	if(Global_datas.state == mode)
 	{
-		case AUX_MODE:
-		case LOUD_SPEAKER_MODE:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); //bt
-			drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to bt mode
-		break;
-		
-		case WIFI_MODE:
-		case WIFI_CONNECTED_MODE:
-		case WIFI_CONNECTING_MODE:
-		case FOURG_MODE:
-		case FOURG_CONNECTED_MODE:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
-			
-		break;
-		
-	    case BT_MODE:
-	    case BT_CONNECTED_MODE:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode
-		break;
-		
-		case FM_MODE:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); //wifi
-			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
-		break;
-		
-		default:
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); //aux
-			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode	
-			Global_datas.g_mode_status = AUX_MODE;
-		break;
+		return;
 	}
 
-	*/
+	if(Global_datas.state == SYS_PLAY_STATE_AUX)
+	{
+		switch(mode)
+		{
+			case SYS_PLAY_STATE_BT:
+				
+			Cmd_Send2FourG(0x03 ,0x16,0x00);
+			Global_datas.state = SYS_PLAY_STATE_BT;
+			drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
+
+			break;
+			
+			case SYS_PLAY_STATE_MW_RADIO:
+				
+			Cmd_Send2FourG(0x03 ,0x15,0x00);
+			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+			drv_audio_4G_Channel(); 
+
+			break;		
+
+			case SYS_PLAY_STATE_FM:
+
+			break;	
+
+			default:break;
+		}
+	}
+
+	else if(Global_datas.state == SYS_PLAY_STATE_BT)
+	{
+		switch(mode)
+		{
+			case SYS_PLAY_STATE_AUX:
+				
+			Cmd_Send2FourG(0x03 ,0x17,0x00);
+			Global_datas.state = SYS_PLAY_STATE_AUX;
+			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+			drv_audio_AuxIn_Channel();
+
+			break;
+			
+			case SYS_PLAY_STATE_MW_RADIO:
+				
+			Cmd_Send2FourG(0x03 ,0x15,0x00);
+			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+			drv_audio_4G_Channel(); 
+
+			break;		
+
+			case SYS_PLAY_STATE_FM:
+
+			break;	
+
+			default:break;
+		}
+	}
+
+	else if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+	{
+		switch(mode)
+		{
+			case SYS_PLAY_STATE_AUX:
+				
+			Cmd_Send2FourG(0x03 ,0x17,0x00);
+			Global_datas.state = SYS_PLAY_STATE_AUX;
+			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+			drv_audio_AuxIn_Channel();
+
+			break;
+			
+			case SYS_PLAY_STATE_BT:
+				
+			Cmd_Send2FourG(0x03 ,0x16,0x00);
+			Global_datas.state = SYS_PLAY_STATE_BT;
+			drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
+
+
+			break;		
+
+			case SYS_PLAY_STATE_FM:
+
+			break;	
+
+			default:break;
+		}
+	}
+	else if(Global_datas.state == SYS_PLAY_STATE_FM)
+	{
+		switch(mode)
+		{
+			case SYS_PLAY_STATE_AUX:
+				
+			Cmd_Send2FourG(0x03 ,0x17,0x00);
+			Global_datas.state = SYS_PLAY_STATE_AUX;
+			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);// change to aux mode
+			drv_audio_AuxIn_Channel();
+
+			break;
+			
+			case SYS_PLAY_STATE_BT:
+				
+			Cmd_Send2FourG(0x03 ,0x16,0x00);
+			Global_datas.state = SYS_PLAY_STATE_BT;
+			drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
+
+
+			break;		
+
+			case SYS_PLAY_STATE_MW_RADIO:
+
+			break;	
+
+			default:break;
+		}
+	}
+
 }
+
 
 void srv_key_volume_up_handler(void)
 {
@@ -302,11 +377,11 @@ void srv_key_handler(void)
 		break;
 
 		
-		case IR_KEY_NET_SET:
+		//case IR_KEY_NET_SET:
 			
-			Global_datas.key_led_blink = 1;
-			srv_key_net_config_handler();
-		break;
+		//	Global_datas.key_led_blink = 1;
+		//	srv_key_net_config_handler();
+		//break;
 		
 		default:
 		break;

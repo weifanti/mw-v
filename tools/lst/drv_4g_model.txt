@@ -5,80 +5,80 @@
                           AREA ||i.Cmd_Send2FourG||, CODE, READONLY, ALIGN=2
 
                   Cmd_Send2FourG PROC
-;;;26     
-;;;27     void Cmd_Send2FourG(uint8_t cmd, uint8_t param0, uint8_t param1)
+;;;39     
+;;;40     void Cmd_Send2FourG(uint8_t cmd, uint8_t param0, uint8_t param1)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;28     {
+;;;41     {
 000002  4607              MOV      r7,r0
-;;;29     	uint8_t checksum;
-;;;30     	//printf("Cmd_Send2FourG:cmd = %x,param0 = %x, msg.param1 = %x \n",cmd,param0,param1);
-;;;31     	UART_WRITE(UART1,0xff);
+;;;42     	uint8_t checksum;
+;;;43     	//printf("Cmd_Send2FourG:cmd = %x,param0 = %x, msg.param1 = %x \n",cmd,param0,param1);
+;;;44     	UART_WRITE(UART1,0xff);
 000004  4c1b              LDR      r4,|L1.116|
 000006  20ff              MOVS     r0,#0xff
-000008  4615              MOV      r5,r2                 ;28
-00000a  460e              MOV      r6,r1                 ;28
+000008  4615              MOV      r5,r2                 ;41
+00000a  460e              MOV      r6,r1                 ;41
 00000c  6020              STR      r0,[r4,#0]
-;;;32     	TIMER_Delay(TIMER0, 1000);
+;;;45     	TIMER_Delay(TIMER0, 1000);
 00000e  217d              MOVS     r1,#0x7d
 000010  00c9              LSLS     r1,r1,#3
 000012  4819              LDR      r0,|L1.120|
 000014  f7fffffe          BL       TIMER_Delay
-;;;33     	UART_WRITE(UART1,0x55);
+;;;46     	UART_WRITE(UART1,0x55);
 000018  2055              MOVS     r0,#0x55
 00001a  6020              STR      r0,[r4,#0]
-;;;34     	TIMER_Delay(TIMER0, 1000);
+;;;47     	TIMER_Delay(TIMER0, 1000);
 00001c  217d              MOVS     r1,#0x7d
 00001e  00c9              LSLS     r1,r1,#3
 000020  4815              LDR      r0,|L1.120|
 000022  f7fffffe          BL       TIMER_Delay
-;;;35     	UART_WRITE(UART1,0x03);
+;;;48     	UART_WRITE(UART1,0x03);
 000026  2003              MOVS     r0,#3
 000028  6020              STR      r0,[r4,#0]
-;;;36     	TIMER_Delay(TIMER0, 1000);
+;;;49     	TIMER_Delay(TIMER0, 1000);
 00002a  217d              MOVS     r1,#0x7d
 00002c  00c9              LSLS     r1,r1,#3
 00002e  4812              LDR      r0,|L1.120|
 000030  f7fffffe          BL       TIMER_Delay
-;;;37     	UART_WRITE(UART1,0x80);
+;;;50     	UART_WRITE(UART1,0x80);
 000034  2080              MOVS     r0,#0x80
 000036  6020              STR      r0,[r4,#0]
-;;;38     	TIMER_Delay(TIMER0, 1000);
+;;;51     	TIMER_Delay(TIMER0, 1000);
 000038  217d              MOVS     r1,#0x7d
 00003a  00c9              LSLS     r1,r1,#3
 00003c  480e              LDR      r0,|L1.120|
 00003e  f7fffffe          BL       TIMER_Delay
-;;;39     	UART_WRITE(UART1,cmd);	
+;;;52     	UART_WRITE(UART1,cmd);	
 000042  6027              STR      r7,[r4,#0]
-;;;40     	TIMER_Delay(TIMER0, 1000);
+;;;53     	TIMER_Delay(TIMER0, 1000);
 000044  217d              MOVS     r1,#0x7d
 000046  00c9              LSLS     r1,r1,#3
 000048  480b              LDR      r0,|L1.120|
 00004a  f7fffffe          BL       TIMER_Delay
-;;;41     	UART_WRITE(UART1,param0);
+;;;54     	UART_WRITE(UART1,param0);
 00004e  6026              STR      r6,[r4,#0]
-;;;42     	TIMER_Delay(TIMER0, 1000);
+;;;55     	TIMER_Delay(TIMER0, 1000);
 000050  217d              MOVS     r1,#0x7d
 000052  00c9              LSLS     r1,r1,#3
 000054  4808              LDR      r0,|L1.120|
 000056  f7fffffe          BL       TIMER_Delay
-;;;43     	UART_WRITE(UART1,param1);
+;;;56     	UART_WRITE(UART1,param1);
 00005a  6025              STR      r5,[r4,#0]
-;;;44     	TIMER_Delay(TIMER0, 1000);
+;;;57     	TIMER_Delay(TIMER0, 1000);
 00005c  217d              MOVS     r1,#0x7d
 00005e  00c9              LSLS     r1,r1,#3
 000060  4805              LDR      r0,|L1.120|
 000062  f7fffffe          BL       TIMER_Delay
-;;;45     	checksum = 0 - (0x03 + 0x80 + cmd + param0 + param1);
+;;;58     	checksum = 0 - (0x03 + 0x80 + cmd + param0 + param1);
 000066  19b8              ADDS     r0,r7,r6
 000068  1940              ADDS     r0,r0,r5
 00006a  3083              ADDS     r0,r0,#0x83
 00006c  4240              RSBS     r0,r0,#0
 00006e  b2c0              UXTB     r0,r0
-;;;46     	UART_WRITE(UART1,checksum);
+;;;59     	UART_WRITE(UART1,checksum);
 000070  6020              STR      r0,[r4,#0]
-;;;47     }
+;;;60     }
 000072  bdf8              POP      {r3-r7,pc}
-;;;48     
+;;;61     
                           ENDP
 
                   |L1.116|
@@ -86,154 +86,175 @@
                   |L1.120|
                           DCD      0x40010000
 
+                          AREA ||i.Cmd_Send2FourG_ModeSwitch||, CODE, READONLY, ALIGN=1
+
+                  Cmd_Send2FourG_ModeSwitch PROC
+;;;25     
+;;;26     void Cmd_Send2FourG_ModeSwitch(void)
+000000  4770              BX       lr
+;;;27     {
+;;;28     	//switch(Global_datas.state)
+;;;29     	{
+;;;30     	
+;;;31     		//case SYS_PLAY_STATE_MW_RADIO: 	Cmd_Send2FourG(0x03, 0x15,0);break;
+;;;32     		//case SYS_PLAY_STATE_BT:  	Cmd_Send2FourG(0x03, 0x16,0);break;
+;;;33     		//case SYS_PLAY_STATE_AUX: 	Cmd_Send2FourG(0x03, 0x17,0);break;
+;;;34     		//case SYS_PLAY_STATE_FM: 	Cmd_Send2FourG(0x03, 0x18,0);break;
+;;;35     		//default:break;
+;;;36     	}
+;;;37     }
+;;;38     
+                          ENDP
+
+
                           AREA ||i.Drv_4GMoudle_PowerUp||, CODE, READONLY, ALIGN=2
 
                   Drv_4GMoudle_PowerUp PROC
-;;;48     
-;;;49     void Drv_4GMoudle_PowerUp(uint8_t onoff)
-000000  4902              LDR      r1,|L2.12|
-;;;50     {
-;;;51     	if(onoff)
+;;;61     
+;;;62     void Drv_4GMoudle_PowerUp(uint8_t onoff)
+000000  4902              LDR      r1,|L3.12|
+;;;63     {
+;;;64     	if(onoff)
 000002  2800              CMP      r0,#0
-000004  d000              BEQ      |L2.8|
-;;;52     		PA9 = 1;
+000004  d000              BEQ      |L3.8|
+;;;65     		PA9 = 1;
 000006  2001              MOVS     r0,#1
-                  |L2.8|
+                  |L3.8|
 000008  6248              STR      r0,[r1,#0x24]
-;;;53     	else 
-;;;54     		PA9 = 0;
-;;;55     }
+;;;66     	else 
+;;;67     		PA9 = 0;
+;;;68     }
 00000a  4770              BX       lr
-;;;56     
+;;;69     
                           ENDP
 
-                  |L2.12|
+                  |L3.12|
                           DCD      0x50004200
 
                           AREA ||i.Drv_FourG_Gpio_Init||, CODE, READONLY, ALIGN=2
 
                   Drv_FourG_Gpio_Init PROC
-;;;57     
-;;;58     void Drv_FourG_Gpio_Init(void)
+;;;70     
+;;;71     void Drv_FourG_Gpio_Init(void)
 000000  b510              PUSH     {r4,lr}
-;;;59     {
-;;;60     	GPIO_SetMode(PA, BIT5, GPIO_MODE_OUTPUT);  // A5 POWER KEY ,  SET HI 3s then set low  to turn on 4G module
-000002  4c10              LDR      r4,|L3.68|
+;;;72     {
+;;;73     	GPIO_SetMode(PA, BIT5, GPIO_MODE_OUTPUT);  // A5 POWER KEY ,  SET HI 3s then set low  to turn on 4G module
+000002  4c10              LDR      r4,|L4.68|
 000004  2201              MOVS     r2,#1
 000006  2120              MOVS     r1,#0x20
 000008  4620              MOV      r0,r4
 00000a  f7fffffe          BL       GPIO_SetMode
-;;;61     	GPIO_SetMode(PA, BIT4, GPIO_MODE_OUTPUT); // A4 4G rest , hi rest 	
+;;;74     	GPIO_SetMode(PA, BIT4, GPIO_MODE_OUTPUT); // A4 4G rest , hi rest 	
 00000e  2201              MOVS     r2,#1
 000010  2110              MOVS     r1,#0x10
 000012  4620              MOV      r0,r4
 000014  f7fffffe          BL       GPIO_SetMode
-;;;62     	GPIO_SetMode(PF, BIT5, GPIO_MODE_OUTPUT); // wakeup ,the same as power key A5
+;;;75     	GPIO_SetMode(PF, BIT5, GPIO_MODE_OUTPUT); // wakeup ,the same as power key A5
 000018  2201              MOVS     r2,#1
 00001a  2120              MOVS     r1,#0x20
-00001c  480a              LDR      r0,|L3.72|
+00001c  480a              LDR      r0,|L4.72|
 00001e  f7fffffe          BL       GPIO_SetMode
-;;;63     	GPIO_SetMode(PA, BIT9, GPIO_MODE_OUTPUT);  // A9 4G POWER ON
+;;;76     	GPIO_SetMode(PA, BIT9, GPIO_MODE_OUTPUT);  // A9 4G POWER ON
 000022  2201              MOVS     r2,#1
 000024  0251              LSLS     r1,r2,#9
 000026  4620              MOV      r0,r4
 000028  f7fffffe          BL       GPIO_SetMode
-;;;64     	PA4 = 0;
-00002c  4806              LDR      r0,|L3.72|
+;;;77     	PA4 = 0;
+00002c  4806              LDR      r0,|L4.72|
 00002e  2100              MOVS     r1,#0
 000030  30c0              ADDS     r0,r0,#0xc0
 000032  6101              STR      r1,[r0,#0x10]
-;;;65     	PA5 = 0;
+;;;78     	PA5 = 0;
 000034  6141              STR      r1,[r0,#0x14]
-;;;66     	PF5 = 1;
-000036  4905              LDR      r1,|L3.76|
+;;;79     	PF5 = 1;
+000036  4905              LDR      r1,|L4.76|
 000038  2001              MOVS     r0,#1
 00003a  6148              STR      r0,[r1,#0x14]
-;;;67     	//Drv_4GMoudle_PowerUp(1);
-;;;68     	Drv_4GMoudle_PowerUp(0);  // first off
+;;;80     	//Drv_4GMoudle_PowerUp(1);
+;;;81     	Drv_4GMoudle_PowerUp(0);  // first off
 00003c  2000              MOVS     r0,#0
 00003e  f7fffffe          BL       Drv_4GMoudle_PowerUp
-;;;69     }
+;;;82     }
 000042  bd10              POP      {r4,pc}
-;;;70     
+;;;83     
                           ENDP
 
-                  |L3.68|
+                  |L4.68|
                           DCD      0x50004000
-                  |L3.72|
+                  |L4.72|
                           DCD      0x50004140
-                  |L3.76|
+                  |L4.76|
                           DCD      0x50004340
 
                           AREA ||i.drv_FourGmodel_power_key_SetHi||, CODE, READONLY, ALIGN=2
 
                   drv_FourGmodel_power_key_SetHi PROC
-;;;71     
-;;;72     void drv_FourGmodel_power_key_SetHi(void)
-000000  4901              LDR      r1,|L4.8|
-;;;73     {
-;;;74     	PA5 = 1;
+;;;84     
+;;;85     void drv_FourGmodel_power_key_SetHi(void)
+000000  4901              LDR      r1,|L5.8|
+;;;86     {
+;;;87     	PA5 = 1;
 000002  2001              MOVS     r0,#1
 000004  6148              STR      r0,[r1,#0x14]
-;;;75     }
+;;;88     }
 000006  4770              BX       lr
-;;;76     void drv_FourGmodel_power_key_SetLow(void)
-                          ENDP
-
-                  |L4.8|
-                          DCD      0x50004200
-
-                          AREA ||i.drv_FourGmodel_power_key_SetLow||, CODE, READONLY, ALIGN=2
-
-                  drv_FourGmodel_power_key_SetLow PROC
-;;;75     }
-;;;76     void drv_FourGmodel_power_key_SetLow(void)
-000000  4901              LDR      r1,|L5.8|
-;;;77     {
-;;;78     	PA5 = 0;
-000002  2000              MOVS     r0,#0
-000004  6148              STR      r0,[r1,#0x14]
-;;;79     }
-000006  4770              BX       lr
-;;;80     
+;;;89     void drv_FourGmodel_power_key_SetLow(void)
                           ENDP
 
                   |L5.8|
                           DCD      0x50004200
 
+                          AREA ||i.drv_FourGmodel_power_key_SetLow||, CODE, READONLY, ALIGN=2
+
+                  drv_FourGmodel_power_key_SetLow PROC
+;;;88     }
+;;;89     void drv_FourGmodel_power_key_SetLow(void)
+000000  4901              LDR      r1,|L6.8|
+;;;90     {
+;;;91     	PA5 = 0;
+000002  2000              MOVS     r0,#0
+000004  6148              STR      r0,[r1,#0x14]
+;;;92     }
+000006  4770              BX       lr
+;;;93     
+                          ENDP
+
+                  |L6.8|
+                          DCD      0x50004200
+
                           AREA ||i.drv_pairing_cmd_send||, CODE, READONLY, ALIGN=1
 
                   drv_pairing_cmd_send PROC
-;;;80     
-;;;81     void drv_pairing_cmd_send(void)
+;;;93     
+;;;94     void drv_pairing_cmd_send(void)
 000000  b510              PUSH     {r4,lr}
-;;;82     {
-;;;83     	Cmd_Send2FourG( 0x03,0x21,0);
+;;;95     {
+;;;96     	Cmd_Send2FourG( 0x03,0x21,0);
 000002  2200              MOVS     r2,#0
 000004  2121              MOVS     r1,#0x21
 000006  2003              MOVS     r0,#3
 000008  f7fffffe          BL       Cmd_Send2FourG
-;;;84     }
+;;;97     }
 00000c  bd10              POP      {r4,pc}
-;;;85     
+;;;98     
                           ENDP
 
 
                           AREA ||i.drv_wifi_4g_switch_cmd_send||, CODE, READONLY, ALIGN=1
 
                   drv_wifi_4g_switch_cmd_send PROC
-;;;85     
-;;;86     void drv_wifi_4g_switch_cmd_send(void)
+;;;98     
+;;;99     void drv_wifi_4g_switch_cmd_send(void)
 000000  b510              PUSH     {r4,lr}
-;;;87     {
-;;;88     	Cmd_Send2FourG( 0x03,0x50,0);
+;;;100    {
+;;;101    	Cmd_Send2FourG( 0x03,0x50,0);
 000002  2200              MOVS     r2,#0
 000004  2150              MOVS     r1,#0x50
 000006  2003              MOVS     r0,#3
 000008  f7fffffe          BL       Cmd_Send2FourG
-;;;89     }
+;;;102    }
 00000c  bd10              POP      {r4,pc}
-;;;90     
+;;;103    
                           ENDP
 
 
@@ -247,21 +268,21 @@
                   g_u324GRbytes
                           DCD      0x00000000
 
-                          AREA ||area_number.12||, DATA, ALIGN=2
-
-                          EXPORTAS ||area_number.12||, ||.data||
-                  g_u324GRhead
-                          DCD      0x00000000
-
                           AREA ||area_number.13||, DATA, ALIGN=2
 
                           EXPORTAS ||area_number.13||, ||.data||
-                  g_u324GRtail
+                  g_u324GRhead
                           DCD      0x00000000
 
                           AREA ||area_number.14||, DATA, ALIGN=2
 
                           EXPORTAS ||area_number.14||, ||.data||
+                  g_u324GRtail
+                          DCD      0x00000000
+
+                          AREA ||area_number.15||, DATA, ALIGN=2
+
+                          EXPORTAS ||area_number.15||, ||.data||
                   g_u324GbWait
                           DCD      0x00000001
 

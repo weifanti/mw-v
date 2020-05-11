@@ -50328,6 +50328,8 @@ Nvoid drv_FourGmodel_power_key_SetHi(void);
 Nvoid drv_pairing_cmd_send(void);
 Nvoid drv_wifi_4g_switch_cmd_send(void);
 Nvoid Drv_4GMoudle_PowerUp(uint8_t onoff);
+Nvoid Cmd_Send2FourG_ModeSwitch(void);
+N
 N
 N#endif
 L 13 "..\src\server\rtc\srv_rtc.c" 2

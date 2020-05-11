@@ -50354,20 +50354,7 @@ N**********************************************************
 N*					GLOBAL DATA TYPE
 N**********************************************************
 N*/
-N//
-N//define key event.
-N//
-Ntypedef enum _KEY_EVENT
-N{
-N	IN_KEY_NONE = 0x00,
-N	IN_KEY_POWER_SP = 0xf0,
-N	IN_KEY_POWER_CP,	
-N	IN_KEY_POWER_CPR,	
-N	IN_KEY_PAIR_SP,
-N	IN_KEY_PAIR_CP,
-N	IN_KEY_PAIR_CPR
-N	
-N} KEY_EVENT;
+N
 N
 N
 N
@@ -50473,11 +50460,9 @@ Ntypedef enum
 N{
 N    MSG_4G_SYS_STATE_IND      = 1,
 N    MSG_MCU1_SYS_STATE_IND,
-N    MSG_BT_STATE_IND,
-N    MSG_EA_DET_IND,
-N    MSG_WIFI_CHANNEL_SET,
-N    MSG_ENCODER_IND,
-N    MSG_VOLUME_SET,
+N    MSG_IO_KEY_IND,
+N    MSG_IR_KEY_IND,
+N
 N} eFourG_Msg;
 N
 Ntypedef enum
@@ -50500,6 +50485,55 @@ N    POWER_IDLE_MODE,
 N
 N} mode_status;
 N
+N
+Ntypedef enum
+N{
+N	SYS_PLAY_STATE_NONE = 0,
+N	SYS_PLAY_STATE_IDLE, 
+N	SYS_PLAY_STATE_POWERUP,
+N	SYS_PLAY_STATE_SHUTTING_DOWN,
+N	SYS_PLAY_STATE_MW_RADIO,
+N	SYS_PLAY_STATE_BT,
+N	SYS_PLAY_STATE_FM,
+N	SYS_PLAY_STATE_AUX
+N
+N} SYS_STATE;
+N
+N
+Ntypedef enum
+N{
+N	SYS_PLAY_EVENT_NONE = 0,
+N	SYS_PLAY_EVENT_POWERING_UP,
+N	SYS_PLAY_EVENT_SHUTTING_DOWN,
+N	SYS_PLAY_EVENT_INIT_FINISH,
+N	SYS_PLAY_EVENT_MODE_SWITCH,
+N	SYS_PLAY_EVENT_VOL_UP,
+N	SYS_PLAY_EVENT_VOL_DOWN,
+N	
+N	SYS_PLAY_EVENT_NEXT_SONG,
+N	SYS_PLAY_EVENT_PREV_SONG,	
+N	SYS_PLAY_EVENT_PLAY_PAUSE,	
+N
+N	SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION,
+N	SYS_PLAY_EVENT_MW_RADIO_PREV_STATION,
+N
+N	
+N	SYS_PLAY_EVENT_EQ_INDOOR_SET,
+N	SYS_PLAY_EVENT_EQ_OUTDOOR_SET,
+N	SYS_PLAY_EVENT_RADIO_NET_SWITCH,
+N	SYS_PLAY_EVENT_RADIO_NET_PAIRING,
+N	SYS_PLAY_EVENT_SW_TO_FM_MODE,
+N	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
+N	SYS_PLAY_EVENT_SW_TO_BT_MODE,
+N	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+N
+N	SYS_PLAY_EVENT_NUM,
+N
+N
+N} SYS_EVENT;
+N
+N
+N
 Ntypedef enum
 N{
 N    MSG_4G_CMD_IND      = 1,
@@ -50519,6 +50553,79 @@ N
 N} EQ_MODE;
 N
 N
+Ntypedef enum
+N{
+N    PLAY_MODE_NONE      = 0,
+N    PLAY_MODE_WIFI,
+N    PLAY_MODE_FM,
+N    PLAY_MODE_BT,
+N    PLAY_MODE_AUX
+N
+N} PLAY_MODE;
+N
+N
+N
+N//
+N//define key event.
+N//
+Ntypedef enum _KEY_EVENT
+N{
+N	IN_KEY_NONE = 0x00,
+N	IN_KEY_POWER_SP,
+N	IN_KEY_POWER_CP,	
+N	IN_KEY_POWER_CPR,	
+N	IN_KEY_PAIR_SP,
+N	IN_KEY_PAIR_CP,
+N	IN_KEY_PAIR_CPR,
+N	
+N	IN_KEY_FM_MODE_S,
+N	IN_KEY_AUX_MODE_S,
+N	IN_KEY_MW_RADIO_MODE_S,
+N	IN_KEY_BT_MODE_S,
+N	IN_KEY_VOL_ADD_S,
+N	IN_KEY_VOL_SUB_S,
+N	IN_KEY_EQ_INDOOR_S,
+N	IN_KEY_EQ_OUTDOOR_S,
+N	IN_KEY_EQ_NORNAL_S,
+N	IN_KEY_PLAY_S,
+N	IN_KEY_NEXT_SONG_S,
+N	IN_KEY_PREV_SONG_S,
+N	IN_KEY_FM_NEXT_S,
+N	IN_KEY_FM_PREV_S,
+N	IN_KEY_AUTO_SEARCH_S,
+N	IN_KEY_RADIO_PREV_S,
+N	IN_KEY_RADIO_NEXT_S,
+N	IN_KEY_RADIO_NET_SWITCH_S,
+N	IN_KEY_RADIO_NET_PARIING_S,
+N	
+N
+N	IR_KEY_POWER,
+N	IR_KEY_POWER_CP,
+N	IR_KEY_MODE,
+N	IR_KEY_VOLUME_UP,
+N	IR_KEY_VOLUME_UP_CP,
+N	IR_KEY_VOLUME_DOWN,
+N	IR_KEY_VOLUME_DOWN_CP,
+N	IR_KEY_PREV_SONG,
+N	IR_KEY_PREV_SONG_CP,
+N	IR_KEY_NEXT_SONG,
+N	IR_KEY_NEXT_SONG_CP,
+N	IR_KEY_PLAY_PAUSE,
+N	IR_KEY_PLAY_PAUSE_CP,
+N	IR_KEY_PREV_STATION,
+N	IR_KEY_NEXT_STATION,
+N	IR_KEY_EQ_INDOOR,
+N	IR_KEY_EQ_OUTDOOR,
+N	IR_KEY_EQ,	
+N
+N
+N	IN_KEY_INIT_FINISH_CMD,
+N	
+N	
+N} KEY_EVENT;
+N
+N
+N
 Ntypedef struct _PowerStatus
 N{
 N	uint8_t PowerBatInStatus;
@@ -50532,6 +50639,16 @@ X	unsigned char bat_status;
 N	uint8_t bat_value;  //0-3 in bat , 4-7 ex bat
 X	unsigned char bat_value;  
 N}sPowerStatus;
+N
+Ntypedef struct _SubBoardStatus
+N{
+N	uint8_t subboard_online;
+X	unsigned char subboard_online;
+N	EQ_MODE eq_mode;
+N	PLAY_MODE playmode;
+N 
+N}SubBoardStatus;
+N
 N
 N#define ADC_CHANNEL_NUM_MAX 16
 N
@@ -50551,18 +50668,21 @@ N	uint8_t key_led_blink;
 X	unsigned char key_led_blink;
 N	uint8_t shoutting_down;
 X	unsigned char shoutting_down;
-N	uint8_t	eq_mode;
-X	unsigned char	eq_mode;
+N	uint8_t	eq_mode;				// in door mode and out door mode
+X	unsigned char	eq_mode;				
 N	uint8_t volume;
 X	unsigned char volume;
-N	uint8_t subboard_online;
-X	unsigned char subboard_online;
 N	uint8_t mode_switching;  // during mode switching , need to mute amp
 X	unsigned char mode_switching;  
-N	uint8_t mute;
-X	unsigned char mute;
-N	uint8_t volume_resume;
-X	unsigned char volume_resume;
+N	uint8_t mute;			 // sys mute flag
+X	unsigned char mute;			 
+N	uint8_t volume_resume;   
+X	unsigned char volume_resume;   
+N	uint8_t inputmessage;
+X	unsigned char inputmessage;
+N	SYS_STATE state;
+N	SYS_EVENT event;
+N	SubBoardStatus SubBoard;
 N	
 N
 N}sGlobalData;
@@ -50661,7 +50781,6 @@ X	static 	unsigned char 	PreKeyIndex = 0;
 N	uint8_t			KeyIndex = 0;
 X	unsigned char			KeyIndex = 0;
 N
-N#if 1	
 N
 N	if (!IsTimeOut(&SoftwareKeyScanTimer))
 N	{
@@ -50722,7 +50841,7 @@ N		case SOFTWARE_KEY_STATE_PRESS_DOWN:
 N			if(PreKeyIndex != KeyIndex)
 N			{
 N
-N				IoKeyInputmessage = SoftwareKeyEvent[PreKeyIndex][SoftwareKeyState - SOFTWARE_KEY_STATE_PRESS_DOWN];
+N				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][SoftwareKeyState - SOFTWARE_KEY_STATE_PRESS_DOWN];
 N				
 N				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 N				return;
@@ -50736,7 +50855,7 @@ X				TimeOutSet(&SoftwareKeyWaitTimer, 1500);
 N				
 N				SoftwareKeyState = SOFTWARE_KEY_STATE_CP;
 N				
-N				IoKeyInputmessage = SoftwareKeyEvent[PreKeyIndex][1];
+N				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][1];
 N				Global_datas.key_led_blink = 1;	
 N				return;
 N			}
@@ -50747,7 +50866,7 @@ N			if(PreKeyIndex != KeyIndex)
 N			{
 N				//return key cp value
 N				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
-N				IoKeyInputmessage = SoftwareKeyEvent[PreKeyIndex][2];
+N				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][2];
 N				Global_datas.key_led_blink = 1;
 N				return;
 N			}
@@ -50760,7 +50879,7 @@ X				TimeOutSet(&SoftwareKeyWaitTimer, 1500);
 N				SoftwareKeyState = SOFTWARE_KEY_STATE_CP;
 N				if((KeyIndex == 4) || (KeyIndex ==5))
 N				{
-N					IoKeyInputmessage = SoftwareKeyEvent[PreKeyIndex][1];
+N					Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][1];
 N				}
 N				
 N				return;
@@ -50771,214 +50890,8 @@ N		default:
 N			SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 N			break;
 N	}
-N#endif
-N
 N}
 N
-N
-N#if 0
-Stypedef enum _GPIO_KEY_STATUS
-S{
-S	GPIO_KEY_STATUS_NONE = 0x00,
-S	GPIO_KEY_POWER_DOWN = 0x01,
-S	GPIO_KEY_MODE_DOWN = 0x02,
-S	GPIO_KEY_POWER_UP = 0xfe,
-S	GPIO_KEY_MODE_UP = 0xfd,
-S	
-S} GPIO_KEY_STATUS;
-S	
-Stypedef enum _GPIO_KEY_VALUE
-S{
-S	GPIO_KEY_VALUE_NONE,
-S	GPIO_KEY1_SHORT = 0x01,
-S	GPIO_KEY2_SHORT = 0x02,
-S	GPIO_KEY1_LONG = 0x10,
-S	GPIO_KEY2_LONG = 0x20,
-S	
-S} GPIO_KEY_VALUE;
-S
-Stypedef struct _keyStatus
-S{
-S	uint8_t key_status;
-S	uint32_t key1_count;
-S	uint8_t key_status_back;
-S	uint32_t key2_count;
-S	
-S}skeyStatus;
-S
-SskeyStatus gpio_key_status;
-S
-Suint8_t gpio_key1_change_flag = 0;
-Suint8_t gpio_key2_change_flag = 0;
-Suint32_t gpio_key1_value_count = 0;
-Suint32_t gpio_key2_value_count = 0;
-Suint8_t gpio_key1_long_flag = 0;
-Suint8_t gpio_key2_long_flag = 0;
-Suint8_t gpio_key_value = 0;    //bit0 key1short bit1 key2short bit4 key1long bit5 key2long
-S
-S
-S
-Svoid drv_gpio_key_status_change(void)
-S{
-S	if((gpio_key_status.key_status_back & 0x01) == PC3)
-S	{
-S		//printf("gpio_key1_change_flag = %d\n",gpio_key1_change_flag);
-S		if(gpio_key1_change_flag == 1)
-S		{
-S			if(gpio_key_status.key1_count > 20)
-S			{
-S				gpio_key1_change_flag = 0;
-S				if(gpio_key_status.key_status_back & 0x01)
-S				{
-S					printf("GPIO_KEY_POWER_UP\n");
-S					gpio_key_status.key_status &= 0xfe;
-S				}
-S				else
-S				{
-S					printf("GPIO_KEY_POWER_DOWN\n");
-S					gpio_key_status.key_status |= 0x01;
-S				}
-S			}
-S			
-S		}
-S		gpio_key_status.key1_count++;
-S	}
-S	else
-S	{
-S		gpio_key1_change_flag = 1;
-S		gpio_key_status.key1_count = 0;
-S		gpio_key_status.key_status_back = (gpio_key_status.key_status_back & 0xfe) | PC3;
-S	}
-S	if(((gpio_key_status.key_status_back >> 1) & 0x01) == PC6)
-S	{	
-S	
-S		//printf("gpio_key2_change_flag = %d\n",gpio_key2_change_flag);
-S		if(gpio_key2_change_flag == 1)
-S		{
-S			if(gpio_key_status.key2_count > 20)
-S			{
-S				gpio_key2_change_flag = 0;
-S				if(gpio_key_status.key_status_back & 0x02)
-S				{
-S					printf("GPIO_KEY_MODE_UP\n");
-S					gpio_key_status.key_status &= 0xfd;
-S					//return GPIO_KEY_MODE_UP;
-S				}
-S				else
-S				{
-S					printf("GPIO_KEY_MODE_DOWN\n");
-S					gpio_key_status.key_status |= 0x02;
-S					//return GPIO_KEY_MODE_DOWN;
-S				}
-S			}
-S		}
-S		
-S		gpio_key_status.key2_count++;
-S	}
-S	else
-S	{
-S		gpio_key2_change_flag = 1;
-S		gpio_key_status.key2_count = 0;
-S		gpio_key_status.key_status_back = (gpio_key_status.key_status_back & 0xfd) | (PC6<<1);
-S	}
-S	
-S}
-S
-Suint8_t drv_gpio_key_handler(void)
-S{
-S//key1
-S
-S	if(gpio_key_status.key_status & 0x01)
-S	{
-S		gpio_key1_value_count++;
-S		
-S//		printf("gpio_key1_value_count = %x\n",gpio_key1_value_count);
-S		if(gpio_key1_value_count > 0x10000)
-S		{
-S			gpio_key1_long_flag = 1;
-S			gpio_key1_value_count = 0;
-S			gpio_key_value = (gpio_key_value&0xfe)|0x10;
-S			printf("GPIO_KEY1_LONG = %d\n",gpio_key_value);
-S		}
-S	}
-S	else
-S	{
-S		if((gpio_key1_value_count > 0x10)&&(gpio_key1_long_flag == 0))
-S		{
-S			gpio_key_value =  (gpio_key_value&0xef)|0x01;
-S			
-S		printf("GPIO_KEY1_SHORT = %d\n",gpio_key_value);
-S		}
-S		else
-S		{
-S			gpio_key1_long_flag = 0;
-S			gpio_key_value = gpio_key_value&0xee;
-S		}
-S		gpio_key1_value_count = 0;
-S	}
-S		
-S	//key2
-S	if(gpio_key_status.key_status & 0x02)
-S	{
-S		gpio_key2_value_count++;
-S//		printf("gpio_key1_value_count = %x\n",gpio_key1_value_count);
-S		if(gpio_key2_value_count > 0x10000)
-S		{
-S			gpio_key2_long_flag = 1;
-S			gpio_key2_value_count = 0;
-S			gpio_key_value = GPIO_KEY2_LONG;
-S			printf("GPIO_KEY2_LONG = %d\n",gpio_key_value);
-S			gpio_key_value= (gpio_key_value&0xfd)|0x20;
-S		}
-S	}
-S	else
-S	{
-S		if((gpio_key2_value_count > 0x10)&&(gpio_key2_long_flag == 0))
-S		{
-S//			printf("gpio_key2_value_count = %d\n",gpio_key2_value_count);
-S			gpio_key_value =  GPIO_KEY2_SHORT;
-S			printf("GPIO_KEY2_SHORT = %d\n",gpio_key_value);
-S			gpio_key_value= (gpio_key_value&0xdf)|0x02;
-S		}
-S		else
-S		{
-S			gpio_key2_long_flag = 0;
-S			gpio_key_value = gpio_key_value&0xdd;
-S			
-S		}
-S		gpio_key2_value_count = 0;
-S	}
-S
-Sreturn gpio_key_value;
-S}
-S
-Suint8_t drv_get_gpio_key_value(void)
-S{
-S	uint8_t key_value = 0;
-S
-S	switch(drv_gpio_key_handler())
-S	{
-S		case GPIO_KEY1_SHORT:
-S			key_value = GPIO_KEY_MODE;
-S		break;
-S		
-S		case GPIO_KEY2_SHORT:
-S			key_value = GPIO_KEY_NET_SET;
-S		break;
-S		
-S		case GPIO_KEY1_LONG:
-S			key_value = GPIO_KEY_POWER;
-S		break;
-S	
-S		default:
-S			key_value = GPIO_KEY_NONE;
-S		break;
-S	}
-S
-S	return key_value;
-S}
-S
-N#endif
 N
 N
 N

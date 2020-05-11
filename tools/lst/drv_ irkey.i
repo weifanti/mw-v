@@ -29378,10 +29378,186 @@ typedef enum
 
 
 
+#line 1 "..\\src\\global\\tym_global.h"
 
-typedef enum _IR_KEY
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef enum
 {
-	IR_KEY_NONE = 0,
+    SYS_ERR_NONE       = 0,
+    SYS_ERR_I2C0       = (1 << 1),
+    SYS_ERR_I2C1       = (1 << 2),
+    SYS_ERR_SPI0       = (1 << 3),
+    SYS_ERR_SPI1       = (1 << 4),
+    SYS_ERR_UART0      = (1 << 5),
+    SYS_ERR_UART1      = (1 << 6)
+} sys_err_e;
+
+extern volatile sys_err_e sys_err;
+
+typedef enum
+{
+    MSG_4G_SYS_STATE_IND      = 1,
+    MSG_MCU1_SYS_STATE_IND,
+    MSG_IO_KEY_IND,
+    MSG_IR_KEY_IND,
+
+} eFourG_Msg;
+
+typedef enum
+{
+	POWER_ON_MODE,
+	WIFI_MODE, 
+	WIFI_CONNECTED_MODE,
+	WIFI_CONNECTING_MODE,
+	FOURG_MODE,
+	FOURG_CONNECTED_MODE,
+    BT_MODE,
+    BT_CONNECTED_MODE,
+    AUX_MODE,
+    LOUD_SPEAKER_MODE,
+    FM_MODE,
+    SYSTEM_UPDATING,
+    SYS_LOW_POWER,
+    POWER_OFF_MODE,
+    POWER_IDLE_MODE,
+
+} mode_status;
+
+
+typedef enum
+{
+	SYS_PLAY_STATE_NONE = 0,
+	SYS_PLAY_STATE_IDLE, 
+	SYS_PLAY_STATE_POWERUP,
+	SYS_PLAY_STATE_SHUTTING_DOWN,
+	SYS_PLAY_STATE_MW_RADIO,
+	SYS_PLAY_STATE_BT,
+	SYS_PLAY_STATE_FM,
+	SYS_PLAY_STATE_AUX
+
+} SYS_STATE;
+
+
+typedef enum
+{
+	SYS_PLAY_EVENT_NONE = 0,
+	SYS_PLAY_EVENT_POWERING_UP,
+	SYS_PLAY_EVENT_SHUTTING_DOWN,
+	SYS_PLAY_EVENT_INIT_FINISH,
+	SYS_PLAY_EVENT_MODE_SWITCH,
+	SYS_PLAY_EVENT_VOL_UP,
+	SYS_PLAY_EVENT_VOL_DOWN,
+	
+	SYS_PLAY_EVENT_NEXT_SONG,
+	SYS_PLAY_EVENT_PREV_SONG,	
+	SYS_PLAY_EVENT_PLAY_PAUSE,	
+
+	SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION,
+	SYS_PLAY_EVENT_MW_RADIO_PREV_STATION,
+
+	
+	SYS_PLAY_EVENT_EQ_INDOOR_SET,
+	SYS_PLAY_EVENT_EQ_OUTDOOR_SET,
+	SYS_PLAY_EVENT_RADIO_NET_SWITCH,
+	SYS_PLAY_EVENT_RADIO_NET_PAIRING,
+	SYS_PLAY_EVENT_SW_TO_FM_MODE,
+	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
+	SYS_PLAY_EVENT_SW_TO_BT_MODE,
+	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+
+	SYS_PLAY_EVENT_NUM,
+
+
+} SYS_EVENT;
+
+
+
+typedef enum
+{
+    MSG_4G_CMD_IND      = 1,
+    MSG_4G_DAT_IND,
+    MSG_MCU1_CMD_IND,
+    MSG_MCU1_DAT_IND,
+
+} eUart_Msg;
+
+
+typedef enum
+{
+    EQ_MODE_NONE      = 0,
+    EQ_MODE_INDOOR,
+    EQ_MODE_OUTDOOR,
+
+} EQ_MODE;
+
+
+typedef enum
+{
+    PLAY_MODE_NONE      = 0,
+    PLAY_MODE_WIFI,
+    PLAY_MODE_FM,
+    PLAY_MODE_BT,
+    PLAY_MODE_AUX
+
+} PLAY_MODE;
+
+
+
+
+
+
+typedef enum _KEY_EVENT
+{
+	IN_KEY_NONE = 0x00,
+	IN_KEY_POWER_SP,
+	IN_KEY_POWER_CP,	
+	IN_KEY_POWER_CPR,	
+	IN_KEY_PAIR_SP,
+	IN_KEY_PAIR_CP,
+	IN_KEY_PAIR_CPR,
+	
+	IN_KEY_FM_MODE_S,
+	IN_KEY_AUX_MODE_S,
+	IN_KEY_MW_RADIO_MODE_S,
+	IN_KEY_BT_MODE_S,
+	IN_KEY_VOL_ADD_S,
+	IN_KEY_VOL_SUB_S,
+	IN_KEY_EQ_INDOOR_S,
+	IN_KEY_EQ_OUTDOOR_S,
+	IN_KEY_EQ_NORNAL_S,
+	IN_KEY_PLAY_S,
+	IN_KEY_NEXT_SONG_S,
+	IN_KEY_PREV_SONG_S,
+	IN_KEY_FM_NEXT_S,
+	IN_KEY_FM_PREV_S,
+	IN_KEY_AUTO_SEARCH_S,
+	IN_KEY_RADIO_PREV_S,
+	IN_KEY_RADIO_NEXT_S,
+	IN_KEY_RADIO_NET_SWITCH_S,
+	IN_KEY_RADIO_NET_PARIING_S,
+	
+
 	IR_KEY_POWER,
 	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
@@ -29397,10 +29573,76 @@ typedef enum _IR_KEY
 	IR_KEY_PLAY_PAUSE_CP,
 	IR_KEY_PREV_STATION,
 	IR_KEY_NEXT_STATION,
-	IR_KEY_EQ,	
 	IR_KEY_EQ_INDOOR,
 	IR_KEY_EQ_OUTDOOR,
-	IR_KEY_NET_SET,
+	IR_KEY_EQ,	
+
+
+	IN_KEY_INIT_FINISH_CMD,
+	
+	
+} KEY_EVENT;
+
+
+
+typedef struct _PowerStatus
+{
+	uint8_t PowerBatInStatus;
+	uint8_t PowerBatExStatus;
+	uint8_t PowerAcStatus;
+	uint8_t bat_status;
+	uint8_t bat_value;  
+}sPowerStatus;
+
+typedef struct _SubBoardStatus
+{
+	uint8_t subboard_online;
+	EQ_MODE eq_mode;
+	PLAY_MODE playmode;
+ 
+}SubBoardStatus;
+
+
+
+
+typedef struct
+{
+ 
+	int16_t ADC_ChannelValue[16];
+	sPowerStatus g_PowerStatus;
+	uint8_t g_mode_status;
+	uint8_t g_4g_initing;
+	uint32_t systick;
+	uint8_t key_led_blink;
+	uint8_t shoutting_down;
+	uint8_t	eq_mode;				
+	uint8_t volume;
+	uint8_t mode_switching;  
+	uint8_t mute;			 
+	uint8_t volume_resume;   
+	uint8_t inputmessage;
+	SYS_STATE state;
+	SYS_EVENT event;
+	SubBoardStatus SubBoard;
+	
+
+}sGlobalData;
+
+extern sGlobalData Global_datas;
+
+
+
+
+
+
+#line 17 "..\\src\\driver\\include\\drv_irkey.h"
+
+
+
+typedef enum _IR_KEY
+{
+	IR_KEY_NONE = 0,
+	
 	IR_KEY_NUM
 	
 } IR_KEY;
@@ -29480,131 +29722,6 @@ uint8_t Ircordpro(void);
 
 
 #line 17 "..\\src\\driver\\drv_ irkey.c"
-#line 1 "..\\src\\global\\tym_global.h"
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-typedef enum
-{
-    SYS_ERR_NONE       = 0,
-    SYS_ERR_I2C0       = (1 << 1),
-    SYS_ERR_I2C1       = (1 << 2),
-    SYS_ERR_SPI0       = (1 << 3),
-    SYS_ERR_SPI1       = (1 << 4),
-    SYS_ERR_UART0      = (1 << 5),
-    SYS_ERR_UART1      = (1 << 6)
-} sys_err_e;
-
-extern volatile sys_err_e sys_err;
-
-typedef enum
-{
-    MSG_4G_SYS_STATE_IND      = 1,
-    MSG_MCU1_SYS_STATE_IND,
-    MSG_BT_STATE_IND,
-    MSG_EA_DET_IND,
-    MSG_WIFI_CHANNEL_SET,
-    MSG_ENCODER_IND,
-    MSG_VOLUME_SET,
-} eFourG_Msg;
-
-typedef enum
-{
-	POWER_ON_MODE,
-	WIFI_MODE, 
-	WIFI_CONNECTED_MODE,
-	WIFI_CONNECTING_MODE,
-	FOURG_MODE,
-	FOURG_CONNECTED_MODE,
-    BT_MODE,
-    BT_CONNECTED_MODE,
-    AUX_MODE,
-    LOUD_SPEAKER_MODE,
-    FM_MODE,
-    SYSTEM_UPDATING,
-    SYS_LOW_POWER,
-    POWER_OFF_MODE,
-    POWER_IDLE_MODE,
-
-} mode_status;
-
-typedef enum
-{
-    MSG_4G_CMD_IND      = 1,
-    MSG_4G_DAT_IND,
-    MSG_MCU1_CMD_IND,
-    MSG_MCU1_DAT_IND,
-
-} eUart_Msg;
-
-
-typedef enum
-{
-    EQ_MODE_NONE      = 0,
-    EQ_MODE_INDOOR,
-    EQ_MODE_OUTDOOR,
-
-} EQ_MODE;
-
-
-typedef struct _PowerStatus
-{
-	uint8_t PowerBatInStatus;
-	uint8_t PowerBatExStatus;
-	uint8_t PowerAcStatus;
-	uint8_t bat_status;
-	uint8_t bat_value;  
-}sPowerStatus;
-
-
-
-typedef struct
-{
- 
-	int16_t ADC_ChannelValue[16];
-	sPowerStatus g_PowerStatus;
-	uint8_t g_mode_status;
-	uint8_t g_4g_initing;
-	uint32_t systick;
-	uint8_t key_led_blink;
-	uint8_t shoutting_down;
-	uint8_t	eq_mode;
-	uint8_t volume;
-	uint8_t subboard_online;
-	uint8_t mode_switching;  
-	uint8_t mute;
-	uint8_t volume_resume;
-	
-
-}sGlobalData;
-
-extern sGlobalData Global_datas;
-
-
-
-
-
-
 #line 18 "..\\src\\driver\\drv_ irkey.c"
 
 uint32_t IrTimerCount = 0;
@@ -29794,7 +29911,7 @@ uint8_t GetIrKey(void)
 
 
 		
-		if((((Global_datas.g_mode_status == POWER_IDLE_MODE) || (Global_datas.g_mode_status == POWER_ON_MODE)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.shoutting_down)) 
+		if((((Global_datas.state == SYS_PLAY_STATE_IDLE) || (Global_datas.state == SYS_PLAY_STATE_POWERUP)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)) 
 		{
 			ir_key_value = IR_KEY_NONE;
 		}

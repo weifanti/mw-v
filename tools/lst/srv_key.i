@@ -29364,11 +29364,9 @@ typedef enum
 {
     MSG_4G_SYS_STATE_IND      = 1,
     MSG_MCU1_SYS_STATE_IND,
-    MSG_BT_STATE_IND,
-    MSG_EA_DET_IND,
-    MSG_WIFI_CHANNEL_SET,
-    MSG_ENCODER_IND,
-    MSG_VOLUME_SET,
+    MSG_IO_KEY_IND,
+    MSG_IR_KEY_IND,
+
 } eFourG_Msg;
 
 typedef enum
@@ -29391,6 +29389,55 @@ typedef enum
 
 } mode_status;
 
+
+typedef enum
+{
+	SYS_PLAY_STATE_NONE = 0,
+	SYS_PLAY_STATE_IDLE, 
+	SYS_PLAY_STATE_POWERUP,
+	SYS_PLAY_STATE_SHUTTING_DOWN,
+	SYS_PLAY_STATE_MW_RADIO,
+	SYS_PLAY_STATE_BT,
+	SYS_PLAY_STATE_FM,
+	SYS_PLAY_STATE_AUX
+
+} SYS_STATE;
+
+
+typedef enum
+{
+	SYS_PLAY_EVENT_NONE = 0,
+	SYS_PLAY_EVENT_POWERING_UP,
+	SYS_PLAY_EVENT_SHUTTING_DOWN,
+	SYS_PLAY_EVENT_INIT_FINISH,
+	SYS_PLAY_EVENT_MODE_SWITCH,
+	SYS_PLAY_EVENT_VOL_UP,
+	SYS_PLAY_EVENT_VOL_DOWN,
+	
+	SYS_PLAY_EVENT_NEXT_SONG,
+	SYS_PLAY_EVENT_PREV_SONG,	
+	SYS_PLAY_EVENT_PLAY_PAUSE,	
+
+	SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION,
+	SYS_PLAY_EVENT_MW_RADIO_PREV_STATION,
+
+	
+	SYS_PLAY_EVENT_EQ_INDOOR_SET,
+	SYS_PLAY_EVENT_EQ_OUTDOOR_SET,
+	SYS_PLAY_EVENT_RADIO_NET_SWITCH,
+	SYS_PLAY_EVENT_RADIO_NET_PAIRING,
+	SYS_PLAY_EVENT_SW_TO_FM_MODE,
+	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
+	SYS_PLAY_EVENT_SW_TO_BT_MODE,
+	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+
+	SYS_PLAY_EVENT_NUM,
+
+
+} SYS_EVENT;
+
+
+
 typedef enum
 {
     MSG_4G_CMD_IND      = 1,
@@ -29410,6 +29457,79 @@ typedef enum
 } EQ_MODE;
 
 
+typedef enum
+{
+    PLAY_MODE_NONE      = 0,
+    PLAY_MODE_WIFI,
+    PLAY_MODE_FM,
+    PLAY_MODE_BT,
+    PLAY_MODE_AUX
+
+} PLAY_MODE;
+
+
+
+
+
+
+typedef enum _KEY_EVENT
+{
+	IN_KEY_NONE = 0x00,
+	IN_KEY_POWER_SP,
+	IN_KEY_POWER_CP,	
+	IN_KEY_POWER_CPR,	
+	IN_KEY_PAIR_SP,
+	IN_KEY_PAIR_CP,
+	IN_KEY_PAIR_CPR,
+	
+	IN_KEY_FM_MODE_S,
+	IN_KEY_AUX_MODE_S,
+	IN_KEY_MW_RADIO_MODE_S,
+	IN_KEY_BT_MODE_S,
+	IN_KEY_VOL_ADD_S,
+	IN_KEY_VOL_SUB_S,
+	IN_KEY_EQ_INDOOR_S,
+	IN_KEY_EQ_OUTDOOR_S,
+	IN_KEY_EQ_NORNAL_S,
+	IN_KEY_PLAY_S,
+	IN_KEY_NEXT_SONG_S,
+	IN_KEY_PREV_SONG_S,
+	IN_KEY_FM_NEXT_S,
+	IN_KEY_FM_PREV_S,
+	IN_KEY_AUTO_SEARCH_S,
+	IN_KEY_RADIO_PREV_S,
+	IN_KEY_RADIO_NEXT_S,
+	IN_KEY_RADIO_NET_SWITCH_S,
+	IN_KEY_RADIO_NET_PARIING_S,
+	
+
+	IR_KEY_POWER,
+	IR_KEY_POWER_CP,
+	IR_KEY_MODE,
+	IR_KEY_VOLUME_UP,
+	IR_KEY_VOLUME_UP_CP,
+	IR_KEY_VOLUME_DOWN,
+	IR_KEY_VOLUME_DOWN_CP,
+	IR_KEY_PREV_SONG,
+	IR_KEY_PREV_SONG_CP,
+	IR_KEY_NEXT_SONG,
+	IR_KEY_NEXT_SONG_CP,
+	IR_KEY_PLAY_PAUSE,
+	IR_KEY_PLAY_PAUSE_CP,
+	IR_KEY_PREV_STATION,
+	IR_KEY_NEXT_STATION,
+	IR_KEY_EQ_INDOOR,
+	IR_KEY_EQ_OUTDOOR,
+	IR_KEY_EQ,	
+
+
+	IN_KEY_INIT_FINISH_CMD,
+	
+	
+} KEY_EVENT;
+
+
+
 typedef struct _PowerStatus
 {
 	uint8_t PowerBatInStatus;
@@ -29418,6 +29538,15 @@ typedef struct _PowerStatus
 	uint8_t bat_status;
 	uint8_t bat_value;  
 }sPowerStatus;
+
+typedef struct _SubBoardStatus
+{
+	uint8_t subboard_online;
+	EQ_MODE eq_mode;
+	PLAY_MODE playmode;
+ 
+}SubBoardStatus;
+
 
 
 
@@ -29431,12 +29560,15 @@ typedef struct
 	uint32_t systick;
 	uint8_t key_led_blink;
 	uint8_t shoutting_down;
-	uint8_t	eq_mode;
+	uint8_t	eq_mode;				
 	uint8_t volume;
-	uint8_t subboard_online;
 	uint8_t mode_switching;  
-	uint8_t mute;
-	uint8_t volume_resume;
+	uint8_t mute;			 
+	uint8_t volume_resume;   
+	uint8_t inputmessage;
+	SYS_STATE state;
+	SYS_EVENT event;
+	SubBoardStatus SubBoard;
 	
 
 }sGlobalData;
@@ -29465,29 +29597,14 @@ extern sGlobalData Global_datas;
 
 
 
+#line 17 "..\\src\\driver\\include\\drv_irkey.h"
+
+
 
 typedef enum _IR_KEY
 {
 	IR_KEY_NONE = 0,
-	IR_KEY_POWER,
-	IR_KEY_POWER_CP,
-	IR_KEY_MODE,
-	IR_KEY_VOLUME_UP,
-	IR_KEY_VOLUME_UP_CP,
-	IR_KEY_VOLUME_DOWN,
-	IR_KEY_VOLUME_DOWN_CP,
-	IR_KEY_PREV_SONG,
-	IR_KEY_PREV_SONG_CP,
-	IR_KEY_NEXT_SONG,
-	IR_KEY_NEXT_SONG_CP,
-	IR_KEY_PLAY_PAUSE,
-	IR_KEY_PLAY_PAUSE_CP,
-	IR_KEY_PREV_STATION,
-	IR_KEY_NEXT_STATION,
-	IR_KEY_EQ,	
-	IR_KEY_EQ_INDOOR,
-	IR_KEY_EQ_OUTDOOR,
-	IR_KEY_NET_SET,
+	
 	IR_KEY_NUM
 	
 } IR_KEY;
@@ -29592,19 +29709,6 @@ uint8_t Ircordpro(void);
 
  
 
-
-
-typedef enum _KEY_EVENT
-{
-	IN_KEY_NONE = 0x00,
-	IN_KEY_POWER_SP = 0xf0,
-	IN_KEY_POWER_CP,	
-	IN_KEY_POWER_CPR,	
-	IN_KEY_PAIR_SP,
-	IN_KEY_PAIR_CP,
-	IN_KEY_PAIR_CPR
-	
-} KEY_EVENT;
 
 
 
@@ -29748,23 +29852,23 @@ void Drv_audio_channel_switch(void);
 void srv_key_mode_handler(void)
 {
 
-switch(Global_datas.g_mode_status)
+switch(Global_datas.state)
 {
-	case AUX_MODE:
+	case SYS_PLAY_STATE_AUX:
 
-		if(Global_datas.subboard_online) 
+		if(Global_datas.SubBoard.subboard_online) 
 		{
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x18,0x00); 
 			
-			Global_datas.g_mode_status = FM_MODE;
+			Global_datas.state = SYS_PLAY_STATE_FM;
 			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);
+			Cmd_Send2FourG(0x03 ,0x18,0x00);
 			drv_audio_FM_Channel(); 
 		}
 		else
 		{
-			Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
 			
-			Global_datas.g_mode_status = WIFI_MODE;
+			Cmd_Send2FourG(0x03 ,0x15,0x00);
+			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
 			drv_audio_4G_Channel(); 
 		}
@@ -29772,91 +29876,166 @@ switch(Global_datas.g_mode_status)
 
 	break;
 	
-	case WIFI_MODE:
-	case WIFI_CONNECTED_MODE:
-	case WIFI_CONNECTING_MODE:
-	case FOURG_MODE:
-	case FOURG_CONNECTED_MODE:
+
+	case SYS_PLAY_STATE_MW_RADIO:
 		
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03,0x16,0x00); 
-		
-		Global_datas.g_mode_status = BT_MODE;
-		drv_Cmd_Send2NCU031(0x70, 0x10,0x00);
+		Cmd_Send2FourG(0x03 ,0x16,0x00);
+		Global_datas.state = SYS_PLAY_STATE_BT;
 		drv_audio_4G_Channel();   
 		
 	break;
 	
-	case BT_MODE:
-	case BT_CONNECTED_MODE:
+	case SYS_PLAY_STATE_BT:
 
 
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); 
-		
-		Global_datas.g_mode_status = AUX_MODE;
+		Cmd_Send2FourG(0x03 ,0x17,0x00);
+		Global_datas.state = SYS_PLAY_STATE_AUX;
 		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
 		drv_audio_AuxIn_Channel(); 
 		
 	break;
 	
-	case FM_MODE:
+	case SYS_PLAY_STATE_FM:
 		
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x15,0x00); 
-		
-		Global_datas.g_mode_status = WIFI_MODE;
+		Cmd_Send2FourG(0x03 ,0x15,0x00);
+		Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
 		drv_audio_4G_Channel(); 
 	break;
 	
 	default:
-		Core_Msg_Send(MSG_MCU1_SYS_STATE_IND, 0x03 ,0x17,0x00); 
-		
-		drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
-		Global_datas.g_mode_status = AUX_MODE;
-		drv_audio_AuxIn_Channel(); 
 	break;
+    }
 }
 
 
+void srv_key_mode_switch_to(uint8_t mode)
+{
+	if(Global_datas.state == mode)
+	{
+		return;
+	}
+
+	if(Global_datas.state == SYS_PLAY_STATE_AUX)
+	{
+		switch(mode)
+		{
+			case SYS_PLAY_STATE_BT:
+				
+			Cmd_Send2FourG(0x03 ,0x16,0x00);
+			Global_datas.state = SYS_PLAY_STATE_BT;
+			drv_audio_4G_Channel();   
+
+			break;
+			
+			case SYS_PLAY_STATE_MW_RADIO:
+				
+			Cmd_Send2FourG(0x03 ,0x15,0x00);
+			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+			drv_audio_4G_Channel(); 
+
+			break;		
+
+			case SYS_PLAY_STATE_FM:
+
+			break;	
+
+			default:break;
+		}
+	}
+
+	else if(Global_datas.state == SYS_PLAY_STATE_BT)
+	{
+		switch(mode)
+		{
+			case SYS_PLAY_STATE_AUX:
+				
+			Cmd_Send2FourG(0x03 ,0x17,0x00);
+			Global_datas.state = SYS_PLAY_STATE_AUX;
+			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
+			drv_audio_AuxIn_Channel();
+
+			break;
+			
+			case SYS_PLAY_STATE_MW_RADIO:
+				
+			Cmd_Send2FourG(0x03 ,0x15,0x00);
+			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+			drv_audio_4G_Channel(); 
+
+			break;		
+
+			case SYS_PLAY_STATE_FM:
+
+			break;	
+
+			default:break;
+		}
+	}
+
+	else if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+	{
+		switch(mode)
+		{
+			case SYS_PLAY_STATE_AUX:
+				
+			Cmd_Send2FourG(0x03 ,0x17,0x00);
+			Global_datas.state = SYS_PLAY_STATE_AUX;
+			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
+			drv_audio_AuxIn_Channel();
+
+			break;
+			
+			case SYS_PLAY_STATE_BT:
+				
+			Cmd_Send2FourG(0x03 ,0x16,0x00);
+			Global_datas.state = SYS_PLAY_STATE_BT;
+			drv_audio_4G_Channel();   
 
 
+			break;		
+
+			case SYS_PLAY_STATE_FM:
+
+			break;	
+
+			default:break;
+		}
+	}
+	else if(Global_datas.state == SYS_PLAY_STATE_FM)
+	{
+		switch(mode)
+		{
+			case SYS_PLAY_STATE_AUX:
+				
+			Cmd_Send2FourG(0x03 ,0x17,0x00);
+			Global_datas.state = SYS_PLAY_STATE_AUX;
+			drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
+			drv_audio_AuxIn_Channel();
+
+			break;
+			
+			case SYS_PLAY_STATE_BT:
+				
+			Cmd_Send2FourG(0x03 ,0x16,0x00);
+			Global_datas.state = SYS_PLAY_STATE_BT;
+			drv_audio_4G_Channel();   
 
 
+			break;		
 
+			case SYS_PLAY_STATE_MW_RADIO:
 
+			break;	
 
+			default:break;
+		}
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 }
+
 
 void srv_key_volume_up_handler(void)
 {
@@ -30026,11 +30205,11 @@ void srv_key_handler(void)
 		break;
 
 		
-		case IR_KEY_NET_SET:
+		
 			
-			Global_datas.key_led_blink = 1;
-			srv_key_net_config_handler();
-		break;
+		
+		
+		
 		
 		default:
 		break;

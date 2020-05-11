@@ -23,6 +23,19 @@ volatile uint32_t g_u324GRhead  = 0;
 volatile uint32_t g_u324GRtail  = 0;
 volatile int32_t g_u324GbWait         = TRUE;
 
+void Cmd_Send2FourG_ModeSwitch(void)
+{
+	//switch(Global_datas.state)
+	{
+	
+		//case SYS_PLAY_STATE_MW_RADIO: 	Cmd_Send2FourG(0x03, 0x15,0);break;
+		//case SYS_PLAY_STATE_BT:  	Cmd_Send2FourG(0x03, 0x16,0);break;
+		//case SYS_PLAY_STATE_AUX: 	Cmd_Send2FourG(0x03, 0x17,0);break;
+		//case SYS_PLAY_STATE_FM: 	Cmd_Send2FourG(0x03, 0x18,0);break;
+		//default:break;
+	}
+}
+
 
 void Cmd_Send2FourG(uint8_t cmd, uint8_t param0, uint8_t param1)
 {

@@ -29339,6 +29339,8 @@ void drv_FourGmodel_power_key_SetHi(void);
 void drv_pairing_cmd_send(void);
 void drv_wifi_4g_switch_cmd_send(void);
 void Drv_4GMoudle_PowerUp(uint8_t onoff);
+void Cmd_Send2FourG_ModeSwitch(void);
+
 
 #line 12 "..\\src\\driver\\drv_4G_model.c"
 
@@ -29354,6 +29356,19 @@ volatile uint32_t g_u324GRbytes = 0;
 volatile uint32_t g_u324GRhead  = 0;
 volatile uint32_t g_u324GRtail  = 0;
 volatile int32_t g_u324GbWait         = 1;
+
+void Cmd_Send2FourG_ModeSwitch(void)
+{
+	
+	{
+	
+		
+		
+		
+		
+		
+	}
+}
 
 
 void Cmd_Send2FourG(uint8_t cmd, uint8_t param0, uint8_t param1)
