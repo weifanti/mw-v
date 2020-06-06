@@ -29407,8 +29407,11 @@ void TYM_sys_PowerManger_init(void);
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
 void TYM_SysPower12V_3V3_onoff(uint8_t on);
-void TYM_power_battery_charge_enable(void);
-void TYM_power_battery_charge_disenable(void);
+void battery_charge_enable(void);
+void battery_charge_disenable(void);
+void DcInDetect(void);
+void BatteryChargeStateChcek(void);
+void Bat_SelectPin_0_external_1_internal(uint8_t value); 
 
 
 
@@ -29421,6 +29424,10 @@ void TYM_power_battery_charge_disenable(void);
 
 
  
+
+
+
+
 
 
 
@@ -29461,12 +29468,12 @@ typedef enum
 
 typedef enum
 {
-	POWER_ON_MODE,
-	WIFI_MODE, 
-	WIFI_CONNECTED_MODE,
-	WIFI_CONNECTING_MODE,
-	FOURG_MODE,
-	FOURG_CONNECTED_MODE,
+		POWER_ON_MODE,
+		WIFI_MODE, 
+		WIFI_CONNECTED_MODE,
+		WIFI_CONNECTING_MODE,
+		FOURG_MODE,
+		FOURG_CONNECTED_MODE,
     BT_MODE,
     BT_CONNECTED_MODE,
     AUX_MODE,
@@ -29485,6 +29492,7 @@ typedef enum
 	SYS_PLAY_STATE_NONE = 0,
 	SYS_PLAY_STATE_IDLE, 
 	SYS_PLAY_STATE_POWERUP,
+	SYS_PLAY_STATE_REBOOT,
 	SYS_PLAY_STATE_SHUTTING_DOWN,
 	SYS_PLAY_STATE_MW_RADIO,
 	SYS_PLAY_STATE_BT,
@@ -29504,6 +29512,8 @@ typedef enum
 	SYS_PLAY_EVENT_VOL_UP,
 	SYS_PLAY_EVENT_VOL_DOWN,
 	
+	SYS_PLAY_EVENT_DEFAULT_VOLUME_SET,
+	
 	SYS_PLAY_EVENT_NEXT_SONG,
 	SYS_PLAY_EVENT_PREV_SONG,	
 	SYS_PLAY_EVENT_PLAY_PAUSE,	
@@ -29520,6 +29530,18 @@ typedef enum
 	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
 	SYS_PLAY_EVENT_SW_TO_BT_MODE,
 	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+
+	SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE,
+	SYS_PLAY_EVENT_REBOOT_4G_MOUDLE,
+
+	SYS_PLAY_EVENT_AUTO_SEARCH,
+	SYS_PLAY_EVENT_BT_PAIRING,
+	SYS_PLAY_EVENT_FM_SEEK_UP,
+	SYS_PLAY_EVENT_FM_SEEK_DOWN,
+	SYS_PLAY_EVENT_FM_PREV_STEP,
+	SYS_PLAY_EVENT_FM_NEXT_STEP,
+	SYS_PLAY_EVENT_FM_NEXT_STATION,
+	SYS_PLAY_EVENT_FM_PREV_STATION,
 
 	SYS_PLAY_EVENT_NUM,
 
@@ -29557,6 +29579,34 @@ typedef enum
 
 } PLAY_MODE;
 
+typedef enum
+{
+    BAT_LEVEL_5_PERCENT      = 0,  
+    BAT_LEVEL_10_PERCENT,
+    BAT_LEVEL_20_PERCENT,
+    BAT_LEVEL_30_PERCENT,
+    BAT_LEVEL_40_PERCENT,
+    BAT_LEVEL_50_PERCENT,
+    BAT_LEVEL_60_PERCENT,
+    BAT_LEVEL_70_PERCENT,
+    BAT_LEVEL_80_PERCENT,
+    BAT_LEVEL_90_PERCENT,
+    BAT_LEVEL_100_PERCENT,    
+
+} BATTERY_LEVEL;
+
+
+typedef enum
+{
+    CHARGE_STATE_NONE      = 0,  
+    CHARGE_STATE_ON,
+    CHARGE_STATE_COMPLETE,
+    CHARGE_STATE_NG,
+ 
+} CHARGE_STATE;
+
+
+
 
 
 
@@ -29584,13 +29634,17 @@ typedef enum _KEY_EVENT
 	IN_KEY_PLAY_S,
 	IN_KEY_NEXT_SONG_S,
 	IN_KEY_PREV_SONG_S,
-	IN_KEY_FM_NEXT_S,
-	IN_KEY_FM_PREV_S,
+	IN_KEY_FM_NEXT_FREQ_S,
+	IN_KEY_FM_PREV_FREQ_S,
 	IN_KEY_AUTO_SEARCH_S,
 	IN_KEY_RADIO_PREV_S,
 	IN_KEY_RADIO_NEXT_S,
 	IN_KEY_RADIO_NET_SWITCH_S,
 	IN_KEY_RADIO_NET_PARIING_S,
+
+	IN_KEY_TURNOFF_4G_MOUDLE,
+	IN_KEY_REBOOT_4G_MOUDLE,
+	IN_KEY_DEFAULT_VOLUME_SET,
 	
 
 	IR_KEY_POWER,
@@ -29627,7 +29681,52 @@ typedef struct _PowerStatus
 	uint8_t PowerAcStatus;
 	uint8_t bat_status;
 	uint8_t bat_value;  
+	uint8_t BatValue;
+	uint8_t NTC_value;
+	
 }sPowerStatus;
+
+
+typedef enum
+{
+    FM_STATE_OFF      = 0,
+    FM_STATE_ON,
+    FM_STATE_SEEK_UP,
+    FM_STATE_SEEK_DOWN,
+    FM_STATE_AUTO_SEARCH,
+} FM_STATE;
+
+
+typedef struct _POWER_STATE
+{
+
+	uint32_t battery_data;
+	uint32_t ntc_data;
+	BATTERY_LEVEL battery_level;
+	CHARGE_STATE charge_state;
+	uint8_t NTC_level;
+	uint8_t AdapterIn;
+	uint8_t battery_low;
+	uint8_t charge_power_good_pin; 
+	
+}POWER_STATE;
+
+
+
+
+typedef struct _Fm_Data
+{
+	uint32_t Frequency;
+	uint8_t  FmError;
+	uint8_t  FmNeedToStore;
+	uint32_t station_table[15];
+	uint8_t station_num;
+	uint8_t index_station;
+	uint8_t current_station;
+	FM_STATE fmstate;
+}Fm_Data;
+
+
 
 typedef struct _SubBoardStatus
 {
@@ -29647,6 +29746,7 @@ typedef struct
 	sPowerStatus g_PowerStatus;
 	uint8_t g_mode_status;
 	uint8_t g_4g_initing;
+	uint8_t power_4g;
 	uint32_t systick;
 	uint8_t key_led_blink;
 	uint8_t shoutting_down;
@@ -29656,14 +29756,18 @@ typedef struct
 	uint8_t mute;			 
 	uint8_t volume_resume;   
 	uint8_t inputmessage;
+	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
 	SubBoardStatus SubBoard;
+	Fm_Data FmData;
+	POWER_STATE PowerState;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
 
 
 

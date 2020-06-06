@@ -12,7 +12,7 @@
 ;;;25     
 ;;;26     	switch(Global_datas.g_mode_status)
 000002  480a              LDR      r0,|L1.44|
-000004  7941              LDRB     r1,[r0,#5]  ; Global_datas
+000004  79c1              LDRB     r1,[r0,#7]  ; Global_datas
 ;;;27     		{
 ;;;28     			case AUX_MODE:
 ;;;29     				audio_channel = AUXIN_CHANNEL;

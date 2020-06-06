@@ -41,6 +41,26 @@ void srv_led_status_show(void)
 		else
 			led_on_off = 1;
 	}
+
+
+	if(Global_datas.state == SYS_PLAY_STATE_AUX) 
+	{	
+	//	printf("AUX:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
+		drv_aux_led_on(1);
+		goto charge_confirm;
+	}
+	else if(Global_datas.state == SYS_PLAY_STATE_FM)
+	{
+	//	printf("FM:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
+		drv_fm_led_on(1);
+		goto charge_confirm;
+	}
+	else if(Global_datas.state == SYS_PLAY_STATE_IDLE)
+	{
+		drv_all_led_on(0);
+		goto charge_confirm;
+		
+ 	}
 	
 	if((Global_datas.g_mode_status == WIFI_CONNECTED_MODE) || (Global_datas.g_mode_status == WIFI_MODE) || (Global_datas.g_mode_status == WIFI_CONNECTING_MODE))
 	{	
@@ -60,21 +80,8 @@ void srv_led_status_show(void)
 		drv_bt_led_on(led_on_off);
 		goto charge_confirm;
 	}
-	if(Global_datas.g_mode_status == AUX_MODE || Global_datas.g_mode_status == LOUD_SPEAKER_MODE) 
-	{	
-	//	printf("AUX:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-		drv_aux_led_on(1);
-		goto charge_confirm;
-	}
-	if(Global_datas.g_mode_status == FM_MODE)
-	{
-	//	printf("FM:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-		drv_fm_led_on(1);
-		goto charge_confirm;
-	}
-	if(Global_datas.g_mode_status == POWER_OFF_MODE)
-	//	printf("FM:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-		drv_all_led_on(0);
+
+
 charge_confirm:	
  	return;
 }

@@ -26,14 +26,17 @@ void TYM_gpio_init(void)
 
 	SYS->GPA_MFPH = 0x00000000;
 	SYS->GPA_MFPL = 0x00000000;
-	SYS->GPB_MFPH = SYS_GPB_MFPH_PB15MFP_ADC0_CH12;
-	SYS->GPB_MFPL = SYS_GPB_MFPL_PB3MFP_USCI0_DAT1 | SYS_GPB_MFPL_PB2MFP_USCI0_DAT0 | SYS_GPB_MFPL_PB7MFP_ADC0_CH15;
-	SYS->GPC_MFPH = SYS_GPC_MFPH_PC10MFP_I2C1_SDA | SYS_GPC_MFPH_PC9MFP_I2C1_SCL;
+	SYS->GPB_MFPH |= SYS_GPB_MFPH_PB15MFP_ADC0_CH12;
+	SYS->GPB_MFPL |= SYS_GPB_MFPL_PB3MFP_USCI0_DAT1 | SYS_GPB_MFPL_PB2MFP_USCI0_DAT0 ;  // USIC0 PB2_tx, PB3_rx   to sub board
+		
+	SYS->GPC_MFPH = SYS_GPC_MFPH_PC10MFP_I2C1_SDA | SYS_GPC_MFPH_PC9MFP_I2C1_SCL;  //I2C_1  pcm1862
 	SYS->GPC_MFPL = 0x00000000;
-	SYS->GPD_MFPH = SYS_GPD_MFPH_PD9MFP_UART0_RXD;
+	SYS->GPD_MFPH = SYS_GPD_MFPH_PD9MFP_UART0_RXD;  // UART_0  debug
 	SYS->GPD_MFPL = SYS_GPD_MFPL_PD1MFP_UART0_TXD;
-	SYS->GPE_MFPH = SYS_GPE_MFPH_PE13MFP_I2C0_SDA | SYS_GPE_MFPH_PE12MFP_I2C0_SCL | SYS_GPE_MFPH_PE9MFP_UART1_RXD | SYS_GPE_MFPH_PE8MFP_UART1_TXD;
+	SYS->GPE_MFPH = SYS_GPE_MFPH_PE13MFP_I2C0_SDA | SYS_GPE_MFPH_PE12MFP_I2C0_SCL | SYS_GPE_MFPH_PE9MFP_UART1_RXD | SYS_GPE_MFPH_PE8MFP_UART1_TXD; //I2C_0: TSA5825 UART1:4G
+	
 	SYS->GPE_MFPL = SYS_GPE_MFPL_PE7MFP_ICE_DAT | SYS_GPE_MFPL_PE6MFP_ICE_CLK;
+	//SYS->GPE_MFPL = SYS_GPE_MFPL_PE7MFP_GPIO | SYS_GPE_MFPL_PE6MFP_GPIO;
 	
 	return;
 }
@@ -109,6 +112,8 @@ void TYM_gpio_adc_get(uint32_t adc_channel)
 /*---------------------------------------------------------------------------------------------------------*/
 /* ADC interrupt handler                                                                                   */
 /*---------------------------------------------------------------------------------------------------------*/
+
+/*
 void ADC_IRQHandler(void)
 {
     
@@ -122,6 +127,6 @@ void ADC_IRQHandler(void)
 	i32ConversionData = ADC_GET_CONVERSION_DATA(ADC, 15);
 	printf("Conversion result of channel 15: 0x%X \n",  i32ConversionData);
     //ADC_CLR_INT_FLAG(ADC, u32Flag);
-}
+}*/
 
 

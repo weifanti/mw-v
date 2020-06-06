@@ -29473,6 +29473,15 @@ void I2C0_IRQHandler(void);
 
 
 
+
+
+
+
+
+
+
+
+
 void drv_pcm1862_input_channel(uint8_t pcm_channel);
 
 
@@ -29689,10 +29698,13 @@ void drv_Adc_pcm1862_Init(void)
 {
 	 
 	printf("Adc_pcm1862_Init\n");
+
+	
+	I2S_select_pin_dac();
+	
 	
 
 
     drv_PM1862_reg_Load();
-	drv_audio_4G_Channel(); 
 }
 

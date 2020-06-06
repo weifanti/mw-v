@@ -17,6 +17,27 @@
 
 
 
+void I2S_select_pin_init(void)
+{
+	
+	GPIO_SetMode(PB, BIT9, GPIO_MODE_OUTPUT); // SN74LVC157 control pin  0->4G wifi; 1-> adc channel
+	PB9 = 1;
+}
+
+void I2S_select_pin_4GMoudle(void)
+{
+	GPIO_SetMode(PB, BIT9, GPIO_MODE_OUTPUT);
+	PB9 = 0;
+}
+
+void I2S_select_pin_dac(void)
+{
+	GPIO_SetMode(PB, BIT9, GPIO_MODE_OUTPUT);
+	PB9 = 1;
+}
+
+
+
 /**
  * Drv_Dap_init
  * @brief      load Dap data part
@@ -27,6 +48,7 @@
 void Drv_Dap_init(void)
 {
 
+    I2S_select_pin_init();
     drv_5825_mute_pin_init();
 	
 	drv_dap_3251_Init();
@@ -34,6 +56,8 @@ void Drv_Dap_init(void)
 	drv_5825_Init();
 	
 	drv_5825_mute_pin_set(1);  // unmute
+
+	TIMER_Delay(TIMER0,50000);
 }
 
 
@@ -68,13 +92,17 @@ void drv_audio_AuxIn_Channel(void)
 
 	drv_pcm1862_PGA_VAL_SET(AUX_PCM1862_GAIN);
 	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(1));
+	I2S_select_pin_dac();
 
 }
 
 void drv_audio_4G_Channel(void)
 {
-	drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
-	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3));
+	//drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
+	//drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(3));
+
+	I2S_select_pin_4GMoudle();
+	//I2S_select_pin_dac();
 
 }
 
@@ -82,6 +110,9 @@ void drv_audio_FM_Channel(void)
 {
 	drv_pcm1862_PGA_VAL_SET(FM_PCM1862_GAIN);
 	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(2));
+	I2S_select_pin_dac();
+
+	
 
 }
 
@@ -89,6 +120,8 @@ void drv_audio_Null_Channel(void) // channel 4 no use
 {
 	drv_pcm1862_PGA_VAL_SET(BT_WIFI_PCM1862_GAIN);
 	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(4));
+	
+	I2S_select_pin_dac();
 
 }
 
@@ -124,17 +157,18 @@ void drv_Audio_Switch(int var)
 
 void Drv_audio_init(void)
 {
-  	drv_audio_Null_Channel();
 	drv_5825_powerdown_pin_init(); // 5825 powerdown pin set hi befor i2s is ready
 	drv_Adc_pcm1862_Init();
+  	drv_audio_Null_Channel();
+	
 	TIMER_Delay(TIMER0,5);
 	Drv_Dap_init();
 
-	if(Global_datas.g_mode_status == FM_MODE)
+	if(Global_datas.state == SYS_PLAY_STATE_FM)
 	{
 		drv_audio_FM_Channel();
 	}
-	else if(Global_datas.g_mode_status == AUX_MODE)
+	else if(Global_datas.state == SYS_PLAY_STATE_AUX)
 	{
 		drv_audio_AuxIn_Channel();
 	}

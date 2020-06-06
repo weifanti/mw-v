@@ -66824,6 +66824,10 @@ N
 N#define TICK_COUNT              (50)   /* 1 second */
 N#define TICK_IN_MS              (1000/TICK_COUNT)
 N
+N#define FM_MAX_STATION_NUM			15
+N#define FM_DELAY_TIME				10
+N
+N
 N#define GPIO_HIGH  1
 N#define GPIO_LOW   0
 N
@@ -66851,12 +66855,12 @@ N} eFourG_Msg;
 N
 Ntypedef enum
 N{
-N	POWER_ON_MODE,
-N	WIFI_MODE, 
-N	WIFI_CONNECTED_MODE,
-N	WIFI_CONNECTING_MODE,
-N	FOURG_MODE,
-N	FOURG_CONNECTED_MODE,
+N		POWER_ON_MODE,
+N		WIFI_MODE, 
+N		WIFI_CONNECTED_MODE,
+N		WIFI_CONNECTING_MODE,
+N		FOURG_MODE,
+N		FOURG_CONNECTED_MODE,
 N    BT_MODE,
 N    BT_CONNECTED_MODE,
 N    AUX_MODE,
@@ -66875,6 +66879,7 @@ N{
 N	SYS_PLAY_STATE_NONE = 0,
 N	SYS_PLAY_STATE_IDLE, 
 N	SYS_PLAY_STATE_POWERUP,
+N	SYS_PLAY_STATE_REBOOT,
 N	SYS_PLAY_STATE_SHUTTING_DOWN,
 N	SYS_PLAY_STATE_MW_RADIO,
 N	SYS_PLAY_STATE_BT,
@@ -66894,6 +66899,8 @@ N	SYS_PLAY_EVENT_MODE_SWITCH,
 N	SYS_PLAY_EVENT_VOL_UP,
 N	SYS_PLAY_EVENT_VOL_DOWN,
 N	
+N	SYS_PLAY_EVENT_DEFAULT_VOLUME_SET,
+N	
 N	SYS_PLAY_EVENT_NEXT_SONG,
 N	SYS_PLAY_EVENT_PREV_SONG,	
 N	SYS_PLAY_EVENT_PLAY_PAUSE,	
@@ -66910,6 +66917,18 @@ N	SYS_PLAY_EVENT_SW_TO_FM_MODE,
 N	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
 N	SYS_PLAY_EVENT_SW_TO_BT_MODE,
 N	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+N
+N	SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE,
+N	SYS_PLAY_EVENT_REBOOT_4G_MOUDLE,
+N
+N	SYS_PLAY_EVENT_AUTO_SEARCH,
+N	SYS_PLAY_EVENT_BT_PAIRING,
+N	SYS_PLAY_EVENT_FM_SEEK_UP,
+N	SYS_PLAY_EVENT_FM_SEEK_DOWN,
+N	SYS_PLAY_EVENT_FM_PREV_STEP,
+N	SYS_PLAY_EVENT_FM_NEXT_STEP,
+N	SYS_PLAY_EVENT_FM_NEXT_STATION,
+N	SYS_PLAY_EVENT_FM_PREV_STATION,
 N
 N	SYS_PLAY_EVENT_NUM,
 N
@@ -66947,6 +66966,34 @@ N    PLAY_MODE_AUX
 N
 N} PLAY_MODE;
 N
+Ntypedef enum
+N{
+N    BAT_LEVEL_5_PERCENT      = 0,  // 5%
+N    BAT_LEVEL_10_PERCENT,
+N    BAT_LEVEL_20_PERCENT,
+N    BAT_LEVEL_30_PERCENT,
+N    BAT_LEVEL_40_PERCENT,
+N    BAT_LEVEL_50_PERCENT,
+N    BAT_LEVEL_60_PERCENT,
+N    BAT_LEVEL_70_PERCENT,
+N    BAT_LEVEL_80_PERCENT,
+N    BAT_LEVEL_90_PERCENT,
+N    BAT_LEVEL_100_PERCENT,    
+N
+N} BATTERY_LEVEL;
+N
+N
+Ntypedef enum
+N{
+N    CHARGE_STATE_NONE      = 0,  //
+N    CHARGE_STATE_ON,
+N    CHARGE_STATE_COMPLETE,
+N    CHARGE_STATE_NG,
+N 
+N} CHARGE_STATE;
+N
+N
+N
 N
 N
 N//
@@ -66974,13 +67021,17 @@ N	IN_KEY_EQ_NORNAL_S,
 N	IN_KEY_PLAY_S,
 N	IN_KEY_NEXT_SONG_S,
 N	IN_KEY_PREV_SONG_S,
-N	IN_KEY_FM_NEXT_S,
-N	IN_KEY_FM_PREV_S,
+N	IN_KEY_FM_NEXT_FREQ_S,
+N	IN_KEY_FM_PREV_FREQ_S,
 N	IN_KEY_AUTO_SEARCH_S,
 N	IN_KEY_RADIO_PREV_S,
 N	IN_KEY_RADIO_NEXT_S,
 N	IN_KEY_RADIO_NET_SWITCH_S,
 N	IN_KEY_RADIO_NET_PARIING_S,
+N
+N	IN_KEY_TURNOFF_4G_MOUDLE,
+N	IN_KEY_REBOOT_4G_MOUDLE,
+N	IN_KEY_DEFAULT_VOLUME_SET,
 N	
 N
 N	IR_KEY_POWER,
@@ -67017,7 +67068,53 @@ N	uint8_t PowerBatExStatus;
 N	uint8_t PowerAcStatus;
 N	uint8_t bat_status;
 N	uint8_t bat_value;  //0-3 in bat , 4-7 ex bat
+N	uint8_t BatValue;
+N	uint8_t NTC_value;
+N	
 N}sPowerStatus;
+N
+N
+Ntypedef enum
+N{
+N    FM_STATE_OFF      = 0,
+N    FM_STATE_ON,
+N    FM_STATE_SEEK_UP,
+N    FM_STATE_SEEK_DOWN,
+N    FM_STATE_AUTO_SEARCH,
+N} FM_STATE;
+N
+N
+Ntypedef struct _POWER_STATE
+N{
+N
+N	uint32_t battery_data;
+N	uint32_t ntc_data;
+N	BATTERY_LEVEL battery_level;
+N	CHARGE_STATE charge_state;
+N	uint8_t NTC_level;
+N	uint8_t AdapterIn;
+N	uint8_t battery_low;
+N	uint8_t charge_power_good_pin; // 1 barrery ok, 0 barrery error
+N	
+N}POWER_STATE;
+N
+N
+N
+N
+Ntypedef struct _Fm_Data
+N{
+N	uint32_t Frequency;
+N	uint8_t  FmError;
+N	uint8_t  FmNeedToStore;
+N	uint32_t station_table[FM_MAX_STATION_NUM];
+X	uint32_t station_table[15];
+N	uint8_t station_num;
+N	uint8_t index_station;
+N	uint8_t current_station;
+N	FM_STATE fmstate;
+N}Fm_Data;
+N
+N
 N
 Ntypedef struct _SubBoardStatus
 N{
@@ -67038,6 +67135,7 @@ X	int16_t ADC_ChannelValue[16];
 N	sPowerStatus g_PowerStatus;
 N	uint8_t g_mode_status;
 N	uint8_t g_4g_initing;
+N	uint8_t power_4g;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
@@ -67047,18 +67145,22 @@ N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;			 // sys mute flag
 N	uint8_t volume_resume;   
 N	uint8_t inputmessage;
+N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
 N	SubBoardStatus SubBoard;
+N	Fm_Data FmData;
+N	POWER_STATE PowerState;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
+N
 N
 N
 N#endif
@@ -67322,23 +67424,7 @@ N *
 N */
 Nvoid drv_5825_vol_set(uint8_t value)
 N{
-N	/*
-N	//tas5852_default_volume = tas5852_default_volume - 0x01;//1 = 0.25db
-N	
-N	tas5825_volume0c[1] = value/2;
-N	tas5825_volume0c[2] = (value%2)<<7;
-N	tas5825_volume10[1] = value/2;
-N	tas5825_volume10[2] = (value%2)<<7;
-N	printf("tas5825_volume10 %x,%x\n",tas5825_volume0c[1],tas5825_volume0c[2]);
-N	drv_5825_00_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
-N	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume0c, sizeof(tas5825_volume0c), (uint8_t*)NULL, 0);
-N	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume10, sizeof(tas5825_volume10), (uint8_t*)NULL, 0);
-N	drv_5825_01_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
-N	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume0c, sizeof(tas5825_volume0c), (uint8_t*)NULL, 0);
-N	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume10, sizeof(tas5825_volume10), (uint8_t*)NULL, 0);
-N	*/
 N
-N    
 N	if(value >16)  return;
 N	//tas5852_default_volume = tas5852_default_volume - 0x01;//1 = 0.25db
 N	
@@ -67369,14 +67455,6 @@ Nvoid drv_5825_vol_mute(uint8_t value)
 N{
 N}
 N
-Nvoid drv_Dap_Load_in_Param(void)
-N{
-N
-N    drv_5825_Load_in_Param(); 
-N	PC8 = 1;
-X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((8)<<2)))) = 1;
-N}
-N
 N
 Nvoid drv_5825_mute_pin_set(uint8_t value)  // MUTE 0, UN MUTE 1
 N{
@@ -67384,6 +67462,7 @@ N	if(value)
 N		PD10 = 1;
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(3))) + ((10)<<2)))) = 1;
 N	else
+N		//PD10 = 0;
 N		PD10 = 0;
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(3))) + ((10)<<2)))) = 0;
 N}

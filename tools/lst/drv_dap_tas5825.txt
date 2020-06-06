@@ -175,121 +175,90 @@
                           AREA ||i.drv_5825_Init||, CODE, READONLY, ALIGN=2
 
                   drv_5825_Init PROC
-;;;400     */
-;;;401    void drv_5825_Init(void)
-000000  b510              PUSH     {r4,lr}
-;;;402    {
-;;;403    
-;;;404        // io control config
-;;;405    	drv_5825_amp_fault_det_init();
+;;;378     */
+;;;379    void drv_5825_Init(void)
+000000  b570              PUSH     {r4-r6,lr}
+;;;380    {
+;;;381    
+;;;382        // io control config
+;;;383    	drv_5825_amp_fault_det_init();
 000002  f7fffffe          BL       drv_5825_amp_fault_det_init
-;;;406        drv_5825_amp_warn_det_init();
+;;;384        drv_5825_amp_warn_det_init();
 000006  f7fffffe          BL       drv_5825_amp_warn_det_init
-;;;407    
-;;;408    	printf("drv_5825_Init***********\n");
-00000a  a006              ADR      r0,|L3.36|
+;;;385    
+;;;386    	printf("drv_5825_Init***********\n");
+00000a  a014              ADR      r0,|L3.92|
 00000c  f7fffffe          BL       __2printf
-;;;409    
-;;;410    	
-;;;411    //  drv_5825_powerdown_pin_set(0);
-;;;412    //	TIMER_Delay(TIMER0,50000);
-;;;413    //    drv_5825_powerdown_pin_set(1);
-;;;414    //	TIMER_Delay(TIMER0,30000);
-;;;415    	
-;;;416        drv_5825_Load_in_Param(); 
-000010  f7fffffe          BL       drv_5825_Load_in_Param
-;;;417    	drv_5825_vol_set(Global_datas.volume);
-000014  480a              LDR      r0,|L3.64|
-000016  7bc0              LDRB     r0,[r0,#0xf]  ; Global_datas
-000018  f7fffffe          BL       drv_5825_vol_set
-;;;418    	
-;;;419    	drv_5825_gpio012_config();
-00001c  f7fffffe          BL       drv_5825_gpio012_config
-;;;420    }
-000020  bd10              POP      {r4,pc}
-;;;421    
+000010  4c19              LDR      r4,|L3.120|
+000012  7ca0              LDRB     r0,[r4,#0x12]  ; Global_datas
+000014  2801              CMP      r0,#1
+000016  d002              BEQ      |L3.30|
+000018  2802              CMP      r0,#2
+00001a  d00c              BEQ      |L3.54|
+00001c  e017              B        |L3.78|
+                  |L3.30|
+00001e  f7fffffe          BL       drv_5825_gpio012_config
+000022  4d16              LDR      r5,|L3.124|
+000024  4816              LDR      r0,|L3.128|
+000026  4629              MOV      r1,r5
+000028  f7fffffe          BL       drv_5825_01_i2c_write
+00002c  4629              MOV      r1,r5
+00002e  4815              LDR      r0,|L3.132|
+000030  f7fffffe          BL       drv_5825_00_i2c_write
+000034  e00b              B        |L3.78|
+                  |L3.54|
+000036  4d11              LDR      r5,|L3.124|
+000038  4813              LDR      r0,|L3.136|
+00003a  3d36              SUBS     r5,r5,#0x36
+00003c  4629              MOV      r1,r5
+00003e  f7fffffe          BL       drv_5825_00_i2c_write
+000042  f7fffffe          BL       drv_5825_gpio012_config
+000046  4629              MOV      r1,r5
+000048  4810              LDR      r0,|L3.140|
+00004a  f7fffffe          BL       drv_5825_01_i2c_write
+                  |L3.78|
+;;;387    
+;;;388    	
+;;;389    //  drv_5825_powerdown_pin_set(0);
+;;;390    //	TIMER_Delay(TIMER0,50000);
+;;;391    //    drv_5825_powerdown_pin_set(1);
+;;;392    //	TIMER_Delay(TIMER0,30000);
+;;;393    	
+;;;394        drv_5825_Load_in_Param(); 
+;;;395    	drv_5825_vol_set(Global_datas.volume);
+00004e  7ce0              LDRB     r0,[r4,#0x13]  ; Global_datas
+000050  f7fffffe          BL       drv_5825_vol_set
+;;;396    	
+;;;397    	drv_5825_gpio012_config();
+000054  f7fffffe          BL       drv_5825_gpio012_config
+;;;398    }
+000058  bd70              POP      {r4-r6,pc}
+;;;399    
                           ENDP
 
-000022  0000              DCW      0x0000
-                  |L3.36|
-000024  6472765f          DCB      "drv_5825_Init***********\n",0
-000028  35383235
-00002c  5f496e69
-000030  742a2a2a
-000034  2a2a2a2a
-000038  2a2a2a2a
-00003c  0a00    
-00003e  00                DCB      0
-00003f  00                DCB      0
-                  |L3.64|
+00005a  0000              DCW      0x0000
+                  |L3.92|
+00005c  6472765f          DCB      "drv_5825_Init***********\n",0
+000060  35383235
+000064  5f496e69
+000068  742a2a2a
+00006c  2a2a2a2a
+000070  2a2a2a2a
+000074  0a00    
+000076  00                DCB      0
+000077  00                DCB      0
+                  |L3.120|
                           DCD      Global_datas+0x20
-
-                          AREA ||i.drv_5825_Load_in_Param||, CODE, READONLY, ALIGN=2
-
-                  drv_5825_Load_in_Param PROC
-;;;210     */
-;;;211    static void drv_5825_Load_in_Param(void)
-000000  b510              PUSH     {r4,lr}
-;;;212    {
-;;;213    	if(Global_datas.eq_mode == EQ_MODE_INDOOR)
-000002  480f              LDR      r0,|L4.64|
-000004  7b80              LDRB     r0,[r0,#0xe]  ; Global_datas
-000006  2801              CMP      r0,#1
-000008  d00d              BEQ      |L4.38|
-;;;214    	{
-;;;215    		
-;;;216    		drv_5825_gpio012_config();
-;;;217    		drv_5825_01_i2c_write(registers_tw_indoor,sizeof(registers_tw_indoor)/2);
-;;;218    		drv_5825_00_i2c_write(registers_mid_indoor,sizeof(registers_mid_indoor)/2); 	
-;;;219    	}
-;;;220    	else if(Global_datas.eq_mode == EQ_MODE_OUTDOOR)
-00000a  2802              CMP      r0,#2
-00000c  d10a              BNE      |L4.36|
-;;;221    	{
-;;;222    		drv_5825_00_i2c_write(registers_mid_outdoor,sizeof(registers_mid_outdoor)/2);
-00000e  4c0d              LDR      r4,|L4.68|
-000010  480d              LDR      r0,|L4.72|
-000012  4621              MOV      r1,r4
-000014  f7fffffe          BL       drv_5825_00_i2c_write
-;;;223    		
-;;;224    		drv_5825_gpio012_config();
-000018  f7fffffe          BL       drv_5825_gpio012_config
-;;;225    		
-;;;226    		drv_5825_01_i2c_write(registers_tw_outdoor,sizeof(registers_tw_outdoor)/2);
-00001c  4621              MOV      r1,r4
-00001e  480b              LDR      r0,|L4.76|
-000020  f7fffffe          BL       drv_5825_01_i2c_write
-                  |L4.36|
-;;;227    	}
-;;;228    
-;;;229    }
-000024  bd10              POP      {r4,pc}
-                  |L4.38|
-000026  f7fffffe          BL       drv_5825_gpio012_config
-00002a  4c06              LDR      r4,|L4.68|
-00002c  4808              LDR      r0,|L4.80|
-00002e  3436              ADDS     r4,r4,#0x36           ;217
-000030  4621              MOV      r1,r4                 ;217
-000032  f7fffffe          BL       drv_5825_01_i2c_write
-000036  4621              MOV      r1,r4                 ;218
-000038  4806              LDR      r0,|L4.84|
-00003a  f7fffffe          BL       drv_5825_00_i2c_write
-00003e  bd10              POP      {r4,pc}
-;;;230    
-                          ENDP
-
-                  |L4.64|
-                          DCD      Global_datas+0x20
-                  |L4.68|
-                          DCD      0x00000f2b
-                  |L4.72|
-                          DCD      ||.constdata||+0x1edc
-                  |L4.76|
-                          DCD      ||.constdata||+0x5bf4
-                  |L4.80|
+                  |L3.124|
+                          DCD      0x00000f61
+                  |L3.128|
                           DCD      ||.constdata||+0x3d32
-                  |L4.84|
+                  |L3.132|
                           DCD      ||.constdata||+0x1a
+                  |L3.136|
+                          DCD      ||.constdata||+0x1edc
+                  |L3.140|
+                          DCD      ||.constdata||+0x5bf4
 
                           AREA ||i.drv_5825_Load_vol_add||, CODE, READONLY, ALIGN=1
 
@@ -319,286 +288,287 @@
                           AREA ||i.drv_5825_amp_fault_det_init||, CODE, READONLY, ALIGN=2
 
                   drv_5825_amp_fault_det_init PROC
-;;;353    
-;;;354    void drv_5825_amp_fault_det_init(void)
+;;;331    
+;;;332    void drv_5825_amp_fault_det_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;355    {
-;;;356    	GPIO_SetMode(PF, BIT2, GPIO_MODE_INPUT);	
+;;;333    {
+;;;334    	GPIO_SetMode(PF, BIT2, GPIO_MODE_INPUT);	
 000002  2200              MOVS     r2,#0
 000004  2104              MOVS     r1,#4
-000006  4802              LDR      r0,|L7.16|
+000006  4802              LDR      r0,|L6.16|
 000008  f7fffffe          BL       GPIO_SetMode
-;;;357    
-;;;358    }
+;;;335    
+;;;336    }
 00000c  bd10              POP      {r4,pc}
-;;;359    
+;;;337    
                           ENDP
 
 00000e  0000              DCW      0x0000
-                  |L7.16|
+                  |L6.16|
                           DCD      0x50004140
 
                           AREA ||i.drv_5825_amp_warn_det_init||, CODE, READONLY, ALIGN=2
 
                   drv_5825_amp_warn_det_init PROC
-;;;359    
-;;;360    void drv_5825_amp_warn_det_init(void)
+;;;337    
+;;;338    void drv_5825_amp_warn_det_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;361    {
-;;;362    	
-;;;363    	GPIO_SetMode(PD, BIT11, GPIO_MODE_INPUT);	
+;;;339    {
+;;;340    	
+;;;341    	GPIO_SetMode(PD, BIT11, GPIO_MODE_INPUT);	
 000002  2101              MOVS     r1,#1
 000004  2200              MOVS     r2,#0
 000006  02c9              LSLS     r1,r1,#11
-000008  4801              LDR      r0,|L8.16|
+000008  4801              LDR      r0,|L7.16|
 00000a  f7fffffe          BL       GPIO_SetMode
-;;;364    }
+;;;342    }
 00000e  bd10              POP      {r4,pc}
-;;;365    
+;;;343    
                           ENDP
 
-                  |L8.16|
+                  |L7.16|
                           DCD      0x500040c0
 
                           AREA ||i.drv_5825_gpio012_config||, CODE, READONLY, ALIGN=2
 
                   drv_5825_gpio012_config PROC
-;;;365    
-;;;366    void drv_5825_gpio012_config(void)
+;;;343    
+;;;344    void drv_5825_gpio012_config(void)
 000000  b538              PUSH     {r3-r5,lr}
-;;;367    {
-;;;368    
-;;;369    	drv_5825_00_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
+;;;345    {
+;;;346    
+;;;347    	drv_5825_00_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
 000002  2102              MOVS     r1,#2
-000004  4824              LDR      r0,|L9.152|
+000004  4824              LDR      r0,|L8.152|
 000006  f7fffffe          BL       drv_5825_00_i2c_write
-;;;370    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)reg_60, 2, (uint8_t*)NULL, 0);
+;;;348    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)reg_60, 2, (uint8_t*)NULL, 0);
 00000a  2400              MOVS     r4,#0
-00000c  4922              LDR      r1,|L9.152|
+00000c  4922              LDR      r1,|L8.152|
 00000e  4623              MOV      r3,r4
 000010  2202              MOVS     r2,#2
 000012  3908              SUBS     r1,r1,#8
 000014  2098              MOVS     r0,#0x98
 000016  9400              STR      r4,[sp,#0]
 000018  f7fffffe          BL       Hal_I2c_Transfer
-;;;371    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)reg_61, 2, (uint8_t*)NULL, 0);
-00001c  491e              LDR      r1,|L9.152|
+;;;349    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)reg_61, 2, (uint8_t*)NULL, 0);
+00001c  491e              LDR      r1,|L8.152|
 00001e  2300              MOVS     r3,#0
 000020  2202              MOVS     r2,#2
 000022  1f89              SUBS     r1,r1,#6
 000024  2098              MOVS     r0,#0x98
 000026  9400              STR      r4,[sp,#0]
 000028  f7fffffe          BL       Hal_I2c_Transfer
-;;;372    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)reg_63, 2, (uint8_t*)NULL, 0);
-00002c  491a              LDR      r1,|L9.152|
+;;;350    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)reg_63, 2, (uint8_t*)NULL, 0);
+00002c  491a              LDR      r1,|L8.152|
 00002e  2300              MOVS     r3,#0
 000030  2202              MOVS     r2,#2
 000032  1f09              SUBS     r1,r1,#4
 000034  2098              MOVS     r0,#0x98
 000036  9400              STR      r4,[sp,#0]
 000038  f7fffffe          BL       Hal_I2c_Transfer
-;;;373    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)reg_64, 2, (uint8_t*)NULL, 0);
-00003c  4916              LDR      r1,|L9.152|
+;;;351    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)reg_64, 2, (uint8_t*)NULL, 0);
+00003c  4916              LDR      r1,|L8.152|
 00003e  2300              MOVS     r3,#0
 000040  2202              MOVS     r2,#2
 000042  1e89              SUBS     r1,r1,#2
 000044  2098              MOVS     r0,#0x98
 000046  9400              STR      r4,[sp,#0]
 000048  f7fffffe          BL       Hal_I2c_Transfer
-;;;374    
-;;;375    	drv_5825_01_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
+;;;352    
+;;;353    	drv_5825_01_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
 00004c  2102              MOVS     r1,#2
-00004e  4812              LDR      r0,|L9.152|
+00004e  4812              LDR      r0,|L8.152|
 000050  f7fffffe          BL       drv_5825_01_i2c_write
-;;;376    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)reg_60, 2, (uint8_t*)NULL, 0);
-000054  4910              LDR      r1,|L9.152|
+;;;354    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)reg_60, 2, (uint8_t*)NULL, 0);
+000054  4910              LDR      r1,|L8.152|
 000056  2300              MOVS     r3,#0
 000058  2202              MOVS     r2,#2
 00005a  3908              SUBS     r1,r1,#8
 00005c  209a              MOVS     r0,#0x9a
 00005e  9400              STR      r4,[sp,#0]
 000060  f7fffffe          BL       Hal_I2c_Transfer
-;;;377    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)reg_61, 2, (uint8_t*)NULL, 0);
-000064  490c              LDR      r1,|L9.152|
+;;;355    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)reg_61, 2, (uint8_t*)NULL, 0);
+000064  490c              LDR      r1,|L8.152|
 000066  2300              MOVS     r3,#0
 000068  2202              MOVS     r2,#2
 00006a  1f89              SUBS     r1,r1,#6
 00006c  209a              MOVS     r0,#0x9a
 00006e  9400              STR      r4,[sp,#0]
 000070  f7fffffe          BL       Hal_I2c_Transfer
-;;;378    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)reg_63, 2, (uint8_t*)NULL, 0);
-000074  4908              LDR      r1,|L9.152|
+;;;356    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)reg_63, 2, (uint8_t*)NULL, 0);
+000074  4908              LDR      r1,|L8.152|
 000076  2300              MOVS     r3,#0
 000078  2202              MOVS     r2,#2
 00007a  1f09              SUBS     r1,r1,#4
 00007c  209a              MOVS     r0,#0x9a
 00007e  9400              STR      r4,[sp,#0]
 000080  f7fffffe          BL       Hal_I2c_Transfer
-;;;379    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)reg_64, 2, (uint8_t*)NULL, 0);
-000084  4904              LDR      r1,|L9.152|
+;;;357    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)reg_64, 2, (uint8_t*)NULL, 0);
+000084  4904              LDR      r1,|L8.152|
 000086  2300              MOVS     r3,#0
 000088  2202              MOVS     r2,#2
 00008a  1e89              SUBS     r1,r1,#2
 00008c  209a              MOVS     r0,#0x9a
 00008e  9400              STR      r4,[sp,#0]
 000090  f7fffffe          BL       Hal_I2c_Transfer
-;;;380    
-;;;381    
-;;;382    }
+;;;358    
+;;;359    
+;;;360    }
 000094  bd38              POP      {r3-r5,pc}
-;;;383    
+;;;361    
                           ENDP
 
 000096  0000              DCW      0x0000
-                  |L9.152|
+                  |L8.152|
                           DCD      ||.constdata||+0x8
 
                           AREA ||i.drv_5825_gpio012_config_a||, CODE, READONLY, ALIGN=2
 
                   drv_5825_gpio012_config_a PROC
-;;;384    
-;;;385    void drv_5825_gpio012_config_a(void)
+;;;362    
+;;;363    void drv_5825_gpio012_config_a(void)
 000000  b508              PUSH     {r3,lr}
-;;;386    {
-;;;387    
-;;;388    	drv_5825_00_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
+;;;364    {
+;;;365    
+;;;366    	drv_5825_00_i2c_write(tas5825_book0_page0,sizeof(tas5825_book0_page0)/2);
 000002  2102              MOVS     r1,#2
-000004  4806              LDR      r0,|L10.32|
+000004  4806              LDR      r0,|L9.32|
 000006  f7fffffe          BL       drv_5825_00_i2c_write
-;;;389    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_gpio_012_confgi, sizeof(tas5825_gpio_012_confgi)/2, (uint8_t*)NULL, 0);
+;;;367    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_gpio_012_confgi, sizeof(tas5825_gpio_012_confgi)/2, (uint8_t*)NULL, 0);
 00000a  2000              MOVS     r0,#0
-00000c  4904              LDR      r1,|L10.32|
+00000c  4904              LDR      r1,|L9.32|
 00000e  4603              MOV      r3,r0
 000010  9000              STR      r0,[sp,#0]
 000012  2204              MOVS     r2,#4
 000014  310a              ADDS     r1,r1,#0xa
 000016  2098              MOVS     r0,#0x98
 000018  f7fffffe          BL       Hal_I2c_Transfer
-;;;390    }
+;;;368    }
 00001c  bd08              POP      {r3,pc}
-;;;391    
+;;;369    
                           ENDP
 
 00001e  0000              DCW      0x0000
-                  |L10.32|
+                  |L9.32|
                           DCD      ||.constdata||+0x8
 
                           AREA ||i.drv_5825_mute_pin_init||, CODE, READONLY, ALIGN=2
 
                   drv_5825_mute_pin_init PROC
-;;;347    
-;;;348    void drv_5825_mute_pin_init(void)
+;;;325    
+;;;326    void drv_5825_mute_pin_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;349    {
-;;;350    	GPIO_SetMode(PD, BIT10, GPIO_MODE_OUTPUT);	
+;;;327    {
+;;;328    	GPIO_SetMode(PD, BIT10, GPIO_MODE_OUTPUT);	
 000002  2201              MOVS     r2,#1
 000004  0291              LSLS     r1,r2,#10
-000006  4803              LDR      r0,|L11.20|
+000006  4803              LDR      r0,|L10.20|
 000008  f7fffffe          BL       GPIO_SetMode
-;;;351    	drv_5825_mute_pin_set(0);  // mute
+;;;329    	drv_5825_mute_pin_set(0);  // mute
 00000c  2000              MOVS     r0,#0
 00000e  f7fffffe          BL       drv_5825_mute_pin_set
-;;;352    }
+;;;330    }
 000012  bd10              POP      {r4,pc}
-;;;353    
+;;;331    
                           ENDP
 
-                  |L11.20|
+                  |L10.20|
                           DCD      0x500040c0
 
                           AREA ||i.drv_5825_mute_pin_set||, CODE, READONLY, ALIGN=2
 
                   drv_5825_mute_pin_set PROC
-;;;313    
-;;;314    void drv_5825_mute_pin_set(uint8_t value)  // MUTE 0, UN MUTE 1
-000000  4902              LDR      r1,|L12.12|
-;;;315    {
-;;;316    	if(value)
+;;;290    
+;;;291    void drv_5825_mute_pin_set(uint8_t value)  // MUTE 0, UN MUTE 1
+000000  4902              LDR      r1,|L11.12|
+;;;292    {
+;;;293    	if(value)
 000002  2800              CMP      r0,#0
-000004  d000              BEQ      |L12.8|
-;;;317    		PD10 = 1;
+000004  d000              BEQ      |L11.8|
+;;;294    		PD10 = 1;
 000006  2001              MOVS     r0,#1
-                  |L12.8|
+                  |L11.8|
 000008  6288              STR      r0,[r1,#0x28]
-;;;318    	else
-;;;319    		PD10 = 0;
-;;;320    }
+;;;295    	else
+;;;296    		//PD10 = 0;
+;;;297    		PD10 = 0;
+;;;298    }
 00000a  4770              BX       lr
-;;;321    
+;;;299    
                           ENDP
 
-                  |L12.12|
+                  |L11.12|
                           DCD      0x500042c0
 
                           AREA ||i.drv_5825_powerdown_pin_init||, CODE, READONLY, ALIGN=1
 
                   drv_5825_powerdown_pin_init PROC
-;;;338    
-;;;339    void drv_5825_powerdown_pin_init(void)
+;;;316    
+;;;317    void drv_5825_powerdown_pin_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;340    {
-;;;341    	//drv_5825_powerdown_pin_set(0);// set low
-;;;342    	//TIMER_Delay(TIMER0, 100000); //delay 100ms
-;;;343    	drv_5825_powerdown_pin_set(1); // set hi
+;;;318    {
+;;;319    	//drv_5825_powerdown_pin_set(0);// set low
+;;;320    	//TIMER_Delay(TIMER0, 100000); //delay 100ms
+;;;321    	drv_5825_powerdown_pin_set(1); // set hi
 000002  2001              MOVS     r0,#1
 000004  f7fffffe          BL       drv_5825_powerdown_pin_set
-;;;344    }
+;;;322    }
 000008  bd10              POP      {r4,pc}
-;;;345    
+;;;323    
                           ENDP
 
 
                           AREA ||i.drv_5825_powerdown_pin_set||, CODE, READONLY, ALIGN=2
 
                   drv_5825_powerdown_pin_set PROC
-;;;323    
-;;;324    void drv_5825_powerdown_pin_set(uint8_t val)
+;;;301    
+;;;302    void drv_5825_powerdown_pin_set(uint8_t val)
 000000  b510              PUSH     {r4,lr}
-;;;325    {
+;;;303    {
 000002  4604              MOV      r4,r0
-;;;326    	
-;;;327    	GPIO_SetMode(PD, BIT12, GPIO_MODE_OUTPUT);	
+;;;304    	
+;;;305    	GPIO_SetMode(PD, BIT12, GPIO_MODE_OUTPUT);	
 000004  2201              MOVS     r2,#1
 000006  0311              LSLS     r1,r2,#12
-000008  4805              LDR      r0,|L14.32|
+000008  4805              LDR      r0,|L13.32|
 00000a  f7fffffe          BL       GPIO_SetMode
-;;;328    	if(val)
-;;;329    	{
-;;;330    		PD12 = 1; //5825 on
-00000e  4805              LDR      r0,|L14.36|
-000010  2c00              CMP      r4,#0                 ;328
-000012  d001              BEQ      |L14.24|
+;;;306    	if(val)
+;;;307    	{
+;;;308    		PD12 = 1; //5825 on
+00000e  4805              LDR      r0,|L13.36|
+000010  2c00              CMP      r4,#0                 ;306
+000012  d001              BEQ      |L13.24|
 000014  2101              MOVS     r1,#1
-000016  e000              B        |L14.26|
-                  |L14.24|
-;;;331    	}
-;;;332    	else
-;;;333    	{
-;;;334    		PD12 = 0; // POWER DOWN
+000016  e000              B        |L13.26|
+                  |L13.24|
+;;;309    	}
+;;;310    	else
+;;;311    	{
+;;;312    		PD12 = 0; // POWER DOWN
 000018  2100              MOVS     r1,#0
-                  |L14.26|
-00001a  6301              STR      r1,[r0,#0x30]         ;330
-;;;335    	}
-;;;336    }
+                  |L13.26|
+00001a  6301              STR      r1,[r0,#0x30]         ;308
+;;;313    	}
+;;;314    }
 00001c  bd10              POP      {r4,pc}
-;;;337    
+;;;315    
                           ENDP
 
 00001e  0000              DCW      0x0000
-                  |L14.32|
+                  |L13.32|
                           DCD      0x500040c0
-                  |L14.36|
+                  |L13.36|
                           DCD      0x500042c0
 
                           AREA ||i.drv_5825_vol_mute||, CODE, READONLY, ALIGN=1
 
                   drv_5825_vol_mute PROC
-;;;301     */
-;;;302    void drv_5825_vol_mute(uint8_t value)
+;;;285     */
+;;;286    void drv_5825_vol_mute(uint8_t value)
 000000  4770              BX       lr
-;;;303    {
-;;;304    }
-;;;305    
+;;;287    {
+;;;288    }
+;;;289    
                           ENDP
 
 
@@ -610,37 +580,21 @@
 000000  b5f8              PUSH     {r3-r7,lr}
 ;;;262    {
 000002  4604              MOV      r4,r0
-;;;263    	/*
-;;;264    	//tas5852_default_volume = tas5852_default_volume - 0x01;//1 = 0.25db
-;;;265    	
-;;;266    	tas5825_volume0c[1] = value/2;
-;;;267    	tas5825_volume0c[2] = (value%2)<<7;
-;;;268    	tas5825_volume10[1] = value/2;
-;;;269    	tas5825_volume10[2] = (value%2)<<7;
-;;;270    	printf("tas5825_volume10 %x,%x\n",tas5825_volume0c[1],tas5825_volume0c[2]);
-;;;271    	drv_5825_00_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
-;;;272    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume0c, sizeof(tas5825_volume0c), (uint8_t*)NULL, 0);
-;;;273    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume10, sizeof(tas5825_volume10), (uint8_t*)NULL, 0);
-;;;274    	drv_5825_01_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
-;;;275    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume0c, sizeof(tas5825_volume0c), (uint8_t*)NULL, 0);
-;;;276    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume10, sizeof(tas5825_volume10), (uint8_t*)NULL, 0);
-;;;277    	*/
-;;;278    
-;;;279        
-;;;280    	if(value >16)  return;
+;;;263    
+;;;264    	if(value >16)  return;
 000004  2810              CMP      r0,#0x10
-000006  d82b              BHI      |L16.96|
-;;;281    	//tas5852_default_volume = tas5852_default_volume - 0x01;//1 = 0.25db
-;;;282    	
-;;;283    	//printf("tas5825_volume10 %x,%x\n",tas5825_volume0c[1],tas5825_volume0c[2]);
-;;;284    	drv_5825_00_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
+000006  d82b              BHI      |L15.96|
+;;;265    	//tas5852_default_volume = tas5852_default_volume - 0x01;//1 = 0.25db
+;;;266    	
+;;;267    	//printf("tas5825_volume10 %x,%x\n",tas5825_volume0c[1],tas5825_volume0c[2]);
+;;;268    	drv_5825_00_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
 000008  2103              MOVS     r1,#3
-00000a  4816              LDR      r0,|L16.100|
+00000a  4816              LDR      r0,|L15.100|
 00000c  f7fffffe          BL       drv_5825_00_i2c_write
-;;;285    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume0c[value], 5, (uint8_t*)NULL, 0);
+;;;269    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume0c[value], 5, (uint8_t*)NULL, 0);
 000010  00a0              LSLS     r0,r4,#2
 000012  1824              ADDS     r4,r4,r0
-000014  4814              LDR      r0,|L16.104|
+000014  4814              LDR      r0,|L15.104|
 000016  2500              MOVS     r5,#0
 000018  1821              ADDS     r1,r4,r0
 00001a  460e              MOV      r6,r1
@@ -649,8 +603,8 @@
 000020  2098              MOVS     r0,#0x98
 000022  9500              STR      r5,[sp,#0]
 000024  f7fffffe          BL       Hal_I2c_Transfer
-;;;286    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume10[value], 5, (uint8_t*)NULL, 0);
-000028  480f              LDR      r0,|L16.104|
+;;;270    	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume10[value], 5, (uint8_t*)NULL, 0);
+000028  480f              LDR      r0,|L15.104|
 00002a  2300              MOVS     r3,#0
 00002c  3055              ADDS     r0,r0,#0x55
 00002e  1821              ADDS     r1,r4,r0
@@ -659,61 +613,38 @@
 000034  2098              MOVS     r0,#0x98
 000036  9500              STR      r5,[sp,#0]
 000038  f7fffffe          BL       Hal_I2c_Transfer
-;;;287    	drv_5825_01_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
+;;;271    	drv_5825_01_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
 00003c  2103              MOVS     r1,#3
-00003e  4809              LDR      r0,|L16.100|
+00003e  4809              LDR      r0,|L15.100|
 000040  f7fffffe          BL       drv_5825_01_i2c_write
-;;;288    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume0c[value], 5, (uint8_t*)NULL, 0);
+;;;272    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume0c[value], 5, (uint8_t*)NULL, 0);
 000044  4631              MOV      r1,r6
 000046  2300              MOVS     r3,#0
 000048  2205              MOVS     r2,#5
 00004a  209a              MOVS     r0,#0x9a
 00004c  9500              STR      r5,[sp,#0]
 00004e  f7fffffe          BL       Hal_I2c_Transfer
-;;;289    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume10[value], 5, (uint8_t*)NULL, 0);
+;;;273    	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume10[value], 5, (uint8_t*)NULL, 0);
 000052  4621              MOV      r1,r4
 000054  2300              MOVS     r3,#0
 000056  2205              MOVS     r2,#5
 000058  209a              MOVS     r0,#0x9a
 00005a  9500              STR      r5,[sp,#0]
 00005c  f7fffffe          BL       Hal_I2c_Transfer
-                  |L16.96|
-;;;290    	
-;;;291    
-;;;292    	
-;;;293    }
+                  |L15.96|
+;;;274    	
+;;;275    
+;;;276    	
+;;;277    }
 000060  bdf8              POP      {r3-r7,pc}
-;;;294    
+;;;278    
                           ENDP
 
 000062  0000              DCW      0x0000
-                  |L16.100|
+                  |L15.100|
                           DCD      ||.constdata||+0xc
-                  |L16.104|
-                          DCD      ||area_number.22||
-
-                          AREA ||i.drv_Dap_Load_in_Param||, CODE, READONLY, ALIGN=2
-
-                  drv_Dap_Load_in_Param PROC
-;;;305    
-;;;306    void drv_Dap_Load_in_Param(void)
-000000  b510              PUSH     {r4,lr}
-;;;307    {
-;;;308    
-;;;309        drv_5825_Load_in_Param(); 
-000002  f7fffffe          BL       drv_5825_Load_in_Param
-;;;310    	PC8 = 1;
-000006  4902              LDR      r1,|L17.16|
-000008  2001              MOVS     r0,#1
-00000a  6208              STR      r0,[r1,#0x20]
-;;;311    }
-00000c  bd10              POP      {r4,pc}
-;;;312    
-                          ENDP
-
-00000e  0000              DCW      0x0000
-                  |L17.16|
-                          DCD      0x50004280
+                  |L15.104|
+                          DCD      ||area_number.20||
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=0
 
@@ -8566,9 +8497,9 @@
                   tas5852_default_volume
 000000  0030              DCW      0x0030
 
-                          AREA ||area_number.22||, DATA, ALIGN=0
+                          AREA ||area_number.20||, DATA, ALIGN=0
 
-                          EXPORTAS ||area_number.22||, ||.data||
+                          EXPORTAS ||area_number.20||, ||.data||
                   tas5825_volume0c
 000000  0c000020          DCB      0x0c,0x00,0x00,0x20
 000004  c50c0000          DCB      0xc5,0x0c,0x00,0x00

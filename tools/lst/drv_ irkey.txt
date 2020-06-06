@@ -153,9 +153,9 @@
 000036  790b              LDRB     r3,[r1,#4]            ;54  ; key_value_bak
 000038  6904              LDR      r4,[r0,#0x10]         ;58
 00003a  1c60              ADDS     r0,r4,#1              ;58
-00003c  2b25              CMP      r3,#0x25              ;54
+00003c  2b28              CMP      r3,#0x28              ;54
 00003e  d008              BEQ      |L2.82|
-000040  2b1a              CMP      r3,#0x1a              ;54
+000040  2b1d              CMP      r3,#0x1d              ;54
 000042  d006              BEQ      |L2.82|
 000044  6108              STR      r0,[r1,#0x10]         ;68  ; repeat_time
 000046  280a              CMP      r0,#0xa               ;68
@@ -217,14 +217,14 @@
 ;;;196    	uint8_t ir_key_hold = 0;
 ;;;197    
 ;;;198    	if(ir_data_rx_ok)
-000002  4d1d              LDR      r5,|L3.120|
+000002  4d1e              LDR      r5,|L3.124|
 000004  2400              MOVS     r4,#0                 ;196
 000006  78a8              LDRB     r0,[r5,#2]  ; ir_data_rx_ok
 000008  2800              CMP      r0,#0
 00000a  d012              BEQ      |L3.50|
 ;;;199    	{
 ;;;200    		printf("ir_data_rx_ok = 1\n");
-00000c  a01b              ADR      r0,|L3.124|
+00000c  a01c              ADR      r0,|L3.128|
 00000e  f7fffffe          BL       __2printf
 ;;;201    		ir_key_value = Ircordpro();
 000012  f7fffffe          BL       Ircordpro
@@ -232,20 +232,20 @@
 000016  2100              MOVS     r1,#0
 000018  70a9              STRB     r1,[r5,#2]
 ;;;203    
-;;;204    
+;;;204            		
 ;;;205    		// shoutting down cann't respond any key. idle state only respond power key
 ;;;206    		if((((Global_datas.state == SYS_PLAY_STATE_IDLE) || (Global_datas.state == SYS_PLAY_STATE_POWERUP)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)) 
-00001a  491d              LDR      r1,|L3.144|
-00001c  7d09              LDRB     r1,[r1,#0x14]  ; Global_datas
+00001a  491e              LDR      r1,|L3.148|
+00001c  7e49              LDRB     r1,[r1,#0x19]  ; Global_datas
 00001e  2901              CMP      r1,#1
 000020  d001              BEQ      |L3.38|
 000022  2902              CMP      r1,#2
 000024  d101              BNE      |L3.42|
                   |L3.38|
-000026  281a              CMP      r0,#0x1a
+000026  281d              CMP      r0,#0x1d
 000028  d101              BNE      |L3.46|
                   |L3.42|
-00002a  2903              CMP      r1,#3
+00002a  2904              CMP      r1,#4
 00002c  d100              BNE      |L3.48|
                   |L3.46|
 ;;;207    		{
@@ -297,55 +297,67 @@
 000032  78e9              LDRB     r1,[r5,#3]            ;213  ; LongKeyPress
 000034  2900              CMP      r1,#0                 ;213
 000036  d0fa              BEQ      |L3.46|
-000038  a016              ADR      r0,|L3.148|
+000038  a017              ADR      r0,|L3.152|
 00003a  f7fffffe          BL       __2printf
 00003e  78e8              LDRB     r0,[r5,#3]            ;216  ; LongKeyPress
 000040  1e40              SUBS     r0,r0,#1              ;216
 000042  70e8              STRB     r0,[r5,#3]            ;216
 000044  7928              LDRB     r0,[r5,#4]            ;217  ; key_value_bak
-000046  381a              SUBS     r0,r0,#0x1a           ;217
-000048  0003              MOVS     r3,r0                 ;217
-00004a  f7fffffe          BL       __ARM_common_switch8
-00004e  0c09              DCB      0x0c,0x09
-000050  12120d12          DCB      0x12,0x12,0x0d,0x12
-000054  0b120f12          DCB      0x0b,0x12,0x0f,0x12
-000058  11120712          DCB      0x11,0x12,0x07,0x12
-00005c  2426              MOVS     r4,#0x26              ;220
-00005e  e008              B        |L3.114|
-000060  241b              MOVS     r4,#0x1b              ;224
-000062  e006              B        |L3.114|
-000064  2420              MOVS     r4,#0x20              ;227
-000066  e004              B        |L3.114|
-000068  241e              MOVS     r4,#0x1e              ;230
-00006a  e002              B        |L3.114|
-00006c  2422              MOVS     r4,#0x22              ;233
-00006e  e000              B        |L3.114|
-000070  2424              MOVS     r4,#0x24              ;236
+000046  2824              CMP      r0,#0x24              ;217
+000048  d013              BEQ      |L3.114|
+00004a  dc06              BGT      |L3.90|
+00004c  281d              CMP      r0,#0x1d              ;217
+00004e  d00a              BEQ      |L3.102|
+000050  2820              CMP      r0,#0x20              ;217
+000052  d00c              BEQ      |L3.110|
+000054  2822              CMP      r0,#0x22              ;217
+000056  d10f              BNE      |L3.120|
+000058  e007              B        |L3.106|
+                  |L3.90|
+00005a  2826              CMP      r0,#0x26              ;217
+00005c  d00b              BEQ      |L3.118|
+00005e  2828              CMP      r0,#0x28              ;217
+000060  d10a              BNE      |L3.120|
+000062  2429              MOVS     r4,#0x29              ;220
+000064  e008              B        |L3.120|
+                  |L3.102|
+000066  241e              MOVS     r4,#0x1e              ;224
+000068  e006              B        |L3.120|
+                  |L3.106|
+00006a  2423              MOVS     r4,#0x23              ;227
+00006c  e004              B        |L3.120|
+                  |L3.110|
+00006e  2421              MOVS     r4,#0x21              ;230
+000070  e002              B        |L3.120|
                   |L3.114|
-000072  4620              MOV      r0,r4                 ;243
-000074  bd70              POP      {r4-r6,pc}
+000072  2425              MOVS     r4,#0x25              ;233
+000074  e000              B        |L3.120|
+                  |L3.118|
+000076  2427              MOVS     r4,#0x27              ;236
+                  |L3.120|
+000078  4620              MOV      r0,r4                 ;243
+00007a  bd70              POP      {r4-r6,pc}
 ;;;249    
                           ENDP
 
-000076  0000              DCW      0x0000
-                  |L3.120|
-                          DCD      ||.data||
                   |L3.124|
-00007c  69725f64          DCB      "ir_data_rx_ok = 1\n",0
-000080  6174615f
-000084  72785f6f
-000088  6b203d20
-00008c  310a00  
-00008f  00                DCB      0
-                  |L3.144|
-                          DCD      Global_datas+0x20
+                          DCD      ||.data||
+                  |L3.128|
+000080  69725f64          DCB      "ir_data_rx_ok = 1\n",0
+000084  6174615f
+000088  72785f6f
+00008c  6b203d20
+000090  310a00  
+000093  00                DCB      0
                   |L3.148|
-000094  6c6f6e67          DCB      "longpress:%d\n",0
-000098  70726573
-00009c  733a2564
-0000a0  0a00    
-0000a2  00                DCB      0
-0000a3  00                DCB      0
+                          DCD      Global_datas+0x20
+                  |L3.152|
+000098  6c6f6e67          DCB      "longpress:%d\n",0
+00009c  70726573
+0000a0  733a2564
+0000a4  0a00    
+0000a6  00                DCB      0
+0000a7  00                DCB      0
 
                           AREA ||i.Ircordpro||, CODE, READONLY, ALIGN=2
 
@@ -556,45 +568,25 @@
                   repeat_time
                           DCD      0x00000000
                   IrKeyMap
-000014  1a201b1c          DCB      0x1a,0x20,0x1b,0x1c
-000018  24001d22          DCB      0x24,0x00,0x1d,0x22
-00001c  1e1f2120          DCB      0x1e,0x1f,0x21,0x20
-000020  23282425          DCB      0x23,0x28,0x24,0x25
-000024  27262126          DCB      0x27,0x26,0x21,0x26
-000028  22272300          DCB      0x22,0x27,0x23,0x00
-00002c  28250029          DCB      0x28,0x25,0x00,0x29
-000030  29002a2a          DCB      0x29,0x00,0x2a,0x2a
+000014  1d201e1f          DCB      0x1d,0x20,0x1e,0x1f
+000018  24002022          DCB      0x24,0x00,0x20,0x22
+00001c  21222123          DCB      0x21,0x22,0x21,0x23
+000020  26282728          DCB      0x26,0x28,0x27,0x28
+000024  27292426          DCB      0x27,0x29,0x24,0x26
+000028  252a2300          DCB      0x25,0x2a,0x23,0x00
+00002c  2b25002c          DCB      0x2b,0x25,0x00,0x2c
+000030  29002d2a          DCB      0x29,0x00,0x2d,0x2a
 000034  0000aa00          DCB      0x00,0x00,0xaa,0x00
                   IrKeyMap_B
-000038  1ad0001c          DCB      0x1a,0xd0,0x00,0x1c
-00003c  d4001dd2          DCB      0xd4,0x00,0x1d,0xd2
-000040  1e1fd120          DCB      0x1e,0x1f,0xd1,0x20
-000044  23d82425          DCB      0x23,0xd8,0x24,0x25
-000048  d72621d6          DCB      0xd7,0x26,0x21,0xd6
-00004c  2227d300          DCB      0x22,0x27,0xd3,0x00
-000050  28d50029          DCB      0x28,0xd5,0x00,0x29
-000054  d9002ada          DCB      0xd9,0x00,0x2a,0xda
+000038  1dd0001f          DCB      0x1d,0xd0,0x00,0x1f
+00003c  d40020d2          DCB      0xd4,0x00,0x20,0xd2
+000040  2122d123          DCB      0x21,0x22,0xd1,0x23
+000044  26d82728          DCB      0x26,0xd8,0x27,0x28
+000048  d72924d6          DCB      0xd7,0x29,0x24,0xd6
+00004c  252ad300          DCB      0x25,0x2a,0xd3,0x00
+000050  2bd5002c          DCB      0x2b,0xd5,0x00,0x2c
+000054  d9002dda          DCB      0xd9,0x00,0x2d,0xda
 000058  0000aa00          DCB      0x00,0x00,0xaa,0x00
-
-                          AREA ||i.__ARM_common_switch8||, COMGROUP=__ARM_common_switch8, CODE, READONLY, ALIGN=1
-
-                  __ARM_common_switch8 PROC
-000000  b430              PUSH     {r4,r5}
-000002  4674              MOV      r4,lr
-000004  1e64              SUBS     r4,r4,#1
-000006  7825              LDRB     r5,[r4,#0]
-000008  1c64              ADDS     r4,r4,#1
-00000a  42ab              CMP      r3,r5
-00000c  d200              BCS      |L35.16|
-00000e  461d              MOV      r5,r3
-                  |L35.16|
-000010  5d63              LDRB     r3,[r4,r5]
-000012  005b              LSLS     r3,r3,#1
-000014  18e3              ADDS     r3,r4,r3
-000016  bc30              POP      {r4,r5}
-000018  4718              BX       r3
-                          ENDP
-
 
 ;*** Start embedded assembler ***
 

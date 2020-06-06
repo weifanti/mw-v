@@ -28,7 +28,7 @@
 00001a  4815              LDR      r0,|L1.112|
 00001c  f7fffffe          BL       TIMER_Delay
 000020  4c14              LDR      r4,|L1.116|
-000022  7ba0              LDRB     r0,[r4,#0xe]  ; Global_datas
+000022  7ca0              LDRB     r0,[r4,#0x12]  ; Global_datas
 000024  2801              CMP      r0,#1
 000026  d002              BEQ      |L1.46|
 000028  2802              CMP      r0,#2
@@ -50,7 +50,7 @@
 ;;;269        /* the first part */
 ;;;270        drv_dap_3251_Load_in_Param(); 
 ;;;271    	drv_dap_3251_vol_set((Global_datas.volume));
-00003e  7be0              LDRB     r0,[r4,#0xf]  ; Global_datas
+00003e  7ce0              LDRB     r0,[r4,#0x13]  ; Global_datas
 000040  f7fffffe          BL       drv_dap_3251_vol_set
 ;;;272    }
 000044  bd10              POP      {r4,pc}

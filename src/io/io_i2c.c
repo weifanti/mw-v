@@ -49,13 +49,19 @@ void Hal_I2c_Init(void)
     I2C_Open(I2C0, I2C_FAST_BAUDRATE);
     NVIC_EnableIRQ(I2C0_IRQn);
     NVIC_SetPriority(I2C0_IRQn, 2UL);
+
+	
 	/*--I2C1--*/
+	
 	CLK_EnableModuleClock(I2C1_MODULE);
     SYS_ResetModule(I2C1_RST);
     I2C_EnableTimeout(I2C1, 1);
     I2C_Open(I2C1, I2C_BAUDRATE);
     NVIC_EnableIRQ(I2C1_IRQn);
     NVIC_SetPriority(I2C1_IRQn, 2UL);
+
+	// I2C3
+	FmIoConfig();
 
 }
 
@@ -75,6 +81,8 @@ static void Hal_I2c0_Stop(void)
     i2c_trans_data.is_in_trans = FALSE;
 }
 
+
+
 /**
  * i2c1 stop
  *
@@ -91,6 +99,7 @@ static void Hal_I2c1_Stop(void)
     i2c_trans_data.wait_cnt    = 0;
     i2c_trans_data.is_in_trans = FALSE;
 }
+
 
 /**
  *  I2C data transfer
@@ -149,6 +158,8 @@ void Hal_I2c_Transfer(uint8_t addr, uint8_t* tx_arr, uint32_t tx_len, uint8_t* r
 
 void Hal_I2c1_Transfer(uint8_t addr, uint8_t* tx_arr, uint32_t tx_len, uint8_t* rx_arr, uint32_t rx_len)
 {
+
+
     /* first check bus and wait */
     while(i2c_trans_data.is_in_trans)
     {
@@ -192,6 +203,8 @@ void Hal_I2c1_Transfer(uint8_t addr, uint8_t* tx_arr, uint32_t tx_len, uint8_t* 
     }
 	
 #endif
+
+
 }
 
 /**
@@ -377,6 +390,7 @@ void I2C0_IRQHandler(void)
             break;
     }
 }
+
 
 /**
  * @brief:       I2C INT callback
@@ -564,5 +578,6 @@ void I2C1_IRQHandler(void)
             break;
     }
 }
+
 
 

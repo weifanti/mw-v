@@ -37,31 +37,6 @@ void drv_Cmd_Send2NCU031(uint8_t cmd, uint8_t param0, uint8_t param1)
 }
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* FM reset control   
-*/
-/*---------------------------------------------------------------------------------------------------------*/
-void drv_FM_on_NCU031_reset(void)
-{
-	int i;
-
-	// FM reset
-	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT); //high en, low dis
-
-	PE11 = 1;
-	for(i = 0UL; i < 20000 ; ++i)
-	{
-	   __NOP();
-	}
-	PE11 = 0;
-	for(i = 0UL; i < 20000 ; ++i)
-	{
-	   __NOP();
-	}
-	PE11 = 1;
-}
-
-
 //Send current state to subboard
 void drv_SendAllstateToSubboard(void)
 {

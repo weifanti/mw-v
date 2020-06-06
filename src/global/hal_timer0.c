@@ -21,10 +21,15 @@
 //TIMER MicAdcCheckTimer;
 TIMER TestTimer;
 TIMER SysTimer_1s;
+TIMER SysTimer_50ms;
+
 TIMER ModulePowerUpPinTimer;
 TIMER LedKeyBlinkTimer;
 TIMER PoweroffLedTimer;
 TIMER ModeSwitchTimer;
+TIMER FmLoopTimer;
+TIMER FmStoreTimer;
+
 
 
 
@@ -132,6 +137,9 @@ void Hal_Timer1_Init(void)
 	TimeOutSet(&PoweroffLedTimer, 100);
 	TimeOutSet(&SubBoardHandshakeTimer, 100);
 	TimeOutSet(&ModeSwitchTimer, 100);
+	TimeOutSet(&FmLoopTimer, 100);
+	TimeOutSet(&FmStoreTimer, 100);
+	TimeOutSet(&SysTimer_50ms, 100);
 
 
 //	TimeOutSet(&KeyScanTimer, 10);

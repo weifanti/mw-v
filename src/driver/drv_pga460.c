@@ -830,7 +830,6 @@ void drv_pga460_in_room(void)
 	back_status = 1;
 	Cmd_Send2FourG(0x03, 0x03, 0x00);
 	Cmd_Send2FourG(0x03, 0x03, 0x00);
-	//drv_Dap_Load_in_Param();
 }
 
 void drv_pga460_out_room(void)
@@ -873,7 +872,6 @@ uint8_t drv_pga460_room_detect(void)
 		{
 			Cmd_Send2FourG(0x03, 0x03, 0x00);
 			Cmd_Send2FourG(0x03, 0x03, 0x00);
-			//drv_Dap_Load_in_Param();
 		}
 		else
 		{

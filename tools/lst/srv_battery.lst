@@ -50365,8 +50365,11 @@ N
 Nvoid drv_power_status_updata(void);
 Nvoid TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
 Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on);
-Nvoid TYM_power_battery_charge_enable(void);
-Nvoid TYM_power_battery_charge_disenable(void);
+Nvoid battery_charge_enable(void);
+Nvoid battery_charge_disenable(void);
+Nvoid DcInDetect(void);
+Nvoid BatteryChargeStateChcek(void);
+Nvoid Bat_SelectPin_0_external_1_internal(uint8_t value); // 0 external, 1 internal
 N
 N#endif
 N
@@ -50392,6 +50395,10 @@ N#endif
 N
 N#define TICK_COUNT              (50)   /* 1 second */
 N#define TICK_IN_MS              (1000/TICK_COUNT)
+N
+N#define FM_MAX_STATION_NUM			15
+N#define FM_DELAY_TIME				10
+N
 N
 N#define GPIO_HIGH  1
 N#define GPIO_LOW   0
@@ -50420,12 +50427,12 @@ N} eFourG_Msg;
 N
 Ntypedef enum
 N{
-N	POWER_ON_MODE,
-N	WIFI_MODE, 
-N	WIFI_CONNECTED_MODE,
-N	WIFI_CONNECTING_MODE,
-N	FOURG_MODE,
-N	FOURG_CONNECTED_MODE,
+N		POWER_ON_MODE,
+N		WIFI_MODE, 
+N		WIFI_CONNECTED_MODE,
+N		WIFI_CONNECTING_MODE,
+N		FOURG_MODE,
+N		FOURG_CONNECTED_MODE,
 N    BT_MODE,
 N    BT_CONNECTED_MODE,
 N    AUX_MODE,
@@ -50444,6 +50451,7 @@ N{
 N	SYS_PLAY_STATE_NONE = 0,
 N	SYS_PLAY_STATE_IDLE, 
 N	SYS_PLAY_STATE_POWERUP,
+N	SYS_PLAY_STATE_REBOOT,
 N	SYS_PLAY_STATE_SHUTTING_DOWN,
 N	SYS_PLAY_STATE_MW_RADIO,
 N	SYS_PLAY_STATE_BT,
@@ -50463,6 +50471,8 @@ N	SYS_PLAY_EVENT_MODE_SWITCH,
 N	SYS_PLAY_EVENT_VOL_UP,
 N	SYS_PLAY_EVENT_VOL_DOWN,
 N	
+N	SYS_PLAY_EVENT_DEFAULT_VOLUME_SET,
+N	
 N	SYS_PLAY_EVENT_NEXT_SONG,
 N	SYS_PLAY_EVENT_PREV_SONG,	
 N	SYS_PLAY_EVENT_PLAY_PAUSE,	
@@ -50479,6 +50489,18 @@ N	SYS_PLAY_EVENT_SW_TO_FM_MODE,
 N	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
 N	SYS_PLAY_EVENT_SW_TO_BT_MODE,
 N	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+N
+N	SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE,
+N	SYS_PLAY_EVENT_REBOOT_4G_MOUDLE,
+N
+N	SYS_PLAY_EVENT_AUTO_SEARCH,
+N	SYS_PLAY_EVENT_BT_PAIRING,
+N	SYS_PLAY_EVENT_FM_SEEK_UP,
+N	SYS_PLAY_EVENT_FM_SEEK_DOWN,
+N	SYS_PLAY_EVENT_FM_PREV_STEP,
+N	SYS_PLAY_EVENT_FM_NEXT_STEP,
+N	SYS_PLAY_EVENT_FM_NEXT_STATION,
+N	SYS_PLAY_EVENT_FM_PREV_STATION,
 N
 N	SYS_PLAY_EVENT_NUM,
 N
@@ -50516,6 +50538,34 @@ N    PLAY_MODE_AUX
 N
 N} PLAY_MODE;
 N
+Ntypedef enum
+N{
+N    BAT_LEVEL_5_PERCENT      = 0,  // 5%
+N    BAT_LEVEL_10_PERCENT,
+N    BAT_LEVEL_20_PERCENT,
+N    BAT_LEVEL_30_PERCENT,
+N    BAT_LEVEL_40_PERCENT,
+N    BAT_LEVEL_50_PERCENT,
+N    BAT_LEVEL_60_PERCENT,
+N    BAT_LEVEL_70_PERCENT,
+N    BAT_LEVEL_80_PERCENT,
+N    BAT_LEVEL_90_PERCENT,
+N    BAT_LEVEL_100_PERCENT,    
+N
+N} BATTERY_LEVEL;
+N
+N
+Ntypedef enum
+N{
+N    CHARGE_STATE_NONE      = 0,  //
+N    CHARGE_STATE_ON,
+N    CHARGE_STATE_COMPLETE,
+N    CHARGE_STATE_NG,
+N 
+N} CHARGE_STATE;
+N
+N
+N
 N
 N
 N//
@@ -50543,13 +50593,17 @@ N	IN_KEY_EQ_NORNAL_S,
 N	IN_KEY_PLAY_S,
 N	IN_KEY_NEXT_SONG_S,
 N	IN_KEY_PREV_SONG_S,
-N	IN_KEY_FM_NEXT_S,
-N	IN_KEY_FM_PREV_S,
+N	IN_KEY_FM_NEXT_FREQ_S,
+N	IN_KEY_FM_PREV_FREQ_S,
 N	IN_KEY_AUTO_SEARCH_S,
 N	IN_KEY_RADIO_PREV_S,
 N	IN_KEY_RADIO_NEXT_S,
 N	IN_KEY_RADIO_NET_SWITCH_S,
 N	IN_KEY_RADIO_NET_PARIING_S,
+N
+N	IN_KEY_TURNOFF_4G_MOUDLE,
+N	IN_KEY_REBOOT_4G_MOUDLE,
+N	IN_KEY_DEFAULT_VOLUME_SET,
 N	
 N
 N	IR_KEY_POWER,
@@ -50586,7 +50640,53 @@ N	uint8_t PowerBatExStatus;
 N	uint8_t PowerAcStatus;
 N	uint8_t bat_status;
 N	uint8_t bat_value;  //0-3 in bat , 4-7 ex bat
+N	uint8_t BatValue;
+N	uint8_t NTC_value;
+N	
 N}sPowerStatus;
+N
+N
+Ntypedef enum
+N{
+N    FM_STATE_OFF      = 0,
+N    FM_STATE_ON,
+N    FM_STATE_SEEK_UP,
+N    FM_STATE_SEEK_DOWN,
+N    FM_STATE_AUTO_SEARCH,
+N} FM_STATE;
+N
+N
+Ntypedef struct _POWER_STATE
+N{
+N
+N	uint32_t battery_data;
+N	uint32_t ntc_data;
+N	BATTERY_LEVEL battery_level;
+N	CHARGE_STATE charge_state;
+N	uint8_t NTC_level;
+N	uint8_t AdapterIn;
+N	uint8_t battery_low;
+N	uint8_t charge_power_good_pin; // 1 barrery ok, 0 barrery error
+N	
+N}POWER_STATE;
+N
+N
+N
+N
+Ntypedef struct _Fm_Data
+N{
+N	uint32_t Frequency;
+N	uint8_t  FmError;
+N	uint8_t  FmNeedToStore;
+N	uint32_t station_table[FM_MAX_STATION_NUM];
+X	uint32_t station_table[15];
+N	uint8_t station_num;
+N	uint8_t index_station;
+N	uint8_t current_station;
+N	FM_STATE fmstate;
+N}Fm_Data;
+N
+N
 N
 Ntypedef struct _SubBoardStatus
 N{
@@ -50607,6 +50707,7 @@ X	int16_t ADC_ChannelValue[16];
 N	sPowerStatus g_PowerStatus;
 N	uint8_t g_mode_status;
 N	uint8_t g_4g_initing;
+N	uint8_t power_4g;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
@@ -50616,18 +50717,22 @@ N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;			 // sys mute flag
 N	uint8_t volume_resume;   
 N	uint8_t inputmessage;
+N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
 N	SubBoardStatus SubBoard;
+N	Fm_Data FmData;
+N	POWER_STATE PowerState;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
+N
 N
 N
 N#endif

@@ -240,13 +240,13 @@
 ;;;114    void drv_led_init(void)
 000000  b570              PUSH     {r4-r6,lr}
 ;;;115    {
-;;;116    	GPIO_SetMode(PA, BIT14, GPIO_MODE_OUTPUT);	//STAT2
+;;;116    	GPIO_SetMode(PA, BIT14, GPIO_MODE_OUTPUT);	//STAT1  RED
 000002  4c1e              LDR      r4,|L7.124|
 000004  2201              MOVS     r2,#1
 000006  0391              LSLS     r1,r2,#14
 000008  4620              MOV      r0,r4
 00000a  f7fffffe          BL       GPIO_SetMode
-;;;117    	GPIO_SetMode(PA, BIT15, GPIO_MODE_OUTPUT);  //STAT1
+;;;117    	GPIO_SetMode(PA, BIT15, GPIO_MODE_OUTPUT);  //STAT2  GREEN
 00000e  2201              MOVS     r2,#1
 000010  03d5              LSLS     r5,r2,#15
 000012  4629              MOV      r1,r5
@@ -308,18 +308,18 @@
 ;;;133    	PA3 = LED_OFF;  //wireless mic
 000072  60c8              STR      r0,[r1,#0xc]
 ;;;134    	
-;;;135    	PA14 = LED_OFF;  //STAT2
+;;;135    	PA14 = LED_OFF;  //STAT1 RED
 000074  6388              STR      r0,[r1,#0x38]
-;;;136    	PA15 = LED_ON;  //STAT1
-000076  2000              MOVS     r0,#0
-000078  63c8              STR      r0,[r1,#0x3c]
+;;;136    	PA15 = LED_OFF;  //STAT1 GREEN
+000076  63c8              STR      r0,[r1,#0x3c]
 ;;;137    	
 ;;;138    	
 ;;;139    }
-00007a  bd70              POP      {r4-r6,pc}
+000078  bd70              POP      {r4-r6,pc}
 ;;;140    
                           ENDP
 
+00007a  0000              DCW      0x0000
                   |L7.124|
                           DCD      0x50004000
                   |L7.128|
@@ -327,12 +327,74 @@
                   |L7.132|
                           DCD      0x50004280
 
+                          AREA ||i.drv_led_state1_onoff_green||, CODE, READONLY, ALIGN=2
+
+                  drv_led_state1_onoff_green PROC
+;;;154    
+;;;155    void drv_led_state1_onoff_green(uint8_t on)
+000000  4903              LDR      r1,|L8.16|
+;;;156    {
+;;;157    	if(on)
+000002  2800              CMP      r0,#0
+000004  d001              BEQ      |L8.10|
+;;;158    	{
+;;;159    		PA15 = LED_ON;
+000006  2000              MOVS     r0,#0
+000008  e000              B        |L8.12|
+                  |L8.10|
+;;;160    	}
+;;;161    	else
+;;;162    	{
+;;;163    		PA15 = LED_OFF;
+00000a  2001              MOVS     r0,#1
+                  |L8.12|
+00000c  63c8              STR      r0,[r1,#0x3c]         ;159
+;;;164    	}
+;;;165    }
+00000e  4770              BX       lr
+;;;166    
+                          ENDP
+
+                  |L8.16|
+                          DCD      0x50004200
+
+                          AREA ||i.drv_led_state1_onoff_red||, CODE, READONLY, ALIGN=2
+
+                  drv_led_state1_onoff_red PROC
+;;;141    
+;;;142    void drv_led_state1_onoff_red(uint8_t on)
+000000  4903              LDR      r1,|L9.16|
+;;;143    {
+;;;144    	if(on)
+000002  2800              CMP      r0,#0
+000004  d001              BEQ      |L9.10|
+;;;145    	{
+;;;146    		PA14 = LED_ON;
+000006  2000              MOVS     r0,#0
+000008  e000              B        |L9.12|
+                  |L9.10|
+;;;147    	}
+;;;148    	else
+;;;149    	{
+;;;150    		PA14 = LED_OFF;
+00000a  2001              MOVS     r0,#1
+                  |L9.12|
+00000c  6388              STR      r0,[r1,#0x38]         ;146
+;;;151    	}
+;;;152    }
+00000e  4770              BX       lr
+;;;153    
+                          ENDP
+
+                  |L9.16|
+                          DCD      0x50004200
+
                           AREA ||i.drv_wifi_led_on||, CODE, READONLY, ALIGN=2
 
                   drv_wifi_led_on PROC
 ;;;15     
 ;;;16     void drv_wifi_led_on(uint8_t value)
-000000  4a07              LDR      r2,|L8.32|
+000000  4a07              LDR      r2,|L10.32|
 ;;;17     {
 ;;;18     	if(value)
 ;;;19     		PA13 = LED_ON;  //4G
@@ -340,32 +402,32 @@
 ;;;21     		PA13 = LED_OFF; //wifi
 000002  2101              MOVS     r1,#1
 000004  2800              CMP      r0,#0                 ;18
-000006  d002              BEQ      |L8.14|
+000006  d002              BEQ      |L10.14|
 000008  2000              MOVS     r0,#0                 ;19
 00000a  6350              STR      r0,[r2,#0x34]         ;19
-00000c  e000              B        |L8.16|
-                  |L8.14|
+00000c  e000              B        |L10.16|
+                  |L10.14|
 00000e  6351              STR      r1,[r2,#0x34]
-                  |L8.16|
+                  |L10.16|
 ;;;22     	PA12 = LED_OFF; //aux
 000010  6311              STR      r1,[r2,#0x30]
 ;;;23     	PA1 = LED_OFF;  //bt
 000012  6051              STR      r1,[r2,#4]
 ;;;24     	PC15 = LED_OFF;  //FM
-000014  4802              LDR      r0,|L8.32|
+000014  4802              LDR      r0,|L10.32|
 000016  3080              ADDS     r0,r0,#0x80
 000018  63c1              STR      r1,[r0,#0x3c]
 ;;;25     	PF6 = LED_OFF;  //4G
-00001a  4802              LDR      r0,|L8.36|
+00001a  4802              LDR      r0,|L10.36|
 00001c  6181              STR      r1,[r0,#0x18]
 ;;;26     }
 00001e  4770              BX       lr
 ;;;27     
                           ENDP
 
-                  |L8.32|
+                  |L10.32|
                           DCD      0x50004200
-                  |L8.36|
+                  |L10.36|
                           DCD      0x50004340
 
                           AREA ||i.drv_wlmic_led_on||, CODE, READONLY, ALIGN=2
@@ -373,26 +435,26 @@
                   drv_wlmic_led_on PROC
 ;;;77     
 ;;;78     void drv_wlmic_led_on(uint8_t value)
-000000  4903              LDR      r1,|L9.16|
+000000  4903              LDR      r1,|L11.16|
 ;;;79     {
 ;;;80     	if(value)
 000002  2800              CMP      r0,#0
-000004  d001              BEQ      |L9.10|
+000004  d001              BEQ      |L11.10|
 ;;;81     		PA3 = LED_ON;  //4G
 000006  2000              MOVS     r0,#0
-000008  e000              B        |L9.12|
-                  |L9.10|
+000008  e000              B        |L11.12|
+                  |L11.10|
 ;;;82     	else
 ;;;83     		PA3 = LED_OFF;  //FM
 00000a  2001              MOVS     r0,#1
-                  |L9.12|
+                  |L11.12|
 00000c  60c8              STR      r0,[r1,#0xc]          ;81
 ;;;84     }
 00000e  4770              BX       lr
 ;;;85     
                           ENDP
 
-                  |L9.16|
+                  |L11.16|
                           DCD      0x50004200
 
 ;*** Start embedded assembler ***

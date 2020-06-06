@@ -543,6 +543,21 @@
               <FileType>1</FileType>
               <FilePath>..\src\driver\drv_gpio_key.c</FilePath>
             </File>
+            <File>
+              <FileName>MoudleFm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\MoudleFm.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\drv_fmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\hal_adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -597,6 +612,11 @@
               <FileName>rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\lib\StdDriver\src\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\lib\StdDriver\src\fmc.c</FilePath>
             </File>
           </Files>
         </Group>

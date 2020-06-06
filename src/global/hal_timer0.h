@@ -32,6 +32,10 @@ extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
 extern TIMER SubBoardHandshakeTimer;
 extern TIMER ModeSwitchTimer;
+extern TIMER FmLoopTimer;
+extern TIMER FmStoreTimer;
+extern TIMER SysTimer_50ms;
+
 
 //extern TIMER AdcTimer;
 //extern TIMER PaTimer;

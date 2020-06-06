@@ -50604,8 +50604,11 @@ N
 Nvoid drv_power_status_updata(void);
 Nvoid TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
 Nvoid TYM_SysPower12V_3V3_onoff(uint8_t on);
-Nvoid TYM_power_battery_charge_enable(void);
-Nvoid TYM_power_battery_charge_disenable(void);
+Nvoid battery_charge_enable(void);
+Nvoid battery_charge_disenable(void);
+Nvoid DcInDetect(void);
+Nvoid BatteryChargeStateChcek(void);
+Nvoid Bat_SelectPin_0_external_1_internal(uint8_t value); // 0 external, 1 internal
 N
 N#endif
 N
@@ -50631,6 +50634,10 @@ N#endif
 N
 N#define TICK_COUNT              (50)   /* 1 second */
 N#define TICK_IN_MS              (1000/TICK_COUNT)
+N
+N#define FM_MAX_STATION_NUM			15
+N#define FM_DELAY_TIME				10
+N
 N
 N#define GPIO_HIGH  1
 N#define GPIO_LOW   0
@@ -50659,12 +50666,12 @@ N} eFourG_Msg;
 N
 Ntypedef enum
 N{
-N	POWER_ON_MODE,
-N	WIFI_MODE, 
-N	WIFI_CONNECTED_MODE,
-N	WIFI_CONNECTING_MODE,
-N	FOURG_MODE,
-N	FOURG_CONNECTED_MODE,
+N		POWER_ON_MODE,
+N		WIFI_MODE, 
+N		WIFI_CONNECTED_MODE,
+N		WIFI_CONNECTING_MODE,
+N		FOURG_MODE,
+N		FOURG_CONNECTED_MODE,
 N    BT_MODE,
 N    BT_CONNECTED_MODE,
 N    AUX_MODE,
@@ -50683,6 +50690,7 @@ N{
 N	SYS_PLAY_STATE_NONE = 0,
 N	SYS_PLAY_STATE_IDLE, 
 N	SYS_PLAY_STATE_POWERUP,
+N	SYS_PLAY_STATE_REBOOT,
 N	SYS_PLAY_STATE_SHUTTING_DOWN,
 N	SYS_PLAY_STATE_MW_RADIO,
 N	SYS_PLAY_STATE_BT,
@@ -50702,6 +50710,8 @@ N	SYS_PLAY_EVENT_MODE_SWITCH,
 N	SYS_PLAY_EVENT_VOL_UP,
 N	SYS_PLAY_EVENT_VOL_DOWN,
 N	
+N	SYS_PLAY_EVENT_DEFAULT_VOLUME_SET,
+N	
 N	SYS_PLAY_EVENT_NEXT_SONG,
 N	SYS_PLAY_EVENT_PREV_SONG,	
 N	SYS_PLAY_EVENT_PLAY_PAUSE,	
@@ -50718,6 +50728,18 @@ N	SYS_PLAY_EVENT_SW_TO_FM_MODE,
 N	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
 N	SYS_PLAY_EVENT_SW_TO_BT_MODE,
 N	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+N
+N	SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE,
+N	SYS_PLAY_EVENT_REBOOT_4G_MOUDLE,
+N
+N	SYS_PLAY_EVENT_AUTO_SEARCH,
+N	SYS_PLAY_EVENT_BT_PAIRING,
+N	SYS_PLAY_EVENT_FM_SEEK_UP,
+N	SYS_PLAY_EVENT_FM_SEEK_DOWN,
+N	SYS_PLAY_EVENT_FM_PREV_STEP,
+N	SYS_PLAY_EVENT_FM_NEXT_STEP,
+N	SYS_PLAY_EVENT_FM_NEXT_STATION,
+N	SYS_PLAY_EVENT_FM_PREV_STATION,
 N
 N	SYS_PLAY_EVENT_NUM,
 N
@@ -50755,6 +50777,34 @@ N    PLAY_MODE_AUX
 N
 N} PLAY_MODE;
 N
+Ntypedef enum
+N{
+N    BAT_LEVEL_5_PERCENT      = 0,  // 5%
+N    BAT_LEVEL_10_PERCENT,
+N    BAT_LEVEL_20_PERCENT,
+N    BAT_LEVEL_30_PERCENT,
+N    BAT_LEVEL_40_PERCENT,
+N    BAT_LEVEL_50_PERCENT,
+N    BAT_LEVEL_60_PERCENT,
+N    BAT_LEVEL_70_PERCENT,
+N    BAT_LEVEL_80_PERCENT,
+N    BAT_LEVEL_90_PERCENT,
+N    BAT_LEVEL_100_PERCENT,    
+N
+N} BATTERY_LEVEL;
+N
+N
+Ntypedef enum
+N{
+N    CHARGE_STATE_NONE      = 0,  //
+N    CHARGE_STATE_ON,
+N    CHARGE_STATE_COMPLETE,
+N    CHARGE_STATE_NG,
+N 
+N} CHARGE_STATE;
+N
+N
+N
 N
 N
 N//
@@ -50782,13 +50832,17 @@ N	IN_KEY_EQ_NORNAL_S,
 N	IN_KEY_PLAY_S,
 N	IN_KEY_NEXT_SONG_S,
 N	IN_KEY_PREV_SONG_S,
-N	IN_KEY_FM_NEXT_S,
-N	IN_KEY_FM_PREV_S,
+N	IN_KEY_FM_NEXT_FREQ_S,
+N	IN_KEY_FM_PREV_FREQ_S,
 N	IN_KEY_AUTO_SEARCH_S,
 N	IN_KEY_RADIO_PREV_S,
 N	IN_KEY_RADIO_NEXT_S,
 N	IN_KEY_RADIO_NET_SWITCH_S,
 N	IN_KEY_RADIO_NET_PARIING_S,
+N
+N	IN_KEY_TURNOFF_4G_MOUDLE,
+N	IN_KEY_REBOOT_4G_MOUDLE,
+N	IN_KEY_DEFAULT_VOLUME_SET,
 N	
 N
 N	IR_KEY_POWER,
@@ -50825,7 +50879,53 @@ N	uint8_t PowerBatExStatus;
 N	uint8_t PowerAcStatus;
 N	uint8_t bat_status;
 N	uint8_t bat_value;  //0-3 in bat , 4-7 ex bat
+N	uint8_t BatValue;
+N	uint8_t NTC_value;
+N	
 N}sPowerStatus;
+N
+N
+Ntypedef enum
+N{
+N    FM_STATE_OFF      = 0,
+N    FM_STATE_ON,
+N    FM_STATE_SEEK_UP,
+N    FM_STATE_SEEK_DOWN,
+N    FM_STATE_AUTO_SEARCH,
+N} FM_STATE;
+N
+N
+Ntypedef struct _POWER_STATE
+N{
+N
+N	uint32_t battery_data;
+N	uint32_t ntc_data;
+N	BATTERY_LEVEL battery_level;
+N	CHARGE_STATE charge_state;
+N	uint8_t NTC_level;
+N	uint8_t AdapterIn;
+N	uint8_t battery_low;
+N	uint8_t charge_power_good_pin; // 1 barrery ok, 0 barrery error
+N	
+N}POWER_STATE;
+N
+N
+N
+N
+Ntypedef struct _Fm_Data
+N{
+N	uint32_t Frequency;
+N	uint8_t  FmError;
+N	uint8_t  FmNeedToStore;
+N	uint32_t station_table[FM_MAX_STATION_NUM];
+X	uint32_t station_table[15];
+N	uint8_t station_num;
+N	uint8_t index_station;
+N	uint8_t current_station;
+N	FM_STATE fmstate;
+N}Fm_Data;
+N
+N
 N
 Ntypedef struct _SubBoardStatus
 N{
@@ -50846,6 +50946,7 @@ X	int16_t ADC_ChannelValue[16];
 N	sPowerStatus g_PowerStatus;
 N	uint8_t g_mode_status;
 N	uint8_t g_4g_initing;
+N	uint8_t power_4g;
 N	uint32_t systick;
 N	uint8_t key_led_blink;
 N	uint8_t shoutting_down;
@@ -50855,18 +50956,22 @@ N	uint8_t mode_switching;  // during mode switching , need to mute amp
 N	uint8_t mute;			 // sys mute flag
 N	uint8_t volume_resume;   
 N	uint8_t inputmessage;
+N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
 N	SubBoardStatus SubBoard;
+N	Fm_Data FmData;
+N	POWER_STATE PowerState;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
 N
-N#define VOLUME_DEFAULT  8
+N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
+N
 N
 N
 N#endif
@@ -50927,6 +51032,9 @@ N
 Nvoid drv_all_led_on(uint8_t value);
 N
 Nvoid drv_led_init(void);
+N
+Nvoid drv_led_state1_onoff_red(uint8_t on);
+Nvoid drv_led_state1_onoff_green(uint8_t on);
 N
 N
 L 27 "..\main.c" 2
@@ -51085,6 +51193,10 @@ Nextern TIMER LedKeyBlinkTimer;
 Nextern TIMER PoweroffLedTimer;
 Nextern TIMER SubBoardHandshakeTimer;
 Nextern TIMER ModeSwitchTimer;
+Nextern TIMER FmLoopTimer;
+Nextern TIMER FmStoreTimer;
+Nextern TIMER SysTimer_50ms;
+N
 N
 N//extern TIMER AdcTimer;
 N//extern TIMER PaTimer;
@@ -51359,8 +51471,393 @@ N
 N
 N
 L 37 "..\main.c" 2
+N#include "MoudleFm.h"
+L 1 "..\src\driver\include\MoudleFm.h" 1
+N/**
+N * moudle_fm.h file
+N * @author    kim wei
+N * @brief     the fm control
+N * @date      2019-06-12
+N *
+N * Copyright (c) Tymphany
+N */
+N#ifndef __MOUDLE_FM_H__
+N#define __MOUDLE_FM_H__
+N
+N
+N//==================================================================
+N// General Commands
+N//==================================================================
+N
+N// STATUS bits - Used by all methods
+N#define STCINT  0x01
+N#define ASQINT  0x02
+N#define RDSINT  0x04
+N#define RSQINT  0x08
+N#define ERR     0x40
+N#define CTS     0x80
+N
+N// POWER_UP
+N#define POWER_UP                      0x01
+N#define POWER_UP_IN_FUNC_FMRX         0x00
+N#define POWER_UP_IN_FUNC_AMRX         0x01
+N#define POWER_UP_IN_FUNC_FMTX         0x02
+N#define POWER_UP_IN_FUNC_WBRX         0x03
+N#define POWER_UP_IN_FUNC_QUERY        0x0F
+N#define POWER_UP_IN_PATCH             0x20
+N#define POWER_UP_IN_GPO2OEN           0x40
+N#define POWER_UP_IN_CTSIEN            0x80
+N#define POWER_UP_IN_OPMODE_RX_ANALOG  0x05
+N#define POWER_UP_IN_OPMODE_TX_ANALOG  0x50
+N
+N#define POWER_UP_IN_OPMODE_RX_DIGITAL  0x0F
+N
+N
+N// GET_REV
+N#define GET_REV 0x10
+N
+N// POWER_DOWN
+N#define POWER_DOWN 0x11
+N
+N// SET_PROPERTY
+N#define SET_PROPERTY 0x12
+N
+N// GET_PROPERTY
+N#define GET_PROPERTY 0x13
+N
+N// GET_INT_STATUS
+N#define GET_INT_STATUS 0x14
+N
+N//==================================================================
+N// FM Receive Commands
+N//==================================================================
+N
+N// FM_TUNE_FREQ
+N#define FM_TUNE_FREQ 0x20
+N
+N// FM_SEEK_START
+N#define FM_SEEK_START           0x21
+N#define FM_SEEK_START_IN_WRAP   0x04
+N#define FM_SEEK_START_IN_SEEKUP 0x08
+N
+N// FM_TUNE_STATUS
+N#define FM_TUNE_STATUS           0x22
+N#define FM_TUNE_STATUS_IN_INTACK 0x01
+N#define FM_TUNE_STATUS_IN_CANCEL 0x02
+N#define FM_TUNE_STATUS_OUT_VALID 0x01
+N#define FM_TUNE_STATUS_OUT_AFCRL 0x02
+N#define FM_TUNE_STATUS_OUT_BTLF  0x80
+N
+N// FM_RSQ_STATUS
+N#define FM_RSQ_STATUS              0x23
+N#define FM_RSQ_STATUS_IN_INTACK    0x01
+N#define FM_RSQ_STATUS_OUT_RSSILINT 0x01
+N#define FM_RSQ_STATUS_OUT_RSSIHINT 0x02
+N#define FM_RSQ_STATUS_OUT_ASNRLINT 0x04
+N#define FM_RSQ_STATUS_OUT_ASNRHINT 0x08
+N#define FM_RSQ_STATUS_OUT_BLENDINT 0x80
+N#define FM_RSQ_STATUS_OUT_VALID    0x01
+N#define FM_RSQ_STATUS_OUT_AFCRL    0x02
+N#define FM_RSQ_STATUS_OUT_SMUTE    0x08
+N#define FM_RSQ_STATUS_OUT_PILOT    0x80
+N#define FM_RSQ_STATUS_OUT_STBLEND  0x7F
+N
+N// FM_RDS_STATUS
+N#define FM_RDS_STATUS               0x24
+N#define FM_RDS_STATUS_IN_INTACK     0x01
+N#define FM_RDS_STATUS_IN_MTFIFO     0x02
+N#define FM_RDS_STATUS_OUT_RECV      0x01
+N#define FM_RDS_STATUS_OUT_SYNCLOST  0x02
+N#define FM_RDS_STATUS_OUT_SYNCFOUND 0x04
+N#define FM_RDS_STATUS_OUT_SYNC      0x01
+N#define FM_RDS_STATUS_OUT_GRPLOST   0x04
+N#define FM_RDS_STATUS_OUT_BLED      0x03
+N#define FM_RDS_STATUS_OUT_BLEC      0x0C
+N#define FM_RDS_STATUS_OUT_BLEB      0x30
+N#define FM_RDS_STATUS_OUT_BLEA      0xC0
+N#define FM_RDS_STATUS_OUT_BLED_SHFT 0
+N#define FM_RDS_STATUS_OUT_BLEC_SHFT 2
+N#define FM_RDS_STATUS_OUT_BLEB_SHFT 4
+N#define FM_RDS_STATUS_OUT_BLEA_SHFT 6
+N
+N
+N
+N//////////////////////////////////////////
+N
+N//==================================================================
+N// General Properties
+N//==================================================================
+N
+N// GPO_IEN
+N#define GPO_IEN				 0x0001
+N#define GPO_IEN_STCIEN_MASK  0x0001
+N#define GPO_IEN_ASQIEN_MASK  0x0002
+N#define GPO_IEN_RDSIEN_MASK  0x0004
+N#define GPO_IEN_SAMEIEN_MASK 0x0004
+N#define GPO_IEN_RSQIEN_MASK  0x0008
+N#define GPO_IEN_ERRIEN_MASK  0x0040
+N#define GPO_IEN_CTSIEN_MASK  0x0080
+N#define GPO_IEN_STCREP_MASK  0x0100
+N#define GPO_IEN_ASQREP_MASK  0x0200
+N#define GPO_IEN_RDSREP_MASK  0x0400
+N#define GPO_IEN_RSQREP_MASK  0x0800
+N#define GPO_IEN_STCIEN_SHFT  0
+N#define GPO_IEN_ASQIEN_SHFT  1
+N#define GPO_IEN_RDSIEN_SHFT  2
+N#define GPO_IEN_SAMEIEN_SHFT 2
+N#define GPO_IEN_RSQIEN_SHFT  3
+N#define GPO_IEN_ERRIEN_SHFT  6
+N#define GPO_IEN_CTSIEN_SHFT  7
+N#define GPO_IEN_STCREP_SHFT  8
+N#define GPO_IEN_ASQREP_SHFT  9
+N#define GPO_IEN_RDSREP_SHFT  10
+N#define GPO_IEN_RSQREP_SHFT  11
+N
+N// DIGITAL_INPUT_FORMAT
+N#define DIGITAL_INPUT_FORMAT            0x0101
+N#define DIGITAL_INPUT_FORMAT_ISIZE_MASK 0x0003
+N#define DIGITAL_INPUT_FORMAT_IMONO_MASK 0x0004
+N#define DIGITAL_INPUT_FORMAT_IMODE_MASK 0x0078
+N#define DIGITAL_INPUT_FORMAT_IFALL_MASK 0x0080
+N#define DIGITAL_INPUT_FORMAT_ISIZE_SHFT 0
+N#define DIGITAL_INPUT_FORMAT_IMONO_SHFT 2
+N#define DIGITAL_INPUT_FORMAT_IMODE_SHFT 3
+N#define DIGITAL_INPUT_FORMAT_IFALL_SHFT 7
+N
+N// DIGITAL_INPUT_SAMPLE_RATE
+N#define DIGITAL_INPUT_SAMPLE_RATE 0x0103
+N
+N// DIGITAL_OUTPUT_FORMAT
+N#define DIGITAL_OUTPUT_FORMAT            0x0102
+N#define DIGITAL_OUTPUT_FORMAT_OSIZE_MASK 0x0003
+N#define DIGITAL_OUTPUT_FORMAT_OMONO_MASK 0x0004
+N#define DIGITAL_OUTPUT_FORMAT_OMODE_MASK 0x0078
+N#define DIGITAL_OUTPUT_FORMAT_OFALL_MASK 0x0080
+N#define DIGITAL_OUTPUT_FORMAT_OSIZE_SHFT 0
+N#define DIGITAL_OUTPUT_FORMAT_OMONO_SHFT 2
+N#define DIGITAL_OUTPUT_FORMAT_OMODE_SHFT 3
+N#define DIGITAL_OUTPUT_FORMAT_OFALL_SHFT 7
+N
+N// DIGITAL_OUTPUT_SAMPLE_RATE
+N#define DIGITAL_OUTPUT_SAMPLE_RATE 0x0104
+N
+N// REFCLK_FREQ
+N#define REFCLK_FREQ 0x0201
+N
+N// REFCLK_PRESCALE
+N#define REFCLK_PRESCALE      0x0202
+N#define REFCLK_PRESCALE_MASK 0x0FFF
+N#define REFCLK_PRESCALE_SHFT 0
+N
+N//==================================================================
+N// FM Receive Properties
+N//==================================================================
+N
+N// FM_DEEMPHASIS
+N#define FM_DEEMPHASIS      0x1100
+N#define FM_DEEMPHASIS_MASK 0x0003
+N#define FM_DEEMPHASIS_SHFT 0
+N
+N// FM_BLEND_STEREO_THRESHOLD
+N#define FM_BLEND_STEREO_THRESHOLD      0x1105
+N#define FM_BLEND_STEREO_THRESHOLD_MASK 0x007F
+N#define FM_BLEND_STEREO_THRESHOLD_SHFT 0
+N
+N// FM_BLEND_MONO_THRESHOLD
+N#define FM_BLEND_MONO_THRESHOLD      0x1106
+N#define FM_BLEND_MONO_THRESHOLD_MASK 0x007F
+N#define FM_BLEND_MONO_THRESHOLD_SHFT 0
+N
+N
+N// FM_MAX_TUNE_ERROR
+N#define FM_MAX_TUNE_ERROR      0x1108
+N#define FM_MAX_TUNE_ERROR_MASK 0x007F
+N#define FM_MAX_TUNE_ERROR_SHFT 0
+N
+N// FM_RSQ_INT_SOURCE
+N#define FM_RSQ_INT_SOURCE               0x1200
+N#define FM_RSQ_INT_SOURCE_RSSILIEN_MASK 0x0001
+N#define FM_RSQ_INT_SOURCE_RSSIHIEN_MASK 0x0002
+N#define FM_RSQ_INT_SOURCE_ASNRLIEN_MASK 0x0004
+N#define FM_RSQ_INT_SOURCE_ASNRHIEN_MASK 0x0008
+N#define FM_RSQ_INT_SOURCE_BLENDIEN_MASK 0x0080
+N#define FM_RSQ_INT_SOURCE_RSSILIEN_SHFT 0
+N#define FM_RSQ_INT_SOURCE_RSSIHIEN_SHFT 1
+N#define FM_RSQ_INT_SOURCE_ASNRLIEN_SHFT 2
+N#define FM_RSQ_INT_SOURCE_ASNRHIEN_SHFT 3
+N#define FM_RSQ_INT_SOURCE_BLENDIEN_SHFT 7
+N
+N// FM_RSQ_SNR_HI_THRESHOLD
+N#define FM_RSQ_SNR_HI_THRESHOLD      0x1201
+N#define FM_RSQ_SNR_HI_THRESHOLD_MASK 0x007F
+N#define FM_RSQ_SNR_HI_THRESHOLD_SHFT 0
+N
+N// FM_RSQ_SNR_LO_THRESHOLD
+N#define FM_RSQ_SNR_LO_THRESHOLD      0x1202
+N#define FM_RSQ_SNR_LO_THRESHOLD_MASK 0x007F
+N#define FM_RSQ_SNR_LO_THRESHOLD_SHFT 0
+N
+N// FM_RSQ_RSSI_HI_THRESHOLD
+N#define FM_RSQ_RSSI_HI_THRESHOLD      0x1203
+N#define FM_RSQ_RSSI_HI_THRESHOLD_MASK 0x007F
+N#define FM_RSQ_RSSI_HI_THRESHOLD_SHFT 0
+N
+N// FM_RSQ_RSSI_LO_THRESHOLD
+N#define FM_RSQ_RSSI_LO_THRESHOLD      0x1204
+N#define FM_RSQ_RSSI_LO_THRESHOLD_MASK 0x007F
+N#define FM_RSQ_RSSI_LO_THRESHOLD_SHFT 0
+N
+N// FM_RSQ_BLEND_THRESHOLD
+N#define FM_RSQ_BLEND_THRESHOLD            0x1207
+N#define FM_RSQ_BLEND_THRESHOLD_BLEND_MASK 0x007F
+N#define FM_RSQ_BLEND_THRESHOLD_PILOT_MASK 0x0080
+N#define FM_RSQ_BLEND_THRESHOLD_BLEND_SHFT 0
+N#define FM_RSQ_BLEND_THRESHOLD_PILOT_SHFT 7
+N
+N// FM_SOFT_MUTE_RATE
+N#define FM_SOFT_MUTE_RATE      0x1300
+N#define FM_SOFT_MUTE_RATE_MASK 0x00FF
+N#define FM_SOFT_MUTE_RATE_SHFT 0
+N
+N// FM_SOFT_MUTE_MAX_ATTENUATION
+N#define FM_SOFT_MUTE_MAX_ATTENUATION      0x1302
+N#define FM_SOFT_MUTE_MAX_ATTENUATION_MASK 0x001F
+N#define FM_SOFT_MUTE_MAX_ATTENUATION_SHFT 0
+N
+N// FM_SOFT_MUTE_SNR_THRESHOLD
+N#define FM_SOFT_MUTE_SNR_THRESHOLD      0x1303
+N#define FM_SOFT_MUTE_SNR_THRESHOLD_MASK 0x000F
+N#define FM_SOFT_MUTE_SNR_THRESHOLD_SHFT 0
+N
+N// FM_SEEK_BAND_BOTTOM
+N#define FM_SEEK_BAND_BOTTOM 0x1400
+N
+N// FM_SEEK_BAND_TOP
+N#define FM_SEEK_BAND_TOP 0x1401
+N
+N// FM_SEEK_FREQ_SPACING
+N#define FM_SEEK_FREQ_SPACING      0x1402
+N#define FM_SEEK_FREQ_SPACING_MASK 0x001F
+N#define FM_SEEK_FREQ_SPACING_SHFT 0
+N
+N// FM_SEEK_TUNE_SNR_THRESHOLD
+N#define FM_SEEK_TUNE_SNR_THRESHOLD      0x1403
+N#define FM_SEEK_TUNE_SNR_THRESHOLD_MASK 0x007F
+N#define FM_SEEK_TUNE_SNR_THRESHOLD_SHFT 0
+N
+N// FM_SEEK_TUNE_RSSI_THRESHOLD
+N#define FM_SEEK_TUNE_RSSI_THRESHOLD      0x1404
+N#define FM_SEEK_TUNE_RSSI_THRESHOLD_MASK 0x007F
+N#define FM_SEEK_TUNE_RSSI_THRESHOLD_SHFT 0
+N
+N// FM_RDS_INTERRUPT_SOURCE
+N#define FM_RDS_INTERRUPT_SOURCE                0x1500
+N#define FM_RDS_INTERRUPT_SOURCE_RECV_MASK      0x0001
+N#define FM_RDS_INTERRUPT_SOURCE_SYNCLOST_MASK  0x0002
+N#define FM_RDS_INTERRUPT_SOURCE_SYNCFOUND_MASK 0x0004
+N#define FM_RDS_INTERRUPT_SOURCE_RECV_SHFT      0
+N#define FM_RDS_INTERRUPT_SOURCE_SYNCLOST_SHFT  1
+N#define FM_RDS_INTERRUPT_SOURCE_SYNCFOUND_SHFT 2
+N
+N// FM_RDS_INTERRUPT_FIFO_COUNT
+N#define FM_RDS_INTERRUPT_FIFO_COUNT      0x1501
+N#define FM_RDS_INTERRUPT_FIFO_COUNT_MASK 0x00FF
+N#define FM_RDS_INTERRUPT_FIFO_COUNT_SHFT 0
+N
+N// FM_RDS_CONFIG
+N#define FM_RDS_CONFIG             0x1502
+N#define FM_RDS_CONFIG_RDSEN_MASK  0x0001
+N#define FM_RDS_CONFIG_BLETHD_MASK 0x0300
+N#define FM_RDS_CONFIG_BLETHC_MASK 0x0C00
+N#define FM_RDS_CONFIG_BLETHB_MASK 0x3000
+N#define FM_RDS_CONFIG_BLETHA_MASK 0xC000
+N#define FM_RDS_CONFIG_RDSEN_SHFT  0
+N#define FM_RDS_CONFIG_BLETHD_SHFT 8
+N#define FM_RDS_CONFIG_BLETHC_SHFT 10
+N#define FM_RDS_CONFIG_BLETHB_SHFT 12
+N#define FM_RDS_CONFIG_BLETHA_SHFT 14
+N
+N
+N// FM_DEEMPH
+N#define FM_DEEMPH_75US 0x2
+N#define FM_DEEMPH_50US 0x1
+N
+N//==================================================================
+N// General Receive Properties
+N//==================================================================
+N
+N// RX_VOLUME
+N#define RX_VOLUME      0x4000
+N#define RX_VOLUME_MASK 0x003F
+N#define RX_VOLUME_SHFT 0
+N
+N// RX_HARD_MUTE
+N#define RX_HARD_MUTE 0x4001
+N#define RX_HARD_MUTE_RMUTE_MASK 0x0001
+N#define RX_HARD_MUTE_LMUTE_MASK 0x0002
+N#define RX_HARD_MUTE_RMUTE_SHFT 0
+N#define RX_HARD_MUTE_LMUTE_SHFT 1
+N
+N
+N
+Nvoid FmIoConfig(void);
+Nvoid test_FMRXtune(void);
+Nuint8_t si47xxFMRX_tune(uint32_t frequency);
+Xunsigned char si47xxFMRX_tune(unsigned int frequency);
+W "..\src\driver\include\MoudleFm.h" 331 10 Deprecated declaration si47xxFMRX_get_frequency - give arg types
+Nuint32_t si47xxFMRX_get_frequency();
+Xunsigned int si47xxFMRX_get_frequency();
+Nvoid si47xx_getPartInformation(void);
+Nvoid fmTuneStatus(uint8_t cancel, uint8_t intack);
+Xvoid fmTuneStatus(unsigned char cancel, unsigned char intack);
+N
+Nvoid si47xxFMRX_powerdown(void);
+Nuint8_t IsFreqValid(void);
+Xunsigned char IsFreqValid(void);
+Nuint8_t IsStationNumValid(void);
+Xunsigned char IsStationNumValid(void);
+Nuint8_t IsCurrentStationNunValid(void);
+Xunsigned char IsCurrentStationNunValid(void);
+N
+N
+Nvoid WaitMs(uint32_t time);
+Xvoid WaitMs(unsigned int time);
+N
+N#endif
+L 38 "..\main.c" 2
+N#include "hal_adc.h"
+L 1 "..\src\driver\include\hal_adc.h" 1
+N/**
+N * hal_adc.h file
+N * @author    kim wei
+N * @brief     The MCU ADC1
+N * @date      2019-06-12
+N *
+N * Copyright (c) Tymphany
+N */
+N#ifndef __HAL_ADC_H__
+N#define __HAL_ADC_H__
+N
+N
+Nextern uint32_t batlevel_table[11];
+Xextern unsigned int batlevel_table[11];
+N
+Nvoid hal_adc_init(void);    // PB6 -> ADC CH6; PB7 -> ADC CH7;
+W "..\src\driver\include\hal_adc.h" 16 6 Deprecated declaration ADC_FunctionTest - give arg types
+Nvoid ADC_FunctionTest();
+Nvoid Mic1Check(void);
+Nvoid bat_value_get(uint32_t dat);
+Xvoid bat_value_get(unsigned int dat);
+Nvoid ntc_value_get(uint32_t dat);
+Xvoid ntc_value_get(unsigned int dat);
+N
+N#endif
+L 39 "..\main.c" 2
+N
 N
 Nvoid Sysctrl(void);
+Nvoid SendFmFreqToSubBoard(void);
+N
 N
 Nvolatile sys_err_e sys_err = SYS_ERR_NONE;
 N#define PLLCTL_SETTING  CLK_PLLCTL_72MHz_HXT
@@ -51422,8 +51919,7 @@ N    CLK_EnableModuleClock(I2C1_MODULE);
 X    CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((9)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
 N
 N	/* Enable ADC module clock */
-N    CLK_EnableModuleClock(ADC_MODULE);
-X    CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((28)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((2) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0xFF) & 0xff) << 10)|(((16) & 0x1f) << 5)));
+N   // CLK_EnableModuleClock(ADC_MODULE);
 N
 N    /* Enable PWM0 module clock */
 N    CLK_EnableModuleClock(PWM0_MODULE);
@@ -51448,8 +51944,12 @@ N	CLK_SetModuleClock(USCI0_MODULE, CLK_CLKSEL1_UARTSEL_HXT, CLK_CLKDIV0_UART(1))
 X	CLK_SetModuleClock(((((2UL) & 0x03) << 30)|((((8)) & 0x1f) << 0)| (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)), (0x0UL<<(24)), (((1)-1) << (8)));
 N
 N    /* ADC clock source is 22.1184MHz, set divider to 7, ADC clock is 22.1184/7 MHz */
-N    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL1_ADCSEL_HIRC, CLK_CLKDIV0_ADC(7));
-X    CLK_SetModuleClock(((((1) & 0x03) << 30)|((((28)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((2) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0xFF) & 0xff) << 10)|(((16) & 0x1f) << 5)), (0x3UL<<(2)), (((7)-1) << (16)));
+N   // CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL1_ADCSEL_HIRC, CLK_CLKDIV0_ADC(7));
+N
+N	/* Configure the GPB6-,GPB7 ADC analog input pins */
+N  //  SYS->GPB_MFPL &= ~(SYS_GPB_MFPL_PB6MFP_Msk | SYS_GPB_MFPL_PB7MFP_Msk);
+N   // SYS->GPB_MFPL |= SYS_GPB_MFPL_PB6MFP_ADC0_CH14 | SYS_GPB_MFPL_PB7MFP_ADC0_CH15 ;
+N	
 N    /* Select PWM01 module clock source */
 N   // CLK_SetModuleClock(PWM0_MODULE, CLK_CLKSEL1_PWM0SEL_PCLK0, 0);
 N
@@ -51467,6 +51967,16 @@ N
 N	Hal_I2c_Init();
 N	
 N}
+N
+N
+N
+N
+Nvoid AMP_FaultPinDetectInit(void)
+N{
+N	GPIO_SetMode(PF, BIT2, GPIO_MODE_INPUT);	
+X	GPIO_SetMode(((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x0140)), 0x00000004, 0x0UL);	
+N}
+N
 N
 Nvoid Amplifier_open(void)
 N{
@@ -51501,13 +52011,16 @@ N    SYS_UnlockReg();
 N	
 N	SYS_Clock_init();
 N	TYM_gpio_init();
+N	hal_adc_init();
 N
 N	/* Lock protected registers */
 N    SYS_LockReg();
 N
 N    /* Start Timer1 to measure delay period of TIMER_Delay API is reasonable or not */
-N   // TIMER1->CTL = TIMER_PERIODIC_MODE | (12 - 1);
+N   // TIMER1->CTL = TIMER_PERIODIC_MODE | (12 - 1);	
+N
 N	TYM_sys_PowerManger_init();
+N	
 N	drv_led_init();
 N
 N	Drv_FourG_Gpio_Init();
@@ -51520,6 +52033,11 @@ N	TYM_DriverInit();
 N	
 N	Core_Msg_Init();
 N
+W "..\main.c" 192 2 function "hal_fmc_init" declared implicitly
+N	hal_fmc_init();
+N
+N	AMP_FaultPinDetectInit();
+N
 N	//srv_rtc_init();
 N
 N}
@@ -51529,11 +52047,19 @@ N{
 N	Global_datas.state = SYS_PLAY_STATE_IDLE;
 N	Global_datas.g_4g_initing = 0;
 N	Global_datas.mode_switching = 0;
+N	Global_datas.power_4g = 0;
 N	Global_datas.mute = 0;
 N	
 N	drv_FourGmodel_power_key_SetLow();  // when powerup , need to pull hi 3 second then pull down.
 N	TimeOutSet(&SysTimer_1s,1000);
 N	Global_datas.SubBoard.subboard_online = 0;	
+N
+N	Global_datas.FmData.Frequency = 8750;
+N	Global_datas.FmData.station_num = 0;
+N
+W "..\main.c" 215 2 function "DataRead" declared implicitly
+N	DataRead();
+N	SendFmFreqToSubBoard();
 N	
 N}
 N
@@ -51544,7 +52070,7 @@ N	Global_datas.g_mode_status = POWER_ON_MODE;
 N	Global_datas.g_4g_initing = 1;
 N	Global_datas.eq_mode = EQ_MODE_INDOOR;
 N	Global_datas.volume = VOLUME_DEFAULT;
-X	Global_datas.volume = 8;
+X	Global_datas.volume = 5;
 N	TYM_drv_powerkeepon(1);
 N	Drv_4GMoudle_PowerUp(1);
 N	drv_FourGmodel_power_key_SetHi();
@@ -51553,9 +52079,7 @@ N	TimeOutSet(&PoweroffLedTimer, 100);
 N	Drv_audio_init();
 N	Global_datas.shoutting_down = 0;
 N	
-N
-N	
-N	drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
+N	//drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
 N	
 N}
 N
@@ -51566,7 +52090,7 @@ N
 N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N	drv_led_init();// led all off
-W "..\main.c" 215 2 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 246 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
 N	Global_datas.shoutting_down = 1;
 N	TimeOutSet(&PoweroffLedTimer, 5000);
@@ -51595,20 +52119,17 @@ N
 N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N	drv_led_init();// led all off
-W "..\main.c" 242 2 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 273 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
 N	Global_datas.shoutting_down = 1;
 N	TimeOutSet(&PoweroffLedTimer, 5000);
-N
-N
-N
+N	
 N	Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
 N	TYM_drv_powerkeepon(0); 		
 N	TYM_SysPower12V_3V3_onoff(0);
 N
-N
 N	//Unlock protected registers before entering Power-down mode 
-N    SYS_UnlockReg();
+N  SYS_UnlockReg();
 N	printf("Enter to Power-Down ......\n");
 N    /* Enter to Power-down mode */
 N	
@@ -52192,24 +52713,13 @@ N					printf("MSG_4G_SYS_STATE_IND:msg.param0 = %x, msg.param1 = %x \n",msg.para
 N					
 N	                if((msg.param0 == 0x08) && (msg.param1 == 0x00))   // 4G handshake
 N	                {
-N						//Global_datas.g_4g_initing = 0;
 N						Global_datas.inputmessage = IN_KEY_INIT_FINISH_CMD;
 N					} 
-N					else if((msg.param0 == 0x09) && (msg.param1 == 0x01))  // check battery level
-N	                {
-N//						printf("0x09, msg.param1 = %x \n",msg.param1);
-N	                	//in bat val
-N						bat_val[1] = (Global_datas.ADC_ChannelValue[15]>>8) & 0xff;
-N						bat_val[0] = Global_datas.ADC_ChannelValue[15] & 0xff;
-N						if(Global_datas.g_PowerStatus.PowerBatInStatus != POWER_BAT_IN_FALSE)
-N							bat_val[1] = bat_val[1] & 0x80;  //in bat en
-N						Cmd_Send2FourG(0x09,bat_val[1],bat_val[0]);
-N						//ex bat val
-N						bat_val[1] = (Global_datas.ADC_ChannelValue[12]>>8) & 0xff;
-N						bat_val[0] = Global_datas.ADC_ChannelValue[12] & 0xff;
-N						if(Global_datas.g_PowerStatus.PowerBatExStatus != POWER_BAT_EX_FALSE)
-N							bat_val[1] = bat_val[1] & 0x60;  //ex bat en
-N						Cmd_Send2FourG(0x09,bat_val[1],bat_val[0]);
+N					else if((msg.param0 == 0x09) && (msg.param1 == 0x01))  // check battery level  
+N				    {
+N						//Cmd_Send2FourG(0x09,Global_datas.PowerState.battery_level, Global_datas.PowerState.AdapterIn);  //Param0: barrery level (1-10)  1到10 对应 10%～ 100%  十个等级   ;Param1： 1 适配器插入，0 未插
+N						//printf("battery_level = %x \n",Global_datas.PowerState.battery_level);
+N						//printf("AdapterIn     = %x \n",Global_datas.PowerState.AdapterIn);
 N					}
 N					
 N					else if(msg.param0 == 0x07)   // set volume
@@ -52233,15 +52743,14 @@ N							drv_5825_mute_pin_set(0);
 N						}
 N						
 N					}
-N					else if(msg.param0 == 0x04 )
+N					else if(msg.param0 == 0x04 ) // mute set
 N					{
 N	                	
 N					}
 N					else if(msg.param0 == 0x0d)  // 4G GO TO POWER OFF , NEED TO POWER DOWN 4G VCC
 N					{
-N						Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
-N						TYM_drv_powerkeepon(0); 
-N						TYM_SysPower12V_3V3_onoff(0);
+N						Global_datas.inputmessage = IN_KEY_TURNOFF_4G_MOUDLE;
+N						printf("IN_KEY_TURNOFF_4G_MOUDLE \n");
 N					}
 N					else if(msg.param0 == 0x06)  // sys status
 N					{
@@ -52261,8 +52770,7 @@ N						}
 N						if (msg.param1 == 0x02)
 N						{
 N		                	Global_datas.g_mode_status = WIFI_CONNECTED_MODE;
-N		                	
-N						printf("0x06, msg.param1 = %x \n",msg.param1);
+N							printf("0x06, msg.param1 = %x \n",msg.param1);
 N						}
 N						if (msg.param1 == 0x04)
 N						{
@@ -52279,14 +52787,12 @@ N						}
 N						if (msg.param1 == 0x011)
 N						{
 N		                	Global_datas.g_mode_status = FOURG_CONNECTED_MODE;
-N		                	
-N						printf("0x06, msg.param1 = %x \n",msg.param1);
+N							printf("0x06, msg.param1 = %x \n",msg.param1);
 N						}
 N						if (msg.param1 == 0x012)
 N						{
 N		                	Global_datas.g_mode_status = FOURG_MODE;
-N		                	
-N						printf("0x06, msg.param1 = %x \n",msg.param1);
+N							printf("0x06, msg.param1 = %x \n",msg.param1);
 N						}
 N						if (msg.param1 == 0x0B)
 N						{
@@ -52304,7 +52810,7 @@ N
 N					}
 N					else if(msg.param0 == 0x20) // check version
 N					{
-N						Cmd_Send2FourG(0x20,0x0,0x4);  //version 0.0.4
+N						Cmd_Send2FourG(0x20,0x0,0x1);  //version 0.0.1
 N					}
 N	            break;
 N
@@ -52319,67 +52825,38 @@ N					}
 N
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x03)) // VOL--
 N					{
-N						
 N						Global_datas.inputmessage = IN_KEY_VOL_SUB_S;
+N						printf("VOL-\n");
 N					}
 N					
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x02))  // V+
 N					{
-N						
 N						Global_datas.inputmessage = IN_KEY_VOL_ADD_S;
-N
+N						printf("VOL+\n");
 N					}
 N
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) //wifi mode
 N					{
 N
-N						drv_5825_mute_pin_set(0); 
-N						Global_datas.mode_switching = 1;
-N						Global_datas.g_mode_status = WIFI_MODE;
-N						drv_audio_4G_Channel();
-N						
 N						printf("FourG_WIFI_CHANNEL\n");
-N
-N						
 N						Global_datas.inputmessage = IN_KEY_MW_RADIO_MODE_S;
 N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x16)) //BT mode
 N					{
-N						drv_5825_mute_pin_set(0); 
-N						Global_datas.mode_switching = 1;
-N						Global_datas.g_mode_status = BT_MODE;
-N						drv_audio_4G_Channel();  	// bt wifi use the same mode
 N						printf("BT_CHANNEL\n");
-N
-N						
 N						Global_datas.inputmessage = IN_KEY_BT_MODE_S;
 N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x17)) //AUX mode
 N					{
-N						drv_5825_mute_pin_set(0); 
-N						Global_datas.mode_switching = 1;
-N						Global_datas.g_mode_status = AUX_MODE;
-N						drv_audio_AuxIn_Channel(); 
 N						printf("AUXIN_CHANNEL\n");
-N
-N						
-N					Global_datas.inputmessage = IN_KEY_AUX_MODE_S;
+N						Global_datas.inputmessage = IN_KEY_AUX_MODE_S;
 N					
 N					}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x18)) //FM mode
 N					{
-N						drv_5825_mute_pin_set(0); 
-N						Global_datas.mode_switching = 1;
-N						Global_datas.g_mode_status = FM_MODE;
-N						drv_audio_FM_Channel(); 
-N
-N						//Drv_4GMoudle_PowerUp(0); // if timeout,turn off.
-N
-N						
-N						Global_datas.inputmessage = IN_KEY_AUX_MODE_S;
-N						
 N						printf("FM_CHANNEL\n");
-N					}
+N						Global_datas.inputmessage = IN_KEY_FM_MODE_S;
+N											}
 N					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) // NEXT CHANNEL
 N					{
 N						Global_datas.inputmessage = IN_KEY_RADIO_NEXT_S;
@@ -52395,6 +52872,19 @@ N					{
 N						Global_datas.inputmessage = IN_KEY_PLAY_S;
 N					}
 N					
+N					if((msg.param0 == 0x03) && (msg.param1 == 0x0d)) // NEXT SONG
+N					{
+N						Global_datas.inputmessage = IN_KEY_NEXT_SONG_S;
+N								
+N					}
+N					if((msg.param0 == 0x03) && (msg.param1 == 0x0e))// PREV SONG
+N					{
+N						Global_datas.inputmessage = IN_KEY_PREV_SONG_S;
+N					
+N					}
+N
+N					
+N					
 N					if((msg.param0 == 0x03) && (msg.param1 == 0xC1)) //inside
 N					{
 N						printf("inside\n");
@@ -52406,6 +52896,48 @@ N
 N						printf("outside\n");
 N						Global_datas.inputmessage = IN_KEY_EQ_OUTDOOR_S;
 N					}
+N					
+N					if((msg.param0 == 0x03) && (msg.param1 == 0xC8))
+N					{
+N
+N						printf("FM UP\n");
+N						Global_datas.inputmessage = IN_KEY_FM_NEXT_FREQ_S;
+N					}
+N
+N					if((msg.param0 == 0x03) && (msg.param1 == 0xC9))
+N					{
+N
+N						printf("FM DOWN\n");
+N						Global_datas.inputmessage = IN_KEY_FM_PREV_FREQ_S;
+N					}	
+N					
+N					if((msg.param0 == 0x03) && (msg.param1 == 0xCB))
+N					{
+N
+N						printf("FM LONG PRESS\n");
+N						Global_datas.inputmessage = IN_KEY_AUTO_SEARCH_S;
+N					}	
+N
+N
+N					
+N
+N					if((msg.param0 == 0x03) && (msg.param1 == 0x62)) // MIC key  single press
+N					{
+N						Cmd_Send2FourG(0x03,0x62,0);
+N
+N						printf("mic key press\n");
+N					}
+N					else if((msg.param0 == 0x03) && (msg.param1 == 0x63)) // MIC long press
+N					{
+N						Cmd_Send2FourG(0x03,0x63,0);
+N						
+N						printf("mic key long press\n");
+N					}
+N					else if((msg.param0 == 0x03) && (msg.param1 == 0x64)) // MIC long press release
+N					{
+N						Cmd_Send2FourG(0x03,0x64,0);					
+N						printf("mic key long release\n");
+N					}					
 N
 N
 N/*
@@ -52419,13 +52951,21 @@ N					if((msg.param0 == 0x03) && (msg.param1 == 0xCA)) // handshake
 N					{
 N						if(Global_datas.SubBoard.subboard_online == 0)  // first in
 N						{
-N						 	drv_SendAllstateToSubboard();
+N						 	//drv_SendAllstateToSubboard();
+N							SendFmFreqToSubBoard();
+N							printf("SUB BOARD ON\n");
+N
+W "..\main.c" 1107 38 enumerated type mixed with another type
+N							Global_datas.SubBoard.eq_mode = msg.param2 >> 4;
+W "..\main.c" 1108 39 enumerated type mixed with another type
+N							Global_datas.SubBoard.playmode = msg.param2 & 0x0f;
+N							Global_datas.SubBoard.subboard_online = 1;
+N							printf("msg.param1 = %d \n",msg.param2);
+N							printf("play_mode = %d \n",Global_datas.SubBoard.playmode);							
 N						}
-N						Global_datas.SubBoard.subboard_online = 1;
-W "..\main.c" 1067 37 enumerated type mixed with another type
-N						Global_datas.SubBoard.eq_mode = msg.param1 >> 4;
-W "..\main.c" 1068 37 enumerated type mixed with another type
-N						Global_datas.SubBoard.eq_mode = msg.param1 && 0x0f;
+N						
+N
+N
 N						
 N						TimeOutSet(&SubBoardHandshakeTimer, 4000);
 N						//drv_Cmd_Send2NCU031(msg.param0,msg.param1,msg.param2);//
@@ -52437,8 +52977,20 @@ N	            default:
 N	             break;
 N	        }
 N    	}	
+W "..\main.c" 852 12 variable "bat_val"  was declared but never referenced
 N}
 N
+N
+Nvoid SendFmFreqToSubBoard(void)
+N{
+N	uint8_t freq_hi = 0, freq_low = 0;
+X	unsigned char freq_hi = 0, freq_low = 0;
+N
+N	freq_hi = Global_datas.FmData.Frequency>>8;
+N	freq_low = Global_datas.FmData.Frequency & 0xff;
+N	
+N	drv_Cmd_Send2NCU031(0x72,freq_hi,freq_low);
+N}
 N
 N
 N/*---------------------------------------------------------------------------------------------------------*/
@@ -52446,34 +52998,60 @@ N/*  Main Function                                                              
 N/*---------------------------------------------------------------------------------------------------------*/
 Nint32_t main(void)
 N{
-N	uint32_t count;
-X	unsigned int count;
-N	uint8_t refcount0=1;
-X	unsigned char refcount0=1;
-N	uint8_t refcount1=1;
-X	unsigned char refcount1=1;
-N	uint8_t refcount2=1;
-X	unsigned char refcount2=1;
 N	uint8_t ledtimecount = 0;
 X	unsigned char ledtimecount = 0;
 N	uint8_t resume_timecount = 0;
 X	unsigned char resume_timecount = 0;
 N	
-N
 N	/* Init System, peripheral clock and multi-function I/O */
 N
 N	SYS_Init();
 N 	SysIdle();
+N
+N  	printf("\nmain\n");
 N	
-N    printf("\nmain\n");
-N		
 N    while(1)
 N    {
+N    	if(IsTimeOut(&SysTimer_50ms))
+N    	{
+N    		TimeOutSet(&SysTimer_50ms, 2000);
+N			ADC_FunctionTest();
+N			DcInDetect();
+N			BatteryChargeStateChcek();
+N
+N			if(Global_datas.PowerState.AdapterIn)
+N			{
+N				switch(Global_datas.PowerState.charge_state)
+N				{
+N					case CHARGE_STATE_ON:
+N						 drv_led_state1_onoff_red(1);
+N						 drv_led_state1_onoff_green(0);
+N						 break;
+N					case CHARGE_STATE_COMPLETE:
+N						 drv_led_state1_onoff_red(0);
+N						 drv_led_state1_onoff_green(1);	
+N						 break;
+N
+N					case CHARGE_STATE_NG:
+N						break;
+N					default:break;
+N				}
+N			}
+N			
+N			if((Global_datas.PowerState.battery_level == 0) && (Global_datas.state > SYS_PLAY_STATE_POWERUP) && (Global_datas.PowerState.AdapterIn == 0))
+N			{
+N				Global_datas.inputmessage =  IN_KEY_POWER_CP;
+N			}
+N			else if((Global_datas.PowerState.battery_level < BAT_LEVEL_20_PERCENT) && (Global_datas.PowerState.battery_data >  batlevel_table[0])  && (Global_datas.volume > 8) && (Global_datas.PowerState.AdapterIn == 0))
+N			{
+N			 	Global_datas.inputmessage =  IN_KEY_DEFAULT_VOLUME_SET;
+N			}
+N
+N		}
 N
 N		if(IsTimeOut(&SysTimer_1s))
 N		{
 N			TimeOutSet(&SysTimer_1s, 500);
-N		
 N	        if(Global_datas.g_4g_initing)
 N			{
 N				srv_led_sys_initing();
@@ -52488,7 +53066,7 @@ N			{
 N				drv_FourGmodel_power_key_SetLow();
 N			}
 N
-N			if(Global_datas.state == SYS_PLAY_STATE_IDLE)
+N			if(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)
 N			{
 N				if(!IsTimeOut(&PoweroffLedTimer))
 N				{			
@@ -52526,14 +53104,15 @@ N					TYM_drv_powerkeepon(0);
 N					TYM_SysPower12V_3V3_onoff(0);
 N
 N					Global_datas.shoutting_down = 0;
+N					Global_datas.state = SYS_PLAY_STATE_IDLE;
 N				}
 N				
 N			}
 N
-N
 N			if(IsTimeOut(&SubBoardHandshakeTimer))
 N			{
 N				Global_datas.SubBoard.subboard_online = 0;
+N				printf("SUB BOARD OFF\n");
 N			}			
 N		}
 N		
@@ -52564,15 +53143,24 @@ N				drv_5825_mute_pin_set(1);  // unmute
 N			}
 N		}
 N
-N		Global_datas.inputmessage = GetIrKey();
-N		
-N		if(!Global_datas.inputmessage)
+N		if(Global_datas.inputmessage == IN_KEY_NONE)  // read IR key
 N		{
-N			GetKeyEvent();
+N			Global_datas.inputmessage = GetIrKey();
 N		}
 N		
-N		//IoKeyProcess();
-N		if(Global_datas.inputmessage == 0)
+N		if( Global_datas.inputmessage == IN_KEY_NONE)  // read gpio key
+N		{
+N			GetKeyEvent();
+N			
+N			if(((Global_datas.state == SYS_PLAY_STATE_IDLE || Global_datas.state == SYS_PLAY_STATE_POWERUP )&&(IN_KEY_POWER_CP != Global_datas.inputmessage)) || \
+N				(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN))
+X			if(((Global_datas.state == SYS_PLAY_STATE_IDLE || Global_datas.state == SYS_PLAY_STATE_POWERUP )&&(IN_KEY_POWER_CP != Global_datas.inputmessage)) || 				(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN))
+N			{
+N				//Global_datas.inputmessage = IN_KEY_NONE;
+N			}
+N		}
+N		
+N		if(Global_datas.inputmessage == IN_KEY_NONE) // message deal
 N		{
 N			MessageProcess();
 N		}
@@ -52582,17 +53170,18 @@ N
 N		
 N	}
 N
-W "..\main.c" 1089 11 variable "count"  was declared but never referenced
-W "..\main.c" 1090 10 variable "refcount0"  was declared but never referenced
-W "..\main.c" 1091 10 variable "refcount1"  was declared but never referenced
-W "..\main.c" 1092 10 variable "refcount2"  was declared but never referenced
-W "..\main.c" 1094 10 variable "resume_timecount"  was declared but never referenced
+W "..\main.c" 1147 10 variable "resume_timecount"  was declared but never referenced
 N}
 N
 N
 N
 Nvoid Sysctrl(void)
 N{
+N	uint8_t temp_fm = 0;
+X	unsigned char temp_fm = 0;
+N	uint8_t temp_valid = 0;
+X	unsigned char temp_valid = 0;
+N	
 N	switch(Global_datas.inputmessage)
 N	{
 N		case IN_KEY_POWER_SP:
@@ -52607,6 +53196,7 @@ N			break;
 N
 N		case IN_KEY_POWER_CP:
 N		case IR_KEY_POWER:
+N					
 N			 if(Global_datas.state == SYS_PLAY_STATE_IDLE)
 N			 {
 N				Global_datas.event = SYS_PLAY_EVENT_POWERING_UP;
@@ -52631,16 +53221,36 @@ N
 N			Global_datas.event = SYS_PLAY_EVENT_VOL_UP;
 N			break;
 N
+N		case IN_KEY_DEFAULT_VOLUME_SET:
+N			Global_datas.event = SYS_PLAY_EVENT_DEFAULT_VOLUME_SET;
+N			break;
+N
 N		case IN_KEY_NEXT_SONG_S:
 N		case IR_KEY_NEXT_SONG:
 N
+N		if(Global_datas.state == SYS_PLAY_STATE_FM)
+N		{
+N			Global_datas.event = SYS_PLAY_EVENT_FM_NEXT_STATION;
+N		}
+N		else 
+N		{
 N			Global_datas.event = SYS_PLAY_EVENT_NEXT_SONG;
+N		}
+N
+N		
 N		break;
 N
 N		case IN_KEY_PREV_SONG_S:
 N		case IR_KEY_PREV_SONG:
 N
-N			Global_datas.event = SYS_PLAY_EVENT_PREV_SONG;
+N			if(Global_datas.state == SYS_PLAY_STATE_FM)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_FM_PREV_STATION;
+N			}
+N			else 
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_PREV_SONG;
+N			}
 N
 N		break;		
 N		
@@ -52655,7 +53265,14 @@ N		case IN_KEY_RADIO_NEXT_S:
 N		case IR_KEY_NEXT_STATION:
 N			
 N
-N			Global_datas.event = SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION;
+N			if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION;
+N			}
+N			else if(Global_datas.state == SYS_PLAY_STATE_FM)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_FM_SEEK_UP;
+N			}
 N
 N		break;
 N
@@ -52663,7 +53280,14 @@ N		case IN_KEY_RADIO_PREV_S:
 N		case IR_KEY_PREV_STATION:
 N			
 N
-N			Global_datas.event = SYS_PLAY_EVENT_MW_RADIO_PREV_STATION;
+N			if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_MW_RADIO_PREV_STATION;
+N			}
+N			else if(Global_datas.state == SYS_PLAY_STATE_FM)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_FM_SEEK_DOWN;
+N			}
 N
 N		break;		
 N
@@ -52672,7 +53296,9 @@ N		case IR_KEY_EQ_INDOOR:
 N
 N		
 N			Global_datas.event = SYS_PLAY_EVENT_EQ_INDOOR_SET;
-N			
+N
+N			if(Global_datas.state == SYS_PLAY_STATE_FM) Global_datas.event = SYS_PLAY_EVENT_FM_PREV_STEP;
+N		    
 N			break;		
 N		
 N		case IN_KEY_EQ_OUTDOOR_S:
@@ -52680,6 +53306,8 @@ N		case IR_KEY_EQ_OUTDOOR:
 N
 N		
 N			Global_datas.event = SYS_PLAY_EVENT_EQ_OUTDOOR_SET;
+N		
+N			if(Global_datas.state == SYS_PLAY_STATE_FM) Global_datas.event = SYS_PLAY_EVENT_FM_NEXT_STEP;
 N			
 N			break;	
 N
@@ -52727,8 +53355,53 @@ N
 N		case IN_KEY_BT_MODE_S: 
 N			
 N			Global_datas.event = SYS_PLAY_EVENT_SW_TO_BT_MODE;
-N			break;			
+N			break;		
 N
+N		case IN_KEY_TURNOFF_4G_MOUDLE:
+N			Global_datas.event = SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE;
+N			break;
+N		case IN_KEY_REBOOT_4G_MOUDLE:
+N
+N			Global_datas.event = SYS_PLAY_EVENT_REBOOT_4G_MOUDLE;
+N			
+N			break;
+N
+N		case IR_KEY_PLAY_PAUSE_CP:
+N
+N			if(Global_datas.state == SYS_PLAY_STATE_FM)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_AUTO_SEARCH;
+N			}
+N			else if(Global_datas.state == SYS_PLAY_STATE_BT)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_BT_PAIRING;			
+N			}
+N			break;
+N			
+N
+N		case IN_KEY_AUTO_SEARCH_S:
+N
+N			if(Global_datas.state == SYS_PLAY_STATE_FM)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_AUTO_SEARCH;
+N			}
+N			
+N			break;
+N
+N			
+N
+N		case IN_KEY_FM_PREV_FREQ_S:
+N
+N		    if(Global_datas.state == SYS_PLAY_STATE_FM)	Global_datas.event = SYS_PLAY_EVENT_FM_PREV_STEP; 		
+N			
+N			break;
+N
+N		case IN_KEY_FM_NEXT_FREQ_S:
+N
+N			if(Global_datas.state == SYS_PLAY_STATE_FM) Global_datas.event = SYS_PLAY_EVENT_FM_NEXT_STEP; 		
+N		
+N			break;
+N			
 N		default:break;
 N			
 N	}
@@ -52749,16 +53422,38 @@ N			Global_datas.state = SYS_PLAY_STATE_POWERUP;
 N			Global_datas.g_4g_initing = 1;
 N			Global_datas.eq_mode = EQ_MODE_INDOOR;
 N			Global_datas.volume = VOLUME_DEFAULT;
-X			Global_datas.volume = 8;
+X			Global_datas.volume = 5;
 N			TYM_drv_powerkeepon(1);
 N			Drv_4GMoudle_PowerUp(1);
+N			Global_datas.power_4g = 1;
 N			drv_FourGmodel_power_key_SetHi();
 N			TimeOutSet(&ModulePowerUpPinTimer,3000);
 N			TimeOutSet(&PoweroffLedTimer, 100);
 N			Drv_audio_init();
-N			Global_datas.shoutting_down = 0;		
+N			Global_datas.shoutting_down = 0;	
+N
+N			drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
+N
+W "..\main.c" 1566 4 function "Fm_Rest" declared implicitly
+N			Fm_Rest();
 N			
 N			break;
+N			
+N		case SYS_PLAY_EVENT_REBOOT_4G_MOUDLE:
+N
+N			TYM_SysPower12V_3V3_onoff(1);
+N			Global_datas.state = SYS_PLAY_STATE_REBOOT;	
+N			Global_datas.g_4g_initing = 1;
+N			
+N			Drv_4GMoudle_PowerUp(1);
+N			Global_datas.power_4g = 1;
+N			drv_FourGmodel_power_key_SetHi();
+N			TimeOutSet(&ModulePowerUpPinTimer,3000);
+N			TimeOutSet(&PoweroffLedTimer, 100);
+N			Global_datas.shoutting_down = 0;	
+N			break;
+N
+N			
 N
 N		case SYS_PLAY_EVENT_SHUTTING_DOWN:
 N
@@ -52769,12 +53464,12 @@ N			drv_Cmd_Send2NCU031(0x70, 0x15,0x00);// power off cmd to LCD board
 N			Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N			//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N			drv_led_init();// led all off
-W "..\main.c" 1391 4 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 1595 4 function "Drv_audio_powerdown" declared implicitly
 N			Drv_audio_powerdown();
 N			Global_datas.shoutting_down = 1;
 N			TimeOutSet(&PoweroffLedTimer, 5000);
 N
-N			Global_datas.state = SYS_PLAY_STATE_IDLE;
+N			Global_datas.state = SYS_PLAY_STATE_SHUTTING_DOWN;
 N			Global_datas.g_4g_initing = 0;
 N			Global_datas.mode_switching = 0;
 N			Global_datas.mute = 0;
@@ -52787,34 +53482,49 @@ N		case SYS_PLAY_EVENT_INIT_FINISH:
 N			
 N			Global_datas.g_4g_initing = 0;
 N			// send start cmd to sub board
-N			if(Global_datas.SubBoard.subboard_online)
+N			if(Global_datas.SubBoard.subboard_online && (Global_datas.state != SYS_PLAY_STATE_REBOOT))
 N			{
+N				drv_Cmd_Send2NCU031(0x03,0x71,19); // system init finish state send to sub board.
+N				drv_Cmd_Send2NCU031(0x07, Global_datas.volume,0x00);// send volume
+N				
 N				switch(Global_datas.SubBoard.playmode)
 N				{
 N					case PLAY_MODE_WIFI:
 N						Cmd_Send2FourG(0x03,0x15,0);
+N						drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+N					
 N						Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 N					    drv_audio_4G_Channel();
 N						break;
 N
 N					case PLAY_MODE_BT:
 N						Cmd_Send2FourG(0x03,0x16,0);
+N						drv_Cmd_Send2NCU031(0x70, 0x10,0x00);
 N						Global_datas.state = SYS_PLAY_STATE_BT;
 N					    drv_audio_4G_Channel();
 N						break;
 N
 N					case PLAY_MODE_AUX:
 N						Cmd_Send2FourG(0x03,0x17,0);
+N						drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
 N						Global_datas.state = SYS_PLAY_STATE_AUX;
 N					    drv_audio_AuxIn_Channel();
 N						break;
 N
 N					case PLAY_MODE_FM:
-N						Cmd_Send2FourG(0x03,0x18,0);
 N						Global_datas.state = SYS_PLAY_STATE_FM;
-W "..\main.c" 1433 10 function "drv_audio_Null_Channel" declared implicitly
-N					    drv_audio_Null_Channel();
-N						//fm_powerup();
+N						Global_datas.fm_delay_time = FM_DELAY_TIME;
+X						Global_datas.fm_delay_time = 10;
+N						Global_datas.FmData.fmstate = FM_STATE_ON;
+N									
+N						drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode	
+N						Cmd_Send2FourG(0x03 ,0x18,0x00);
+N						//si47xxFMRX_powerup();
+N						//si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N						test_FMRXtune();
+N						drv_audio_FM_Channel(); 
+N						SendFmFreqToSubBoard();
+N
 N						break;
 N
 N					default:
@@ -52836,35 +53546,45 @@ N
 N			break;
 N
 N		case SYS_PLAY_EVENT_MODE_SWITCH:
-N
 N			srv_key_mode_handler();
-N			 
 N			break;
 N
 N		case SYS_PLAY_EVENT_SW_TO_AUX_MODE:
 N			
-W "..\main.c" 1463 4 function "srv_key_mode_switch_to" declared implicitly
+W "..\main.c" 1680 4 function "srv_key_mode_switch_to" declared implicitly
 N			srv_key_mode_switch_to(SYS_PLAY_STATE_AUX);	
 N				
 N			break;
 N
 N		case SYS_PLAY_EVENT_SW_TO_FM_MODE:
 N			
-N			srv_key_mode_switch_to(SYS_PLAY_EVENT_SW_TO_FM_MODE);	
+N			srv_key_mode_switch_to(SYS_PLAY_STATE_FM);	
 N			
 N			break;
 N			
 N		case SYS_PLAY_EVENT_SW_TO_BT_MODE:
 N			
-N			srv_key_mode_switch_to(SYS_PLAY_EVENT_SW_TO_BT_MODE);	
+N			srv_key_mode_switch_to(SYS_PLAY_STATE_BT);	
 N			
 N			break;	
 N			
 N		case SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE:
 N			
-N			srv_key_mode_switch_to(SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE);	
+N			srv_key_mode_switch_to(SYS_PLAY_STATE_MW_RADIO);	
 N		
-N			break;			
+N			break;		
+N
+N
+N		case SYS_PLAY_EVENT_DEFAULT_VOLUME_SET:
+N			
+N				Global_datas.volume = 8;
+N				Drv_Dap_vol_set(Global_datas.volume);
+N				Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
+N				drv_Cmd_Send2NCU031(0x07, Global_datas.volume,0x00);// send volume
+N
+N			break;
+N
+N			
 N
 N		case SYS_PLAY_EVENT_VOL_UP:
 N			
@@ -52875,6 +53595,8 @@ N			{
 N				Global_datas.volume++;
 N				Drv_Dap_vol_set(Global_datas.volume);
 N				Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
+N
+N				drv_Cmd_Send2NCU031(0x07, Global_datas.volume,0x00);// send volume
 N			}
 N
 N			break;
@@ -52892,6 +53614,7 @@ N					Global_datas.mute = 1;
 N					drv_5825_mute_pin_set(0); 
 N				}
 N				Cmd_Send2FourG(0x03,0x04,Global_datas.volume); // send volume  to 4G moudle
+N				drv_Cmd_Send2NCU031(0x07, Global_datas.volume,0x00);// send volume
 N			}
 N			break;
 N
@@ -52930,7 +53653,7 @@ N
 N			if(Global_datas.eq_mode != EQ_MODE_OUTDOOR)
 N			{
 N				Global_datas.eq_mode = EQ_MODE_OUTDOOR;
-W "..\main.c" 1547 5 function "srv_key_eq_outdoor_switch_handler" declared implicitly
+W "..\main.c" 1779 5 function "srv_key_eq_outdoor_switch_handler" declared implicitly
 N				srv_key_eq_outdoor_switch_handler();
 N				Drv_audio_channel_switch();
 N			}
@@ -52942,7 +53665,7 @@ N
 N			if(Global_datas.eq_mode != EQ_MODE_INDOOR)
 N			{
 N				Global_datas.eq_mode = EQ_MODE_INDOOR;
-W "..\main.c" 1558 5 function "srv_key_eq_outdoor_switch_handler" declared implicitly
+W "..\main.c" 1790 5 function "srv_key_eq_outdoor_switch_handler" declared implicitly
 N				srv_key_eq_outdoor_switch_handler();
 N				Drv_audio_channel_switch();
 N			}
@@ -52961,7 +53684,156 @@ N
 N
 N			Cmd_Send2FourG(0x03,0x21,0); 
 N			
-N			break;		
+N			break;	
+N
+N		case SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE:
+N
+N			Global_datas.power_4g = 0;
+N
+N		    printf("\nTURN OFF 4G MOUDLE\n");
+N
+N			if(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)
+N			{
+N				Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
+N				TYM_drv_powerkeepon(0); 
+N				TYM_SysPower12V_3V3_onoff(0);		
+N				Global_datas.state = SYS_PLAY_STATE_IDLE;
+N			}
+N			else if(Global_datas.state == SYS_PLAY_STATE_FM)
+N			{
+N				Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
+N			}
+N		
+N			break;
+N
+N		case SYS_PLAY_EVENT_AUTO_SEARCH:
+N
+N			if(Global_datas.FmData.fmstate == FM_STATE_ON)
+N			{
+N				Global_datas.FmData.fmstate = FM_STATE_AUTO_SEARCH;
+N				Global_datas.FmData.index_station = 0;
+N				
+N				for(temp_fm=0;temp_fm<FM_MAX_STATION_NUM;temp_fm++)
+X				for(temp_fm=0;temp_fm<15;temp_fm++)
+N				{
+N					Global_datas.FmData.station_table[temp_fm] = 0;
+N				}
+N				Global_datas.FmData.Frequency = 8750;			
+N			}
+N			else if(Global_datas.FmData.fmstate == FM_STATE_AUTO_SEARCH)
+N			{
+N				Global_datas.FmData.fmstate = FM_STATE_ON;
+N			}
+N				
+N			break;
+N
+N		case SYS_PLAY_EVENT_FM_SEEK_DOWN:
+N
+N			if(Global_datas.FmData.fmstate == FM_STATE_ON)
+N			{
+N				Global_datas.FmData.fmstate = FM_STATE_SEEK_DOWN;
+N			}
+N			break;
+N
+N		
+N		case SYS_PLAY_EVENT_FM_SEEK_UP:
+N			
+N			if(Global_datas.FmData.fmstate == FM_STATE_ON)
+N			{
+N				Global_datas.FmData.fmstate = FM_STATE_SEEK_UP;
+N			}			
+N			
+N			break;
+N
+N		case SYS_PLAY_EVENT_FM_NEXT_STEP:
+N			
+N			if(Global_datas.state == SYS_PLAY_STATE_FM)
+N			{
+N				if(Global_datas.FmData.Frequency <= 10790)	Global_datas.FmData.Frequency += 10;
+N				else Global_datas.FmData.Frequency = 8750;
+N				Global_datas.FmData.FmNeedToStore = 1;
+N				TimeOutSet(&FmStoreTimer, 2000);
+N				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N				SendFmFreqToSubBoard();
+N				printf("FM UP\n");
+N
+N			}
+N
+N			break;
+N
+N		case SYS_PLAY_EVENT_FM_PREV_STEP:
+N			
+N			if(Global_datas.state == SYS_PLAY_STATE_FM)
+N			{
+N				if(Global_datas.FmData.Frequency >= 8760)	Global_datas.FmData.Frequency -= 10;
+N				else Global_datas.FmData.Frequency = 10080;
+N				Global_datas.FmData.FmNeedToStore = 1;
+N				TimeOutSet(&FmStoreTimer, 2000);
+N				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N				
+N				SendFmFreqToSubBoard();
+N				printf("FM DOWN\n");
+N
+N			}
+N
+N			break;
+N
+N			case SYS_PLAY_EVENT_FM_PREV_STATION:
+N				
+N			if(Global_datas.FmData.station_num)
+N			{
+N				if(Global_datas.FmData.current_station > 0)
+N				{
+N					Global_datas.FmData.current_station--;
+N				}
+N				else
+N				{
+N					Global_datas.FmData.current_station = (Global_datas.FmData.station_num - 1);
+N				}
+N			
+N				Global_datas.FmData.Frequency = Global_datas.FmData.station_table[Global_datas.FmData.current_station];
+N				//dis_mic(1);
+N				si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N				SendFmFreqToSubBoard();
+N				//FreqDisplay(Frequency); 	
+N			
+N				Global_datas.FmData.FmNeedToStore = 1;
+N				TimeOutSet(&FmStoreTimer, 2000);
+N			}
+N
+N			break;
+N
+N			case SYS_PLAY_EVENT_FM_NEXT_STATION:
+N				
+N			if(Global_datas.FmData.station_num)
+N			{
+N				if(Global_datas.FmData.current_station < (Global_datas.FmData.station_num-1))
+N				{
+N					Global_datas.FmData.current_station++;
+N				}
+N				else
+N				{
+N					Global_datas.FmData.current_station = 0;
+N				}
+N			
+N				Global_datas.FmData.Frequency = Global_datas.FmData.station_table[Global_datas.FmData.current_station];
+N				//dis_mic(1);
+N				si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N				//FreqDisplay(Frequency); 	
+N				SendFmFreqToSubBoard();
+N			
+N				Global_datas.FmData.FmNeedToStore = 1;
+N				TimeOutSet(&FmStoreTimer, 2000);
+N			
+N			}
+N
+N
+N			break;			
+N
+N		case SYS_PLAY_EVENT_BT_PAIRING:
+N
+N			Cmd_Send2FourG(0x03,0x4f,0);  // BT enter pairing mode
+N			break;
 N
 N		default:break;
 N	}
@@ -52985,20 +53857,183 @@ N
 N		case SYS_PLAY_STATE_BT:
 N			
 N			break;
-N
-N		case SYS_PLAY_STATE_FM:
 N			
-N			break;		
-N
 N		case SYS_PLAY_STATE_AUX:
 N			
 N			break;	
 N
 N		case SYS_PLAY_STATE_SHUTTING_DOWN:
 N			
-N			break;			
+N			break;	
 N
-N		
+N		case SYS_PLAY_STATE_FM:
+N
+N			if(IsTimeOut(&FmLoopTimer))
+N			{
+N				TimeOutSet(&FmLoopTimer,1000);
+N
+N				if(Global_datas.fm_delay_time)
+N				{
+N
+N				    
+N					Global_datas.fm_delay_time--;
+N					if(Global_datas.fm_delay_time == 0)
+N					{
+N						Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
+N						//Drv_4GMoudle_PowerUp(0); 
+N						//Global_datas.power_4g = 0;
+N						//TimeOutSet(&PoweroffLedTimer, 5000);
+N					}
+N				}
+N			}
+N
+N			if(IsTimeOut(&FmStoreTimer))
+N			{
+N				if(Global_datas.FmData.FmNeedToStore)
+N				{
+N					Global_datas.FmData.FmNeedToStore = 0;
+W "..\main.c" 2015 6 function "DataStore" declared implicitly
+N					DataStore();
+N				}
+N			}
+N
+N			switch(Global_datas.FmData.fmstate)
+N			{
+N				case FM_STATE_OFF:
+N
+N				break;
+N
+N				case FM_STATE_ON:
+N
+N				break;
+N
+N				case FM_STATE_SEEK_UP:
+N
+N					if(Global_datas.FmData.Frequency <= 10790)
+N					{
+N						Global_datas.FmData.Frequency += 10;
+N					}
+N					else
+N					{
+N						Global_datas.FmData.Frequency = 10800;
+N						Global_datas.FmData.fmstate = FM_STATE_ON;		
+N						//dis_mic(0);
+N					}
+N
+N					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N					//FreqDisplay(Frequency);
+N					
+N					if(temp_valid)
+N					{
+N						//dis_mic(1);
+N						Global_datas.FmData.fmstate = FM_STATE_ON;		
+N						
+N						Global_datas.FmData.FmNeedToStore = 1;
+N						TimeOutSet(&FmStoreTimer, 2000);
+N					}
+N
+N				
+N
+N				break;
+N
+N				case FM_STATE_SEEK_DOWN:
+N
+N					if(Global_datas.FmData.Frequency >= 8760)  Global_datas.FmData.Frequency -= 10;
+N					else 
+N					{
+N						Global_datas.FmData.Frequency = 8750;
+N						Global_datas.FmData.fmstate = FM_STATE_ON;		
+N						//dis_mic(0);
+N					}
+N
+N					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N					//FreqDisplay(Frequency);
+N					
+N
+N					if(temp_valid)
+N					{
+N						//dis_mic(1);
+N						Global_datas.FmData.fmstate = FM_STATE_ON;		
+N						Global_datas.FmData.FmNeedToStore = 1;
+N						TimeOutSet(&FmStoreTimer, 2000);					
+N					}					 
+N
+N				break;
+N
+N				case FM_STATE_AUTO_SEARCH:
+N 
+N				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N				//FreqDisplay(Global_datas.FmData.Frequency);
+N				
+N				if(temp_valid)
+N				{
+N					//dis_mic(1);
+N					WaitMs(2000);
+N					
+N					Global_datas.FmData.station_table[Global_datas.FmData.index_station] = Global_datas.FmData.Frequency;
+N					if(Global_datas.FmData.index_station < (FM_MAX_STATION_NUM -1)) Global_datas.FmData.index_station++;
+X					if(Global_datas.FmData.index_station < (15 -1)) Global_datas.FmData.index_station++;
+N					if(Global_datas.FmData.Frequency <= 10790)
+N					{
+N						Global_datas.FmData.Frequency += 10;
+N					}
+N					else
+N					{
+N						Global_datas.FmData.station_num = Global_datas.FmData.index_station;
+N						if(Global_datas.FmData.station_num)
+N						{
+N							Global_datas.FmData.Frequency = Global_datas.FmData.station_table[0];
+N							//dis_mic(1);		
+N							Global_datas.FmData.current_station = 0;
+N						}
+N						else
+N						{
+N							Global_datas.FmData.Frequency = 8750;
+N							//dis_mic(0);
+N						}
+N
+N
+N						Global_datas.FmData.FmNeedToStore = 1;
+N						TimeOutSet(&FmStoreTimer, 1000);
+N						
+N						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N						
+N						SendFmFreqToSubBoard();
+N						//FreqDisplay(Frequency);
+N						Global_datas.FmData.fmstate = FM_STATE_ON;		
+N					}
+N				}	
+N				else
+N				{
+N					if(Global_datas.FmData.Frequency <= 10790)	Global_datas.FmData.Frequency += 10;
+N					else
+N					{
+N						Global_datas.FmData.station_num = Global_datas.FmData.index_station;
+N						if(Global_datas.FmData.station_num)
+N						{
+N							Global_datas.FmData.Frequency = Global_datas.FmData.station_table[0];
+N							//dis_mic(1);		
+N							Global_datas.FmData.current_station = 0;
+N						}
+N						else
+N						{
+N							Global_datas.FmData.Frequency = 8750;
+N							//dis_mic(0);
+N						}
+N
+W "..\main.c" 2142 7 function "DataStore" declared implicitly
+N						DataStore();
+N						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N						SendFmFreqToSubBoard();
+N						//FreqDisplay(Frequency);
+N						Global_datas.FmData.fmstate = FM_STATE_ON;		
+N					}
+N				}					
+N
+N				break;
+N			}
+N			
+N			break;		
 N			
 N		default:break;
 N	}

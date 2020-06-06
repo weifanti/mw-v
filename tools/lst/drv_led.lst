@@ -50298,6 +50298,9 @@ Nvoid drv_all_led_on(uint8_t value);
 N
 Nvoid drv_led_init(void);
 N
+Nvoid drv_led_state1_onoff_red(uint8_t on);
+Nvoid drv_led_state1_onoff_green(uint8_t on);
+N
 N
 L 12 "..\src\driver\drv_led.c" 2
 N
@@ -50450,9 +50453,9 @@ N}
 N
 Nvoid drv_led_init(void)
 N{
-N	GPIO_SetMode(PA, BIT14, GPIO_MODE_OUTPUT);	//STAT2
+N	GPIO_SetMode(PA, BIT14, GPIO_MODE_OUTPUT);	//STAT1  RED
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) )), 0x00004000, 0x1UL);	
-N	GPIO_SetMode(PA, BIT15, GPIO_MODE_OUTPUT);  //STAT1
+N	GPIO_SetMode(PA, BIT15, GPIO_MODE_OUTPUT);  //STAT2  GREEN
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) )), 0x00008000, 0x1UL);  
 N	GPIO_SetMode(PA, BIT13, GPIO_MODE_OUTPUT);	//wifi
 X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) )), 0x00002000, 0x1UL);	
@@ -50485,12 +50488,42 @@ X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*
 N	PA3 = LED_OFF;  //wireless mic
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((3)<<2)))) = 1;  
 N	
-N	PA14 = LED_OFF;  //STAT2
+N	PA14 = LED_OFF;  //STAT1 RED
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((14)<<2)))) = 1;  
-N	PA15 = LED_ON;  //STAT1
-X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((15)<<2)))) = 0;  
+N	PA15 = LED_OFF;  //STAT1 GREEN
+X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((15)<<2)))) = 1;  
 N	
 N	
+N}
+N
+N
+Nvoid drv_led_state1_onoff_red(uint8_t on)
+N{
+N	if(on)
+N	{
+N		PA14 = LED_ON;
+X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((14)<<2)))) = 0;
+N	}
+N	else
+N	{
+N		PA14 = LED_OFF;
+X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((14)<<2)))) = 1;
+N	}
+N}
+N
+N
+Nvoid drv_led_state1_onoff_green(uint8_t on)
+N{
+N	if(on)
+N	{
+N		PA15 = LED_ON;
+X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((15)<<2)))) = 0;
+N	}
+N	else
+N	{
+N		PA15 = LED_OFF;
+X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((15)<<2)))) = 1;
+N	}
 N}
 N
 N

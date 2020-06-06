@@ -48,8 +48,11 @@ void TYM_sys_PowerManger_init(void);
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); // 1 0n, 0 off
 void TYM_SysPower12V_3V3_onoff(uint8_t on);
-void TYM_power_battery_charge_enable(void);
-void TYM_power_battery_charge_disenable(void);
+void battery_charge_enable(void);
+void battery_charge_disenable(void);
+void DcInDetect(void);
+void BatteryChargeStateChcek(void);
+void Bat_SelectPin_0_external_1_internal(uint8_t value); // 0 external, 1 internal
 
 #endif
 

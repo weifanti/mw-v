@@ -27,24 +27,18 @@ void srv_key_mode_handler(void)
 switch(Global_datas.state)
 {
 	case SYS_PLAY_STATE_AUX:
+	
+		Global_datas.state = SYS_PLAY_STATE_FM;
+		Global_datas.fm_delay_time = FM_DELAY_TIME;
+		Global_datas.FmData.fmstate = FM_STATE_ON;
+						
+		drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode	
+		Cmd_Send2FourG(0x03 ,0x18,0x00);
 
-		if(Global_datas.SubBoard.subboard_online) // if subboard online ,turn on fm
-		{
+		test_FMRXtune();
+		SendFmFreqToSubBoard();
+		drv_audio_FM_Channel(); 
 			
-			Global_datas.state = SYS_PLAY_STATE_FM;
-			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode	
-			Cmd_Send2FourG(0x03 ,0x18,0x00);
-			drv_audio_FM_Channel(); 
-		}
-		else
-		{
-			
-			Cmd_Send2FourG(0x03 ,0x15,0x00);
-			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
-			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi mode	
-			drv_audio_4G_Channel(); 
-		}
-
 
 	break;
 	
@@ -54,6 +48,8 @@ switch(Global_datas.state)
 		Cmd_Send2FourG(0x03 ,0x16,0x00);
 		Global_datas.state = SYS_PLAY_STATE_BT;
 		drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
+		
+		drv_Cmd_Send2NCU031(0x70, 0x10,0x00);// change to BT mode 
 		
 	break;
 	
@@ -68,11 +64,27 @@ switch(Global_datas.state)
 	break;
 	
 	case SYS_PLAY_STATE_FM:
-		
-		Cmd_Send2FourG(0x03 ,0x15,0x00);
-		Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
-		drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
-		drv_audio_4G_Channel(); 
+
+		if(Global_datas.power_4g)
+		{
+		  si47xxFMRX_powerdown();
+		  Global_datas.FmData.fmstate = FM_STATE_OFF;	
+			Cmd_Send2FourG(0x03 ,0x15,0x00);
+			Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+			drv_audio_4G_Channel(); 
+
+		}
+		else
+		{
+			si47xxFMRX_powerdown();
+			Global_datas.FmData.fmstate = FM_STATE_OFF;   
+			drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+			
+			Global_datas.state = SYS_PLAY_STATE_IDLE;
+			Global_datas.inputmessage = IN_KEY_REBOOT_4G_MOUDLE; // go to reboot 4G moudle mode
+		}
+
 	break;
 	
 	default:
@@ -110,6 +122,16 @@ void srv_key_mode_switch_to(uint8_t mode)
 			break;		
 
 			case SYS_PLAY_STATE_FM:
+				
+			Global_datas.state = SYS_PLAY_STATE_FM;
+			Global_datas.fm_delay_time = FM_DELAY_TIME;
+			Global_datas.FmData.fmstate = FM_STATE_ON;
+						
+			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode	
+			Cmd_Send2FourG(0x03 ,0x18,0x00);
+			test_FMRXtune();
+			drv_audio_FM_Channel(); 
+
 
 			break;	
 
@@ -141,6 +163,17 @@ void srv_key_mode_switch_to(uint8_t mode)
 
 			case SYS_PLAY_STATE_FM:
 
+			Global_datas.state = SYS_PLAY_STATE_FM;
+			Global_datas.fm_delay_time = FM_DELAY_TIME;
+			Global_datas.FmData.fmstate = FM_STATE_ON;
+						
+			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode	
+			Cmd_Send2FourG(0x03 ,0x18,0x00);
+			test_FMRXtune();
+			drv_audio_FM_Channel(); 
+
+			
+
 			break;	
 
 			default:break;
@@ -170,6 +203,16 @@ void srv_key_mode_switch_to(uint8_t mode)
 			break;		
 
 			case SYS_PLAY_STATE_FM:
+				
+			Global_datas.state = SYS_PLAY_STATE_FM;
+			Global_datas.fm_delay_time = FM_DELAY_TIME;
+			Global_datas.FmData.fmstate = FM_STATE_ON;
+						
+			drv_Cmd_Send2NCU031(0x70, 0x13,0x00);// change to fm mode	
+			Cmd_Send2FourG(0x03 ,0x18,0x00);
+			test_FMRXtune();
+			drv_audio_FM_Channel(); 
+
 
 			break;	
 
@@ -195,10 +238,52 @@ void srv_key_mode_switch_to(uint8_t mode)
 			Global_datas.state = SYS_PLAY_STATE_BT;
 			drv_audio_4G_Channel();   // BT and 4G wifi use the same channel
 
+			if(Global_datas.power_4g)
+			{
+			    si47xxFMRX_powerdown();
+			    Global_datas.FmData.fmstate = FM_STATE_OFF;	
+				Cmd_Send2FourG(0x03 ,0x16,0x00);
+				Global_datas.state = SYS_PLAY_STATE_BT;
+				drv_audio_4G_Channel(); 
+			
+			}
+			else
+			{
+				si47xxFMRX_powerdown();
+				Global_datas.FmData.fmstate = FM_STATE_OFF;   
+				
+				Global_datas.state = SYS_PLAY_STATE_IDLE;
+				Global_datas.inputmessage = IN_KEY_REBOOT_4G_MOUDLE; // go to reboot 4G moudle mode
+			}
+
 
 			break;		
 
 			case SYS_PLAY_STATE_MW_RADIO:
+
+			
+			if(Global_datas.power_4g)
+			{
+			  si47xxFMRX_powerdown();
+			  Global_datas.FmData.fmstate = FM_STATE_OFF;	
+				Cmd_Send2FourG(0x03 ,0x15,0x00);
+				Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+				drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+				drv_audio_4G_Channel(); 
+			
+			}
+			else
+			{
+				si47xxFMRX_powerdown();
+				Global_datas.FmData.fmstate = FM_STATE_OFF;   
+				drv_Cmd_Send2NCU031(0x70, 0x11,0x00);// change to wifi/4g mode
+				
+				Global_datas.state = SYS_PLAY_STATE_IDLE;
+				Global_datas.inputmessage = IN_KEY_REBOOT_4G_MOUDLE; // go to reboot 4G moudle mode
+			}
+
+
+			
 
 			break;	
 

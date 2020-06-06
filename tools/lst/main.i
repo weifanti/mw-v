@@ -29637,8 +29637,11 @@ void TYM_sys_PowerManger_init(void);
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
 void TYM_SysPower12V_3V3_onoff(uint8_t on);
-void TYM_power_battery_charge_enable(void);
-void TYM_power_battery_charge_disenable(void);
+void battery_charge_enable(void);
+void battery_charge_disenable(void);
+void DcInDetect(void);
+void BatteryChargeStateChcek(void);
+void Bat_SelectPin_0_external_1_internal(uint8_t value); 
 
 
 
@@ -29651,6 +29654,10 @@ void TYM_power_battery_charge_disenable(void);
 
 
  
+
+
+
+
 
 
 
@@ -29691,12 +29698,12 @@ typedef enum
 
 typedef enum
 {
-	POWER_ON_MODE,
-	WIFI_MODE, 
-	WIFI_CONNECTED_MODE,
-	WIFI_CONNECTING_MODE,
-	FOURG_MODE,
-	FOURG_CONNECTED_MODE,
+		POWER_ON_MODE,
+		WIFI_MODE, 
+		WIFI_CONNECTED_MODE,
+		WIFI_CONNECTING_MODE,
+		FOURG_MODE,
+		FOURG_CONNECTED_MODE,
     BT_MODE,
     BT_CONNECTED_MODE,
     AUX_MODE,
@@ -29715,6 +29722,7 @@ typedef enum
 	SYS_PLAY_STATE_NONE = 0,
 	SYS_PLAY_STATE_IDLE, 
 	SYS_PLAY_STATE_POWERUP,
+	SYS_PLAY_STATE_REBOOT,
 	SYS_PLAY_STATE_SHUTTING_DOWN,
 	SYS_PLAY_STATE_MW_RADIO,
 	SYS_PLAY_STATE_BT,
@@ -29734,6 +29742,8 @@ typedef enum
 	SYS_PLAY_EVENT_VOL_UP,
 	SYS_PLAY_EVENT_VOL_DOWN,
 	
+	SYS_PLAY_EVENT_DEFAULT_VOLUME_SET,
+	
 	SYS_PLAY_EVENT_NEXT_SONG,
 	SYS_PLAY_EVENT_PREV_SONG,	
 	SYS_PLAY_EVENT_PLAY_PAUSE,	
@@ -29750,6 +29760,18 @@ typedef enum
 	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
 	SYS_PLAY_EVENT_SW_TO_BT_MODE,
 	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+
+	SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE,
+	SYS_PLAY_EVENT_REBOOT_4G_MOUDLE,
+
+	SYS_PLAY_EVENT_AUTO_SEARCH,
+	SYS_PLAY_EVENT_BT_PAIRING,
+	SYS_PLAY_EVENT_FM_SEEK_UP,
+	SYS_PLAY_EVENT_FM_SEEK_DOWN,
+	SYS_PLAY_EVENT_FM_PREV_STEP,
+	SYS_PLAY_EVENT_FM_NEXT_STEP,
+	SYS_PLAY_EVENT_FM_NEXT_STATION,
+	SYS_PLAY_EVENT_FM_PREV_STATION,
 
 	SYS_PLAY_EVENT_NUM,
 
@@ -29787,6 +29809,34 @@ typedef enum
 
 } PLAY_MODE;
 
+typedef enum
+{
+    BAT_LEVEL_5_PERCENT      = 0,  
+    BAT_LEVEL_10_PERCENT,
+    BAT_LEVEL_20_PERCENT,
+    BAT_LEVEL_30_PERCENT,
+    BAT_LEVEL_40_PERCENT,
+    BAT_LEVEL_50_PERCENT,
+    BAT_LEVEL_60_PERCENT,
+    BAT_LEVEL_70_PERCENT,
+    BAT_LEVEL_80_PERCENT,
+    BAT_LEVEL_90_PERCENT,
+    BAT_LEVEL_100_PERCENT,    
+
+} BATTERY_LEVEL;
+
+
+typedef enum
+{
+    CHARGE_STATE_NONE      = 0,  
+    CHARGE_STATE_ON,
+    CHARGE_STATE_COMPLETE,
+    CHARGE_STATE_NG,
+ 
+} CHARGE_STATE;
+
+
+
 
 
 
@@ -29814,13 +29864,17 @@ typedef enum _KEY_EVENT
 	IN_KEY_PLAY_S,
 	IN_KEY_NEXT_SONG_S,
 	IN_KEY_PREV_SONG_S,
-	IN_KEY_FM_NEXT_S,
-	IN_KEY_FM_PREV_S,
+	IN_KEY_FM_NEXT_FREQ_S,
+	IN_KEY_FM_PREV_FREQ_S,
 	IN_KEY_AUTO_SEARCH_S,
 	IN_KEY_RADIO_PREV_S,
 	IN_KEY_RADIO_NEXT_S,
 	IN_KEY_RADIO_NET_SWITCH_S,
 	IN_KEY_RADIO_NET_PARIING_S,
+
+	IN_KEY_TURNOFF_4G_MOUDLE,
+	IN_KEY_REBOOT_4G_MOUDLE,
+	IN_KEY_DEFAULT_VOLUME_SET,
 	
 
 	IR_KEY_POWER,
@@ -29857,7 +29911,52 @@ typedef struct _PowerStatus
 	uint8_t PowerAcStatus;
 	uint8_t bat_status;
 	uint8_t bat_value;  
+	uint8_t BatValue;
+	uint8_t NTC_value;
+	
 }sPowerStatus;
+
+
+typedef enum
+{
+    FM_STATE_OFF      = 0,
+    FM_STATE_ON,
+    FM_STATE_SEEK_UP,
+    FM_STATE_SEEK_DOWN,
+    FM_STATE_AUTO_SEARCH,
+} FM_STATE;
+
+
+typedef struct _POWER_STATE
+{
+
+	uint32_t battery_data;
+	uint32_t ntc_data;
+	BATTERY_LEVEL battery_level;
+	CHARGE_STATE charge_state;
+	uint8_t NTC_level;
+	uint8_t AdapterIn;
+	uint8_t battery_low;
+	uint8_t charge_power_good_pin; 
+	
+}POWER_STATE;
+
+
+
+
+typedef struct _Fm_Data
+{
+	uint32_t Frequency;
+	uint8_t  FmError;
+	uint8_t  FmNeedToStore;
+	uint32_t station_table[15];
+	uint8_t station_num;
+	uint8_t index_station;
+	uint8_t current_station;
+	FM_STATE fmstate;
+}Fm_Data;
+
+
 
 typedef struct _SubBoardStatus
 {
@@ -29877,6 +29976,7 @@ typedef struct
 	sPowerStatus g_PowerStatus;
 	uint8_t g_mode_status;
 	uint8_t g_4g_initing;
+	uint8_t power_4g;
 	uint32_t systick;
 	uint8_t key_led_blink;
 	uint8_t shoutting_down;
@@ -29886,14 +29986,18 @@ typedef struct
 	uint8_t mute;			 
 	uint8_t volume_resume;   
 	uint8_t inputmessage;
+	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
 	SubBoardStatus SubBoard;
+	Fm_Data FmData;
+	POWER_STATE PowerState;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
 
 
 
@@ -29955,6 +30059,9 @@ void drv_wlmic_led_on(uint8_t value);
 void drv_all_led_on(uint8_t value);
 
 void drv_led_init(void);
+
+void drv_led_state1_onoff_red(uint8_t on);
+void drv_led_state1_onoff_green(uint8_t on);
 
 
 #line 27 "..\\main.c"
@@ -30104,6 +30211,10 @@ extern TIMER LedKeyBlinkTimer;
 extern TIMER PoweroffLedTimer;
 extern TIMER SubBoardHandshakeTimer;
 extern TIMER ModeSwitchTimer;
+extern TIMER FmLoopTimer;
+extern TIMER FmStoreTimer;
+extern TIMER SysTimer_50ms;
+
 
 
 
@@ -30341,8 +30452,267 @@ void drv_5825_gpio012_config(void);
 
 
 #line 37 "..\\main.c"
+#line 1 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+#line 24 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+#line 37 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 75 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+#line 89 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+#line 107 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+
+
+
+
+
+
+
+
+#line 140 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+#line 151 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+
+
+
+#line 165 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 214 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 286 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+
+
+
+
+
+#line 304 "..\\src\\driver\\include\\MoudleFm.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void FmIoConfig(void);
+void test_FMRXtune(void);
+unsigned char si47xxFMRX_tune(unsigned int frequency);
+unsigned int si47xxFMRX_get_frequency();
+void si47xx_getPartInformation(void);
+void fmTuneStatus(unsigned char cancel, unsigned char intack);
+
+void si47xxFMRX_powerdown(void);
+unsigned char IsFreqValid(void);
+unsigned char IsStationNumValid(void);
+unsigned char IsCurrentStationNunValid(void);
+
+
+void WaitMs(unsigned int time);
+
+#line 38 "..\\main.c"
+#line 1 "..\\src\\driver\\include\\hal_adc.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+extern unsigned int batlevel_table[11];
+
+void hal_adc_init(void);    
+void ADC_FunctionTest();
+void Mic1Check(void);
+void bat_value_get(unsigned int dat);
+void ntc_value_get(unsigned int dat);
+
+#line 39 "..\\main.c"
+
 
 void Sysctrl(void);
+void SendFmFreqToSubBoard(void);
+
 
 volatile sys_err_e sys_err = SYS_ERR_NONE;
 
@@ -30391,7 +30761,7 @@ void SYS_Clock_init(void)
     CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((9)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
 
 	 
-    CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((28)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((2) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0xFF) & 0xff) << 10)|(((16) & 0x1f) << 5)));
+   
 
      
     CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((20)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((1) & 0x07) << 25)|(((28) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
@@ -30409,7 +30779,12 @@ void SYS_Clock_init(void)
 	CLK_SetModuleClock(((((2UL) & 0x03) << 30)|((((8)) & 0x1f) << 0)| (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)), (0x0UL<<(24)), (((1)-1) << (8)));
 
      
-    CLK_SetModuleClock(((((1) & 0x03) << 30)|((((28)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((2) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0xFF) & 0xff) << 10)|(((16) & 0x1f) << 5)), (0x3UL<<(2)), (((7)-1) << (16)));
+   
+
+	 
+  
+   
+	
      
    
 
@@ -30427,6 +30802,15 @@ void SYS_BusInit(void)
 	Hal_I2c_Init();
 	
 }
+
+
+
+
+void AMP_FaultPinDetectInit(void)
+{
+	GPIO_SetMode(((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x0140)), 0x00000004, 0x0UL);	
+}
+
 
 void Amplifier_open(void)
 {
@@ -30455,13 +30839,16 @@ void SYS_Init(void)
 	
 	SYS_Clock_init();
 	TYM_gpio_init();
+	hal_adc_init();
 
 	 
     SYS_LockReg();
 
      
    
+
 	TYM_sys_PowerManger_init();
+	
 	drv_led_init();
 
 	Drv_FourG_Gpio_Init();
@@ -30474,6 +30861,10 @@ void SYS_Init(void)
 	
 	Core_Msg_Init();
 
+	hal_fmc_init();
+
+	AMP_FaultPinDetectInit();
+
 	
 
 }
@@ -30483,11 +30874,18 @@ void SysIdle(void)
 	Global_datas.state = SYS_PLAY_STATE_IDLE;
 	Global_datas.g_4g_initing = 0;
 	Global_datas.mode_switching = 0;
+	Global_datas.power_4g = 0;
 	Global_datas.mute = 0;
 	
 	drv_FourGmodel_power_key_SetLow();  
 	TimeOutSet(&SysTimer_1s,1000);
 	Global_datas.SubBoard.subboard_online = 0;	
+
+	Global_datas.FmData.Frequency = 8750;
+	Global_datas.FmData.station_num = 0;
+
+	DataRead();
+	SendFmFreqToSubBoard();
 	
 }
 
@@ -30497,7 +30895,7 @@ void SYS_Status(void)
 	Global_datas.g_mode_status = POWER_ON_MODE;	
 	Global_datas.g_4g_initing = 1;
 	Global_datas.eq_mode = EQ_MODE_INDOOR;
-	Global_datas.volume = 8;
+	Global_datas.volume = 5;
 	TYM_drv_powerkeepon(1);
 	Drv_4GMoudle_PowerUp(1);
 	drv_FourGmodel_power_key_SetHi();
@@ -30506,9 +30904,7 @@ void SYS_Status(void)
 	Drv_audio_init();
 	Global_datas.shoutting_down = 0;
 	
-
 	
-	drv_Cmd_Send2NCU031(0x70, 0x16,0x00);
 	
 }
 
@@ -30549,16 +30945,13 @@ void PowerDown_deepsleep(void)
 	Drv_audio_powerdown();
 	Global_datas.shoutting_down = 1;
 	TimeOutSet(&PoweroffLedTimer, 5000);
-
-
-
+	
 	Drv_4GMoudle_PowerUp(0); 
 	TYM_drv_powerkeepon(0); 		
 	TYM_SysPower12V_3V3_onoff(0);
 
-
 	
-    SYS_UnlockReg();
+  SYS_UnlockReg();
 	printf("Enter to Power-Down ......\n");
      
 	
@@ -30618,7 +31011,7 @@ void IoKeyProcess(void)
 		
 }
 
-#line 820 "..\\main.c"
+#line 848 "..\\main.c"
 void MessageProcess(void)
 {
 	sCoreMsg msg;
@@ -30636,24 +31029,13 @@ void MessageProcess(void)
 					
 	                if((msg.param0 == 0x08) && (msg.param1 == 0x00))   
 	                {
-						
 						Global_datas.inputmessage = IN_KEY_INIT_FINISH_CMD;
 					} 
 					else if((msg.param0 == 0x09) && (msg.param1 == 0x01))  
-	                {
-
-	                	
-						bat_val[1] = (Global_datas.ADC_ChannelValue[15]>>8) & 0xff;
-						bat_val[0] = Global_datas.ADC_ChannelValue[15] & 0xff;
-						if(Global_datas.g_PowerStatus.PowerBatInStatus != POWER_BAT_IN_FALSE)
-							bat_val[1] = bat_val[1] & 0x80;  
-						Cmd_Send2FourG(0x09,bat_val[1],bat_val[0]);
+				    {
 						
-						bat_val[1] = (Global_datas.ADC_ChannelValue[12]>>8) & 0xff;
-						bat_val[0] = Global_datas.ADC_ChannelValue[12] & 0xff;
-						if(Global_datas.g_PowerStatus.PowerBatExStatus != POWER_BAT_EX_FALSE)
-							bat_val[1] = bat_val[1] & 0x60;  
-						Cmd_Send2FourG(0x09,bat_val[1],bat_val[0]);
+						
+						
 					}
 					
 					else if(msg.param0 == 0x07)   
@@ -30677,15 +31059,14 @@ void MessageProcess(void)
 						}
 						
 					}
-					else if(msg.param0 == 0x04 )
+					else if(msg.param0 == 0x04 ) 
 					{
 	                	
 					}
 					else if(msg.param0 == 0x0d)  
 					{
-						Drv_4GMoudle_PowerUp(0);  
-						TYM_drv_powerkeepon(0); 
-						TYM_SysPower12V_3V3_onoff(0);
+						Global_datas.inputmessage = IN_KEY_TURNOFF_4G_MOUDLE;
+						printf("IN_KEY_TURNOFF_4G_MOUDLE \n");
 					}
 					else if(msg.param0 == 0x06)  
 					{
@@ -30705,8 +31086,7 @@ void MessageProcess(void)
 						if (msg.param1 == 0x02)
 						{
 		                	Global_datas.g_mode_status = WIFI_CONNECTED_MODE;
-		                	
-						printf("0x06, msg.param1 = %x \n",msg.param1);
+							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x04)
 						{
@@ -30723,14 +31103,12 @@ void MessageProcess(void)
 						if (msg.param1 == 0x011)
 						{
 		                	Global_datas.g_mode_status = FOURG_CONNECTED_MODE;
-		                	
-						printf("0x06, msg.param1 = %x \n",msg.param1);
+							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x012)
 						{
 		                	Global_datas.g_mode_status = FOURG_MODE;
-		                	
-						printf("0x06, msg.param1 = %x \n",msg.param1);
+							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x0B)
 						{
@@ -30748,7 +31126,7 @@ void MessageProcess(void)
 					}
 					else if(msg.param0 == 0x20) 
 					{
-						Cmd_Send2FourG(0x20,0x0,0x4);  
+						Cmd_Send2FourG(0x20,0x0,0x1);  
 					}
 	            break;
 
@@ -30763,67 +31141,38 @@ void MessageProcess(void)
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0x03)) 
 					{
-						
 						Global_datas.inputmessage = IN_KEY_VOL_SUB_S;
+						printf("VOL-\n");
 					}
 					
 					if((msg.param0 == 0x03) && (msg.param1 == 0x02))  
 					{
-						
 						Global_datas.inputmessage = IN_KEY_VOL_ADD_S;
-
+						printf("VOL+\n");
 					}
 
 					if((msg.param0 == 0x03) && (msg.param1 == 0x15)) 
 					{
 
-						drv_5825_mute_pin_set(0); 
-						Global_datas.mode_switching = 1;
-						Global_datas.g_mode_status = WIFI_MODE;
-						drv_audio_4G_Channel();
-						
 						printf("FourG_WIFI_CHANNEL\n");
-
-						
 						Global_datas.inputmessage = IN_KEY_MW_RADIO_MODE_S;
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x16)) 
 					{
-						drv_5825_mute_pin_set(0); 
-						Global_datas.mode_switching = 1;
-						Global_datas.g_mode_status = BT_MODE;
-						drv_audio_4G_Channel();  	
 						printf("BT_CHANNEL\n");
-
-						
 						Global_datas.inputmessage = IN_KEY_BT_MODE_S;
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x17)) 
 					{
-						drv_5825_mute_pin_set(0); 
-						Global_datas.mode_switching = 1;
-						Global_datas.g_mode_status = AUX_MODE;
-						drv_audio_AuxIn_Channel(); 
 						printf("AUXIN_CHANNEL\n");
-
-						
-					Global_datas.inputmessage = IN_KEY_AUX_MODE_S;
+						Global_datas.inputmessage = IN_KEY_AUX_MODE_S;
 					
 					}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x18)) 
 					{
-						drv_5825_mute_pin_set(0); 
-						Global_datas.mode_switching = 1;
-						Global_datas.g_mode_status = FM_MODE;
-						drv_audio_FM_Channel(); 
-
-						
-
-						
-						Global_datas.inputmessage = IN_KEY_AUX_MODE_S;
-						
 						printf("FM_CHANNEL\n");
-					}
+						Global_datas.inputmessage = IN_KEY_FM_MODE_S;
+											}
 					if((msg.param0 == 0x03) && (msg.param1 == 0x31)) 
 					{
 						Global_datas.inputmessage = IN_KEY_RADIO_NEXT_S;
@@ -30839,6 +31188,19 @@ void MessageProcess(void)
 						Global_datas.inputmessage = IN_KEY_PLAY_S;
 					}
 					
+					if((msg.param0 == 0x03) && (msg.param1 == 0x0d)) 
+					{
+						Global_datas.inputmessage = IN_KEY_NEXT_SONG_S;
+								
+					}
+					if((msg.param0 == 0x03) && (msg.param1 == 0x0e))
+					{
+						Global_datas.inputmessage = IN_KEY_PREV_SONG_S;
+					
+					}
+
+					
+					
 					if((msg.param0 == 0x03) && (msg.param1 == 0xC1)) 
 					{
 						printf("inside\n");
@@ -30850,6 +31212,48 @@ void MessageProcess(void)
 						printf("outside\n");
 						Global_datas.inputmessage = IN_KEY_EQ_OUTDOOR_S;
 					}
+					
+					if((msg.param0 == 0x03) && (msg.param1 == 0xC8))
+					{
+
+						printf("FM UP\n");
+						Global_datas.inputmessage = IN_KEY_FM_NEXT_FREQ_S;
+					}
+
+					if((msg.param0 == 0x03) && (msg.param1 == 0xC9))
+					{
+
+						printf("FM DOWN\n");
+						Global_datas.inputmessage = IN_KEY_FM_PREV_FREQ_S;
+					}	
+					
+					if((msg.param0 == 0x03) && (msg.param1 == 0xCB))
+					{
+
+						printf("FM LONG PRESS\n");
+						Global_datas.inputmessage = IN_KEY_AUTO_SEARCH_S;
+					}	
+
+
+					
+
+					if((msg.param0 == 0x03) && (msg.param1 == 0x62)) 
+					{
+						Cmd_Send2FourG(0x03,0x62,0);
+
+						printf("mic key press\n");
+					}
+					else if((msg.param0 == 0x03) && (msg.param1 == 0x63)) 
+					{
+						Cmd_Send2FourG(0x03,0x63,0);
+						
+						printf("mic key long press\n");
+					}
+					else if((msg.param0 == 0x03) && (msg.param1 == 0x64)) 
+					{
+						Cmd_Send2FourG(0x03,0x64,0);					
+						printf("mic key long release\n");
+					}					
 
 
 
@@ -30863,11 +31267,19 @@ void MessageProcess(void)
 					{
 						if(Global_datas.SubBoard.subboard_online == 0)  
 						{
-						 	drv_SendAllstateToSubboard();
+						 	
+							SendFmFreqToSubBoard();
+							printf("SUB BOARD ON\n");
+
+							Global_datas.SubBoard.eq_mode = msg.param2 >> 4;
+							Global_datas.SubBoard.playmode = msg.param2 & 0x0f;
+							Global_datas.SubBoard.subboard_online = 1;
+							printf("msg.param1 = %d \n",msg.param2);
+							printf("play_mode = %d \n",Global_datas.SubBoard.playmode);							
 						}
-						Global_datas.SubBoard.subboard_online = 1;
-						Global_datas.SubBoard.eq_mode = msg.param1 >> 4;
-						Global_datas.SubBoard.eq_mode = msg.param1 && 0x0f;
+						
+
+
 						
 						TimeOutSet(&SubBoardHandshakeTimer, 4000);
 						
@@ -30882,34 +31294,74 @@ void MessageProcess(void)
 }
 
 
+void SendFmFreqToSubBoard(void)
+{
+	unsigned char freq_hi = 0, freq_low = 0;
+
+	freq_hi = Global_datas.FmData.Frequency>>8;
+	freq_low = Global_datas.FmData.Frequency & 0xff;
+	
+	drv_Cmd_Send2NCU031(0x72,freq_hi,freq_low);
+}
+
 
  
  
  
 int32_t main(void)
 {
-	unsigned int count;
-	unsigned char refcount0=1;
-	unsigned char refcount1=1;
-	unsigned char refcount2=1;
 	unsigned char ledtimecount = 0;
 	unsigned char resume_timecount = 0;
 	
-
 	 
 
 	SYS_Init();
  	SysIdle();
+
+  	printf("\nmain\n");
 	
-    printf("\nmain\n");
-		
     while(1)
     {
+    	if(IsTimeOut(&SysTimer_50ms))
+    	{
+    		TimeOutSet(&SysTimer_50ms, 2000);
+			ADC_FunctionTest();
+			DcInDetect();
+			BatteryChargeStateChcek();
+
+			if(Global_datas.PowerState.AdapterIn)
+			{
+				switch(Global_datas.PowerState.charge_state)
+				{
+					case CHARGE_STATE_ON:
+						 drv_led_state1_onoff_red(1);
+						 drv_led_state1_onoff_green(0);
+						 break;
+					case CHARGE_STATE_COMPLETE:
+						 drv_led_state1_onoff_red(0);
+						 drv_led_state1_onoff_green(1);	
+						 break;
+
+					case CHARGE_STATE_NG:
+						break;
+					default:break;
+				}
+			}
+			
+			if((Global_datas.PowerState.battery_level == 0) && (Global_datas.state > SYS_PLAY_STATE_POWERUP) && (Global_datas.PowerState.AdapterIn == 0))
+			{
+				Global_datas.inputmessage =  IN_KEY_POWER_CP;
+			}
+			else if((Global_datas.PowerState.battery_level < BAT_LEVEL_20_PERCENT) && (Global_datas.PowerState.battery_data >  batlevel_table[0])  && (Global_datas.volume > 8) && (Global_datas.PowerState.AdapterIn == 0))
+			{
+			 	Global_datas.inputmessage =  IN_KEY_DEFAULT_VOLUME_SET;
+			}
+
+		}
 
 		if(IsTimeOut(&SysTimer_1s))
 		{
 			TimeOutSet(&SysTimer_1s, 500);
-		
 	        if(Global_datas.g_4g_initing)
 			{
 				srv_led_sys_initing();
@@ -30924,7 +31376,7 @@ int32_t main(void)
 				drv_FourGmodel_power_key_SetLow();
 			}
 
-			if(Global_datas.state == SYS_PLAY_STATE_IDLE)
+			if(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)
 			{
 				if(!IsTimeOut(&PoweroffLedTimer))
 				{			
@@ -30953,14 +31405,15 @@ int32_t main(void)
 					TYM_SysPower12V_3V3_onoff(0);
 
 					Global_datas.shoutting_down = 0;
+					Global_datas.state = SYS_PLAY_STATE_IDLE;
 				}
 				
 			}
 
-
 			if(IsTimeOut(&SubBoardHandshakeTimer))
 			{
 				Global_datas.SubBoard.subboard_online = 0;
+				printf("SUB BOARD OFF\n");
 			}			
 		}
 		
@@ -30991,15 +31444,23 @@ int32_t main(void)
 			}
 		}
 
-		Global_datas.inputmessage = GetIrKey();
-		
-		if(!Global_datas.inputmessage)
+		if(Global_datas.inputmessage == IN_KEY_NONE)  
 		{
-			GetKeyEvent();
+			Global_datas.inputmessage = GetIrKey();
 		}
 		
+		if( Global_datas.inputmessage == IN_KEY_NONE)  
+		{
+			GetKeyEvent();
+			
+			if(((Global_datas.state == SYS_PLAY_STATE_IDLE || Global_datas.state == SYS_PLAY_STATE_POWERUP )&&(IN_KEY_POWER_CP != Global_datas.inputmessage)) || 				(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN))
+
+			{
+				
+			}
+		}
 		
-		if(Global_datas.inputmessage == 0)
+		if(Global_datas.inputmessage == IN_KEY_NONE) 
 		{
 			MessageProcess();
 		}
@@ -31015,6 +31476,9 @@ int32_t main(void)
 
 void Sysctrl(void)
 {
+	unsigned char temp_fm = 0;
+	unsigned char temp_valid = 0;
+	
 	switch(Global_datas.inputmessage)
 	{
 		case IN_KEY_POWER_SP:
@@ -31029,6 +31493,7 @@ void Sysctrl(void)
 
 		case IN_KEY_POWER_CP:
 		case IR_KEY_POWER:
+					
 			 if(Global_datas.state == SYS_PLAY_STATE_IDLE)
 			 {
 				Global_datas.event = SYS_PLAY_EVENT_POWERING_UP;
@@ -31053,16 +31518,36 @@ void Sysctrl(void)
 			Global_datas.event = SYS_PLAY_EVENT_VOL_UP;
 			break;
 
+		case IN_KEY_DEFAULT_VOLUME_SET:
+			Global_datas.event = SYS_PLAY_EVENT_DEFAULT_VOLUME_SET;
+			break;
+
 		case IN_KEY_NEXT_SONG_S:
 		case IR_KEY_NEXT_SONG:
 
+		if(Global_datas.state == SYS_PLAY_STATE_FM)
+		{
+			Global_datas.event = SYS_PLAY_EVENT_FM_NEXT_STATION;
+		}
+		else 
+		{
 			Global_datas.event = SYS_PLAY_EVENT_NEXT_SONG;
+		}
+
+		
 		break;
 
 		case IN_KEY_PREV_SONG_S:
 		case IR_KEY_PREV_SONG:
 
-			Global_datas.event = SYS_PLAY_EVENT_PREV_SONG;
+			if(Global_datas.state == SYS_PLAY_STATE_FM)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_FM_PREV_STATION;
+			}
+			else 
+			{
+				Global_datas.event = SYS_PLAY_EVENT_PREV_SONG;
+			}
 
 		break;		
 		
@@ -31077,7 +31562,14 @@ void Sysctrl(void)
 		case IR_KEY_NEXT_STATION:
 			
 
-			Global_datas.event = SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION;
+			if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_MW_RADIO_NEXT_STATION;
+			}
+			else if(Global_datas.state == SYS_PLAY_STATE_FM)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_FM_SEEK_UP;
+			}
 
 		break;
 
@@ -31085,7 +31577,14 @@ void Sysctrl(void)
 		case IR_KEY_PREV_STATION:
 			
 
-			Global_datas.event = SYS_PLAY_EVENT_MW_RADIO_PREV_STATION;
+			if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_MW_RADIO_PREV_STATION;
+			}
+			else if(Global_datas.state == SYS_PLAY_STATE_FM)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_FM_SEEK_DOWN;
+			}
 
 		break;		
 
@@ -31094,7 +31593,9 @@ void Sysctrl(void)
 
 		
 			Global_datas.event = SYS_PLAY_EVENT_EQ_INDOOR_SET;
-			
+
+			if(Global_datas.state == SYS_PLAY_STATE_FM) Global_datas.event = SYS_PLAY_EVENT_FM_PREV_STEP;
+		    
 			break;		
 		
 		case IN_KEY_EQ_OUTDOOR_S:
@@ -31102,6 +31603,8 @@ void Sysctrl(void)
 
 		
 			Global_datas.event = SYS_PLAY_EVENT_EQ_OUTDOOR_SET;
+		
+			if(Global_datas.state == SYS_PLAY_STATE_FM) Global_datas.event = SYS_PLAY_EVENT_FM_NEXT_STEP;
 			
 			break;	
 
@@ -31149,8 +31652,53 @@ void Sysctrl(void)
 		case IN_KEY_BT_MODE_S: 
 			
 			Global_datas.event = SYS_PLAY_EVENT_SW_TO_BT_MODE;
-			break;			
+			break;		
 
+		case IN_KEY_TURNOFF_4G_MOUDLE:
+			Global_datas.event = SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE;
+			break;
+		case IN_KEY_REBOOT_4G_MOUDLE:
+
+			Global_datas.event = SYS_PLAY_EVENT_REBOOT_4G_MOUDLE;
+			
+			break;
+
+		case IR_KEY_PLAY_PAUSE_CP:
+
+			if(Global_datas.state == SYS_PLAY_STATE_FM)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_AUTO_SEARCH;
+			}
+			else if(Global_datas.state == SYS_PLAY_STATE_BT)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_BT_PAIRING;			
+			}
+			break;
+			
+
+		case IN_KEY_AUTO_SEARCH_S:
+
+			if(Global_datas.state == SYS_PLAY_STATE_FM)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_AUTO_SEARCH;
+			}
+			
+			break;
+
+			
+
+		case IN_KEY_FM_PREV_FREQ_S:
+
+		    if(Global_datas.state == SYS_PLAY_STATE_FM)	Global_datas.event = SYS_PLAY_EVENT_FM_PREV_STEP; 		
+			
+			break;
+
+		case IN_KEY_FM_NEXT_FREQ_S:
+
+			if(Global_datas.state == SYS_PLAY_STATE_FM) Global_datas.event = SYS_PLAY_EVENT_FM_NEXT_STEP; 		
+		
+			break;
+			
 		default:break;
 			
 	}
@@ -31170,16 +31718,37 @@ void Sysctrl(void)
 			Global_datas.state = SYS_PLAY_STATE_POWERUP;	
 			Global_datas.g_4g_initing = 1;
 			Global_datas.eq_mode = EQ_MODE_INDOOR;
-			Global_datas.volume = 8;
+			Global_datas.volume = 5;
 			TYM_drv_powerkeepon(1);
 			Drv_4GMoudle_PowerUp(1);
+			Global_datas.power_4g = 1;
 			drv_FourGmodel_power_key_SetHi();
 			TimeOutSet(&ModulePowerUpPinTimer,3000);
 			TimeOutSet(&PoweroffLedTimer, 100);
 			Drv_audio_init();
-			Global_datas.shoutting_down = 0;		
+			Global_datas.shoutting_down = 0;	
+
+			drv_Cmd_Send2NCU031(0x70, 0x16,0x00);
+
+			Fm_Rest();
 			
 			break;
+			
+		case SYS_PLAY_EVENT_REBOOT_4G_MOUDLE:
+
+			TYM_SysPower12V_3V3_onoff(1);
+			Global_datas.state = SYS_PLAY_STATE_REBOOT;	
+			Global_datas.g_4g_initing = 1;
+			
+			Drv_4GMoudle_PowerUp(1);
+			Global_datas.power_4g = 1;
+			drv_FourGmodel_power_key_SetHi();
+			TimeOutSet(&ModulePowerUpPinTimer,3000);
+			TimeOutSet(&PoweroffLedTimer, 100);
+			Global_datas.shoutting_down = 0;	
+			break;
+
+			
 
 		case SYS_PLAY_EVENT_SHUTTING_DOWN:
 
@@ -31194,7 +31763,7 @@ void Sysctrl(void)
 			Global_datas.shoutting_down = 1;
 			TimeOutSet(&PoweroffLedTimer, 5000);
 
-			Global_datas.state = SYS_PLAY_STATE_IDLE;
+			Global_datas.state = SYS_PLAY_STATE_SHUTTING_DOWN;
 			Global_datas.g_4g_initing = 0;
 			Global_datas.mode_switching = 0;
 			Global_datas.mute = 0;
@@ -31207,33 +31776,48 @@ void Sysctrl(void)
 			
 			Global_datas.g_4g_initing = 0;
 			
-			if(Global_datas.SubBoard.subboard_online)
+			if(Global_datas.SubBoard.subboard_online && (Global_datas.state != SYS_PLAY_STATE_REBOOT))
 			{
+				drv_Cmd_Send2NCU031(0x03,0x71,19); 
+				drv_Cmd_Send2NCU031(0x07, Global_datas.volume,0x00);
+				
 				switch(Global_datas.SubBoard.playmode)
 				{
 					case PLAY_MODE_WIFI:
 						Cmd_Send2FourG(0x03,0x15,0);
+						drv_Cmd_Send2NCU031(0x70, 0x11,0x00);
+					
 						Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 					    drv_audio_4G_Channel();
 						break;
 
 					case PLAY_MODE_BT:
 						Cmd_Send2FourG(0x03,0x16,0);
+						drv_Cmd_Send2NCU031(0x70, 0x10,0x00);
 						Global_datas.state = SYS_PLAY_STATE_BT;
 					    drv_audio_4G_Channel();
 						break;
 
 					case PLAY_MODE_AUX:
 						Cmd_Send2FourG(0x03,0x17,0);
+						drv_Cmd_Send2NCU031(0x70, 0x12,0x00);
 						Global_datas.state = SYS_PLAY_STATE_AUX;
 					    drv_audio_AuxIn_Channel();
 						break;
 
 					case PLAY_MODE_FM:
-						Cmd_Send2FourG(0x03,0x18,0);
 						Global_datas.state = SYS_PLAY_STATE_FM;
-					    drv_audio_Null_Channel();
+						Global_datas.fm_delay_time = 10;
+						Global_datas.FmData.fmstate = FM_STATE_ON;
+									
+						drv_Cmd_Send2NCU031(0x70, 0x13,0x00);
+						Cmd_Send2FourG(0x03 ,0x18,0x00);
 						
+						
+						test_FMRXtune();
+						drv_audio_FM_Channel(); 
+						SendFmFreqToSubBoard();
+
 						break;
 
 					default:
@@ -31255,9 +31839,7 @@ void Sysctrl(void)
 			break;
 
 		case SYS_PLAY_EVENT_MODE_SWITCH:
-
 			srv_key_mode_handler();
-			 
 			break;
 
 		case SYS_PLAY_EVENT_SW_TO_AUX_MODE:
@@ -31268,21 +31850,33 @@ void Sysctrl(void)
 
 		case SYS_PLAY_EVENT_SW_TO_FM_MODE:
 			
-			srv_key_mode_switch_to(SYS_PLAY_EVENT_SW_TO_FM_MODE);	
+			srv_key_mode_switch_to(SYS_PLAY_STATE_FM);	
 			
 			break;
 			
 		case SYS_PLAY_EVENT_SW_TO_BT_MODE:
 			
-			srv_key_mode_switch_to(SYS_PLAY_EVENT_SW_TO_BT_MODE);	
+			srv_key_mode_switch_to(SYS_PLAY_STATE_BT);	
 			
 			break;	
 			
 		case SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE:
 			
-			srv_key_mode_switch_to(SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE);	
+			srv_key_mode_switch_to(SYS_PLAY_STATE_MW_RADIO);	
 		
-			break;			
+			break;		
+
+
+		case SYS_PLAY_EVENT_DEFAULT_VOLUME_SET:
+			
+				Global_datas.volume = 8;
+				Drv_Dap_vol_set(Global_datas.volume);
+				Cmd_Send2FourG(0x03,0x04,Global_datas.volume); 
+				drv_Cmd_Send2NCU031(0x07, Global_datas.volume,0x00);
+
+			break;
+
+			
 
 		case SYS_PLAY_EVENT_VOL_UP:
 			
@@ -31292,6 +31886,8 @@ void Sysctrl(void)
 				Global_datas.volume++;
 				Drv_Dap_vol_set(Global_datas.volume);
 				Cmd_Send2FourG(0x03,0x04,Global_datas.volume); 
+
+				drv_Cmd_Send2NCU031(0x07, Global_datas.volume,0x00);
 			}
 
 			break;
@@ -31308,6 +31904,7 @@ void Sysctrl(void)
 					drv_5825_mute_pin_set(0); 
 				}
 				Cmd_Send2FourG(0x03,0x04,Global_datas.volume); 
+				drv_Cmd_Send2NCU031(0x07, Global_datas.volume,0x00);
 			}
 			break;
 
@@ -31375,7 +31972,155 @@ void Sysctrl(void)
 
 			Cmd_Send2FourG(0x03,0x21,0); 
 			
-			break;		
+			break;	
+
+		case SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE:
+
+			Global_datas.power_4g = 0;
+
+		    printf("\nTURN OFF 4G MOUDLE\n");
+
+			if(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)
+			{
+				Drv_4GMoudle_PowerUp(0);  
+				TYM_drv_powerkeepon(0); 
+				TYM_SysPower12V_3V3_onoff(0);		
+				Global_datas.state = SYS_PLAY_STATE_IDLE;
+			}
+			else if(Global_datas.state == SYS_PLAY_STATE_FM)
+			{
+				Drv_4GMoudle_PowerUp(0);  
+			}
+		
+			break;
+
+		case SYS_PLAY_EVENT_AUTO_SEARCH:
+
+			if(Global_datas.FmData.fmstate == FM_STATE_ON)
+			{
+				Global_datas.FmData.fmstate = FM_STATE_AUTO_SEARCH;
+				Global_datas.FmData.index_station = 0;
+				
+				for(temp_fm=0;temp_fm<15;temp_fm++)
+				{
+					Global_datas.FmData.station_table[temp_fm] = 0;
+				}
+				Global_datas.FmData.Frequency = 8750;			
+			}
+			else if(Global_datas.FmData.fmstate == FM_STATE_AUTO_SEARCH)
+			{
+				Global_datas.FmData.fmstate = FM_STATE_ON;
+			}
+				
+			break;
+
+		case SYS_PLAY_EVENT_FM_SEEK_DOWN:
+
+			if(Global_datas.FmData.fmstate == FM_STATE_ON)
+			{
+				Global_datas.FmData.fmstate = FM_STATE_SEEK_DOWN;
+			}
+			break;
+
+		
+		case SYS_PLAY_EVENT_FM_SEEK_UP:
+			
+			if(Global_datas.FmData.fmstate == FM_STATE_ON)
+			{
+				Global_datas.FmData.fmstate = FM_STATE_SEEK_UP;
+			}			
+			
+			break;
+
+		case SYS_PLAY_EVENT_FM_NEXT_STEP:
+			
+			if(Global_datas.state == SYS_PLAY_STATE_FM)
+			{
+				if(Global_datas.FmData.Frequency <= 10790)	Global_datas.FmData.Frequency += 10;
+				else Global_datas.FmData.Frequency = 8750;
+				Global_datas.FmData.FmNeedToStore = 1;
+				TimeOutSet(&FmStoreTimer, 2000);
+				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+				SendFmFreqToSubBoard();
+				printf("FM UP\n");
+
+			}
+
+			break;
+
+		case SYS_PLAY_EVENT_FM_PREV_STEP:
+			
+			if(Global_datas.state == SYS_PLAY_STATE_FM)
+			{
+				if(Global_datas.FmData.Frequency >= 8760)	Global_datas.FmData.Frequency -= 10;
+				else Global_datas.FmData.Frequency = 10080;
+				Global_datas.FmData.FmNeedToStore = 1;
+				TimeOutSet(&FmStoreTimer, 2000);
+				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+				
+				SendFmFreqToSubBoard();
+				printf("FM DOWN\n");
+
+			}
+
+			break;
+
+			case SYS_PLAY_EVENT_FM_PREV_STATION:
+				
+			if(Global_datas.FmData.station_num)
+			{
+				if(Global_datas.FmData.current_station > 0)
+				{
+					Global_datas.FmData.current_station--;
+				}
+				else
+				{
+					Global_datas.FmData.current_station = (Global_datas.FmData.station_num - 1);
+				}
+			
+				Global_datas.FmData.Frequency = Global_datas.FmData.station_table[Global_datas.FmData.current_station];
+				
+				si47xxFMRX_tune(Global_datas.FmData.Frequency);
+				SendFmFreqToSubBoard();
+				
+			
+				Global_datas.FmData.FmNeedToStore = 1;
+				TimeOutSet(&FmStoreTimer, 2000);
+			}
+
+			break;
+
+			case SYS_PLAY_EVENT_FM_NEXT_STATION:
+				
+			if(Global_datas.FmData.station_num)
+			{
+				if(Global_datas.FmData.current_station < (Global_datas.FmData.station_num-1))
+				{
+					Global_datas.FmData.current_station++;
+				}
+				else
+				{
+					Global_datas.FmData.current_station = 0;
+				}
+			
+				Global_datas.FmData.Frequency = Global_datas.FmData.station_table[Global_datas.FmData.current_station];
+				
+				si47xxFMRX_tune(Global_datas.FmData.Frequency);
+				
+				SendFmFreqToSubBoard();
+			
+				Global_datas.FmData.FmNeedToStore = 1;
+				TimeOutSet(&FmStoreTimer, 2000);
+			
+			}
+
+
+			break;			
+
+		case SYS_PLAY_EVENT_BT_PAIRING:
+
+			Cmd_Send2FourG(0x03,0x4f,0);  
+			break;
 
 		default:break;
 	}
@@ -31399,20 +32144,180 @@ void Sysctrl(void)
 		case SYS_PLAY_STATE_BT:
 			
 			break;
-
-		case SYS_PLAY_STATE_FM:
 			
-			break;		
-
 		case SYS_PLAY_STATE_AUX:
 			
 			break;	
 
 		case SYS_PLAY_STATE_SHUTTING_DOWN:
 			
-			break;			
+			break;	
 
-		
+		case SYS_PLAY_STATE_FM:
+
+			if(IsTimeOut(&FmLoopTimer))
+			{
+				TimeOutSet(&FmLoopTimer,1000);
+
+				if(Global_datas.fm_delay_time)
+				{
+
+				    
+					Global_datas.fm_delay_time--;
+					if(Global_datas.fm_delay_time == 0)
+					{
+						Cmd_Send2FourG( 0x03,0x55,0x00); 
+						
+						
+						
+					}
+				}
+			}
+
+			if(IsTimeOut(&FmStoreTimer))
+			{
+				if(Global_datas.FmData.FmNeedToStore)
+				{
+					Global_datas.FmData.FmNeedToStore = 0;
+					DataStore();
+				}
+			}
+
+			switch(Global_datas.FmData.fmstate)
+			{
+				case FM_STATE_OFF:
+
+				break;
+
+				case FM_STATE_ON:
+
+				break;
+
+				case FM_STATE_SEEK_UP:
+
+					if(Global_datas.FmData.Frequency <= 10790)
+					{
+						Global_datas.FmData.Frequency += 10;
+					}
+					else
+					{
+						Global_datas.FmData.Frequency = 10800;
+						Global_datas.FmData.fmstate = FM_STATE_ON;		
+						
+					}
+
+					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+					
+					
+					if(temp_valid)
+					{
+						
+						Global_datas.FmData.fmstate = FM_STATE_ON;		
+						
+						Global_datas.FmData.FmNeedToStore = 1;
+						TimeOutSet(&FmStoreTimer, 2000);
+					}
+
+				
+
+				break;
+
+				case FM_STATE_SEEK_DOWN:
+
+					if(Global_datas.FmData.Frequency >= 8760)  Global_datas.FmData.Frequency -= 10;
+					else 
+					{
+						Global_datas.FmData.Frequency = 8750;
+						Global_datas.FmData.fmstate = FM_STATE_ON;		
+						
+					}
+
+					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+					
+					
+
+					if(temp_valid)
+					{
+						
+						Global_datas.FmData.fmstate = FM_STATE_ON;		
+						Global_datas.FmData.FmNeedToStore = 1;
+						TimeOutSet(&FmStoreTimer, 2000);					
+					}					 
+
+				break;
+
+				case FM_STATE_AUTO_SEARCH:
+ 
+				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+				
+				
+				if(temp_valid)
+				{
+					
+					WaitMs(2000);
+					
+					Global_datas.FmData.station_table[Global_datas.FmData.index_station] = Global_datas.FmData.Frequency;
+					if(Global_datas.FmData.index_station < (15 -1)) Global_datas.FmData.index_station++;
+					if(Global_datas.FmData.Frequency <= 10790)
+					{
+						Global_datas.FmData.Frequency += 10;
+					}
+					else
+					{
+						Global_datas.FmData.station_num = Global_datas.FmData.index_station;
+						if(Global_datas.FmData.station_num)
+						{
+							Global_datas.FmData.Frequency = Global_datas.FmData.station_table[0];
+							
+							Global_datas.FmData.current_station = 0;
+						}
+						else
+						{
+							Global_datas.FmData.Frequency = 8750;
+							
+						}
+
+
+						Global_datas.FmData.FmNeedToStore = 1;
+						TimeOutSet(&FmStoreTimer, 1000);
+						
+						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+						
+						SendFmFreqToSubBoard();
+						
+						Global_datas.FmData.fmstate = FM_STATE_ON;		
+					}
+				}	
+				else
+				{
+					if(Global_datas.FmData.Frequency <= 10790)	Global_datas.FmData.Frequency += 10;
+					else
+					{
+						Global_datas.FmData.station_num = Global_datas.FmData.index_station;
+						if(Global_datas.FmData.station_num)
+						{
+							Global_datas.FmData.Frequency = Global_datas.FmData.station_table[0];
+							
+							Global_datas.FmData.current_station = 0;
+						}
+						else
+						{
+							Global_datas.FmData.Frequency = 8750;
+							
+						}
+
+						DataStore();
+						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+						SendFmFreqToSubBoard();
+						
+						Global_datas.FmData.fmstate = FM_STATE_ON;		
+					}
+				}					
+
+				break;
+			}
+			
+			break;		
 			
 		default:break;
 	}

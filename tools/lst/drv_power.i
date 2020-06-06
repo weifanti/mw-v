@@ -29407,8 +29407,11 @@ void TYM_sys_PowerManger_init(void);
 void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
 void TYM_SysPower12V_3V3_onoff(uint8_t on);
-void TYM_power_battery_charge_enable(void);
-void TYM_power_battery_charge_disenable(void);
+void battery_charge_enable(void);
+void battery_charge_disenable(void);
+void DcInDetect(void);
+void BatteryChargeStateChcek(void);
+void Bat_SelectPin_0_external_1_internal(uint8_t value); 
 
 
 
@@ -29421,6 +29424,10 @@ void TYM_power_battery_charge_disenable(void);
 
 
  
+
+
+
+
 
 
 
@@ -29461,12 +29468,12 @@ typedef enum
 
 typedef enum
 {
-	POWER_ON_MODE,
-	WIFI_MODE, 
-	WIFI_CONNECTED_MODE,
-	WIFI_CONNECTING_MODE,
-	FOURG_MODE,
-	FOURG_CONNECTED_MODE,
+		POWER_ON_MODE,
+		WIFI_MODE, 
+		WIFI_CONNECTED_MODE,
+		WIFI_CONNECTING_MODE,
+		FOURG_MODE,
+		FOURG_CONNECTED_MODE,
     BT_MODE,
     BT_CONNECTED_MODE,
     AUX_MODE,
@@ -29485,6 +29492,7 @@ typedef enum
 	SYS_PLAY_STATE_NONE = 0,
 	SYS_PLAY_STATE_IDLE, 
 	SYS_PLAY_STATE_POWERUP,
+	SYS_PLAY_STATE_REBOOT,
 	SYS_PLAY_STATE_SHUTTING_DOWN,
 	SYS_PLAY_STATE_MW_RADIO,
 	SYS_PLAY_STATE_BT,
@@ -29504,6 +29512,8 @@ typedef enum
 	SYS_PLAY_EVENT_VOL_UP,
 	SYS_PLAY_EVENT_VOL_DOWN,
 	
+	SYS_PLAY_EVENT_DEFAULT_VOLUME_SET,
+	
 	SYS_PLAY_EVENT_NEXT_SONG,
 	SYS_PLAY_EVENT_PREV_SONG,	
 	SYS_PLAY_EVENT_PLAY_PAUSE,	
@@ -29520,6 +29530,18 @@ typedef enum
 	SYS_PLAY_EVENT_SW_TO_AUX_MODE,
 	SYS_PLAY_EVENT_SW_TO_BT_MODE,
 	SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE,
+
+	SYS_PLAY_EVENT_TURN_OFF_4G_MOUDLE,
+	SYS_PLAY_EVENT_REBOOT_4G_MOUDLE,
+
+	SYS_PLAY_EVENT_AUTO_SEARCH,
+	SYS_PLAY_EVENT_BT_PAIRING,
+	SYS_PLAY_EVENT_FM_SEEK_UP,
+	SYS_PLAY_EVENT_FM_SEEK_DOWN,
+	SYS_PLAY_EVENT_FM_PREV_STEP,
+	SYS_PLAY_EVENT_FM_NEXT_STEP,
+	SYS_PLAY_EVENT_FM_NEXT_STATION,
+	SYS_PLAY_EVENT_FM_PREV_STATION,
 
 	SYS_PLAY_EVENT_NUM,
 
@@ -29557,6 +29579,34 @@ typedef enum
 
 } PLAY_MODE;
 
+typedef enum
+{
+    BAT_LEVEL_5_PERCENT      = 0,  
+    BAT_LEVEL_10_PERCENT,
+    BAT_LEVEL_20_PERCENT,
+    BAT_LEVEL_30_PERCENT,
+    BAT_LEVEL_40_PERCENT,
+    BAT_LEVEL_50_PERCENT,
+    BAT_LEVEL_60_PERCENT,
+    BAT_LEVEL_70_PERCENT,
+    BAT_LEVEL_80_PERCENT,
+    BAT_LEVEL_90_PERCENT,
+    BAT_LEVEL_100_PERCENT,    
+
+} BATTERY_LEVEL;
+
+
+typedef enum
+{
+    CHARGE_STATE_NONE      = 0,  
+    CHARGE_STATE_ON,
+    CHARGE_STATE_COMPLETE,
+    CHARGE_STATE_NG,
+ 
+} CHARGE_STATE;
+
+
+
 
 
 
@@ -29584,13 +29634,17 @@ typedef enum _KEY_EVENT
 	IN_KEY_PLAY_S,
 	IN_KEY_NEXT_SONG_S,
 	IN_KEY_PREV_SONG_S,
-	IN_KEY_FM_NEXT_S,
-	IN_KEY_FM_PREV_S,
+	IN_KEY_FM_NEXT_FREQ_S,
+	IN_KEY_FM_PREV_FREQ_S,
 	IN_KEY_AUTO_SEARCH_S,
 	IN_KEY_RADIO_PREV_S,
 	IN_KEY_RADIO_NEXT_S,
 	IN_KEY_RADIO_NET_SWITCH_S,
 	IN_KEY_RADIO_NET_PARIING_S,
+
+	IN_KEY_TURNOFF_4G_MOUDLE,
+	IN_KEY_REBOOT_4G_MOUDLE,
+	IN_KEY_DEFAULT_VOLUME_SET,
 	
 
 	IR_KEY_POWER,
@@ -29627,7 +29681,52 @@ typedef struct _PowerStatus
 	uint8_t PowerAcStatus;
 	uint8_t bat_status;
 	uint8_t bat_value;  
+	uint8_t BatValue;
+	uint8_t NTC_value;
+	
 }sPowerStatus;
+
+
+typedef enum
+{
+    FM_STATE_OFF      = 0,
+    FM_STATE_ON,
+    FM_STATE_SEEK_UP,
+    FM_STATE_SEEK_DOWN,
+    FM_STATE_AUTO_SEARCH,
+} FM_STATE;
+
+
+typedef struct _POWER_STATE
+{
+
+	uint32_t battery_data;
+	uint32_t ntc_data;
+	BATTERY_LEVEL battery_level;
+	CHARGE_STATE charge_state;
+	uint8_t NTC_level;
+	uint8_t AdapterIn;
+	uint8_t battery_low;
+	uint8_t charge_power_good_pin; 
+	
+}POWER_STATE;
+
+
+
+
+typedef struct _Fm_Data
+{
+	uint32_t Frequency;
+	uint8_t  FmError;
+	uint8_t  FmNeedToStore;
+	uint32_t station_table[15];
+	uint8_t station_num;
+	uint8_t index_station;
+	uint8_t current_station;
+	FM_STATE fmstate;
+}Fm_Data;
+
+
 
 typedef struct _SubBoardStatus
 {
@@ -29647,6 +29746,7 @@ typedef struct
 	sPowerStatus g_PowerStatus;
 	uint8_t g_mode_status;
 	uint8_t g_4g_initing;
+	uint8_t power_4g;
 	uint32_t systick;
 	uint8_t key_led_blink;
 	uint8_t shoutting_down;
@@ -29656,14 +29756,18 @@ typedef struct
 	uint8_t mute;			 
 	uint8_t volume_resume;   
 	uint8_t inputmessage;
+	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
 	SubBoardStatus SubBoard;
+	Fm_Data FmData;
+	POWER_STATE PowerState;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
 
 
 
@@ -29676,6 +29780,12 @@ extern sGlobalData Global_datas;
 
 
 
+
+void PowerKeepOnPinInit(void)  
+{
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000004, 0x1UL); 
+}
+
 void TYM_drv_powerkeepon(uint8_t onoff) 
 {
 	if(onoff)
@@ -29683,6 +29793,7 @@ void TYM_drv_powerkeepon(uint8_t onoff)
 	else 
 		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((2)<<2)))) = 0;
 }
+
 
 
 void TYM_SysPower12V_3V3_onoff(uint8_t on)
@@ -29697,162 +29808,136 @@ void TYM_SysPower12V_3V3_onoff(uint8_t on)
 		}
 }
 
-void TYM_power_gpio_init(void)
+void SysPower_12V_ControlPin_Init(void)
 {
-	
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) )), 0x00000100, 0x1UL); 
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000010, 0x0UL); 
-	
-	
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000100, 0x1UL); 
-
-	
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000100, 0x1UL); 
-	
-
-
-
- 
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000400, 0x0UL); 
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000800, 0x0UL); 
-
-
-	
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000004, 0x1UL); 
-	
-	
 	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00004000, 0x1UL); 
-
+	TYM_SysPower12V_3V3_onoff(0);
 }
 
 
-void TYM_power_battery_charge_enable(void)
+
+
+void DcInDetect(void)
+{
+	if((*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((4)<<2))))) 
+	{
+		Global_datas.PowerState.AdapterIn = 0;
+	}
+	else
+	{
+		Global_datas.PowerState.AdapterIn = 1;
+	}
+	
+}
+
+
+
+void DcInDetect_init(void)
+{
+
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000010, 0x0UL);	
+	DcInDetect();
+}
+
+
+void BatteryChargeStateCheckInit(void)
+{
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000400, 0x0UL);	
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000800, 0x0UL);	
+	
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0100)), 0x00000004, 0x0UL);	
+}
+
+
+
+
+void BatteryChargeStateChcek(void)  
+{
+	if((*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((10)<<2)))))
+	{
+		if((*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((11)<<2))))) Global_datas.PowerState.charge_state = CHARGE_STATE_NG;
+		else Global_datas.PowerState.charge_state = CHARGE_STATE_COMPLETE;
+	}
+	else
+	{
+		if((*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((11)<<2))))) Global_datas.PowerState.charge_state = CHARGE_STATE_ON;
+		else  Global_datas.PowerState.charge_state = CHARGE_STATE_NONE;
+	}
+
+	if((*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(4))) + ((2)<<2))))) 
+	{
+		Global_datas.PowerState.charge_power_good_pin = 1;
+	}
+	else 
+	{
+		Global_datas.PowerState.charge_power_good_pin = 0;
+	}
+	
+	printf("charge state = %d \n",Global_datas.PowerState.charge_state);
+	printf("power good   = %d \n",Global_datas.PowerState.charge_power_good_pin);
+
+	
+}
+
+
+void I_Charge_current_set_hi(void) 
+{
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(3))) + ((8)<<2)))) = 0;
+}
+
+void I_Charge_current_set_low(void) 
+{
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(3))) + ((8)<<2)))) = 1;
+}
+
+
+
+
+
+void I_Charge_select_pin_init(void)
+{
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000100, 0x1UL); 
+	I_Charge_current_set_low();
+}
+
+
+
+void Bat_SelectPin_0_external_1_internal(uint8_t value) 
+{
+	if(value)
+	{
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((8)<<2)))) = 1;  
+	}
+	else
+	{
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((8)<<2)))) = 0; 
+	}
+}
+
+
+
+void InternalBat_or_ExteranlBat_select_pin_init(void)
+{
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) )), 0x00000100, 0x1UL); 
+	Bat_SelectPin_0_external_1_internal(0); 
+}
+
+
+void BatteryChargeEnable_pin_init(void)
+{
+	
+	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0080)), 0x00000100, 0x1UL); 
+	
+}
+void battery_charge_enable(void)
 {
 	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((8)<<2)))) = 1;
 }
 
-void TYM_power_battery_charge_disenable(void)
+void battery_charge_disenable(void)
 {
 	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((8)<<2)))) = 0;
 }
-
-
- 
-
-
- 
- 
-void TYM_drv_BQ24610_charge_current_Set(int val)  
-{
-	
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000100, 0x1UL); 
-	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(3))) + ((8)<<2)))) = val;
-}
-
- 
- 
- 
-void TYM_drv_SysPower_init(void)
-{  
-	TYM_drv_powerkeepon(0); 
-	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((14)<<2)))) = 0; 
-	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((8)<<2)))) = 0; 
-
-	TYM_drv_BQ24610_charge_current_Set(1);
-}
-
- 
- 
- 
-void TYM_drv_In_bat_status_updata(void)
-{
-	
-	if(Global_datas.ADC_ChannelValue[15] < 0x22)
-	{
-		Global_datas.g_PowerStatus.PowerBatInStatus = POWER_BAT_IN_FALSE;
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~0x01);
-	}
-	else
-	{
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | 0x01;
-	
-		if((Global_datas.ADC_ChannelValue[15] >= 0x22) && (Global_datas.ADC_ChannelValue[15] <= 0x7C0))
-		{
-			Global_datas.g_PowerStatus.PowerBatInStatus = STAT_BAT_IN_UNFILL;
-			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~0x20);
-			Global_datas.g_PowerStatus.bat_value = (Global_datas.g_PowerStatus.bat_value & 0xf0) | Global_datas.ADC_ChannelValue[15]/0x79;		
-		}
-		if(Global_datas.ADC_ChannelValue[15] > 0x7C0)
-		{
-			Global_datas.g_PowerStatus.PowerBatInStatus = STAT_BAT_IN_FULL;
-			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | 0x20;
-		}
-	}
-}
-
- 
- 
- 
-void TYM_drv_ex_bat_status_updata(void)
-{
-	if(Global_datas.ADC_ChannelValue[12] < 0x22)
-	{
-		Global_datas.g_PowerStatus.PowerBatExStatus = POWER_BAT_EX_FALSE;
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~0x02);
-	}
-	else
-	{	
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | 0x02;
-		
-		if((Global_datas.ADC_ChannelValue[12] >= 0x22) && (Global_datas.ADC_ChannelValue[15] <= 0x7C0))
-		{
-			Global_datas.g_PowerStatus.PowerBatExStatus = STAT_BAT_EX_UNFILL;
-			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~0x40);
-			Global_datas.g_PowerStatus.bat_value = (Global_datas.g_PowerStatus.bat_value & 0x0f) | ((Global_datas.ADC_ChannelValue[12]/0x79) << 8);
-		}
-		if(Global_datas.ADC_ChannelValue[12] > 0x7C0)
-		{
-			Global_datas.g_PowerStatus.PowerBatExStatus = STAT_BAT_EX_FULL;
-			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | 0x40;
-		}
-	}
-	
-}
-
- 
- 
- 
-void TYM_drv_ac_status_updata(void)
-{
-	if((*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((4)<<2)))))
-	{
-		Global_datas.g_PowerStatus.PowerAcStatus = POWER_AC_FALSE;
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~0x04);
-		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((1)<<2)))) = 0;  
-	}					
-	else
-	{
-		Global_datas.g_PowerStatus.PowerAcStatus = POWER_AC_EN;
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | 0x04;
-		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((1)<<2)))) = 1;   
-	}
-}
-
-void drv_power_status_updata(void)
-{
-
-	TYM_gpio_adc_get(ADC_CHANNEL_12|ADC_CHANNEL_15);
-	TYM_drv_In_bat_status_updata();
-	TYM_drv_ex_bat_status_updata();
-	TYM_drv_ac_status_updata();
-
-
-	
-
-	
-}
-
-
 
 
  
@@ -29860,12 +29945,23 @@ void drv_power_status_updata(void)
  
 void TYM_sys_PowerManger_init(void)
 {
-	TYM_power_gpio_init();
-	TYM_drv_SysPower_init();
-	drv_power_status_updata();
-	Global_datas.g_PowerStatus.bat_status = 0;
-	Global_datas.g_PowerStatus.bat_value = 0;
-	TYM_power_battery_charge_enable();
+	
+
+	BatteryChargeStateCheckInit();
+	DcInDetect_init();	
+	
+	I_Charge_select_pin_init();
+
+	
+	BatteryChargeEnable_pin_init();
+	battery_charge_enable(); 
+
+	
+	PowerKeepOnPinInit();
+	TYM_drv_powerkeepon(0); 
+
+	
+	SysPower_12V_ControlPin_Init();
 }
 
 

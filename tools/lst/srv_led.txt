@@ -5,21 +5,21 @@
                           AREA ||i.srv_led_change_handler||, CODE, READONLY, ALIGN=2
 
                   srv_led_change_handler PROC
-;;;120    
-;;;121    void srv_led_change_handler(void)
+;;;127    
+;;;128    void srv_led_change_handler(void)
 000000  b510              PUSH     {r4,lr}
-;;;122    {
-;;;123    	if(!(Global_datas.g_4g_initing))
+;;;129    {
+;;;130    	if(!(Global_datas.g_4g_initing))
 000002  4803              LDR      r0,|L1.16|
-000004  7980              LDRB     r0,[r0,#6]  ; Global_datas
+000004  7a00              LDRB     r0,[r0,#8]  ; Global_datas
 000006  2800              CMP      r0,#0
 000008  d101              BNE      |L1.14|
-;;;124    		srv_led_status_show();
+;;;131    		srv_led_status_show();
 00000a  f7fffffe          BL       srv_led_status_show
                   |L1.14|
-;;;125    }
+;;;132    }
 00000e  bd10              POP      {r4,pc}
-;;;126    
+;;;133    
                           ENDP
 
                   |L1.16|
@@ -30,18 +30,18 @@
                   srv_led_status_show PROC
 ;;;23     
 ;;;24     void srv_led_status_show(void)
-000000  b510              PUSH     {r4,lr}
+000000  b570              PUSH     {r4-r6,lr}
 ;;;25     {
 ;;;26      //printf("srv_led_charge_handler:Global_datas.g_mode_status = %x \n",Global_datas.g_mode_status);
 ;;;27     	if((Global_datas.g_mode_status == WIFI_CONNECTED_MODE) || (Global_datas.g_mode_status == FOURG_CONNECTED_MODE) || (Global_datas.g_mode_status == BT_CONNECTED_MODE) || (Global_datas.g_mode_status == AUX_MODE) || (Global_datas.g_mode_status == FM_MODE) )
-000002  4823              LDR      r0,|L2.144|
-000004  2300              MOVS     r3,#0
-000006  7940              LDRB     r0,[r0,#5]  ; Global_datas
+000002  4a22              LDR      r2,|L2.140|
+000004  2400              MOVS     r4,#0
+000006  79d0              LDRB     r0,[r2,#7]  ; Global_datas
 ;;;28     	{
 ;;;29     		led_status = 0;
 ;;;30     		led_on_off = 1;
-000008  2201              MOVS     r2,#1
-00000a  4922              LDR      r1,|L2.148|
+000008  2301              MOVS     r3,#1
+00000a  4921              LDR      r1,|L2.144|
 00000c  2802              CMP      r0,#2                 ;27
 00000e  d00d              BEQ      |L2.44|
 000010  2805              CMP      r0,#5                 ;27
@@ -56,194 +56,200 @@
 ;;;32     	else
 ;;;33     	{
 ;;;34     		led_status = 1;
-000020  700a              STRB     r2,[r1,#0]
+000020  700b              STRB     r3,[r1,#0]
 ;;;35     		//led_on_off = 1;
 ;;;36     	}
 ;;;37     	if(led_status)
 ;;;38     	{	
 ;;;39     		if(led_on_off)
-000022  784c              LDRB     r4,[r1,#1]  ; led_on_off
-000024  2c00              CMP      r4,#0
-000026  d006              BEQ      |L2.54|
+000022  784d              LDRB     r5,[r1,#1]  ; led_on_off
+000024  2d00              CMP      r5,#0
+000026  d002              BEQ      |L2.46|
 ;;;40     			led_on_off = 0;
-000028  704b              STRB     r3,[r1,#1]
-00002a  e005              B        |L2.56|
+000028  704c              STRB     r4,[r1,#1]
+00002a  e001              B        |L2.48|
                   |L2.44|
-00002c  700b              STRB     r3,[r1,#0]            ;29
-00002e  704a              STRB     r2,[r1,#1]            ;30
+00002c  700c              STRB     r4,[r1,#0]            ;29
+                  |L2.46|
 ;;;41     		else
 ;;;42     			led_on_off = 1;
+00002e  704b              STRB     r3,[r1,#1]
+                  |L2.48|
 ;;;43     	}
-;;;44     	
-;;;45     	if((Global_datas.g_mode_status == WIFI_CONNECTED_MODE) || (Global_datas.g_mode_status == WIFI_MODE) || (Global_datas.g_mode_status == WIFI_CONNECTING_MODE))
-000030  2802              CMP      r0,#2
-000032  d019              BEQ      |L2.104|
-000034  e000              B        |L2.56|
-                  |L2.54|
-000036  704a              STRB     r2,[r1,#1]            ;42
-                  |L2.56|
-000038  2801              CMP      r0,#1
-00003a  d015              BEQ      |L2.104|
-00003c  2803              CMP      r0,#3
-00003e  d013              BEQ      |L2.104|
-;;;46     	{	
-;;;47     	//	printf("wifi:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-;;;48     		drv_wifi_led_on(led_on_off);
-;;;49     		goto charge_confirm;
-;;;50     	}
-;;;51     	if((Global_datas.g_mode_status == FOURG_MODE) || (Global_datas.g_mode_status == FOURG_CONNECTED_MODE))
-000040  2804              CMP      r0,#4
-000042  d015              BEQ      |L2.112|
-000044  2805              CMP      r0,#5
-000046  d013              BEQ      |L2.112|
-;;;52     	{	
-;;;53     	//	printf("4G:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-;;;54     		drv_4G_led_on(led_on_off);
-;;;55     		goto charge_confirm;
-;;;56     	}
-;;;57     	if((Global_datas.g_mode_status == BT_MODE) || (Global_datas.g_mode_status == BT_CONNECTED_MODE))
-000048  2806              CMP      r0,#6
-00004a  d015              BEQ      |L2.120|
-00004c  2807              CMP      r0,#7
-00004e  d013              BEQ      |L2.120|
-;;;58     	{	
-;;;59     	//	printf("BT:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-;;;60     		drv_bt_led_on(led_on_off);
+;;;44     
+;;;45     
+;;;46     	if(Global_datas.state == SYS_PLAY_STATE_AUX) 
+000030  7e52              LDRB     r2,[r2,#0x19]  ; Global_datas
+000032  2a08              CMP      r2,#8
+000034  d015              BEQ      |L2.98|
+;;;47     	{	
+;;;48     	//	printf("AUX:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
+;;;49     		drv_aux_led_on(1);
+;;;50     		goto charge_confirm;
+;;;51     	}
+;;;52     	else if(Global_datas.state == SYS_PLAY_STATE_FM)
+000036  2a07              CMP      r2,#7
+000038  d017              BEQ      |L2.106|
+;;;53     	{
+;;;54     	//	printf("FM:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
+;;;55     		drv_fm_led_on(1);
+;;;56     		goto charge_confirm;
+;;;57     	}
+;;;58     	else if(Global_datas.state == SYS_PLAY_STATE_IDLE)
+00003a  2a01              CMP      r2,#1
+00003c  d019              BEQ      |L2.114|
+;;;59     	{
+;;;60     		drv_all_led_on(0);
 ;;;61     		goto charge_confirm;
-;;;62     	}
-;;;63     	if(Global_datas.g_mode_status == AUX_MODE || Global_datas.g_mode_status == LOUD_SPEAKER_MODE) 
-000050  2808              CMP      r0,#8
-000052  d015              BEQ      |L2.128|
-000054  2809              CMP      r0,#9
-000056  d013              BEQ      |L2.128|
-;;;64     	{	
-;;;65     	//	printf("AUX:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-;;;66     		drv_aux_led_on(1);
-;;;67     		goto charge_confirm;
-;;;68     	}
-;;;69     	if(Global_datas.g_mode_status == FM_MODE)
-000058  280a              CMP      r0,#0xa
-00005a  d015              BEQ      |L2.136|
-;;;70     	{
-;;;71     	//	printf("FM:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-;;;72     		drv_fm_led_on(1);
-;;;73     		goto charge_confirm;
-;;;74     	}
-;;;75     	if(Global_datas.g_mode_status == POWER_OFF_MODE)
-00005c  280d              CMP      r0,#0xd
-00005e  d102              BNE      |L2.102|
-;;;76     	//	printf("FM:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
-;;;77     		drv_all_led_on(0);
-000060  2000              MOVS     r0,#0
-000062  f7fffffe          BL       drv_all_led_on
-                  |L2.102|
-;;;78     charge_confirm:	
-;;;79      	return;
-;;;80     }
-000066  bd10              POP      {r4,pc}
-                  |L2.104|
-000068  7848              LDRB     r0,[r1,#1]            ;48  ; led_on_off
-00006a  f7fffffe          BL       drv_wifi_led_on
-00006e  bd10              POP      {r4,pc}
-                  |L2.112|
-000070  7848              LDRB     r0,[r1,#1]            ;54  ; led_on_off
-000072  f7fffffe          BL       drv_4G_led_on
-000076  bd10              POP      {r4,pc}
-                  |L2.120|
-000078  7848              LDRB     r0,[r1,#1]            ;60  ; led_on_off
-00007a  f7fffffe          BL       drv_bt_led_on
-00007e  bd10              POP      {r4,pc}
-                  |L2.128|
-000080  2001              MOVS     r0,#1                 ;66
-000082  f7fffffe          BL       drv_aux_led_on
-000086  bd10              POP      {r4,pc}
-                  |L2.136|
-000088  2001              MOVS     r0,#1                 ;72
-00008a  f7fffffe          BL       drv_fm_led_on
-00008e  bd10              POP      {r4,pc}
-;;;81     
+;;;62     		
+;;;63      	}
+;;;64     	
+;;;65     	if((Global_datas.g_mode_status == WIFI_CONNECTED_MODE) || (Global_datas.g_mode_status == WIFI_MODE) || (Global_datas.g_mode_status == WIFI_CONNECTING_MODE))
+00003e  2802              CMP      r0,#2
+000040  d01b              BEQ      |L2.122|
+000042  2801              CMP      r0,#1
+000044  d019              BEQ      |L2.122|
+000046  2803              CMP      r0,#3
+000048  d017              BEQ      |L2.122|
+;;;66     	{	
+;;;67     	//	printf("wifi:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
+;;;68     		drv_wifi_led_on(led_on_off);
+;;;69     		goto charge_confirm;
+;;;70     	}
+;;;71     	if((Global_datas.g_mode_status == FOURG_MODE) || (Global_datas.g_mode_status == FOURG_CONNECTED_MODE))
+00004a  2804              CMP      r0,#4
+00004c  d019              BEQ      |L2.130|
+00004e  2805              CMP      r0,#5
+000050  d017              BEQ      |L2.130|
+;;;72     	{	
+;;;73     	//	printf("4G:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
+;;;74     		drv_4G_led_on(led_on_off);
+;;;75     		goto charge_confirm;
+;;;76     	}
+;;;77     	if((Global_datas.g_mode_status == BT_MODE) || (Global_datas.g_mode_status == BT_CONNECTED_MODE))
+000052  2806              CMP      r0,#6
+000054  d001              BEQ      |L2.90|
+000056  2807              CMP      r0,#7
+000058  d102              BNE      |L2.96|
+                  |L2.90|
+;;;78     	{	
+;;;79     	//	printf("BT:led_status,led_on_off, =%x, %x \n",led_status,led_on_off);
+;;;80     		drv_bt_led_on(led_on_off);
+00005a  7848              LDRB     r0,[r1,#1]  ; led_on_off
+00005c  f7fffffe          BL       drv_bt_led_on
+                  |L2.96|
+;;;81     		goto charge_confirm;
+;;;82     	}
+;;;83     
+;;;84     
+;;;85     charge_confirm:	
+;;;86      	return;
+;;;87     }
+000060  bd70              POP      {r4-r6,pc}
+                  |L2.98|
+000062  2001              MOVS     r0,#1                 ;49
+000064  f7fffffe          BL       drv_aux_led_on
+000068  bd70              POP      {r4-r6,pc}
+                  |L2.106|
+00006a  2001              MOVS     r0,#1                 ;55
+00006c  f7fffffe          BL       drv_fm_led_on
+000070  bd70              POP      {r4-r6,pc}
+                  |L2.114|
+000072  2000              MOVS     r0,#0                 ;60
+000074  f7fffffe          BL       drv_all_led_on
+000078  bd70              POP      {r4-r6,pc}
+                  |L2.122|
+00007a  7848              LDRB     r0,[r1,#1]            ;68  ; led_on_off
+00007c  f7fffffe          BL       drv_wifi_led_on
+000080  bd70              POP      {r4-r6,pc}
+                  |L2.130|
+000082  7848              LDRB     r0,[r1,#1]            ;74  ; led_on_off
+000084  f7fffffe          BL       drv_4G_led_on
+000088  bd70              POP      {r4-r6,pc}
+;;;88     
                           ENDP
 
-                  |L2.144|
+00008a  0000              DCW      0x0000
+                  |L2.140|
                           DCD      Global_datas+0x20
-                  |L2.148|
+                  |L2.144|
                           DCD      ||.data||
 
                           AREA ||i.srv_led_sys_initing||, CODE, READONLY, ALIGN=2
 
                   srv_led_sys_initing PROC
-;;;81     
-;;;82     void srv_led_sys_initing(void)
+;;;88     
+;;;89     void srv_led_sys_initing(void)
 000000  b510              PUSH     {r4,lr}
-;;;83     {
-;;;84     #if 0
-;;;85     
-;;;86     #else
-;;;87     	if(i < 5)
+;;;90     {
+;;;91     #if 0
+;;;92     
+;;;93     #else
+;;;94     	if(i < 5)
 000002  4912              LDR      r1,|L3.76|
 000004  7888              LDRB     r0,[r1,#2]  ; i
 000006  2805              CMP      r0,#5
 000008  d201              BCS      |L3.14|
-00000a  1c40              ADDS     r0,r0,#1              ;83
-;;;88     		i++;
+00000a  1c40              ADDS     r0,r0,#1              ;90
+;;;95     		i++;
 00000c  e000              B        |L3.16|
                   |L3.14|
-;;;89     	else
-;;;90     		i = 1;
+;;;96     	else
+;;;97     		i = 1;
 00000e  2001              MOVS     r0,#1
                   |L3.16|
 000010  7088              STRB     r0,[r1,#2]
-;;;91     
-;;;92     	switch(i)
+;;;98     
+;;;99     	switch(i)
 000012  b2c0              UXTB     r0,r0
 000014  0003              MOVS     r3,r0
 000016  f7fffffe          BL       __ARM_common_switch8
 00001a  0607              DCB      0x06,0x07
 00001c  04080c10          DCB      0x04,0x08,0x0c,0x10
 000020  1407              DCB      0x14,0x07
-;;;93     	{
-;;;94     		case 1:
-;;;95     			drv_wifi_led_on(1);
+;;;100    	{
+;;;101    		case 1:
+;;;102    			drv_wifi_led_on(1);
 000022  2001              MOVS     r0,#1
 000024  f7fffffe          BL       drv_wifi_led_on
-;;;96     		break;
-;;;97     		
-;;;98     		case 2:
-;;;99     			drv_4G_led_on(1);
-;;;100    		break;
-;;;101    			
-;;;102    		case 3:
-;;;103    			drv_bt_led_on(1);
-;;;104    		break;
-;;;105    		
-;;;106    		case 4:
-;;;107    			drv_aux_led_on(1);
-;;;108    		break;
-;;;109    		
-;;;110    		case 5:
-;;;111    			drv_fm_led_on(1);
-;;;112    		break;
-;;;113    				
-;;;114    		default:
+;;;103    		break;
+;;;104    		
+;;;105    		case 2:
+;;;106    			drv_4G_led_on(1);
+;;;107    		break;
+;;;108    			
+;;;109    		case 3:
+;;;110    			drv_bt_led_on(1);
+;;;111    		break;
+;;;112    		
+;;;113    		case 4:
+;;;114    			drv_aux_led_on(1);
 ;;;115    		break;
-;;;116    	}
-;;;117    #endif	
-;;;118     	return;
-;;;119    }
+;;;116    		
+;;;117    		case 5:
+;;;118    			drv_fm_led_on(1);
+;;;119    		break;
+;;;120    				
+;;;121    		default:
+;;;122    		break;
+;;;123    	}
+;;;124    #endif	
+;;;125     	return;
+;;;126    }
 000028  bd10              POP      {r4,pc}
-00002a  2001              MOVS     r0,#1                 ;99
+00002a  2001              MOVS     r0,#1                 ;106
 00002c  f7fffffe          BL       drv_4G_led_on
 000030  bd10              POP      {r4,pc}
-000032  2001              MOVS     r0,#1                 ;103
+000032  2001              MOVS     r0,#1                 ;110
 000034  f7fffffe          BL       drv_bt_led_on
 000038  bd10              POP      {r4,pc}
-00003a  2001              MOVS     r0,#1                 ;107
+00003a  2001              MOVS     r0,#1                 ;114
 00003c  f7fffffe          BL       drv_aux_led_on
 000040  bd10              POP      {r4,pc}
-000042  2001              MOVS     r0,#1                 ;111
+000042  2001              MOVS     r0,#1                 ;118
 000044  f7fffffe          BL       drv_fm_led_on
 000048  bd10              POP      {r4,pc}
-;;;120    
+;;;127    
                           ENDP
 
 00004a  0000              DCW      0x0000

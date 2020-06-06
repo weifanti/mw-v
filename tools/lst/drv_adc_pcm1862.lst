@@ -50430,11 +50430,20 @@ N    FourG_4G_CHANNEL,
 N    FM_CHANNEL,
 N} sSN74LVC157;
 N*/
+N
+N
+N// 12DB 0X18
+N// 0DB  0X00
+N//-12DB 0XE8
 N#define PCM1862_IN_CHANNEL(x)  (1 << (x-1)) 
 N#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
 N//#define BT_WIFI_PCM1862_GAIN	0x00 // 0db
-N#define FM_PCM1862_GAIN	0x00 // 0db
-N#define AUX_PCM1862_GAIN	0x00 // 0db
+N//#define FM_PCM1862_GAIN	0x18 // 12db
+N#define FM_PCM1862_GAIN	0x2b // 23.5db
+N//#define AUX_PCM1862_GAIN	0x18 // 12db
+N#define AUX_PCM1862_GAIN	0x21 // 17.5db
+N//#define AUX_PCM1862_GAIN	0x00 // 17.5db
+N//#define FM_PCM1862_GAIN	    0x00 // 23.5db
 N
 N
 Nvoid drv_pcm1862_input_channel(uint8_t pcm_channel);
@@ -50825,11 +50834,14 @@ Nvoid drv_Adc_pcm1862_Init(void)
 N{
 N	/* load data */
 N	printf("Adc_pcm1862_Init\n");
+N
+N	
+W "..\src\driver\audio\drv_adc_pcm1862.c" 167 2 function "I2S_select_pin_dac" declared implicitly
+N	I2S_select_pin_dac();
+N	//drv_audio_4G_Channel(); // first 4g channel
 N	
 N//	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
 N//	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
 N    drv_PM1862_reg_Load();
-W "..\src\driver\audio\drv_adc_pcm1862.c" 169 2 function "drv_audio_4G_Channel" declared implicitly
-N	drv_audio_4G_Channel(); // first 4g channel
 N}
 N

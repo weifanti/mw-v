@@ -87,74 +87,16 @@
                   |L1.120|
                           DCD      0x40010000
 
-                          AREA ||i.drv_FM_on_NCU031_reset||, CODE, READONLY, ALIGN=2
-
-                  drv_FM_on_NCU031_reset PROC
-;;;43     /*---------------------------------------------------------------------------------------------------------*/
-;;;44     void drv_FM_on_NCU031_reset(void)
-000000  b510              PUSH     {r4,lr}
-;;;45     {
-;;;46     	int i;
-;;;47     
-;;;48     	// FM reset
-;;;49     	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT); //high en, low dis
-000002  2201              MOVS     r2,#1
-000004  02d1              LSLS     r1,r2,#11
-000006  480a              LDR      r0,|L2.48|
-000008  f7fffffe          BL       GPIO_SetMode
-;;;50     
-;;;51     	PE11 = 1;
-00000c  4a09              LDR      r2,|L2.52|
-00000e  2301              MOVS     r3,#1
-000010  62d3              STR      r3,[r2,#0x2c]
-;;;52     	for(i = 0UL; i < 20000 ; ++i)
-000012  4909              LDR      r1,|L2.56|
-000014  2000              MOVS     r0,#0
-                  |L2.22|
-;;;53     	{
-;;;54     	   __NOP();
-000016  bf00              NOP      
-000018  1c40              ADDS     r0,r0,#1
-00001a  4288              CMP      r0,r1                 ;52
-00001c  dbfb              BLT      |L2.22|
-;;;55     	}
-;;;56     	PE11 = 0;
-00001e  2000              MOVS     r0,#0
-000020  62d0              STR      r0,[r2,#0x2c]
-                  |L2.34|
-;;;57     	for(i = 0UL; i < 20000 ; ++i)
-;;;58     	{
-;;;59     	   __NOP();
-000022  bf00              NOP      
-000024  1c40              ADDS     r0,r0,#1
-000026  4288              CMP      r0,r1                 ;57
-000028  dbfb              BLT      |L2.34|
-;;;60     	}
-;;;61     	PE11 = 1;
-00002a  62d3              STR      r3,[r2,#0x2c]
-;;;62     }
-00002c  bd10              POP      {r4,pc}
-;;;63     
-                          ENDP
-
-00002e  0000              DCW      0x0000
-                  |L2.48|
-                          DCD      0x50004100
-                  |L2.52|
-                          DCD      0x50004300
-                  |L2.56|
-                          DCD      0x00004e20
-
                           AREA ||i.drv_SendAllstateToSubboard||, CODE, READONLY, ALIGN=2
 
                   drv_SendAllstateToSubboard PROC
-;;;65     //Send current state to subboard
-;;;66     void drv_SendAllstateToSubboard(void)
+;;;40     //Send current state to subboard
+;;;41     void drv_SendAllstateToSubboard(void)
 000000  b510              PUSH     {r4,lr}
-;;;67     {
-;;;68     	switch(Global_datas.g_mode_status)  //state mode
-000002  4814              LDR      r0,|L3.84|
-000004  7941              LDRB     r1,[r0,#5]  ; Global_datas
+;;;42     {
+;;;43     	switch(Global_datas.g_mode_status)  //state mode
+000002  4814              LDR      r0,|L2.84|
+000004  79c1              LDRB     r1,[r0,#7]  ; Global_datas
 000006  000b              MOVS     r3,r1
 000008  f7fffffe          BL       __ARM_common_switch8
 00000c  0f231212          DCB      0x0f,0x23,0x12,0x12
@@ -162,97 +104,97 @@
 000014  181e231b          DCB      0x18,0x1e,0x23,0x1b
 000018  23232309          DCB      0x23,0x23,0x23,0x09
 00001c  2300              DCB      0x23,0x00
-;;;69     	{
-;;;70     		case POWER_IDLE_MODE:
-;;;71     			{
-;;;72     				if(Global_datas.g_4g_initing)
-00001e  7980              LDRB     r0,[r0,#6]  ; Global_datas
+;;;44     	{
+;;;45     		case POWER_IDLE_MODE:
+;;;46     			{
+;;;47     				if(Global_datas.g_4g_initing)
+00001e  7a00              LDRB     r0,[r0,#8]  ; Global_datas
 000020  2800              CMP      r0,#0
-000022  d002              BEQ      |L3.42|
-;;;73     				{
-;;;74     					drv_Cmd_Send2NCU031(0x71, 0x12,0x00);  // powering up
+000022  d002              BEQ      |L2.42|
+;;;48     				{
+;;;49     					drv_Cmd_Send2NCU031(0x71, 0x12,0x00);  // powering up
 000024  2200              MOVS     r2,#0
 000026  2112              MOVS     r1,#0x12
-000028  e010              B        |L3.76|
-                  |L3.42|
-;;;75     				}			
-;;;76     				else
-;;;77     				{
-;;;78     					drv_Cmd_Send2NCU031(0x71, 0x11,0x00);  // power idle mode
+000028  e010              B        |L2.76|
+                  |L2.42|
+;;;50     				}			
+;;;51     				else
+;;;52     				{
+;;;53     					drv_Cmd_Send2NCU031(0x71, 0x11,0x00);  // power idle mode
 00002a  2200              MOVS     r2,#0
 00002c  2111              MOVS     r1,#0x11
-00002e  e00d              B        |L3.76|
-;;;79     				}
-;;;80     			}
-;;;81     		break;
-;;;82     
-;;;83     		case WIFI_MODE:
-;;;84     		case WIFI_CONNECTED_MODE:
-;;;85     		case WIFI_CONNECTING_MODE:
-;;;86     			{
-;;;87     				drv_Cmd_Send2NCU031(0x71, 0x15,0x00);  // 
+00002e  e00d              B        |L2.76|
+;;;54     				}
+;;;55     			}
+;;;56     		break;
+;;;57     
+;;;58     		case WIFI_MODE:
+;;;59     		case WIFI_CONNECTED_MODE:
+;;;60     		case WIFI_CONNECTING_MODE:
+;;;61     			{
+;;;62     				drv_Cmd_Send2NCU031(0x71, 0x15,0x00);  // 
 000030  2200              MOVS     r2,#0
 000032  2115              MOVS     r1,#0x15
-;;;88     			}
-;;;89     		break;
-000034  e00a              B        |L3.76|
-;;;90     
-;;;91     		case FOURG_MODE:
-;;;92     		case FOURG_CONNECTED_MODE:
-;;;93     			{
-;;;94     				drv_Cmd_Send2NCU031(0x71, 0x16,0x00);  // 
+;;;63     			}
+;;;64     		break;
+000034  e00a              B        |L2.76|
+;;;65     
+;;;66     		case FOURG_MODE:
+;;;67     		case FOURG_CONNECTED_MODE:
+;;;68     			{
+;;;69     				drv_Cmd_Send2NCU031(0x71, 0x16,0x00);  // 
 000036  2200              MOVS     r2,#0
 000038  2116              MOVS     r1,#0x16
-;;;95     			}
-;;;96     		break;
-00003a  e007              B        |L3.76|
-;;;97     
-;;;98     		case BT_CONNECTED_MODE:
-;;;99     		case BT_MODE:
-;;;100    			{
-;;;101    				drv_Cmd_Send2NCU031(0x71, 0x14,0x00);  //
+;;;70     			}
+;;;71     		break;
+00003a  e007              B        |L2.76|
+;;;72     
+;;;73     		case BT_CONNECTED_MODE:
+;;;74     		case BT_MODE:
+;;;75     			{
+;;;76     				drv_Cmd_Send2NCU031(0x71, 0x14,0x00);  //
 00003c  2200              MOVS     r2,#0
 00003e  2114              MOVS     r1,#0x14
-;;;102    			}
-;;;103    		break;				
-000040  e004              B        |L3.76|
-;;;104    
-;;;105    		case FM_MODE:
-;;;106    			{
-;;;107    				drv_Cmd_Send2NCU031(0x71, 0x18,0x00);  //
+;;;77     			}
+;;;78     		break;				
+000040  e004              B        |L2.76|
+;;;79     
+;;;80     		case FM_MODE:
+;;;81     			{
+;;;82     				drv_Cmd_Send2NCU031(0x71, 0x18,0x00);  //
 000042  2200              MOVS     r2,#0
 000044  2118              MOVS     r1,#0x18
-;;;108    			}
-;;;109    		break;	
-000046  e001              B        |L3.76|
-;;;110    		
-;;;111    	case AUX_MODE:
-;;;112    			{
-;;;113    				drv_Cmd_Send2NCU031(0x71, 0x17,0x00);  //
+;;;83     			}
+;;;84     		break;	
+000046  e001              B        |L2.76|
+;;;85     		
+;;;86     	case AUX_MODE:
+;;;87     			{
+;;;88     				drv_Cmd_Send2NCU031(0x71, 0x17,0x00);  //
 000048  2200              MOVS     r2,#0
 00004a  2117              MOVS     r1,#0x17
-                  |L3.76|
+                  |L2.76|
 00004c  2071              MOVS     r0,#0x71
 00004e  f7fffffe          BL       drv_Cmd_Send2NCU031
-;;;114    			}
-;;;115    	break;		
-;;;116    
-;;;117    	default:break;
-;;;118    	}
-;;;119    	// eq state
-;;;120    	// volume
-;;;121    	// MW radio channel
-;;;122    	// battery level
-;;;123    	// charge state
-;;;124    
-;;;125    
-;;;126    	
-;;;127    }
+;;;89     			}
+;;;90     	break;		
+;;;91     
+;;;92     	default:break;
+;;;93     	}
+;;;94     	// eq state
+;;;95     	// volume
+;;;96     	// MW radio channel
+;;;97     	// battery level
+;;;98     	// charge state
+;;;99     
+;;;100    
+;;;101    	
+;;;102    }
 000052  bd10              POP      {r4,pc}
-;;;128    
+;;;103    
                           ENDP
 
-                  |L3.84|
+                  |L2.84|
                           DCD      Global_datas+0x20
 
                           AREA ||i.__ARM_common_switch8||, COMGROUP=__ARM_common_switch8, CODE, READONLY, ALIGN=1
@@ -264,9 +206,9 @@
 000006  7825              LDRB     r5,[r4,#0]
 000008  1c64              ADDS     r4,r4,#1
 00000a  42ab              CMP      r3,r5
-00000c  d200              BCS      |L25.16|
+00000c  d200              BCS      |L19.16|
 00000e  461d              MOV      r5,r3
-                  |L25.16|
+                  |L19.16|
 000010  5d63              LDRB     r3,[r4,r5]
 000012  005b              LSLS     r3,r3,#1
 000014  18e3              ADDS     r3,r4,r3

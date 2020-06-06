@@ -260,23 +260,7 @@ void drv_5825_Load_vol_reduce(void)
  */
 void drv_5825_vol_set(uint8_t value)
 {
-	/*
-	//tas5852_default_volume = tas5852_default_volume - 0x01;//1 = 0.25db
-	
-	tas5825_volume0c[1] = value/2;
-	tas5825_volume0c[2] = (value%2)<<7;
-	tas5825_volume10[1] = value/2;
-	tas5825_volume10[2] = (value%2)<<7;
-	printf("tas5825_volume10 %x,%x\n",tas5825_volume0c[1],tas5825_volume0c[2]);
-	drv_5825_00_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
-	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume0c, sizeof(tas5825_volume0c), (uint8_t*)NULL, 0);
-	Hal_I2c_Transfer(DAP1_I2C_ADDR, (uint8_t*)tas5825_volume10, sizeof(tas5825_volume10), (uint8_t*)NULL, 0);
-	drv_5825_01_i2c_write(tas5852_volume_page,sizeof(tas5852_volume_page)/2);
-	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume0c, sizeof(tas5825_volume0c), (uint8_t*)NULL, 0);
-	Hal_I2c_Transfer(DAP2_I2C_ADDR, (uint8_t*)tas5825_volume10, sizeof(tas5825_volume10), (uint8_t*)NULL, 0);
-	*/
 
-    
 	if(value >16)  return;
 	//tas5852_default_volume = tas5852_default_volume - 0x01;//1 = 0.25db
 	
@@ -303,19 +287,13 @@ void drv_5825_vol_mute(uint8_t value)
 {
 }
 
-void drv_Dap_Load_in_Param(void)
-{
-
-    drv_5825_Load_in_Param(); 
-	PC8 = 1;
-}
-
 
 void drv_5825_mute_pin_set(uint8_t value)  // MUTE 0, UN MUTE 1
 {
 	if(value)
 		PD10 = 1;
 	else
+		//PD10 = 0;
 		PD10 = 0;
 }
 

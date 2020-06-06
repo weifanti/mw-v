@@ -201,7 +201,7 @@ uint8_t GetIrKey(void)
 		ir_key_value = Ircordpro();
 		ir_data_rx_ok = 0;
 
-
+        		
 		// shoutting down cann't respond any key. idle state only respond power key
 		if((((Global_datas.state == SYS_PLAY_STATE_IDLE) || (Global_datas.state == SYS_PLAY_STATE_POWERUP)) && (ir_key_value != IR_KEY_POWER)) || (Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)) 
 		{

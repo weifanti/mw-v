@@ -2,228 +2,157 @@
 ; commandline ArmCC [--list --split_sections --debug -c --asm --interleave -o.\obj\io_gpio.o --asm_dir=.\lst\ --list_dir=.\lst\ --depend=.\obj\io_gpio.d --cpu=Cortex-M0 --apcs=interwork --diag_suppress=9931 -I..\lib\CMSIS\Include -I..\lib\Device\Nuvoton\NUC029xGE\Include -I..\lib\StdDriver\inc -I..\src\core\include -I..\src\driver\include -I..\src\io\include -I..\src\global -I..\src\server\include -I..\src\driver\audio -D__UVISION_VERSION=522 --omf_browse=.\obj\io_gpio.crf ..\src\io\io_gpio.c]
                           THUMB
 
-                          AREA ||i.ADC_IRQHandler||, CODE, READONLY, ALIGN=2
-
-                          REQUIRE _printf_percent
-                          REQUIRE _printf_x
-                          REQUIRE _printf_longlong_hex
-                  ADC_IRQHandler PROC
-;;;111    /*---------------------------------------------------------------------------------------------------------*/
-;;;112    void ADC_IRQHandler(void)
-000000  b510              PUSH     {r4,lr}
-;;;113    {
-;;;114        
-;;;115    	int32_t  i32ConversionData;
-;;;116    	ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
-000002  480a              LDR      r0,|L1.44|
-000004  2101              MOVS     r1,#1
-000006  6101              STR      r1,[r0,#0x10]
-000008  4a09              LDR      r2,|L1.48|
-00000a  0581              LSLS     r1,r0,#22
-00000c  6011              STR      r1,[r2,#0]
-;;;117    	
-;;;118        NVIC_DisableIRQ(ADC_IRQn);
-;;;119        ADC_GET_INT_FLAG(ADC, ADC_ADF_INT);
-00000e  6900              LDR      r0,[r0,#0x10]
-;;;120    	i32ConversionData = ADC_GET_CONVERSION_DATA(ADC, 12);
-000010  4c06              LDR      r4,|L1.44|
-000012  3c80              SUBS     r4,r4,#0x80
-000014  6b20              LDR      r0,[r4,#0x30]
-000016  b281              UXTH     r1,r0
-;;;121    	printf("Conversion result of channel 12: 0x%X \n",  i32ConversionData);
-000018  a006              ADR      r0,|L1.52|
-00001a  f7fffffe          BL       __2printf
-;;;122    	i32ConversionData = ADC_GET_CONVERSION_DATA(ADC, 15);
-00001e  6be0              LDR      r0,[r4,#0x3c]
-000020  b281              UXTH     r1,r0
-;;;123    	printf("Conversion result of channel 15: 0x%X \n",  i32ConversionData);
-000022  a00e              ADR      r0,|L1.92|
-000024  f7fffffe          BL       __2printf
-;;;124        //ADC_CLR_INT_FLAG(ADC, u32Flag);
-;;;125    }
-000028  bd10              POP      {r4,pc}
-;;;126    
-                          ENDP
-
-00002a  0000              DCW      0x0000
-                  |L1.44|
-                          DCD      0x400e0080
-                  |L1.48|
-                          DCD      0xe000e180
-                  |L1.52|
-000034  436f6e76          DCB      "Conversion result of channel 12: 0x%X \n",0
-000038  65727369
-00003c  6f6e2072
-000040  6573756c
-000044  74206f66
-000048  20636861
-00004c  6e6e656c
-000050  2031323a
-000054  20307825
-000058  58200a00
-                  |L1.92|
-00005c  436f6e76          DCB      "Conversion result of channel 15: 0x%X \n",0
-000060  65727369
-000064  6f6e2072
-000068  6573756c
-00006c  74206f66
-000070  20636861
-000074  6e6e656c
-000078  2031353a
-00007c  20307825
-000080  58200a00
-
                           AREA ||i.TYM_gpio_adc_get||, CODE, READONLY, ALIGN=2
 
                   TYM_gpio_adc_get PROC
-;;;41     
-;;;42     void TYM_gpio_adc_get(uint32_t adc_channel)
+;;;44     
+;;;45     void TYM_gpio_adc_get(uint32_t adc_channel)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;43     {
-;;;44     	uint8_t u8ChannelCount;
-;;;45     	uint32_t  adc_channel_en;
-;;;46     	
-;;;47     	/* Set the ADC operation mode as continuous scan, input mode as single-end and
-;;;48     	     enable the analog input channel 0, 1, 2 and 3 */
-;;;49     	ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_CONTINUOUS, adc_channel);
-000002  4e23              LDR      r6,|L2.144|
-000004  4605              MOV      r5,r0                 ;43
+;;;46     {
+;;;47     	uint8_t u8ChannelCount;
+;;;48     	uint32_t  adc_channel_en;
+;;;49     	
+;;;50     	/* Set the ADC operation mode as continuous scan, input mode as single-end and
+;;;51     	     enable the analog input channel 0, 1, 2 and 3 */
+;;;52     	ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_CONTINUOUS, adc_channel);
+000002  4e23              LDR      r6,|L1.144|
+000004  4605              MOV      r5,r0                 ;46
 000006  4603              MOV      r3,r0
 000008  220c              MOVS     r2,#0xc
 00000a  2100              MOVS     r1,#0
 00000c  4630              MOV      r0,r6
 00000e  f7fffffe          BL       ADC_Open
-;;;50     //	printf("adc channel: 0x%Xul\n",	adc_channel);
-;;;51     
-;;;52     	/* Power on ADC module */
-;;;53     	ADC_POWER_ON(ADC);
-000012  4c1f              LDR      r4,|L2.144|
+;;;53     //	printf("adc channel: 0x%Xul\n",	adc_channel);
+;;;54     
+;;;55     	/* Power on ADC module */
+;;;56     	ADC_POWER_ON(ADC);
+000012  4c1f              LDR      r4,|L1.144|
 000014  3480              ADDS     r4,r4,#0x80
 000016  6820              LDR      r0,[r4,#0]
 000018  2701              MOVS     r7,#1
 00001a  4338              ORRS     r0,r0,r7
 00001c  6020              STR      r0,[r4,#0]
-;;;54     
-;;;55     	/* Enable the ADC interrupt */
-;;;56     	ADC_EnableInt(ADC, ADC_ADF_INT);
+;;;57     
+;;;58     	/* Enable the ADC interrupt */
+;;;59     	ADC_EnableInt(ADC, ADC_ADF_INT);
 00001e  4639              MOV      r1,r7
 000020  4630              MOV      r0,r6
 000022  f7fffffe          BL       ADC_EnableInt
-;;;57     //	NVIC_EnableIRQ(ADC_IRQn);
-;;;58     
-;;;59     	/* Clear the A/D interrupt flag for safe */
-;;;60     	ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
-000026  6127              STR      r7,[r4,#0x10]
+;;;60     //	NVIC_EnableIRQ(ADC_IRQn);
 ;;;61     
-;;;62     	/* Start A/D conversion */
-;;;63     	ADC_START_CONV(ADC);
+;;;62     	/* Clear the A/D interrupt flag for safe */
+;;;63     	ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
+000026  6127              STR      r7,[r4,#0x10]
+;;;64     
+;;;65     	/* Start A/D conversion */
+;;;66     	ADC_START_CONV(ADC);
 000028  6820              LDR      r0,[r4,#0]
 00002a  02f9              LSLS     r1,r7,#11
 00002c  4308              ORRS     r0,r0,r1
 00002e  6020              STR      r0,[r4,#0]
-                  |L2.48|
-;;;64     #if 1
-;;;65     	/* Wait conversion done */
-;;;66     	while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT));
+                  |L1.48|
+;;;67     #if 1
+;;;68     	/* Wait conversion done */
+;;;69     	while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT));
 000030  6920              LDR      r0,[r4,#0x10]
 000032  07c0              LSLS     r0,r0,#31
-000034  d0fc              BEQ      |L2.48|
-;;;67     
-;;;68     	/* Clear the A/D interrupt flag for safe */
-;;;69     	ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
+000034  d0fc              BEQ      |L1.48|
+;;;70     
+;;;71     	/* Clear the A/D interrupt flag for safe */
+;;;72     	ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
 000036  2001              MOVS     r0,#1
 000038  6120              STR      r0,[r4,#0x10]
-;;;70     
-;;;71     	adc_channel_en = adc_channel;
-;;;72     	for(u8ChannelCount = 0; u8ChannelCount < ADC_CHANNEL_NUM_MAX; u8ChannelCount++)
-;;;73     	{
-;;;74     		if(adc_channel_en & 0x01)
-;;;75     		{
-;;;76     			Global_datas.ADC_ChannelValue[u8ChannelCount] = ADC_GET_CONVERSION_DATA(ADC, u8ChannelCount);
-00003a  4a16              LDR      r2,|L2.148|
-00003c  4629              MOV      r1,r5                 ;71
-00003e  2000              MOVS     r0,#0                 ;72
-                  |L2.64|
-000040  07cb              LSLS     r3,r1,#31             ;74
-000042  d004              BEQ      |L2.78|
+;;;73     
+;;;74     	adc_channel_en = adc_channel;
+;;;75     	for(u8ChannelCount = 0; u8ChannelCount < ADC_CHANNEL_NUM_MAX; u8ChannelCount++)
+;;;76     	{
+;;;77     		if(adc_channel_en & 0x01)
+;;;78     		{
+;;;79     			Global_datas.ADC_ChannelValue[u8ChannelCount] = ADC_GET_CONVERSION_DATA(ADC, u8ChannelCount);
+00003a  4a16              LDR      r2,|L1.148|
+00003c  4629              MOV      r1,r5                 ;74
+00003e  2000              MOVS     r0,#0                 ;75
+                  |L1.64|
+000040  07cb              LSLS     r3,r1,#31             ;77
+000042  d004              BEQ      |L1.78|
 000044  0083              LSLS     r3,r0,#2
 000046  199b              ADDS     r3,r3,r6
 000048  681b              LDR      r3,[r3,#0]
 00004a  0047              LSLS     r7,r0,#1
 00004c  53d3              STRH     r3,[r2,r7]
-                  |L2.78|
-;;;77     //			printf("adc channel %d: 0x%Xul\n",  u8ChannelCount,Global_datas.ADC_ChannelValue[u8ChannelCount]);
-;;;78     		}
-;;;79     		adc_channel_en = adc_channel_en >> 1;		
+                  |L1.78|
+;;;80     //			printf("adc channel %d: 0x%Xul\n",  u8ChannelCount,Global_datas.ADC_ChannelValue[u8ChannelCount]);
+;;;81     		}
+;;;82     		adc_channel_en = adc_channel_en >> 1;		
 00004e  1c40              ADDS     r0,r0,#1
 000050  0849              LSRS     r1,r1,#1
-000052  b2c0              UXTB     r0,r0                 ;72
-000054  2810              CMP      r0,#0x10              ;72
-000056  d3f3              BCC      |L2.64|
-                  |L2.88|
-;;;80     	}
-;;;81     
-;;;82     	/* Wait conversion done */
-;;;83     	while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT));
+000052  b2c0              UXTB     r0,r0                 ;75
+000054  2810              CMP      r0,#0x10              ;75
+000056  d3f3              BCC      |L1.64|
+                  |L1.88|
+;;;83     	}
+;;;84     
+;;;85     	/* Wait conversion done */
+;;;86     	while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT));
 000058  6920              LDR      r0,[r4,#0x10]
 00005a  07c0              LSLS     r0,r0,#31
-00005c  d0fc              BEQ      |L2.88|
-;;;84     
-;;;85     	/* Stop A/D conversion */
-;;;86     	ADC_STOP_CONV(ADC);
+00005c  d0fc              BEQ      |L1.88|
+;;;87     
+;;;88     	/* Stop A/D conversion */
+;;;89     	ADC_STOP_CONV(ADC);
 00005e  6820              LDR      r0,[r4,#0]
 000060  2101              MOVS     r1,#1
 000062  02c9              LSLS     r1,r1,#11
 000064  4388              BICS     r0,r0,r1
 000066  6020              STR      r0,[r4,#0]
-;;;87     
-;;;88     	adc_channel_en = adc_channel;
-;;;89     	for(u8ChannelCount = 0; u8ChannelCount < ADC_CHANNEL_NUM_MAX; u8ChannelCount++)
+;;;90     
+;;;91     	adc_channel_en = adc_channel;
+;;;92     	for(u8ChannelCount = 0; u8ChannelCount < ADC_CHANNEL_NUM_MAX; u8ChannelCount++)
 000068  2100              MOVS     r1,#0
-00006a  4630              MOV      r0,r6                 ;49
-                  |L2.108|
-;;;90     	{
-;;;91     		if(adc_channel_en & 0x01)
+00006a  4630              MOV      r0,r6                 ;52
+                  |L1.108|
+;;;93     	{
+;;;94     		if(adc_channel_en & 0x01)
 00006c  07eb              LSLS     r3,r5,#31
-00006e  d004              BEQ      |L2.122|
-;;;92     		{
-;;;93     			Global_datas.ADC_ChannelValue[u8ChannelCount] = ADC_GET_CONVERSION_DATA(ADC, u8ChannelCount);
+00006e  d004              BEQ      |L1.122|
+;;;95     		{
+;;;96     			Global_datas.ADC_ChannelValue[u8ChannelCount] = ADC_GET_CONVERSION_DATA(ADC, u8ChannelCount);
 000070  008b              LSLS     r3,r1,#2
 000072  181b              ADDS     r3,r3,r0
 000074  681b              LDR      r3,[r3,#0]
 000076  004e              LSLS     r6,r1,#1
 000078  5393              STRH     r3,[r2,r6]
-                  |L2.122|
-;;;94     //			printf("adc channel %d: 0x%Xul\n",  u8ChannelCount,ADC_ChannelValue[u8ChannelCount]);
-;;;95     		}
-;;;96     		adc_channel_en = adc_channel_en >> 1;		
+                  |L1.122|
+;;;97     //			printf("adc channel %d: 0x%Xul\n",  u8ChannelCount,ADC_ChannelValue[u8ChannelCount]);
+;;;98     		}
+;;;99     		adc_channel_en = adc_channel_en >> 1;		
 00007a  1c49              ADDS     r1,r1,#1
 00007c  086d              LSRS     r5,r5,#1
-00007e  b2c9              UXTB     r1,r1                 ;89
-000080  2910              CMP      r1,#0x10              ;89
-000082  d3f3              BCC      |L2.108|
-;;;97     	}
-;;;98     
-;;;99     	/* Clear the A/D interrupt flag for safe */
-;;;100    	ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
+00007e  b2c9              UXTB     r1,r1                 ;92
+000080  2910              CMP      r1,#0x10              ;92
+000082  d3f3              BCC      |L1.108|
+;;;100    	}
+;;;101    
+;;;102    	/* Clear the A/D interrupt flag for safe */
+;;;103    	ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
 000084  2101              MOVS     r1,#1
 000086  6121              STR      r1,[r4,#0x10]
-;;;101    	
-;;;102    	/* Disable the ADC interrupt */
-;;;103    	ADC_DisableInt(ADC, ADC_ADF_INT);
+;;;104    	
+;;;105    	/* Disable the ADC interrupt */
+;;;106    	ADC_DisableInt(ADC, ADC_ADF_INT);
 000088  f7fffffe          BL       ADC_DisableInt
-;;;104        /* Disable External Interrupt */
-;;;105    //    NVIC_DisableIRQ(ADC_IRQn);
-;;;106    #endif
-;;;107    }
+;;;107        /* Disable External Interrupt */
+;;;108    //    NVIC_DisableIRQ(ADC_IRQn);
+;;;109    #endif
+;;;110    }
 00008c  bdf8              POP      {r3-r7,pc}
-;;;108    
+;;;111    
                           ENDP
 
 00008e  0000              DCW      0x0000
-                  |L2.144|
+                  |L1.144|
                           DCD      0x400e0000
-                  |L2.148|
+                  |L1.148|
                           DCD      Global_datas
 
                           AREA ||i.TYM_gpio_init||, CODE, READONLY, ALIGN=2
@@ -231,7 +160,7 @@
                   TYM_gpio_init PROC
 ;;;20      */
 ;;;21     void TYM_gpio_init(void)
-000000  480d              LDR      r0,|L3.56|
+000000  4810              LDR      r0,|L2.68|
 ;;;22     {
 ;;;23     	/* Disable the GPB7 & GPB15 digital input path to avoid the leakage current. */
 ;;;24     
@@ -248,45 +177,52 @@
 000010  6341              STR      r1,[r0,#0x34]
 ;;;28     	SYS->GPA_MFPL = 0x00000000;
 000012  6301              STR      r1,[r0,#0x30]
-;;;29     	SYS->GPB_MFPH = SYS_GPB_MFPH_PB15MFP_ADC0_CH12;
-000014  0152              LSLS     r2,r2,#5
-000016  63c2              STR      r2,[r0,#0x3c]
-;;;30     	SYS->GPB_MFPL = SYS_GPB_MFPL_PB3MFP_USCI0_DAT1 | SYS_GPB_MFPL_PB2MFP_USCI0_DAT0 | SYS_GPB_MFPL_PB7MFP_ADC0_CH15;
-000018  4a08              LDR      r2,|L3.60|
-00001a  6382              STR      r2,[r0,#0x38]
-;;;31     	SYS->GPC_MFPH = SYS_GPC_MFPH_PC10MFP_I2C1_SDA | SYS_GPC_MFPH_PC9MFP_I2C1_SCL;
-00001c  2233              MOVS     r2,#0x33
-00001e  4808              LDR      r0,|L3.64|
-000020  0112              LSLS     r2,r2,#4
-000022  6042              STR      r2,[r0,#4]
-;;;32     	SYS->GPC_MFPL = 0x00000000;
-000024  6001              STR      r1,[r0,#0]
-;;;33     	SYS->GPD_MFPH = SYS_GPD_MFPH_PD9MFP_UART0_RXD;
-000026  2130              MOVS     r1,#0x30
-000028  60c1              STR      r1,[r0,#0xc]
-;;;34     	SYS->GPD_MFPL = SYS_GPD_MFPL_PD1MFP_UART0_TXD;
-00002a  6081              STR      r1,[r0,#8]
-;;;35     	SYS->GPE_MFPH = SYS_GPE_MFPH_PE13MFP_I2C0_SDA | SYS_GPE_MFPH_PE12MFP_I2C0_SCL | SYS_GPE_MFPH_PE9MFP_UART1_RXD | SYS_GPE_MFPH_PE8MFP_UART1_TXD;
-00002c  4905              LDR      r1,|L3.68|
-00002e  6141              STR      r1,[r0,#0x14]
-;;;36     	SYS->GPE_MFPL = SYS_GPE_MFPL_PE7MFP_ICE_DAT | SYS_GPE_MFPL_PE6MFP_ICE_CLK;
-000030  0609              LSLS     r1,r1,#24
-000032  6101              STR      r1,[r0,#0x10]
+;;;29     	SYS->GPB_MFPH |= SYS_GPB_MFPH_PB15MFP_ADC0_CH12;
+000014  6bc2              LDR      r2,[r0,#0x3c]
+000016  2301              MOVS     r3,#1
+000018  071b              LSLS     r3,r3,#28
+00001a  431a              ORRS     r2,r2,r3
+00001c  63c2              STR      r2,[r0,#0x3c]
+;;;30     	SYS->GPB_MFPL |= SYS_GPB_MFPL_PB3MFP_USCI0_DAT1 | SYS_GPB_MFPL_PB2MFP_USCI0_DAT0 ;  // USIC0
+00001e  6b82              LDR      r2,[r0,#0x38]
+000020  2311              MOVS     r3,#0x11
+000022  02db              LSLS     r3,r3,#11
+000024  431a              ORRS     r2,r2,r3
+000026  6382              STR      r2,[r0,#0x38]
+;;;31     		
+;;;32     	SYS->GPC_MFPH = SYS_GPC_MFPH_PC10MFP_I2C1_SDA | SYS_GPC_MFPH_PC9MFP_I2C1_SCL;  //I2C_1  pcm1862
+000028  2233              MOVS     r2,#0x33
+00002a  4807              LDR      r0,|L2.72|
+00002c  0112              LSLS     r2,r2,#4
+00002e  6042              STR      r2,[r0,#4]
+;;;33     	SYS->GPC_MFPL = 0x00000000;
+000030  6001              STR      r1,[r0,#0]
+;;;34     	SYS->GPD_MFPH = SYS_GPD_MFPH_PD9MFP_UART0_RXD;  // UART_0
+000032  2130              MOVS     r1,#0x30
+000034  60c1              STR      r1,[r0,#0xc]
+;;;35     	SYS->GPD_MFPL = SYS_GPD_MFPL_PD1MFP_UART0_TXD;
+000036  6081              STR      r1,[r0,#8]
+;;;36     	SYS->GPE_MFPH = SYS_GPE_MFPH_PE13MFP_I2C0_SDA | SYS_GPE_MFPH_PE12MFP_I2C0_SCL | SYS_GPE_MFPH_PE9MFP_UART1_RXD | SYS_GPE_MFPH_PE8MFP_UART1_TXD; //I2C_0: TSA5825 UART1:4G
+000038  4904              LDR      r1,|L2.76|
+00003a  6141              STR      r1,[r0,#0x14]
 ;;;37     	
-;;;38     	return;
-;;;39     }
-000034  4770              BX       lr
-;;;40     
+;;;38     	SYS->GPE_MFPL = SYS_GPE_MFPL_PE7MFP_ICE_DAT | SYS_GPE_MFPL_PE6MFP_ICE_CLK;
+00003c  0609              LSLS     r1,r1,#24
+00003e  6101              STR      r1,[r0,#0x10]
+;;;39     	//SYS->GPE_MFPL = SYS_GPE_MFPL_PE7MFP_GPIO | SYS_GPE_MFPL_PE6MFP_GPIO;
+;;;40     	
+;;;41     	return;
+;;;42     }
+000040  4770              BX       lr
+;;;43     
                           ENDP
 
-000036  0000              DCW      0x0000
-                  |L3.56|
+000042  0000              DCW      0x0000
+                  |L2.68|
                           DCD      0x50004040
-                  |L3.60|
-                          DCD      0x10008800
-                  |L3.64|
+                  |L2.72|
                           DCD      0x50000040
-                  |L3.68|
+                  |L2.76|
                           DCD      0x00440011
 
 ;*** Start embedded assembler ***

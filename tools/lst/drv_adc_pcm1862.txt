@@ -13,31 +13,34 @@
 ;;;164    	printf("Adc_pcm1862_Init\n");
 000002  a00b              ADR      r0,|L1.48|
 000004  f7fffffe          BL       __2printf
-000008  2400              MOVS     r4,#0
-00000a  4d0e              LDR      r5,|L1.68|
-00000c  4626              MOV      r6,r4
-                  |L1.14|
-00000e  00e0              LSLS     r0,r4,#3
-000010  1941              ADDS     r1,r0,r5
-000012  9600              STR      r6,[sp,#0]
-000014  684a              LDR      r2,[r1,#4]
-000016  5829              LDR      r1,[r5,r0]
-000018  2300              MOVS     r3,#0
-00001a  2094              MOVS     r0,#0x94
-00001c  f7fffffe          BL       Hal_I2c1_Transfer
-000020  1c64              ADDS     r4,r4,#1
-000022  b2e4              UXTB     r4,r4
-000024  2c06              CMP      r4,#6
-000026  d3f2              BCC      |L1.14|
-;;;165    	
-;;;166    //	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
-;;;167    //	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
-;;;168        drv_PM1862_reg_Load();
-;;;169    	drv_audio_4G_Channel(); // first 4g channel
-000028  f7fffffe          BL       drv_audio_4G_Channel
-;;;170    }
+;;;165    
+;;;166    	
+;;;167    	I2S_select_pin_dac();
+000008  f7fffffe          BL       I2S_select_pin_dac
+00000c  2400              MOVS     r4,#0
+00000e  4d0d              LDR      r5,|L1.68|
+000010  4626              MOV      r6,r4
+                  |L1.18|
+000012  00e0              LSLS     r0,r4,#3
+000014  1941              ADDS     r1,r0,r5
+000016  9600              STR      r6,[sp,#0]
+000018  684a              LDR      r2,[r1,#4]
+00001a  5829              LDR      r1,[r5,r0]
+00001c  2300              MOVS     r3,#0
+00001e  2094              MOVS     r0,#0x94
+000020  f7fffffe          BL       Hal_I2c1_Transfer
+000024  1c64              ADDS     r4,r4,#1
+000026  b2e4              UXTB     r4,r4
+000028  2c06              CMP      r4,#6
+00002a  d3f2              BCC      |L1.18|
+;;;168    	//drv_audio_4G_Channel(); // first 4g channel
+;;;169    	
+;;;170    //	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
+;;;171    //	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
+;;;172        drv_PM1862_reg_Load();
+;;;173    }
 00002c  bdf8              POP      {r3-r7,pc}
-;;;171    
+;;;174    
                           ENDP
 
 00002e  0000              DCW      0x0000

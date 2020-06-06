@@ -113,8 +113,8 @@ void drv_all_led_on(uint8_t value)
 
 void drv_led_init(void)
 {
-	GPIO_SetMode(PA, BIT14, GPIO_MODE_OUTPUT);	//STAT2
-	GPIO_SetMode(PA, BIT15, GPIO_MODE_OUTPUT);  //STAT1
+	GPIO_SetMode(PA, BIT14, GPIO_MODE_OUTPUT);	//STAT1  RED
+	GPIO_SetMode(PA, BIT15, GPIO_MODE_OUTPUT);  //STAT2  GREEN
 	GPIO_SetMode(PA, BIT13, GPIO_MODE_OUTPUT);	//wifi
 	GPIO_SetMode(PA, BIT12, GPIO_MODE_OUTPUT);  //aux
 	GPIO_SetMode(PA, BIT1, GPIO_MODE_OUTPUT);	//bt
@@ -132,10 +132,36 @@ void drv_led_init(void)
 	PA2 = LED_OFF;  //err
 	PA3 = LED_OFF;  //wireless mic
 	
-	PA14 = LED_OFF;  //STAT2
-	PA15 = LED_ON;  //STAT1
+	PA14 = LED_OFF;  //STAT1 RED
+	PA15 = LED_OFF;  //STAT1 GREEN
 	
 	
+}
+
+
+void drv_led_state1_onoff_red(uint8_t on)
+{
+	if(on)
+	{
+		PA14 = LED_ON;
+	}
+	else
+	{
+		PA14 = LED_OFF;
+	}
+}
+
+
+void drv_led_state1_onoff_green(uint8_t on)
+{
+	if(on)
+	{
+		PA15 = LED_ON;
+	}
+	else
+	{
+		PA15 = LED_OFF;
+	}
 }
 
 

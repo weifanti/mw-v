@@ -29347,6 +29347,9 @@ void drv_all_led_on(uint8_t value);
 
 void drv_led_init(void);
 
+void drv_led_state1_onoff_red(uint8_t on);
+void drv_led_state1_onoff_green(uint8_t on);
+
 
 #line 12 "..\\src\\driver\\drv_led.c"
 
@@ -29473,9 +29476,35 @@ void drv_led_init(void)
 	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((3)<<2)))) = 1;  
 	
 	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((14)<<2)))) = 1;  
-	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((15)<<2)))) = 0;  
+	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((15)<<2)))) = 1;  
 	
 	
+}
+
+
+void drv_led_state1_onoff_red(uint8_t on)
+{
+	if(on)
+	{
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((14)<<2)))) = 0;
+	}
+	else
+	{
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((14)<<2)))) = 1;
+	}
+}
+
+
+void drv_led_state1_onoff_green(uint8_t on)
+{
+	if(on)
+	{
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((15)<<2)))) = 0;
+	}
+	else
+	{
+		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((15)<<2)))) = 1;
+	}
 }
 
 

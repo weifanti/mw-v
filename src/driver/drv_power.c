@@ -20,6 +20,12 @@
 #define PLLCTL_SETTING  CLK_PLLCTL_72MHz_HXT
 #define PLL_CLOCK       72000000
 
+
+void PowerKeepOnPinInit(void)  
+{
+	GPIO_SetMode(PC, BIT2, GPIO_MODE_OUTPUT); // SYS power keep on
+}
+
 void TYM_drv_powerkeepon(uint8_t onoff) // 1 0n, 0 off
 {
 	if(onoff)
@@ -27,6 +33,7 @@ void TYM_drv_powerkeepon(uint8_t onoff) // 1 0n, 0 off
 	else 
 		PC2 = 0;
 }
+
 
 
 void TYM_SysPower12V_3V3_onoff(uint8_t on)
@@ -41,162 +48,136 @@ void TYM_SysPower12V_3V3_onoff(uint8_t on)
 		}
 }
 
-void TYM_power_gpio_init(void)
+void SysPower_12V_ControlPin_Init(void)
 {
-	//battery 
-	GPIO_SetMode(PA, BIT8, GPIO_MODE_OUTPUT); //VBAT IN EN   low internal bat, hi external bat
-	GPIO_SetMode(PC, BIT4, GPIO_MODE_INPUT); //+24V IN EN   high
-	
-	//battery charger
-	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  high 1A ,low 2A
-
-	//battery charge enable
-	GPIO_SetMode(PC, BIT8, GPIO_MODE_OUTPUT); //Hi enable , low disable
-	/***
-	*STAT1:1,STAT2:0  charge in
-	*STAT1:0,STAT2:1  charge complate
-	*STAT1:1,STAT2:0  charge suspend
-	***/
-	GPIO_SetMode(PB, BIT10, GPIO_MODE_INPUT); // STAT1
-	GPIO_SetMode(PB, BIT11, GPIO_MODE_INPUT); // STAT2   
-
-
-	//power on/off
-	GPIO_SetMode(PC, BIT2, GPIO_MODE_OUTPUT); // SYS power keep on
-	
-	//system power 
 	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis  +12V(TAS5825) ,3.3V EN(AMP and other 3.3v , not mcu 3.3V)
-
+	TYM_SysPower12V_3V3_onoff(0);
 }
 
 
-void TYM_power_battery_charge_enable(void)
+
+
+void DcInDetect(void)
+{
+	if(PC4) 
+	{
+		Global_datas.PowerState.AdapterIn = 0;
+	}
+	else
+	{
+		Global_datas.PowerState.AdapterIn = 1;
+	}
+	
+}
+
+
+
+void DcInDetect_init(void)
+{
+
+	GPIO_SetMode(PC, BIT4, GPIO_MODE_INPUT);	
+	DcInDetect();
+}
+
+
+void BatteryChargeStateCheckInit(void)
+{
+	GPIO_SetMode(PB, BIT10, GPIO_MODE_INPUT);	// STATE 1
+	GPIO_SetMode(PB, BIT11, GPIO_MODE_INPUT);	// STATE 2
+	
+	GPIO_SetMode(PE, BIT2, GPIO_MODE_INPUT);	// POWER GOOD PIN,  HI: NORMAL ,  LOW : BATTERY ERROR
+}
+
+
+// state 1, state2: 1 0-> CHARGE COMPLETE ;  1 1-> CHARGE NG; 0 1-> CHANGE ON
+
+void BatteryChargeStateChcek(void)  // 
+{
+	if(PB10)
+	{
+		if(PB11) Global_datas.PowerState.charge_state = CHARGE_STATE_NG;
+		else Global_datas.PowerState.charge_state = CHARGE_STATE_COMPLETE;
+	}
+	else
+	{
+		if(PB11) Global_datas.PowerState.charge_state = CHARGE_STATE_ON;
+		else  Global_datas.PowerState.charge_state = CHARGE_STATE_NONE;
+	}
+
+	if(PE2) 
+	{
+		Global_datas.PowerState.charge_power_good_pin = 1;
+	}
+	else 
+	{
+		Global_datas.PowerState.charge_power_good_pin = 0;
+	}
+	
+	printf("charge state = %d \n",Global_datas.PowerState.charge_state);
+	printf("power good   = %d \n",Global_datas.PowerState.charge_power_good_pin);
+
+	
+}
+
+
+void I_Charge_current_set_hi(void) // 1.6A
+{
+		PD8 = 0;
+}
+
+void I_Charge_current_set_low(void) //0.5A
+{
+		PD8 = 1;
+}
+
+
+//battery charger control  
+// val: high 0.5A , low 1.6A
+
+void I_Charge_select_pin_init(void)
+{
+	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  high 1A ,low 2A
+	I_Charge_current_set_low();
+}
+
+
+
+void Bat_SelectPin_0_external_1_internal(uint8_t value) // 0 external, 1 internal
+{
+	if(value)
+	{
+		PA8 = 1;  // internal bat
+	}
+	else
+	{
+		PA8 = 0; // external bat
+	}
+}
+
+
+//VBAT select:   Hi internal bat, low external bat
+void InternalBat_or_ExteranlBat_select_pin_init(void)
+{
+	GPIO_SetMode(PA, BIT8, GPIO_MODE_OUTPUT); //VBAT select:   Hi internal bat, low external bat
+	Bat_SelectPin_0_external_1_internal(0); // default select external pin
+}
+
+
+void BatteryChargeEnable_pin_init(void)
+{
+	
+	GPIO_SetMode(PC, BIT8, GPIO_MODE_OUTPUT); // charge enable: 1 enable , 0 disable.
+	
+}
+void battery_charge_enable(void)
 {
 	PC8 = 1;
 }
 
-void TYM_power_battery_charge_disenable(void)
+void battery_charge_disenable(void)
 {
 	PC8 = 0;
 }
-
-
-/*---------------------------------------------------------------------------------------------------------*/
-/* battery charger control  
- *  val: high 0.5A , low 1.6A
-*/
-/*---------------------------------------------------------------------------------------------------------*/
-void TYM_drv_BQ24610_charge_current_Set(int val)  
-{
-	
-	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  
-	PD8 = val;
-}
-
-/*---------------------------------------------------------------------------------------------------------*/
-/* system power on                                                                                   */
-/*---------------------------------------------------------------------------------------------------------*/
-void TYM_drv_SysPower_init(void)
-{  
-	TYM_drv_powerkeepon(0); // first off, wait 1 second than keep on
-	PB14 = 0; //sys pw
-	PA8 = 0; // internal bat 
-
-	TYM_drv_BQ24610_charge_current_Set(GPIO_HIGH);
-}
-#if 1
-/*---------------------------------------------------------------------------------------------------------*/
-/* TYM_drv_In_bat_status_updata                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
-void TYM_drv_In_bat_status_updata(void)
-{
-	
-	if(Global_datas.ADC_ChannelValue[15] < 0x22)
-	{
-		Global_datas.g_PowerStatus.PowerBatInStatus = POWER_BAT_IN_FALSE;
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~INTERNAL_BAT_EN);
-	}
-	else
-	{
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | INTERNAL_BAT_EN;
-	
-		if((Global_datas.ADC_ChannelValue[15] >= 0x22) && (Global_datas.ADC_ChannelValue[15] <= 0x7C0))
-		{
-			Global_datas.g_PowerStatus.PowerBatInStatus = STAT_BAT_IN_UNFILL;
-			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~INTERNAL_CHG_CP);
-			Global_datas.g_PowerStatus.bat_value = (Global_datas.g_PowerStatus.bat_value & 0xf0) | Global_datas.ADC_ChannelValue[15]/0x79;		
-		}
-		if(Global_datas.ADC_ChannelValue[15] > 0x7C0)
-		{
-			Global_datas.g_PowerStatus.PowerBatInStatus = STAT_BAT_IN_FULL;
-			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | INTERNAL_CHG_CP;
-		}
-	}
-}
-
-/*---------------------------------------------------------------------------------------------------------*/
-/* TYM_drv_ex_bat_status_updata                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
-void TYM_drv_ex_bat_status_updata(void)
-{
-	if(Global_datas.ADC_ChannelValue[12] < 0x22)
-	{
-		Global_datas.g_PowerStatus.PowerBatExStatus = POWER_BAT_EX_FALSE;
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~EXTERNAL_BAT_EN);
-	}
-	else
-	{	
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | EXTERNAL_BAT_EN;
-		
-		if((Global_datas.ADC_ChannelValue[12] >= 0x22) && (Global_datas.ADC_ChannelValue[15] <= 0x7C0))
-		{
-			Global_datas.g_PowerStatus.PowerBatExStatus = STAT_BAT_EX_UNFILL;
-			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~EXTERNAL_CHG_CP);
-			Global_datas.g_PowerStatus.bat_value = (Global_datas.g_PowerStatus.bat_value & 0x0f) | ((Global_datas.ADC_ChannelValue[12]/0x79) << 8);
-		}
-		if(Global_datas.ADC_ChannelValue[12] > 0x7C0)
-		{
-			Global_datas.g_PowerStatus.PowerBatExStatus = STAT_BAT_EX_FULL;
-			Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | EXTERNAL_CHG_CP;
-		}
-	}
-	
-}
-
-/*---------------------------------------------------------------------------------------------------------*/
-/* TYM_drv_ac_status_updata                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
-void TYM_drv_ac_status_updata(void)
-{
-	if(PC4)
-	{
-		Global_datas.g_PowerStatus.PowerAcStatus = POWER_AC_FALSE;
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status & (~DC_EN);
-		PC1 = 0;  //+34V
-	}					
-	else
-	{
-		Global_datas.g_PowerStatus.PowerAcStatus = POWER_AC_EN;
-		Global_datas.g_PowerStatus.bat_status = Global_datas.g_PowerStatus.bat_status | DC_EN;
-		PC1 = 1;   //+34V
-	}
-}
-
-void drv_power_status_updata(void)
-{
-
-	TYM_gpio_adc_get(ADC_CHANNEL_12|ADC_CHANNEL_15);
-	TYM_drv_In_bat_status_updata();
-	TYM_drv_ex_bat_status_updata();
-	TYM_drv_ac_status_updata();
-//	printf("bat in val: %d \n",Global_datas.ADC_ChannelValue[15]);
-//	printf("bat ex val: %d \n",Global_datas.ADC_ChannelValue[12]);
-	
-//	printf("bat in sta: %x, bat ex sta: %x,ac sta: %x\n",Global_datas.g_PowerStatus.PowerBatInStatus,Global_datas.g_PowerStatus.PowerBatExStatus,Global_datas.g_PowerStatus.PowerAcStatus);
-	
-}
-
-#endif
 
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -204,12 +185,23 @@ void drv_power_status_updata(void)
 /*---------------------------------------------------------------------------------------------------------*/
 void TYM_sys_PowerManger_init(void)
 {
-	TYM_power_gpio_init();
-	TYM_drv_SysPower_init();
-	drv_power_status_updata();
-	Global_datas.g_PowerStatus.bat_status = 0;
-	Global_datas.g_PowerStatus.bat_value = 0;
-	TYM_power_battery_charge_enable();
+	//battery 
+
+	BatteryChargeStateCheckInit();
+	DcInDetect_init();	
+	
+	I_Charge_select_pin_init();
+
+	//battery charge enable
+	BatteryChargeEnable_pin_init();
+	battery_charge_enable(); // enable
+
+	//power on/off
+	PowerKeepOnPinInit();
+	TYM_drv_powerkeepon(0); // first off
+
+	//system power  12V , AMP 3.3V
+	SysPower_12V_ControlPin_Init();
 }
 
 
