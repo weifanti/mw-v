@@ -2,20 +2,71 @@
 ; commandline ArmCC [--list --split_sections --debug -c --asm --interleave -o.\obj\drv_power.o --asm_dir=.\lst\ --list_dir=.\lst\ --depend=.\obj\drv_power.d --cpu=Cortex-M0 --apcs=interwork --diag_suppress=9931 -I..\lib\CMSIS\Include -I..\lib\Device\Nuvoton\NUC029xGE\Include -I..\lib\StdDriver\inc -I..\src\core\include -I..\src\driver\include -I..\src\io\include -I..\src\global -I..\src\server\include -I..\src\driver\audio -D__UVISION_VERSION=522 --omf_browse=.\obj\drv_power.crf ..\src\driver\drv_power.c]
                           THUMB
 
+                          AREA ||i.AdapterPowerCtrPin_init||, CODE, READONLY, ALIGN=2
+
+                  AdapterPowerCtrPin_init PROC
+;;;182    
+;;;183    void AdapterPowerCtrPin_init(void)
+000000  b510              PUSH     {r4,lr}
+;;;184    {
+;;;185    	GPIO_SetMode(PB, BIT8, GPIO_MODE_OUTPUT); // 1 HI POWER , 0 low power
+000002  2201              MOVS     r2,#1
+000004  0211              LSLS     r1,r2,#8
+000006  4803              LDR      r0,|L1.20|
+000008  f7fffffe          BL       GPIO_SetMode
+;;;186    	AdapterPowerModeCtrl(0);  					// first low power
+00000c  2000              MOVS     r0,#0
+00000e  f7fffffe          BL       AdapterPowerModeCtrl
+;;;187    }
+000012  bd10              POP      {r4,pc}
+;;;188    
+                          ENDP
+
+                  |L1.20|
+                          DCD      0x50004040
+
+                          AREA ||i.AdapterPowerModeCtrl||, CODE, READONLY, ALIGN=2
+
+                  AdapterPowerModeCtrl PROC
+;;;188    
+;;;189    void AdapterPowerModeCtrl(uint8_t value)// 1 HI POWER , 0 low power  , set this pin low  when enter to powerdown mode
+000000  4902              LDR      r1,|L2.12|
+;;;190    {
+;;;191    	if(value)
+000002  2800              CMP      r0,#0
+000004  d000              BEQ      |L2.8|
+;;;192    	{
+;;;193    		PB8 = 1;
+000006  2001              MOVS     r0,#1
+                  |L2.8|
+000008  6208              STR      r0,[r1,#0x20]
+;;;194    	}
+;;;195    	else
+;;;196    	{
+;;;197    		PB8 = 0;
+;;;198    	}
+;;;199    }
+00000a  4770              BX       lr
+;;;200    
+                          ENDP
+
+                  |L2.12|
+                          DCD      0x50004240
+
                           AREA ||i.Bat_SelectPin_0_external_1_internal||, CODE, READONLY, ALIGN=2
 
                   Bat_SelectPin_0_external_1_internal PROC
 ;;;144    
 ;;;145    void Bat_SelectPin_0_external_1_internal(uint8_t value) // 0 external, 1 internal
-000000  4902              LDR      r1,|L1.12|
+000000  4902              LDR      r1,|L3.12|
 ;;;146    {
 ;;;147    	if(value)
 000002  2800              CMP      r0,#0
-000004  d000              BEQ      |L1.8|
+000004  d000              BEQ      |L3.8|
 ;;;148    	{
 ;;;149    		PA8 = 1;  // internal bat
 000006  2001              MOVS     r0,#1
-                  |L1.8|
+                  |L3.8|
 000008  6208              STR      r0,[r1,#0x20]
 ;;;150    	}
 ;;;151    	else
@@ -27,7 +78,7 @@
 ;;;156    
                           ENDP
 
-                  |L1.12|
+                  |L3.12|
                           DCD      0x50004200
 
                           AREA ||i.BatteryChargeEnable_pin_init||, CODE, READONLY, ALIGN=2
@@ -41,7 +92,7 @@
 ;;;169    	GPIO_SetMode(PC, BIT8, GPIO_MODE_OUTPUT); // charge enable: 1 enable , 0 disable.
 000002  2201              MOVS     r2,#1
 000004  0211              LSLS     r1,r2,#8
-000006  4802              LDR      r0,|L2.16|
+000006  4802              LDR      r0,|L4.16|
 000008  f7fffffe          BL       GPIO_SetMode
 ;;;170    	
 ;;;171    }
@@ -50,7 +101,7 @@
                           ENDP
 
 00000e  0000              DCW      0x0000
-                  |L2.16|
+                  |L4.16|
                           DCD      0x50004080
 
                           AREA ||i.BatteryChargeStateChcek||, CODE, READONLY, ALIGN=2
@@ -64,7 +115,7 @@
 000000  b510              PUSH     {r4,lr}
 ;;;95     {
 ;;;96     	if(PB10)
-000002  4812              LDR      r0,|L3.76|
+000002  4812              LDR      r0,|L5.76|
 000004  6a83              LDR      r3,[r0,#0x28]
 ;;;97     	{
 ;;;98     		if(PB11) Global_datas.PowerState.charge_state = CHARGE_STATE_NG;
@@ -75,56 +126,56 @@
 ;;;103    		if(PB11) Global_datas.PowerState.charge_state = CHARGE_STATE_ON;
 000006  2101              MOVS     r1,#1
 000008  2200              MOVS     r2,#0
-00000a  4c11              LDR      r4,|L3.80|
+00000a  4c11              LDR      r4,|L5.80|
 00000c  6ac0              LDR      r0,[r0,#0x2c]
 00000e  2b00              CMP      r3,#0                 ;96
-000010  d006              BEQ      |L3.32|
+000010  d006              BEQ      |L5.32|
 000012  2800              CMP      r0,#0                 ;98
-000014  d001              BEQ      |L3.26|
+000014  d001              BEQ      |L5.26|
 000016  2003              MOVS     r0,#3                 ;98
-000018  e000              B        |L3.28|
-                  |L3.26|
+000018  e000              B        |L5.28|
+                  |L5.26|
 00001a  2002              MOVS     r0,#2                 ;99
-                  |L3.28|
+                  |L5.28|
 00001c  7460              STRB     r0,[r4,#0x11]         ;98
-00001e  e004              B        |L3.42|
-                  |L3.32|
+00001e  e004              B        |L5.42|
+                  |L5.32|
 000020  2800              CMP      r0,#0
-000022  d001              BEQ      |L3.40|
+000022  d001              BEQ      |L5.40|
 000024  7461              STRB     r1,[r4,#0x11]
-000026  e000              B        |L3.42|
-                  |L3.40|
+000026  e000              B        |L5.42|
+                  |L5.40|
 ;;;104    		else  Global_datas.PowerState.charge_state = CHARGE_STATE_NONE;
 000028  7462              STRB     r2,[r4,#0x11]
-                  |L3.42|
+                  |L5.42|
 ;;;105    	}
 ;;;106    
 ;;;107    	if(PE2) 
-00002a  4808              LDR      r0,|L3.76|
+00002a  4808              LDR      r0,|L5.76|
 00002c  30c0              ADDS     r0,r0,#0xc0
 00002e  6880              LDR      r0,[r0,#8]
 000030  2800              CMP      r0,#0
-000032  d001              BEQ      |L3.56|
+000032  d001              BEQ      |L5.56|
 ;;;108    	{
 ;;;109    		Global_datas.PowerState.charge_power_good_pin = 1;
 000034  7561              STRB     r1,[r4,#0x15]
-000036  e000              B        |L3.58|
-                  |L3.56|
+000036  e000              B        |L5.58|
+                  |L5.56|
 ;;;110    	}
 ;;;111    	else 
 ;;;112    	{
 ;;;113    		Global_datas.PowerState.charge_power_good_pin = 0;
 000038  7562              STRB     r2,[r4,#0x15]
-                  |L3.58|
+                  |L5.58|
 ;;;114    	}
 ;;;115    	
 ;;;116    	printf("charge state = %d \n",Global_datas.PowerState.charge_state);
 00003a  7c61              LDRB     r1,[r4,#0x11]  ; Global_datas
-00003c  a005              ADR      r0,|L3.84|
+00003c  a005              ADR      r0,|L5.84|
 00003e  f7fffffe          BL       __2printf
 ;;;117    	printf("power good   = %d \n",Global_datas.PowerState.charge_power_good_pin);
 000042  7d61              LDRB     r1,[r4,#0x15]  ; Global_datas
-000044  a008              ADR      r0,|L3.104|
+000044  a008              ADR      r0,|L5.104|
 000046  f7fffffe          BL       __2printf
 ;;;118    
 ;;;119    	
@@ -133,17 +184,17 @@
 ;;;121    
                           ENDP
 
-                  |L3.76|
+                  |L5.76|
                           DCD      0x50004240
-                  |L3.80|
+                  |L5.80|
                           DCD      Global_datas+0x80
-                  |L3.84|
+                  |L5.84|
 000054  63686172          DCB      "charge state = %d \n",0
 000058  67652073
 00005c  74617465
 000060  203d2025
 000064  64200a00
-                  |L3.104|
+                  |L5.104|
 000068  706f7765          DCB      "power good   = %d \n",0
 00006c  7220676f
 000070  6f642020
@@ -158,7 +209,7 @@
 000000  b510              PUSH     {r4,lr}
 ;;;84     {
 ;;;85     	GPIO_SetMode(PB, BIT10, GPIO_MODE_INPUT);	// STATE 1
-000002  4c0a              LDR      r4,|L4.44|
+000002  4c0a              LDR      r4,|L6.44|
 000004  2101              MOVS     r1,#1
 000006  2200              MOVS     r2,#0
 000008  0289              LSLS     r1,r1,#10
@@ -172,7 +223,7 @@
 000018  f7fffffe          BL       GPIO_SetMode
 ;;;87     	
 ;;;88     	GPIO_SetMode(PE, BIT2, GPIO_MODE_INPUT);	// POWER GOOD PIN,  HI: NORMAL ,  LOW : BATTERY ERROR
-00001c  4803              LDR      r0,|L4.44|
+00001c  4803              LDR      r0,|L6.44|
 00001e  2200              MOVS     r2,#0
 000020  2104              MOVS     r1,#4
 000022  30c0              ADDS     r0,r0,#0xc0
@@ -183,7 +234,7 @@
                           ENDP
 
 00002a  0000              DCW      0x0000
-                  |L4.44|
+                  |L6.44|
                           DCD      0x50004040
 
                           AREA ||i.DcInDetect||, CODE, READONLY, ALIGN=2
@@ -191,24 +242,24 @@
                   DcInDetect PROC
 ;;;59     
 ;;;60     void DcInDetect(void)
-000000  4804              LDR      r0,|L5.20|
+000000  4804              LDR      r0,|L7.20|
 ;;;61     {
 ;;;62     	if(PC4) 
 000002  6901              LDR      r1,[r0,#0x10]
 ;;;63     	{
 ;;;64     		Global_datas.PowerState.AdapterIn = 0;
-000004  4804              LDR      r0,|L5.24|
+000004  4804              LDR      r0,|L7.24|
 000006  2900              CMP      r1,#0                 ;62
-000008  d001              BEQ      |L5.14|
+000008  d001              BEQ      |L7.14|
 00000a  2100              MOVS     r1,#0
-00000c  e000              B        |L5.16|
-                  |L5.14|
+00000c  e000              B        |L7.16|
+                  |L7.14|
 ;;;65     	}
 ;;;66     	else
 ;;;67     	{
 ;;;68     		Global_datas.PowerState.AdapterIn = 1;
 00000e  2101              MOVS     r1,#1
-                  |L5.16|
+                  |L7.16|
 000010  74c1              STRB     r1,[r0,#0x13]         ;64
 ;;;69     	}
 ;;;70     	
@@ -217,9 +268,9 @@
 ;;;72     
                           ENDP
 
-                  |L5.20|
+                  |L7.20|
                           DCD      0x50004280
-                  |L5.24|
+                  |L7.24|
                           DCD      Global_datas+0x80
 
                           AREA ||i.DcInDetect_init||, CODE, READONLY, ALIGN=2
@@ -233,7 +284,7 @@
 ;;;78     	GPIO_SetMode(PC, BIT4, GPIO_MODE_INPUT);	
 000002  2200              MOVS     r2,#0
 000004  2110              MOVS     r1,#0x10
-000006  4803              LDR      r0,|L6.20|
+000006  4803              LDR      r0,|L8.20|
 000008  f7fffffe          BL       GPIO_SetMode
 ;;;79     	DcInDetect();
 00000c  f7fffffe          BL       DcInDetect
@@ -243,7 +294,7 @@
                           ENDP
 
 000012  0000              DCW      0x0000
-                  |L6.20|
+                  |L8.20|
                           DCD      0x50004080
 
                           AREA ||i.I_Charge_current_set_hi||, CODE, READONLY, ALIGN=2
@@ -251,7 +302,7 @@
                   I_Charge_current_set_hi PROC
 ;;;122    
 ;;;123    void I_Charge_current_set_hi(void) // 1.6A
-000000  4901              LDR      r1,|L7.8|
+000000  4901              LDR      r1,|L9.8|
 ;;;124    {
 ;;;125    		PD8 = 0;
 000002  2000              MOVS     r0,#0
@@ -261,7 +312,7 @@
 ;;;127    
                           ENDP
 
-                  |L7.8|
+                  |L9.8|
                           DCD      0x500042c0
 
                           AREA ||i.I_Charge_current_set_low||, CODE, READONLY, ALIGN=2
@@ -269,7 +320,7 @@
                   I_Charge_current_set_low PROC
 ;;;127    
 ;;;128    void I_Charge_current_set_low(void) //0.5A
-000000  4901              LDR      r1,|L8.8|
+000000  4901              LDR      r1,|L10.8|
 ;;;129    {
 ;;;130    		PD8 = 1;
 000002  2001              MOVS     r0,#1
@@ -279,7 +330,7 @@
 ;;;132    
                           ENDP
 
-                  |L8.8|
+                  |L10.8|
                           DCD      0x500042c0
 
                           AREA ||i.I_Charge_select_pin_init||, CODE, READONLY, ALIGN=2
@@ -292,9 +343,9 @@
 ;;;139    	GPIO_SetMode(PD, BIT8, GPIO_MODE_OUTPUT); //BQ24610_ICHG_SELE  high 1A ,low 2A
 000002  2201              MOVS     r2,#1
 000004  0211              LSLS     r1,r2,#8
-000006  4803              LDR      r0,|L9.20|
+000006  4803              LDR      r0,|L11.20|
 000008  f7fffffe          BL       GPIO_SetMode
-00000c  4902              LDR      r1,|L9.24|
+00000c  4902              LDR      r1,|L11.24|
 00000e  2001              MOVS     r0,#1
 000010  6208              STR      r0,[r1,#0x20]
 ;;;140    	I_Charge_current_set_low();
@@ -303,9 +354,9 @@
 ;;;142    
                           ENDP
 
-                  |L9.20|
+                  |L11.20|
                           DCD      0x500040c0
-                  |L9.24|
+                  |L11.24|
                           DCD      0x500042c0
 
                           AREA ||i.InternalBat_or_ExteranlBat_select_pin_init||, CODE, READONLY, ALIGN=2
@@ -318,7 +369,7 @@
 ;;;161    	GPIO_SetMode(PA, BIT8, GPIO_MODE_OUTPUT); //VBAT select:   Hi internal bat, low external bat
 000002  2201              MOVS     r2,#1
 000004  0211              LSLS     r1,r2,#8
-000006  4803              LDR      r0,|L10.20|
+000006  4803              LDR      r0,|L12.20|
 000008  f7fffffe          BL       GPIO_SetMode
 ;;;162    	Bat_SelectPin_0_external_1_internal(0); // default select external pin
 00000c  2000              MOVS     r0,#0
@@ -328,7 +379,7 @@
 ;;;164    
                           ENDP
 
-                  |L10.20|
+                  |L12.20|
                           DCD      0x50004000
 
                           AREA ||i.PowerKeepOnPinInit||, CODE, READONLY, ALIGN=2
@@ -341,7 +392,7 @@
 ;;;26     	GPIO_SetMode(PC, BIT2, GPIO_MODE_OUTPUT); // SYS power keep on
 000002  2201              MOVS     r2,#1
 000004  2104              MOVS     r1,#4
-000006  4802              LDR      r0,|L11.16|
+000006  4802              LDR      r0,|L13.16|
 000008  f7fffffe          BL       GPIO_SetMode
 ;;;27     }
 00000c  bd10              POP      {r4,pc}
@@ -349,7 +400,7 @@
                           ENDP
 
 00000e  0000              DCW      0x0000
-                  |L11.16|
+                  |L13.16|
                           DCD      0x50004080
 
                           AREA ||i.SysPower_12V_ControlPin_Init||, CODE, READONLY, ALIGN=2
@@ -362,7 +413,7 @@
 ;;;53     	GPIO_SetMode(PB, BIT14, GPIO_MODE_OUTPUT); //system power high en, low dis  +12V(TAS5825) ,3.3V EN(AMP and other 3.3v , not mcu 3.3V)
 000002  2201              MOVS     r2,#1
 000004  0391              LSLS     r1,r2,#14
-000006  4803              LDR      r0,|L12.20|
+000006  4803              LDR      r0,|L14.20|
 000008  f7fffffe          BL       GPIO_SetMode
 ;;;54     	TYM_SysPower12V_3V3_onoff(0);
 00000c  2000              MOVS     r0,#0
@@ -372,7 +423,7 @@
 ;;;56     
                           ENDP
 
-                  |L12.20|
+                  |L14.20|
                           DCD      0x50004040
 
                           AREA ||i.TYM_SysPower12V_3V3_onoff||, CODE, READONLY, ALIGN=2
@@ -380,15 +431,15 @@
                   TYM_SysPower12V_3V3_onoff PROC
 ;;;38     
 ;;;39     void TYM_SysPower12V_3V3_onoff(uint8_t on)
-000000  4902              LDR      r1,|L13.12|
+000000  4902              LDR      r1,|L15.12|
 ;;;40     {
 ;;;41     		if(on)
 000002  2800              CMP      r0,#0
-000004  d000              BEQ      |L13.8|
+000004  d000              BEQ      |L15.8|
 ;;;42     		{
 ;;;43     			PB14 = 1; //sys pw on
 000006  2001              MOVS     r0,#1
-                  |L13.8|
+                  |L15.8|
 000008  6388              STR      r0,[r1,#0x38]
 ;;;44     		}
 ;;;45     		else
@@ -400,7 +451,7 @@
 ;;;50     
                           ENDP
 
-                  |L13.12|
+                  |L15.12|
                           DCD      0x50004240
 
                           AREA ||i.TYM_drv_powerkeepon||, CODE, READONLY, ALIGN=2
@@ -408,14 +459,14 @@
                   TYM_drv_powerkeepon PROC
 ;;;28     
 ;;;29     void TYM_drv_powerkeepon(uint8_t onoff) // 1 0n, 0 off
-000000  4902              LDR      r1,|L14.12|
+000000  4902              LDR      r1,|L16.12|
 ;;;30     {
 ;;;31     	if(onoff)
 000002  2800              CMP      r0,#0
-000004  d000              BEQ      |L14.8|
+000004  d000              BEQ      |L16.8|
 ;;;32     		PC2 = 1;
 000006  2001              MOVS     r0,#1
-                  |L14.8|
+                  |L16.8|
 000008  6088              STR      r0,[r1,#8]
 ;;;33     	else 
 ;;;34     		PC2 = 0;
@@ -424,50 +475,55 @@
 ;;;36     
                           ENDP
 
-                  |L14.12|
+                  |L16.12|
                           DCD      0x50004280
 
                           AREA ||i.TYM_sys_PowerManger_init||, CODE, READONLY, ALIGN=2
 
                   TYM_sys_PowerManger_init PROC
-;;;185    /*---------------------------------------------------------------------------------------------------------*/
-;;;186    void TYM_sys_PowerManger_init(void)
+;;;204    /*---------------------------------------------------------------------------------------------------------*/
+;;;205    void TYM_sys_PowerManger_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;187    {
-;;;188    	//battery 
-;;;189    
-;;;190    	BatteryChargeStateCheckInit();
-000002  f7fffffe          BL       BatteryChargeStateCheckInit
-;;;191    	DcInDetect_init();	
-000006  f7fffffe          BL       DcInDetect_init
-;;;192    	
-;;;193    	I_Charge_select_pin_init();
-00000a  f7fffffe          BL       I_Charge_select_pin_init
-;;;194    
-;;;195    	//battery charge enable
-;;;196    	BatteryChargeEnable_pin_init();
-00000e  f7fffffe          BL       BatteryChargeEnable_pin_init
-000012  4905              LDR      r1,|L15.40|
-000014  2001              MOVS     r0,#1
-000016  6208              STR      r0,[r1,#0x20]
-;;;197    	battery_charge_enable(); // enable
-;;;198    
-;;;199    	//power on/off
-;;;200    	PowerKeepOnPinInit();
-000018  f7fffffe          BL       PowerKeepOnPinInit
-;;;201    	TYM_drv_powerkeepon(0); // first off
-00001c  2000              MOVS     r0,#0
-00001e  f7fffffe          BL       TYM_drv_powerkeepon
-;;;202    
-;;;203    	//system power  12V , AMP 3.3V
-;;;204    	SysPower_12V_ControlPin_Init();
-000022  f7fffffe          BL       SysPower_12V_ControlPin_Init
-;;;205    }
-000026  bd10              POP      {r4,pc}
-;;;206    
+;;;206    {
+;;;207    
+;;;208    	// 24V adapter power mode control, 0 low power mode, 1 hi power mode
+;;;209    	AdapterPowerCtrPin_init();
+000002  f7fffffe          BL       AdapterPowerCtrPin_init
+;;;210    	
+;;;211    	
+;;;212    	//battery 
+;;;213    	BatteryChargeStateCheckInit();
+000006  f7fffffe          BL       BatteryChargeStateCheckInit
+;;;214    	DcInDetect_init();	
+00000a  f7fffffe          BL       DcInDetect_init
+;;;215    	
+;;;216    	I_Charge_select_pin_init();
+00000e  f7fffffe          BL       I_Charge_select_pin_init
+;;;217    
+;;;218    	//battery charge enable
+;;;219    	BatteryChargeEnable_pin_init();
+000012  f7fffffe          BL       BatteryChargeEnable_pin_init
+000016  4905              LDR      r1,|L17.44|
+000018  2001              MOVS     r0,#1
+00001a  6208              STR      r0,[r1,#0x20]
+;;;220    	battery_charge_enable(); // enable
+;;;221    
+;;;222    	//power on/off
+;;;223    	PowerKeepOnPinInit();
+00001c  f7fffffe          BL       PowerKeepOnPinInit
+;;;224    	TYM_drv_powerkeepon(0); // first off
+000020  2000              MOVS     r0,#0
+000022  f7fffffe          BL       TYM_drv_powerkeepon
+;;;225    
+;;;226    	//system power  12V , AMP 3.3V
+;;;227    	SysPower_12V_ControlPin_Init();
+000026  f7fffffe          BL       SysPower_12V_ControlPin_Init
+;;;228    }
+00002a  bd10              POP      {r4,pc}
+;;;229    
                           ENDP
 
-                  |L15.40|
+                  |L17.44|
                           DCD      0x50004280
 
                           AREA ||i.battery_charge_disenable||, CODE, READONLY, ALIGN=2
@@ -475,7 +531,7 @@
                   battery_charge_disenable PROC
 ;;;176    
 ;;;177    void battery_charge_disenable(void)
-000000  4901              LDR      r1,|L16.8|
+000000  4901              LDR      r1,|L18.8|
 ;;;178    {
 ;;;179    	PC8 = 0;
 000002  2000              MOVS     r0,#0
@@ -485,7 +541,7 @@
 ;;;181    
                           ENDP
 
-                  |L16.8|
+                  |L18.8|
                           DCD      0x50004280
 
                           AREA ||i.battery_charge_enable||, CODE, READONLY, ALIGN=2
@@ -493,7 +549,7 @@
                   battery_charge_enable PROC
 ;;;171    }
 ;;;172    void battery_charge_enable(void)
-000000  4901              LDR      r1,|L17.8|
+000000  4901              LDR      r1,|L19.8|
 ;;;173    {
 ;;;174    	PC8 = 1;
 000002  2001              MOVS     r0,#1
@@ -503,7 +559,7 @@
 ;;;176    
                           ENDP
 
-                  |L17.8|
+                  |L19.8|
                           DCD      0x50004280
 
 ;*** Start embedded assembler ***

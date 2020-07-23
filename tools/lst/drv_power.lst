@@ -3392,7 +3392,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50370,6 +50370,9 @@ Nvoid battery_charge_disenable(void);
 Nvoid DcInDetect(void);
 Nvoid BatteryChargeStateChcek(void);
 Nvoid Bat_SelectPin_0_external_1_internal(uint8_t value); // 0 external, 1 internal
+Nvoid AdapterPowerModeCtrl(uint8_t value);
+N
+N
 N
 N#endif
 N
@@ -50459,6 +50462,16 @@ N	SYS_PLAY_STATE_FM,
 N	SYS_PLAY_STATE_AUX
 N
 N} SYS_STATE;
+N
+N
+Ntypedef enum
+N{
+N	NET_TYPE_NONE = 0,
+N	NET_TYPE_WIFI,
+N	NET_TYPE_4G,
+N
+N} NET_TYPE;
+N
 N
 N
 Ntypedef enum
@@ -50720,14 +50733,21 @@ N	uint8_t inputmessage;
 N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
+N	NET_TYPE MW_radio_net_type;
 N	SubBoardStatus SubBoard;
 N	Fm_Data FmData;
 N	POWER_STATE PowerState;
+N	uint8_t ir_bak_key;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define MSG_MAX_LEN						(12)
+Nextern uint8_t RxBuff[60];
+Nextern uint8_t RxMsgCount_PTE;
+N
 N
 N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
@@ -50926,13 +50946,39 @@ X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*
 N}
 N
 N
+Nvoid AdapterPowerCtrPin_init(void)
+N{
+N	GPIO_SetMode(PB, BIT8, GPIO_MODE_OUTPUT); // 1 HI POWER , 0 low power
+X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x0040)), 0x00000100, 0x1UL); 
+N	AdapterPowerModeCtrl(0);  					// first low power
+N}
+N
+Nvoid AdapterPowerModeCtrl(uint8_t value)// 1 HI POWER , 0 low power  , set this pin low  when enter to powerdown mode
+N{
+N	if(value)
+N	{
+N		PB8 = 1;
+X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((8)<<2)))) = 1;
+N	}
+N	else
+N	{
+N		PB8 = 0;
+X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(1))) + ((8)<<2)))) = 0;
+N	}
+N}
+N
+N
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* system power on                                                                                   */
 N/*---------------------------------------------------------------------------------------------------------*/
 Nvoid TYM_sys_PowerManger_init(void)
 N{
-N	//battery 
 N
+N	// 24V adapter power mode control, 0 low power mode, 1 hi power mode
+N	AdapterPowerCtrPin_init();
+N	
+N	
+N	//battery 
 N	BatteryChargeStateCheckInit();
 N	DcInDetect_init();	
 N	

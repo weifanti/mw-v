@@ -29466,6 +29466,16 @@ typedef enum
 
 typedef enum
 {
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
+
+
+typedef enum
+{
 	SYS_PLAY_EVENT_NONE = 0,
 	SYS_PLAY_EVENT_POWERING_UP,
 	SYS_PLAY_EVENT_SHUTTING_DOWN,
@@ -29721,14 +29731,21 @@ typedef struct
 	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	uint8_t ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern uint8_t RxBuff[60];
+extern uint8_t RxMsgCount_PTE;
+
 
 
 
@@ -29824,26 +29841,76 @@ uint8_t Ircordpro(void);
 
 #line 17 "..\\src\\driver\\drv_ irkey.c"
 #line 18 "..\\src\\driver\\drv_ irkey.c"
+#line 1 "..\\src\\global\\hal_timer0.h"
 
-uint32_t IrTimerCount = 0;
-uint8_t ir_data[33] = {0};
-uint8_t ir_code[4] = {0};
-uint8_t DecodeStartFlag = 0;
-uint8_t DecodeFinishFlag = 0;
-uint8_t ir_data_rx_ok = 0;
-uint8_t LongKeyPress = 0;
-uint8_t key_value_bak = 0;
+
+
+typedef struct	_TIMER
+{
+	unsigned int	TimeOutVal; 								
+	unsigned int	RecTickVal;			  						
+} TIMER;
+
+void Hal_Timer0_Init(void);
+void Hal_Timer1_Init(void);
+
+void
+TimeOutSet(
+	TIMER	*timer,
+	unsigned int 	timeout
+	);
+
+
+
+
+
+unsigned char
+IsTimeOut(
+	TIMER 	*timer
+	);
+
+extern TIMER SysTimer_1s;
+extern TIMER TestTimer;
+extern TIMER ModulePowerUpPinTimer;
+extern TIMER LedKeyBlinkTimer;
+extern TIMER PoweroffLedTimer;
+extern TIMER SubBoardHandshakeTimer;
+extern TIMER ModeSwitchTimer;
+extern TIMER FmLoopTimer;
+extern TIMER FmStoreTimer;
+extern TIMER SysTimer_50ms;
+extern TIMER IrLongPressTimer;
+
+
+
+
+
+
+
+
+
+#line 19 "..\\src\\driver\\drv_ irkey.c"
+
+
+unsigned int IrTimerCount = 0;
+unsigned char ir_data[33] = {0};
+unsigned char ir_code[4] = {0};
+unsigned char DecodeStartFlag = 0;
+unsigned char DecodeFinishFlag = 0;
+unsigned char ir_data_rx_ok = 0;
+unsigned char LongKeyPress = 0;
+
 
 
 void GPCDEF_IRQHandler(void)
 {
-    volatile uint32_t temp;
-	static uint8_t i = 0;
-	static uint32_t repeat_time = 0;	
+    volatile unsigned int temp;
+	static unsigned char i = 0;
+	static unsigned int repeat_time = 0;	
 
-	    if(((((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)))->INTSRC & (0x00000001))) 
+	    if(((((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)))->INTSRC & (0x00000001))) 
 		{
-	        ((((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)))->INTSRC = (0x00000001));
+	        ((((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)))->INTSRC = (0x00000001));
 
 			if((IrTimerCount > 120) && (IrTimerCount < 145))
 			{
@@ -29853,14 +29920,17 @@ void GPCDEF_IRQHandler(void)
 					i = 0;
 					repeat_time = 0;
 					LongKeyPress = 0;
-					key_value_bak = 0;
+					
+					Global_datas.ir_bak_key = IN_KEY_NONE;
 			}
 			else if((IrTimerCount > 23) && (IrTimerCount < 120))
 			{
 				IrTimerCount = 0;
 				
 
-				if((key_value_bak == IR_KEY_PLAY_PAUSE) || (key_value_bak == IR_KEY_POWER))
+				TimeOutSet(&IrLongPressTimer, 300);
+
+				if((Global_datas.ir_bak_key  == IR_KEY_PLAY_PAUSE) || (Global_datas.ir_bak_key == IR_KEY_POWER))
 				{
 					if(repeat_time < 15)
 					{
@@ -29920,21 +29990,21 @@ void GPCDEF_IRQHandler(void)
 void Drv_IrKey_init(void)
 {
 
-	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000001,  0x0UL);
-	GPIO_EnableInt(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0, 0x00000001UL);
+	GPIO_SetMode(((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)), 0x00000001,  0x0UL);
+	GPIO_EnableInt(((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)), 0, 0x00000001UL);
 	
 	NVIC_EnableIRQ(GPCDEF_IRQn);  
-    ((((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)))->DBEN |= (0x00000001));
+    ((((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)))->DBEN |= (0x00000001));
 }
 
 
 
-uint8_t Ircordpro(void)
+unsigned char Ircordpro(void)
 { 
   unsigned char i, j, k,temp;
   unsigned char cord,value = 0;
-  uint8_t ir_key =0;
-  uint8_t key_value=0;
+  unsigned char ir_key =0;
+  unsigned char key_value=0;
 
   k=0;
   for(i=0;i<4;i++)      
@@ -29974,7 +30044,8 @@ uint8_t Ircordpro(void)
 			{
 				ir_key = IrKeyMap[temp][0];
 				printf("ir_key_num:%d\n", temp);
-				key_value_bak = ir_key;
+				Global_datas.ir_bak_key = ir_key;
+				TimeOutSet(&IrLongPressTimer, 500);
 				return ir_key;
 			}
 		}
@@ -29990,7 +30061,9 @@ uint8_t Ircordpro(void)
 			{
 				ir_key = IrKeyMap_B[temp][0];
 				printf("ir_key_num:%d\n", temp);
-				key_value_bak = ir_key;
+				Global_datas.ir_bak_key = ir_key;
+				
+				TimeOutSet(&IrLongPressTimer, 500);
 				return ir_key;
 			}
 		}
@@ -29998,11 +30071,11 @@ uint8_t Ircordpro(void)
 	 return IR_KEY_NONE;
 }
 
-uint8_t GetIrKey(void)
+unsigned char GetIrKey(void)
 {
-	uint8_t ir_key_value = 0;
+	unsigned char ir_key_value = 0;
 	
-	uint8_t ir_key_hold = 0;
+	unsigned char ir_key_hold = 0;
 
 	if(ir_data_rx_ok)
 	{
@@ -30023,7 +30096,7 @@ uint8_t GetIrKey(void)
 	{
 		printf("longpress:%d\n", LongKeyPress);
 		LongKeyPress--;
-		switch(key_value_bak)
+		switch(Global_datas.ir_bak_key)
 		{
 			case IR_KEY_PLAY_PAUSE:
 				ir_key_hold = IR_KEY_PLAY_PAUSE_CP;

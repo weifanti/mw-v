@@ -40,11 +40,16 @@ typedef enum
 #define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
 //#define BT_WIFI_PCM1862_GAIN	0x00 // 0db
 //#define FM_PCM1862_GAIN	0x18 // 12db
-#define FM_PCM1862_GAIN	0x2b // 23.5db
+//#define FM_PCM1862_GAIN	0x21 // 17.5db
+//#define AUX_PCM1862_GAIN	0x17 // 11.5db
+
 //#define AUX_PCM1862_GAIN	0x18 // 12db
-#define AUX_PCM1862_GAIN	0x21 // 17.5db
-//#define AUX_PCM1862_GAIN	0x00 // 17.5db
+//#define AUX_PCM1862_GAIN	0x21 // 17.5db
 //#define FM_PCM1862_GAIN	    0x00 // 23.5db
+#define FM_PCM1862_GAIN		0x21 // 17.5db
+#define AUX_PCM1862_GAIN	0x17 // 11.5db
+
+//#define AUX_PCM1862_GAIN	0x0b // 5.5db
 
 
 void drv_pcm1862_input_channel(uint8_t pcm_channel);

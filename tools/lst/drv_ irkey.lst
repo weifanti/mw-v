@@ -3392,7 +3392,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50419,6 +50419,16 @@ N
 N
 Ntypedef enum
 N{
+N	NET_TYPE_NONE = 0,
+N	NET_TYPE_WIFI,
+N	NET_TYPE_4G,
+N
+N} NET_TYPE;
+N
+N
+N
+Ntypedef enum
+N{
 N	SYS_PLAY_EVENT_NONE = 0,
 N	SYS_PLAY_EVENT_POWERING_UP,
 N	SYS_PLAY_EVENT_SHUTTING_DOWN,
@@ -50676,14 +50686,21 @@ N	uint8_t inputmessage;
 N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
+N	NET_TYPE MW_radio_net_type;
 N	SubBoardStatus SubBoard;
 N	Fm_Data FmData;
 N	POWER_STATE PowerState;
+N	uint8_t ir_bak_key;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define MSG_MAX_LEN						(12)
+Nextern uint8_t RxBuff[60];
+Nextern uint8_t RxMsgCount_PTE;
+N
 N
 N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
@@ -50780,28 +50797,93 @@ N#endif
 N
 L 17 "..\src\driver\drv_ irkey.c" 2
 N#include "tym_global.h"
+N#include "hal_timer0.h"
+L 1 "..\src\global\hal_timer0.h" 1
+N#define uint8_t         unsigned char
+N#define uint32_t        unsigned int
+N
+Ntypedef struct	_TIMER
+N{
+N	uint32_t	TimeOutVal; 								//time out value
+X	unsigned int	TimeOutVal; 								
+N	uint32_t	RecTickVal;			  						//softtimer setting value
+X	unsigned int	RecTickVal;			  						
+N} TIMER;
+N
+Nvoid Hal_Timer0_Init(void);
+Nvoid Hal_Timer1_Init(void);
+N
+Nvoid
+NTimeOutSet(
+N	TIMER	*timer,
+N	uint32_t 	timeout
+X	unsigned int 	timeout
+N	);
+N
+N
+N//
+N// Check whether time out.
+N//
+Nuint8_t
+Xunsigned char
+NIsTimeOut(
+N	TIMER 	*timer
+N	);
+N
+Nextern TIMER SysTimer_1s;
+Nextern TIMER TestTimer;
+Nextern TIMER ModulePowerUpPinTimer;
+Nextern TIMER LedKeyBlinkTimer;
+Nextern TIMER PoweroffLedTimer;
+Nextern TIMER SubBoardHandshakeTimer;
+Nextern TIMER ModeSwitchTimer;
+Nextern TIMER FmLoopTimer;
+Nextern TIMER FmStoreTimer;
+Nextern TIMER SysTimer_50ms;
+Nextern TIMER IrLongPressTimer;
+N
+N
+N//extern TIMER AdcTimer;
+N//extern TIMER PaTimer;
+N//extern TIMER ModCheckTimer;
+N//extern TIMER BatDisplayTimer;
+N//extern TIMER FmStoreTimer;
+N//extern TIMER MicAdcCheckTimer;
+N
+L 19 "..\src\driver\drv_ irkey.c" 2
+N
 N
 Nuint32_t IrTimerCount = 0;
+Xunsigned int IrTimerCount = 0;
 Nuint8_t ir_data[33] = {0};
+Xunsigned char ir_data[33] = {0};
 Nuint8_t ir_code[4] = {0};
+Xunsigned char ir_code[4] = {0};
 Nuint8_t DecodeStartFlag = 0;
+Xunsigned char DecodeStartFlag = 0;
 Nuint8_t DecodeFinishFlag = 0;
+Xunsigned char DecodeFinishFlag = 0;
 Nuint8_t ir_data_rx_ok = 0;
+Xunsigned char ir_data_rx_ok = 0;
 Nuint8_t LongKeyPress = 0;
-Nuint8_t key_value_bak = 0;
+Xunsigned char LongKeyPress = 0;
+N//uint8_t key_value_bak = 0;
 N
 N
 Nvoid GPCDEF_IRQHandler(void)
 N{
 N    volatile uint32_t temp;
+X    volatile unsigned int temp;
 N	static uint8_t i = 0;
+X	static unsigned char i = 0;
 N	static uint32_t repeat_time = 0;	
+X	static unsigned int repeat_time = 0;	
 N
 N	    if(GPIO_GET_INT_FLAG(PD,BIT0)) // IR KEY
-X	    if(((((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)))->INTSRC & (0x00000001))) 
+X	    if(((((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)))->INTSRC & (0x00000001))) 
 N		{
 N	        GPIO_CLR_INT_FLAG(PD, BIT0);
-X	        ((((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)))->INTSRC = (0x00000001));
+X	        ((((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)))->INTSRC = (0x00000001));
 N
 N			if((IrTimerCount > 120) && (IrTimerCount < 145))// start code  14ms
 N			{
@@ -50811,14 +50893,17 @@ N					IrTimerCount = 0;
 N					i = 0;
 N					repeat_time = 0;
 N					LongKeyPress = 0;
-N					key_value_bak = 0;
+N					//key_value_bak = 0;
+N					Global_datas.ir_bak_key = IN_KEY_NONE;
 N			}
 N			else if((IrTimerCount > 23) && (IrTimerCount < 120))
 N			{
 N				IrTimerCount = 0;
 N				//printf("REPPPPPPPPPPPPPPP\n");
 N
-N				if((key_value_bak == IR_KEY_PLAY_PAUSE) || (key_value_bak == IR_KEY_POWER))
+N				TimeOutSet(&IrLongPressTimer, 300);
+N
+N				if((Global_datas.ir_bak_key  == IR_KEY_PLAY_PAUSE) || (Global_datas.ir_bak_key == IR_KEY_POWER))
 N				{
 N					if(repeat_time < 15)
 N					{
@@ -50879,23 +50964,26 @@ Nvoid Drv_IrKey_init(void)
 N{
 N
 N	GPIO_SetMode(PD, BIT0,  GPIO_MODE_INPUT);
-X	GPIO_SetMode(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0x00000001,  0x0UL);
+X	GPIO_SetMode(((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)), 0x00000001,  0x0UL);
 N	GPIO_EnableInt(PD, 0, GPIO_INT_FALLING);
-X	GPIO_EnableInt(((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)), 0, 0x00000001UL);
+X	GPIO_EnableInt(((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)), 0, 0x00000001UL);
 N	
 N	NVIC_EnableIRQ(GPCDEF_IRQn);  
 N    GPIO_ENABLE_DEBOUNCE(PD, BIT0);
-X    ((((GPIO_T *) (((( uint32_t)0x50000000) + 0x4000) + 0x00C0)))->DBEN |= (0x00000001));
+X    ((((GPIO_T *) (((( unsigned int)0x50000000) + 0x4000) + 0x00C0)))->DBEN |= (0x00000001));
 N}
 N
 N
 N
 Nuint8_t Ircordpro(void)//红外码值处理函数
+Xunsigned char Ircordpro(void)
 N{ 
 N  unsigned char i, j, k,temp;
 N  unsigned char cord,value = 0;
 N  uint8_t ir_key =0;
+X  unsigned char ir_key =0;
 N  uint8_t key_value=0;
+X  unsigned char key_value=0;
 N
 N  k=0;
 N  for(i=0;i<4;i++)      //处理4个字节
@@ -50935,7 +51023,8 @@ N			if(IrKeyMap[temp][1] == key_value)
 N			{
 N				ir_key = IrKeyMap[temp][0];
 N				printf("ir_key_num:%d\n", temp);
-N				key_value_bak = ir_key;
+N				Global_datas.ir_bak_key = ir_key;
+N				TimeOutSet(&IrLongPressTimer, 500);
 N				return ir_key;
 N			}
 N		}
@@ -50951,7 +51040,9 @@ N			if(IrKeyMap_B[temp][1] == key_value)
 N			{
 N				ir_key = IrKeyMap_B[temp][0];
 N				printf("ir_key_num:%d\n", temp);
-N				key_value_bak = ir_key;
+N				Global_datas.ir_bak_key = ir_key;
+N				
+N				TimeOutSet(&IrLongPressTimer, 500);
 N				return ir_key;
 N			}
 N		}
@@ -50960,10 +51051,13 @@ N	 return IR_KEY_NONE;
 N}
 N
 Nuint8_t GetIrKey(void)
+Xunsigned char GetIrKey(void)
 N{
 N	uint8_t ir_key_value = 0;
+X	unsigned char ir_key_value = 0;
 N	
 N	uint8_t ir_key_hold = 0;
+X	unsigned char ir_key_hold = 0;
 N
 N	if(ir_data_rx_ok)
 N	{
@@ -50984,7 +51078,7 @@ N	if(LongKeyPress)
 N	{
 N		printf("longpress:%d\n", LongKeyPress);
 N		LongKeyPress--;
-N		switch(key_value_bak)
+N		switch(Global_datas.ir_bak_key)
 N		{
 N			case IR_KEY_PLAY_PAUSE:
 N				ir_key_hold = IR_KEY_PLAY_PAUSE_CP;

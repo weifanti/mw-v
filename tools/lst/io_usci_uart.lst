@@ -3392,7 +3392,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50294,7 +50294,9 @@ N/*-----------------------uart param config end-----------------*/
 N
 N
 Nint32_t Transfer_Uart_Init(void);
-Nint32_t Debug_Uart_Init(void);
+N//int32_t Debug_Uart_Init(void);
+Nint32_t PTE_Uart0_Init(void);
+N
 Nint32_t USCI_Uart_Init(void);
 N
 Nvoid UART_TEST_HANDLE(void);
@@ -50421,6 +50423,16 @@ N	SYS_PLAY_STATE_FM,
 N	SYS_PLAY_STATE_AUX
 N
 N} SYS_STATE;
+N
+N
+Ntypedef enum
+N{
+N	NET_TYPE_NONE = 0,
+N	NET_TYPE_WIFI,
+N	NET_TYPE_4G,
+N
+N} NET_TYPE;
+N
 N
 N
 Ntypedef enum
@@ -50682,14 +50694,21 @@ N	uint8_t inputmessage;
 N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
+N	NET_TYPE MW_radio_net_type;
 N	SubBoardStatus SubBoard;
 N	Fm_Data FmData;
 N	POWER_STATE PowerState;
+N	uint8_t ir_bak_key;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define MSG_MAX_LEN						(12)
+Nextern uint8_t RxBuff[60];
+Nextern uint8_t RxMsgCount_PTE;
+N
 N
 N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
@@ -50704,14 +50723,13 @@ N
 N#define PLLCTL_SETTING  CLK_PLLCTL_72MHz_HXT
 N#define PLL_CLOCK       72000000
 N
-N#define RXBUFSIZE 1024
+N//#define RXBUFSIZE 1024
 N#define UUART_CMD_LEN 7
 N
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* Global variables                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
-Nuint8_t g_uu8RecData[RXBUFSIZE]  = {0};
-Xuint8_t g_uu8RecData[1024]  = {0};
+N//uint8_t g_uu8RecData[RXBUFSIZE]  = {0};
 N
 Nvolatile uint32_t g_uu32comRbytes = 0;
 Nvolatile uint32_t g_uu32comRhead  = 0;

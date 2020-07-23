@@ -29382,7 +29382,9 @@ typedef enum
 
 
 int32_t Transfer_Uart_Init(void);
-int32_t Debug_Uart_Init(void);
+
+int32_t PTE_Uart0_Init(void);
+
 int32_t USCI_Uart_Init(void);
 
 void UART_TEST_HANDLE(void);
@@ -29642,6 +29644,9 @@ void battery_charge_disenable(void);
 void DcInDetect(void);
 void BatteryChargeStateChcek(void);
 void Bat_SelectPin_0_external_1_internal(uint8_t value); 
+void AdapterPowerModeCtrl(uint8_t value);
+
+
 
 
 
@@ -29730,6 +29735,16 @@ typedef enum
 	SYS_PLAY_STATE_AUX
 
 } SYS_STATE;
+
+
+typedef enum
+{
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
 
 
 typedef enum
@@ -29989,14 +30004,21 @@ typedef struct
 	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	uint8_t ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern uint8_t RxBuff[60];
+extern uint8_t RxMsgCount_PTE;
+
 
 
 
@@ -30214,6 +30236,7 @@ extern TIMER ModeSwitchTimer;
 extern TIMER FmLoopTimer;
 extern TIMER FmStoreTimer;
 extern TIMER SysTimer_50ms;
+extern TIMER IrLongPressTimer;
 
 
 
@@ -30722,26 +30745,30 @@ volatile sys_err_e sys_err = SYS_ERR_NONE;
 void SYS_Clock_init(void)
 {
 
-    
-   
+#line 75 "..\\main.c"
+
 	 
     CLK_EnableXtalRC((0x1ul << (2)));
 
      
-    CLK_WaitClockReady((0x1ul << (4)));
+    CLK_WaitClockReady((0x1ul << (4)));	
 
      
-    CLK_SetHCLK((0x07UL<<(0)), (((1)-1) << (0)));
+    CLK_SetHCLK((0x07UL<<(0)), (((1)-1) << (0)));	
+
 
      
-    CLK_EnableXtalRC((0x1ul << (0)) | (0x1ul << (1)));
-
+    CLK_EnableXtalRC((0x1ul << (0)));
      
-    CLK_WaitClockReady((0x1ul << (0)) | (0x1ul << (1)));
-
+    CLK_WaitClockReady((0x1ul << (0)));
      
     CLK_SetCoreClock(72000000);
-    CLK_SetSysTickClockSrc((0x03UL<<(3)));
+    CLK_SetSysTickClockSrc((0x03UL<<(3)));	
+
+
+
+
+
 
      
     CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((16)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
@@ -30793,7 +30820,8 @@ void SYS_Clock_init(void)
 
 void SYS_BusInit(void)
 {
-	Debug_Uart_Init();
+	
+	PTE_Uart0_Init(); 
 	
 	Transfer_Uart_Init();
 	
@@ -30802,6 +30830,65 @@ void SYS_BusInit(void)
 	Hal_I2c_Init();
 	
 }
+
+
+void SYS_Clock_Disable(void)
+{
+	 
+	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((16)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+	   
+	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((17)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+	  
+	   
+	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((18)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+	  
+	   
+	  CLK_DisableModuleClock(((((2UL) & 0x03) << 30)|((((8)) & 0x1f) << 0)| (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+	  
+	   
+	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((8)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+	  
+	   
+	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((9)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+	
+	   
+	 
+	
+	   
+	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((20)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((1) & 0x07) << 25)|(((28) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+
+	
+}
+
+void SYS_Clock_Enable(void)
+{
+	 
+	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((16)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+	   
+	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((17)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+	  
+	   
+	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((18)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+	  
+	   
+	  CLK_EnableModuleClock(((((2UL) & 0x03) << 30)|((((8)) & 0x1f) << 0)| (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+	  
+	   
+	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((8)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+	  
+	   
+	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((9)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+	
+	   
+	 
+	
+	   
+	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((20)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((1) & 0x07) << 25)|(((28) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+
+	
+}
+
+
 
 
 
@@ -30883,9 +30970,14 @@ void SysIdle(void)
 
 	Global_datas.FmData.Frequency = 8750;
 	Global_datas.FmData.station_num = 0;
+	Global_datas.ir_bak_key = IN_KEY_NONE;
+	Global_datas.MW_radio_net_type = NET_TYPE_NONE;
 
 	DataRead();
 	SendFmFreqToSubBoard();
+
+
+	
 	
 }
 
@@ -31011,7 +31103,7 @@ void IoKeyProcess(void)
 		
 }
 
-#line 848 "..\\main.c"
+#line 938 "..\\main.c"
 void MessageProcess(void)
 {
 	sCoreMsg msg;
@@ -31075,6 +31167,8 @@ void MessageProcess(void)
 		                	Global_datas.g_mode_status = BT_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
 							
+							Global_datas.MW_radio_net_type = NET_TYPE_NONE;
+							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);
 							
 						}
 					
@@ -31082,33 +31176,44 @@ void MessageProcess(void)
 						{
 		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
+							Global_datas.MW_radio_net_type = NET_TYPE_NONE;
 						}
 						if (msg.param1 == 0x02)
 						{
 		                	Global_datas.g_mode_status = WIFI_CONNECTED_MODE;
+							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
+							
 						}
 						if (msg.param1 == 0x04)
 						{
 		                	Global_datas.g_mode_status = WIFI_MODE;
-		                	
+							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
+							
+							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);
 						printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x05)
 						{
 		                	Global_datas.g_mode_status = WIFI_CONNECTING_MODE;
+							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
 		                	
 						printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x011)
 						{
 		                	Global_datas.g_mode_status = FOURG_CONNECTED_MODE;
+							Global_datas.MW_radio_net_type = NET_TYPE_4G;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x012)
 						{
 		                	Global_datas.g_mode_status = FOURG_MODE;
+							Global_datas.MW_radio_net_type = NET_TYPE_4G;
+							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);
+							
 							printf("0x06, msg.param1 = %x \n",msg.param1);
+							
 						}
 						if (msg.param1 == 0x0B)
 						{
@@ -31318,16 +31423,30 @@ int32_t main(void)
 	SYS_Init();
  	SysIdle();
 
+	
+
   	printf("\nmain\n");
+
+	printf("compile time: %s %s\r\n", "Jul 23 2020", "16:59:12");
+
+	
+	
 	
     while(1)
     {
+
+		if(IsTimeOut(&IrLongPressTimer))
+		{
+			Global_datas.ir_bak_key = IN_KEY_NONE;
+		}
     	if(IsTimeOut(&SysTimer_50ms))
     	{
     		TimeOutSet(&SysTimer_50ms, 2000);
 			ADC_FunctionTest();
 			DcInDetect();
 			BatteryChargeStateChcek();
+			
+			printf("volume = %d \n",Global_datas.volume);
 
 			if(Global_datas.PowerState.AdapterIn)
 			{
@@ -31350,7 +31469,7 @@ int32_t main(void)
 			
 			if((Global_datas.PowerState.battery_level == 0) && (Global_datas.state > SYS_PLAY_STATE_POWERUP) && (Global_datas.PowerState.AdapterIn == 0))
 			{
-				Global_datas.inputmessage =  IN_KEY_POWER_CP;
+				
 			}
 			else if((Global_datas.PowerState.battery_level < BAT_LEVEL_20_PERCENT) && (Global_datas.PowerState.battery_data >  batlevel_table[0])  && (Global_datas.volume > 8) && (Global_datas.PowerState.AdapterIn == 0))
 			{
@@ -31406,6 +31525,12 @@ int32_t main(void)
 
 					Global_datas.shoutting_down = 0;
 					Global_datas.state = SYS_PLAY_STATE_IDLE;
+
+				     
+			    
+					 
+    			
+			   	
 				}
 				
 			}
@@ -31465,6 +31590,9 @@ int32_t main(void)
 			MessageProcess();
 		}
 
+		
+
+
 		Sysctrl();
 
 		
@@ -31472,6 +31600,78 @@ int32_t main(void)
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
 void Sysctrl(void)
@@ -31682,6 +31882,10 @@ void Sysctrl(void)
 			{
 				Global_datas.event = SYS_PLAY_EVENT_AUTO_SEARCH;
 			}
+			else if(Global_datas.state == SYS_PLAY_STATE_BT)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_BT_PAIRING;
+			}
 			
 			break;
 
@@ -31709,10 +31913,27 @@ void Sysctrl(void)
 		Global_datas.key_led_blink = 1;
 	}
 
+
 	switch(Global_datas.event)
 	{
 	
 		case SYS_PLAY_EVENT_POWERING_UP:
+
+
+	
+
+		
+		 
+    
+    
+
+	
+
+
+
+
+		
+		   
 
 			TYM_SysPower12V_3V3_onoff(1);
 			Global_datas.state = SYS_PLAY_STATE_POWERUP;	
@@ -31721,6 +31942,9 @@ void Sysctrl(void)
 			Global_datas.volume = 5;
 			TYM_drv_powerkeepon(1);
 			Drv_4GMoudle_PowerUp(1);
+			
+			AdapterPowerModeCtrl(1);
+			
 			Global_datas.power_4g = 1;
 			drv_FourGmodel_power_key_SetHi();
 			TimeOutSet(&ModulePowerUpPinTimer,3000);
@@ -31746,6 +31970,7 @@ void Sysctrl(void)
 			TimeOutSet(&ModulePowerUpPinTimer,3000);
 			TimeOutSet(&PoweroffLedTimer, 100);
 			Global_datas.shoutting_down = 0;	
+			drv_audio_4G_Channel();
 			break;
 
 			
@@ -31826,12 +32051,15 @@ void Sysctrl(void)
 						drv_audio_4G_Channel();
 						break;
 				}
+
+				Drv_Dap_vol_set(Global_datas.volume);
 			}
 			else
 			{
 				Cmd_Send2FourG(0x03,0x15,0);
 				Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 				drv_audio_4G_Channel();
+				Drv_Dap_vol_set(Global_datas.volume);
 			}
 
 			
@@ -31840,29 +32068,34 @@ void Sysctrl(void)
 
 		case SYS_PLAY_EVENT_MODE_SWITCH:
 			srv_key_mode_handler();
+			Drv_Dap_vol_set(Global_datas.volume);
 			break;
 
 		case SYS_PLAY_EVENT_SW_TO_AUX_MODE:
 			
 			srv_key_mode_switch_to(SYS_PLAY_STATE_AUX);	
+			Drv_Dap_vol_set(Global_datas.volume);
 				
 			break;
 
 		case SYS_PLAY_EVENT_SW_TO_FM_MODE:
 			
 			srv_key_mode_switch_to(SYS_PLAY_STATE_FM);	
+			Drv_Dap_vol_set(Global_datas.volume);
 			
 			break;
 			
 		case SYS_PLAY_EVENT_SW_TO_BT_MODE:
 			
 			srv_key_mode_switch_to(SYS_PLAY_STATE_BT);	
+			Drv_Dap_vol_set(Global_datas.volume);
 			
 			break;	
 			
 		case SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE:
 			
-			srv_key_mode_switch_to(SYS_PLAY_STATE_MW_RADIO);	
+			srv_key_mode_switch_to(SYS_PLAY_STATE_MW_RADIO);
+			Drv_Dap_vol_set(Global_datas.volume);
 		
 			break;		
 
@@ -31980,12 +32213,24 @@ void Sysctrl(void)
 
 		    printf("\nTURN OFF 4G MOUDLE\n");
 
+			AdapterPowerModeCtrl(0);
+
 			if(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)
 			{
 				Drv_4GMoudle_PowerUp(0);  
 				TYM_drv_powerkeepon(0); 
 				TYM_SysPower12V_3V3_onoff(0);		
 				Global_datas.state = SYS_PLAY_STATE_IDLE;
+				drv_all_led_on(0);
+
+			 
+			
+			 
+    		
+			
+
+
+				
 			}
 			else if(Global_datas.state == SYS_PLAY_STATE_FM)
 			{
@@ -32020,6 +32265,11 @@ void Sysctrl(void)
 			{
 				Global_datas.FmData.fmstate = FM_STATE_SEEK_DOWN;
 			}
+			else if(Global_datas.FmData.fmstate == FM_STATE_SEEK_DOWN)
+			{
+				Global_datas.FmData.fmstate = FM_STATE_ON;
+				Global_datas.FmData.FmNeedToStore = 1;
+			}
 			break;
 
 		
@@ -32028,7 +32278,12 @@ void Sysctrl(void)
 			if(Global_datas.FmData.fmstate == FM_STATE_ON)
 			{
 				Global_datas.FmData.fmstate = FM_STATE_SEEK_UP;
-			}			
+			}
+			else if(Global_datas.FmData.fmstate == FM_STATE_SEEK_UP)
+			{
+				Global_datas.FmData.fmstate = FM_STATE_ON;
+				Global_datas.FmData.FmNeedToStore = 1;
+			}
 			
 			break;
 
@@ -32053,7 +32308,7 @@ void Sysctrl(void)
 			if(Global_datas.state == SYS_PLAY_STATE_FM)
 			{
 				if(Global_datas.FmData.Frequency >= 8760)	Global_datas.FmData.Frequency -= 10;
-				else Global_datas.FmData.Frequency = 10080;
+				else Global_datas.FmData.Frequency = 10800;
 				Global_datas.FmData.FmNeedToStore = 1;
 				TimeOutSet(&FmStoreTimer, 2000);
 				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
@@ -32201,11 +32456,10 @@ void Sysctrl(void)
 					}
 					else
 					{
-						Global_datas.FmData.Frequency = 10800;
-						Global_datas.FmData.fmstate = FM_STATE_ON;		
-						
+						Global_datas.FmData.Frequency = 8750;
 					}
 
+					SendFmFreqToSubBoard();
 					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
 					
 					
@@ -32227,15 +32481,14 @@ void Sysctrl(void)
 					if(Global_datas.FmData.Frequency >= 8760)  Global_datas.FmData.Frequency -= 10;
 					else 
 					{
-						Global_datas.FmData.Frequency = 8750;
-						Global_datas.FmData.fmstate = FM_STATE_ON;		
+						Global_datas.FmData.Frequency = 10800;
 						
 					}
 
+					
+					SendFmFreqToSubBoard();
 					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
 					
-					
-
 					if(temp_valid)
 					{
 						
@@ -32247,9 +32500,10 @@ void Sysctrl(void)
 				break;
 
 				case FM_STATE_AUTO_SEARCH:
- 
-				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+
 				
+				SendFmFreqToSubBoard();
+				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
 				
 				if(temp_valid)
 				{
@@ -32280,11 +32534,8 @@ void Sysctrl(void)
 
 						Global_datas.FmData.FmNeedToStore = 1;
 						TimeOutSet(&FmStoreTimer, 1000);
-						
-						si47xxFMRX_tune(Global_datas.FmData.Frequency);
-						
 						SendFmFreqToSubBoard();
-						
+						si47xxFMRX_tune(Global_datas.FmData.Frequency);	
 						Global_datas.FmData.fmstate = FM_STATE_ON;		
 					}
 				}	
@@ -32306,10 +32557,11 @@ void Sysctrl(void)
 							
 						}
 
-						DataStore();
-						si47xxFMRX_tune(Global_datas.FmData.Frequency);
-						SendFmFreqToSubBoard();
 						
+						SendFmFreqToSubBoard();
+						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+						
+						Global_datas.FmData.FmNeedToStore = 1;
 						Global_datas.FmData.fmstate = FM_STATE_ON;		
 					}
 				}					

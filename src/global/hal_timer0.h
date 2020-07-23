@@ -35,6 +35,7 @@ extern TIMER ModeSwitchTimer;
 extern TIMER FmLoopTimer;
 extern TIMER FmStoreTimer;
 extern TIMER SysTimer_50ms;
+extern TIMER IrLongPressTimer;
 
 
 //extern TIMER AdcTimer;

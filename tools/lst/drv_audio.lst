@@ -3418,7 +3418,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50530,11 +50530,16 @@ N#define PCM1862_IN_CHANNEL(x)  (1 << (x-1))
 N#define BT_WIFI_PCM1862_GAIN	0xe8 // -12db
 N//#define BT_WIFI_PCM1862_GAIN	0x00 // 0db
 N//#define FM_PCM1862_GAIN	0x18 // 12db
-N#define FM_PCM1862_GAIN	0x2b // 23.5db
+N//#define FM_PCM1862_GAIN	0x21 // 17.5db
+N//#define AUX_PCM1862_GAIN	0x17 // 11.5db
+N
 N//#define AUX_PCM1862_GAIN	0x18 // 12db
-N#define AUX_PCM1862_GAIN	0x21 // 17.5db
-N//#define AUX_PCM1862_GAIN	0x00 // 17.5db
+N//#define AUX_PCM1862_GAIN	0x21 // 17.5db
 N//#define FM_PCM1862_GAIN	    0x00 // 23.5db
+N#define FM_PCM1862_GAIN		0x21 // 17.5db
+N#define AUX_PCM1862_GAIN	0x17 // 11.5db
+N
+N//#define AUX_PCM1862_GAIN	0x0b // 5.5db
 N
 N
 Nvoid drv_pcm1862_input_channel(uint8_t pcm_channel);
@@ -50854,6 +50859,16 @@ N
 N
 Ntypedef enum
 N{
+N	NET_TYPE_NONE = 0,
+N	NET_TYPE_WIFI,
+N	NET_TYPE_4G,
+N
+N} NET_TYPE;
+N
+N
+N
+Ntypedef enum
+N{
 N	SYS_PLAY_EVENT_NONE = 0,
 N	SYS_PLAY_EVENT_POWERING_UP,
 N	SYS_PLAY_EVENT_SHUTTING_DOWN,
@@ -51111,14 +51126,21 @@ N	uint8_t inputmessage;
 N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
+N	NET_TYPE MW_radio_net_type;
 N	SubBoardStatus SubBoard;
 N	Fm_Data FmData;
 N	POWER_STATE PowerState;
+N	uint8_t ir_bak_key;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define MSG_MAX_LEN						(12)
+Nextern uint8_t RxBuff[60];
+Nextern uint8_t RxMsgCount_PTE;
+N
 N
 N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
@@ -51192,8 +51214,20 @@ N *
 N */
 Nvoid Drv_Dap_vol_set(uint8_t value)
 N{
-N	drv_5825_vol_set(value);
-N	drv_dap_3251_vol_set(value);
+N	if((Global_datas.state == SYS_PLAY_STATE_AUX) || (Global_datas.state == SYS_PLAY_STATE_FM))
+N	{
+N		drv_5825_vol_set(value);
+N		drv_dap_3251_vol_set(value);
+N
+N	}
+N	else
+N	{
+W "..\src\driver\audio\drv_audio.c" 81 3 function "drv_5825_vol_set_wifi_bt" declared implicitly
+N		drv_5825_vol_set_wifi_bt(value);
+W "..\src\driver\audio\drv_audio.c" 82 3 function "drv_dap_3251_vol_set_wifi_bt" declared implicitly
+N		drv_dap_3251_vol_set_wifi_bt(value);
+N	}
+N
 N}
 N
 N/**
@@ -51213,7 +51247,7 @@ Nvoid drv_audio_AuxIn_Channel(void)
 N{
 N
 N	drv_pcm1862_PGA_VAL_SET(AUX_PCM1862_GAIN);
-X	drv_pcm1862_PGA_VAL_SET(0x21);
+X	drv_pcm1862_PGA_VAL_SET(0x17);
 N	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(1));
 X	drv_pcm1862_input_channel((1 << (1-1)));
 N	I2S_select_pin_dac();
@@ -51233,7 +51267,7 @@ N
 Nvoid drv_audio_FM_Channel(void)
 N{
 N	drv_pcm1862_PGA_VAL_SET(FM_PCM1862_GAIN);
-X	drv_pcm1862_PGA_VAL_SET(0x2b);
+X	drv_pcm1862_PGA_VAL_SET(0x21);
 N	drv_pcm1862_input_channel(PCM1862_IN_CHANNEL(2));
 X	drv_pcm1862_input_channel((1 << (2-1)));
 N	I2S_select_pin_dac();
@@ -51288,9 +51322,11 @@ N{
 N	drv_5825_powerdown_pin_init(); // 5825 powerdown pin set hi befor i2s is ready
 N	drv_Adc_pcm1862_Init();
 N  	drv_audio_Null_Channel();
+N
 N	
-N	TIMER_Delay(TIMER0,5);
-X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),5);
+N	
+N	TIMER_Delay(TIMER0,5000);
+X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),5000);
 N	Drv_Dap_init();
 N
 N	if(Global_datas.state == SYS_PLAY_STATE_FM)
@@ -51305,6 +51341,7 @@ N	else
 N	{
 N		drv_audio_4G_Channel();
 N	}
+N
 N}
 N
 Nvoid Drv_audio_channel_switch(void)
@@ -51336,7 +51373,7 @@ N
 Nvoid Drv_audio_powerdown(void)
 N{
 N
-W "..\src\driver\audio\drv_audio.c" 208 2 function "drv_5825_powerdown_pin_set" declared implicitly
+W "..\src\driver\audio\drv_audio.c" 221 2 function "drv_5825_powerdown_pin_set" declared implicitly
 N	drv_5825_powerdown_pin_set(0);//power down
 N	drv_Adc_pcm1862_Init();
 N	drv_dap_3251_rest();

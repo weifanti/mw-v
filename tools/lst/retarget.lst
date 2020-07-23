@@ -3393,7 +3393,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50705,15 +50705,15 @@ Nvoid SendChar_ToUART(int ch)
 N{
 N
 N    while(DEBUG_PORT->FIFOSTS & UART_FIFOSTS_TXFULL_Msk);
-X    while(((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (23)));
+X    while(((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (23)));
 N    DEBUG_PORT->DAT = ch;
-X    ((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->DAT = ch;
+X    ((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->DAT = ch;
 N    if(ch == '\n')
 N    {
 N        while(DEBUG_PORT->FIFOSTS & UART_FIFOSTS_TXFULL_Msk);
-X        while(((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (23)));
+X        while(((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (23)));
 N        DEBUG_PORT->DAT = '\r';
-X        ((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->DAT = '\r';
+X        ((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->DAT = '\r';
 N    }
 N}
 N#else
@@ -50845,10 +50845,10 @@ N
 N    while(1)
 N    {
 N        if((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_RXEMPTY_Msk) == 0)
-X        if((((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (14))) == 0)
+X        if((((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (14))) == 0)
 N        {
 N            return (DEBUG_PORT->DAT);
-X            return (((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->DAT);
+X            return (((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->DAT);
 N        }
 N    }
 N
@@ -50869,7 +50869,7 @@ N
 Nint kbhit(void)
 N{
 N    return !((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_RXEMPTY_Msk) == 0);
-X    return !((((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (14))) == 0);
+X    return !((((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (14))) == 0);
 N}
 N/**
 N * @brief    Check if debug message finished
@@ -50885,7 +50885,7 @@ N
 Nint IsDebugFifoEmpty(void)
 N{
 N    return ((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_TXEMPTYF_Msk) != 0);
-X    return ((((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (28))) != 0);
+X    return ((((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (28))) != 0);
 N}
 N
 N/**

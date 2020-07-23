@@ -3392,7 +3392,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50294,7 +50294,9 @@ N/*-----------------------uart param config end-----------------*/
 N
 N
 Nint32_t Transfer_Uart_Init(void);
-Nint32_t Debug_Uart_Init(void);
+N//int32_t Debug_Uart_Init(void);
+Nint32_t PTE_Uart0_Init(void);
+N
 Nint32_t USCI_Uart_Init(void);
 N
 Nvoid UART_TEST_HANDLE(void);
@@ -50421,6 +50423,16 @@ N	SYS_PLAY_STATE_FM,
 N	SYS_PLAY_STATE_AUX
 N
 N} SYS_STATE;
+N
+N
+Ntypedef enum
+N{
+N	NET_TYPE_NONE = 0,
+N	NET_TYPE_WIFI,
+N	NET_TYPE_4G,
+N
+N} NET_TYPE;
+N
 N
 N
 Ntypedef enum
@@ -50682,14 +50694,21 @@ N	uint8_t inputmessage;
 N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
+N	NET_TYPE MW_radio_net_type;
 N	SubBoardStatus SubBoard;
 N	Fm_Data FmData;
 N	POWER_STATE PowerState;
+N	uint8_t ir_bak_key;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define MSG_MAX_LEN						(12)
+Nextern uint8_t RxBuff[60];
+Nextern uint8_t RxMsgCount_PTE;
+N
 N
 N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
@@ -50703,14 +50722,14 @@ N
 N#define PLLCTL_SETTING  CLK_PLLCTL_72MHz_HXT
 N#define PLL_CLOCK       72000000
 N
-N#define RXBUFSIZE 1024
+N//#define RXBUFSIZE 1024
 N
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* Global variables                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N
-Nuint8_t g_u8RecData[RXBUFSIZE]  = {0};
-Xuint8_t g_u8RecData[1024]  = {0};
+N
+N
 N
 Nvolatile uint32_t g_u32comRbytes = 0;
 Nvolatile uint32_t g_u32comRhead  = 0;
@@ -50806,117 +50825,192 @@ X    ((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->LINE = (3) | (0x0 << (3))
 N	Hal_Uart2_Data_Init();
 N}
 N
+N
+N
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* UART Callback function                                                                                  */
 N/*---------------------------------------------------------------------------------------------------------*/
+Nvoid UART_TEST_HANDLE(void)
+N{
+N
+N
+N	
+N
+N
+N#if 0	
+S	   uint8_t u8InChar = 0xFF;    
+S	   //static uint8_t nRxIndex=0;
+S	 //  uint8_t  temp1, temp2, cnt;
+S	   
+S		  uint32_t u32IntSts = UART0->INTSTS;
+S	
+S	 UART_ClearIntFlag(UART0, UART_INTEN_RDAIEN_Msk);
+S		  
+S	 printf("\AAAAA_UART_03 test:");
+S	   
+S	// if(u32IntSts & UART_INTSTS_RDAINT_Msk)
+S	   {
+S		   // Get all the input characters 
+S		   if(UART_IS_RX_READY(UART0))
+S		   {
+S			   // Get the character from UART Buffer 
+S			   u8InChar = UART_READ(UART0);
+S			   UART_WRITE(UART0, u8InChar);
+S		   }   
+S		   
+S	
+S	   }
+S
+S
+N#else
+N
+N	  uint8_t u8InChar = 0xFF;
+N	
+N	
+N	  uint32_t temp0 = UART0->INTSTS;
+X	  uint32_t temp0 = ((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->INTSTS;
+N	//	uint8_t  temp1, cnt;
+N	
+N	  uint8_t DataByte=0;
+N	  static uint8_t nRxIndex=0;
+N	  static uint8_t nDataLenTemp=0;
+N	  static uint8_t nDataLen=0;
+N	  static uint32_t rcr = 0;
+N	  uint8_t rcr_rx = 0;
+N
+N
+N
+N	UART_ClearIntFlag(UART0, UART_INTEN_RDAIEN_Msk);
+X	UART_ClearIntFlag(((UART_T *) ((( uint32_t)0x40000000) + 0x50000)), (0x1ul << (0)));
+N
+N	if(UART_IS_RX_READY(UART0))
+X	if((((((UART_T *) ((( uint32_t)0x40000000) + 0x50000)))->INTSTS & (0x1ul << (0)))>>(0)))
+N	{
+N		DataByte = UART_READ(UART0);
+X		DataByte = ((((UART_T *) ((( uint32_t)0x40000000) + 0x50000)))->DAT);
+N		//UART_WRITE(UART0, u8InChar);
+N	} 
+N
+N		
+N		switch (nRxIndex)
+N		{
+N			case 0: 
+N				
+N				printf("INDEX 0: %x\n",DataByte);
+N				if(DataByte==0x5A)
+N					nRxIndex=1;
+N				break;
+N			case 1: 
+N				
+N				printf("INDEX 1: %x\n",DataByte);
+N				if(DataByte==0xA5) nRxIndex=2;
+N				else
+N				{
+N					if(DataByte==0xff) nRxIndex=1;
+N					else nRxIndex=0;
+N				}
+N				break;
+N			case 2:  
+N				
+N				nDataLen=DataByte;
+N
+N				//nDataLen = 4; // modify the uart protocol 190716
+N				
+N				rcr = nDataLen;
+N				//nCurRecvLen0[nUart0Recv]=DataByte;  
+N				nDataLenTemp=0;
+N				nRxIndex=3;
+N
+N				
+N				
+N				break;		
+N			case 3:
+N				
+N				if(nDataLenTemp<nDataLen-1)
+N				{
+N					RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+nDataLenTemp]=DataByte;
+X					RxBuff[RxMsgCount_PTE*(12)+nDataLenTemp]=DataByte;
+N					rcr +=DataByte;
+N					nDataLenTemp++;
+N					
+N				}
+N				else
+N				{
+N					RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+nDataLenTemp]=DataByte;
+X					RxBuff[RxMsgCount_PTE*(12)+nDataLenTemp]=DataByte;
+N					rcr+=DataByte;
+N					nRxIndex=4;
+N				}
+N				break;
+N			case 4:
+N				
+N				   printf("INDEX 4: %x\n",DataByte);
+N				   rcr_rx = DataByte;
+N				   rcr = ~rcr + 1;
+N				   
+N				  printf("RCR: %x\n",rcr);
+N				  // if(rcr_rx == (rcr & 0xff))
+N				   {
+N					   nRxIndex=0;
+N					   RxMsgCount_PTE++; 
+N				   }
+N		
+N				   nRxIndex=0;
+N					break;
+N			default:
+N				nRxIndex=0;
+N				break;
+N		} 
+N
+N
+N
+N
+N#endif
+N
+N
+N    if(UART0->FIFOSTS & (UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk | UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_RXOVIF_Msk))
+X    if(((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & ((0x1ul << (6)) | (0x1ul << (5)) | (0x1ul << (4)) | (0x1ul << (0))))
+N    {
+N        UART_ClearIntFlag(UART0, (UART_INTSTS_RLSINT_Msk| UART_INTSTS_BUFERRINT_Msk));
+X        UART_ClearIntFlag(((UART_T *) ((( uint32_t)0x40000000) + 0x50000)), ((0x1ul << (10))| (0x1ul << (13))));
+N    }
+W "..\src\io\io_uart.c" 149 12 variable "u8InChar"  was declared but never referenced
+W "..\src\io\io_uart.c" 160 12 variable "rcr_rx"  was set but never used
+N}
+N
+N
+N
+N
+N/*---------------------------------------------------------------------------------------------------------*/
+N/* UART Callback function                                                                                  */
+N/*---------------------------------------------------------------------------------------------------------*/
+N/*
 Nvoid UART_TEST_HANDLE()
 N{
 N    uint8_t u8InChar = 0xFF;	
 N	//static uint8_t nRxIndex=0;
 N  //  uint8_t  temp1, temp2, cnt;
 N	
-N    //uint32_t u32IntSts = UART0->INTSTS;
-N	UART_ClearIntFlag(UART0, UART_INTEN_RDAIEN_Msk);
-X	UART_ClearIntFlag(((UART_T *) ((( uint32_t)0x40000000) + 0x50000)), (0x1ul << (0)));
-N	UART_ClearIntFlag(UART2, UART_INTEN_RDAIEN_Msk);
-X	UART_ClearIntFlag(((UART_T *) ((( uint32_t)0x40100000) + 0x54000)), (0x1ul << (0)));
-N//  printf("\nuart02_Input:");
-N    /* Get all the input characters */
-N	 if(UART_IS_RX_READY(UART0))
-X	 if((((((UART_T *) ((( uint32_t)0x40000000) + 0x50000)))->INTSTS & (0x1ul << (0)))>>(0)))
+N	   uint32_t u32IntSts = UART0->INTSTS;
+N
+N  UART_ClearIntFlag(UART0, UART_INTEN_RDAIEN_Msk);
+N	   
+N  printf("\AAAAA_UART_03 test:");
+N	
+N // if(u32IntSts & UART_INTSTS_RDAINT_Msk)
 N    {
-N        /* Get the character from UART Buffer */
-N        u8InChar = UART_READ(UART0);
-X        u8InChar = ((((UART_T *) ((( uint32_t)0x40000000) + 0x50000)))->DAT);
-N//        printf("\nUART0_READ = %x ", u8InChar);
-N//		UART_WRITE(UART2,u8InChar);
-N//		UART_WRITE(UART0,u8InChar);
-N
-N        if(u8InChar == '0')
+N        // Get all the input characters 
+N        if(UART_IS_RX_READY(UART0))
 N        {
-N            g_bWait = FALSE;
-X            g_bWait = 0;
-N        }
+N            // Get the character from UART Buffer 
+N            u8InChar = UART_READ(UART0);
+N            UART_WRITE(UART0, u8InChar);
+N    	}	
+N		
 N
-N        /* Check if buffer full */
-N        if(g_u32comRbytes < RXBUFSIZE)
-X        if(g_u32comRbytes < 1024)
-N        {
-N            /* Enqueue the character */
-N            g_u8RecData[g_u32comRtail] = u8InChar;
-N            g_u32comRtail = (g_u32comRtail == (RXBUFSIZE - 1)) ? 0 : (g_u32comRtail + 1);
-X            g_u32comRtail = (g_u32comRtail == (1024 - 1)) ? 0 : (g_u32comRtail + 1);
-N            g_u32comRbytes++;
-N        }
-N    }
-N	 
-N
-N    /* check int reg */
-N    if((UART2 -> INTSTS) & UART_INTSTS_RDAINT_Msk)
-X    if((((UART_T *) ((( uint32_t)0x40100000) + 0x54000)) -> INTSTS) & (0x1ul << (8)))
-N    {
-N        /* Get all the input characters */
-N        while(UART_IS_RX_READY(UART2))
-X        while((((((UART_T *) ((( uint32_t)0x40100000) + 0x54000)))->INTSTS & (0x1ul << (0)))>>(0)))
-N    	{
-N			uart2_get_data[uart_counts] = UART_READ(UART2);
-X			uart2_get_data[uart_counts] = ((((UART_T *) ((( uint32_t)0x40100000) + 0x54000)))->DAT);
-N			uart_counts++;
-N			if (uart_counts > 140)
-N				uart_counts = 0;
-N    	}
-N		/*
-N        {
-N            temp1 = uart2_data.rx_tail;
-N            uart2_data.rx_buff[temp1] = UART_READ(UART2);
-N			//printf("\nuart2_data.rx_buff[%x] = %x ",temp1, uart2_data.rx_buff[temp1]);
-N            temp1++;
-N
-N            if(temp1 >= UART2_RX_BUFF_LEN)
-N            {
-N                temp1 = temp1 - UART2_RX_BUFF_LEN;
-N            }
-N
-N            uart2_data.rx_tail = temp1;
-N        }
-N        */
-N    }
-N#if 0
-S    if((UART2 -> INTSTS) & UART_INTSTS_THREINT_Msk)
-S    {
-S        /* write data */
-S        cnt = uart2_data.tx_head;
-S        cnt = (uart2_data.tx_tail >= cnt) ? (uart2_data.tx_tail - cnt) : (uart2_data.tx_tail + UART2_TX_BUFF_LEN - cnt);
-S
-S        while((!UART_IS_TX_FULL(UART2)) && cnt)
-S        {
-S            temp1 = uart2_data.tx_head;
-S            temp2 = uart2_data.tx_buff[temp1];
-S            UART_WRITE(UART2, temp2);
-S            temp1++;
-S
-S            if(temp1 >= UART2_TX_BUFF_LEN)
-S            {
-S                temp1 = temp1 - UART2_TX_BUFF_LEN;
-S            }
-S
-S            uart2_data.tx_head = temp1;
-S            cnt --;
-S
-S            if(cnt == 0)
-S            {
-S                /* when all tx bytes are in buffer, tx should be ok */
-S                uart2_data.tx_ok = 1;
-S                UART_DisableInt(UART2, UART_INTEN_THREIEN_Msk);
-S                /* now we should listen for the rx */
-S                UART_EnableInt(UART2, (UART_INTEN_RDAIEN_Msk | UART_INTEN_RXTOIEN_Msk));
-S            }
-S        }
-S    }    
-N#endif
-N  //  printf("\nuart02Transmission Test:");
+N	}
 N}
-N
+N*/
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* UART Callback function                                                                                  */
 N/*---------------------------------------------------------------------------------------------------------*/
@@ -51026,6 +51120,7 @@ N/* ISR to handle UART Channel 1 interrupt event                                
 N/*---------------------------------------------------------------------------------------------------------*/
 Nvoid UART1_IRQHandler(void)
 N{
+N
 N    UART_4G_HANDLE();
 N}
 N
@@ -51046,10 +51141,10 @@ N    printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
 N    printf("\nUART Sample Program\n");
 N	
 N    /* Enable UART1 UART2 RDA Interrupt */
-N	UART_EnableInt(UART2, UART_INTEN_RDAIEN_Msk );
-X	UART_EnableInt(((UART_T *) ((( uint32_t)0x40100000) + 0x54000)), (0x1ul << (0)) );
+N	//UART_EnableInt(UART2, UART_INTEN_RDAIEN_Msk );
 N	UART_EnableInt(UART1, UART_INTEN_RDAIEN_Msk );
 X	UART_EnableInt(((UART_T *) ((( uint32_t)0x40100000) + 0x50000)), (0x1ul << (0)) );
+N	//UART_EnableInt(UART0, UART_INTEN_RDAIEN_Msk );
 N
 N    return 0;
 N}
@@ -51057,10 +51152,10 @@ N
 N/*---------------------------------------------------------------------------------------------------------*/
 N/*  debug uart init                                                                                          */
 N/*---------------------------------------------------------------------------------------------------------*/
-Nint32_t Debug_Uart_Init(void)
+Nint32_t PTE_Uart0_Init(void)
 N{
-N	printf("debug uart init!\n");
-N    /* Init UART0 for printf and test */
+N	printf("pte uart0 init!\n");
+N    /* Init UART0 for PTE uart */
 N    UART0_Init();
 N	
 N    /* Enable UART RDA Interrupt */

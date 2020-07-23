@@ -29441,12 +29441,12 @@ Get_LR_and_Branch
 void SendChar_ToUART(int ch)
 {
 
-    while(((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (23)));
-    ((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->DAT = ch;
+    while(((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (23)));
+    ((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->DAT = ch;
     if(ch == '\n')
     {
-        while(((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (23)));
-        ((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->DAT = '\r';
+        while(((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (23)));
+        ((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->DAT = '\r';
     }
 }
 #line 506 "..\\lib\\StdDriver\\src\\retarget.c"
@@ -29483,9 +29483,9 @@ char GetChar(void)
 
     while(1)
     {
-        if((((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (14))) == 0)
+        if((((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (14))) == 0)
         {
-            return (((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->DAT);
+            return (((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->DAT);
         }
     }
 
@@ -29505,7 +29505,7 @@ char GetChar(void)
 
 int kbhit(void)
 {
-    return !((((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (14))) == 0);
+    return !((((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (14))) == 0);
 }
 
 
@@ -29520,7 +29520,7 @@ int kbhit(void)
 
 int IsDebugFifoEmpty(void)
 {
-    return ((((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & (0x1ul << (28))) != 0);
+    return ((((UART_T *) ((( uint32_t)0x40100000) + 0x54000))->FIFOSTS & (0x1ul << (28))) != 0);
 }
 
 

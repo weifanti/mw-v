@@ -29350,7 +29350,7 @@ void Cmd_Send2FourG_ModeSwitch(void);
 
 
 
-uint8_t g_4G_u8RecData[1024]  = {0};
+
 
 volatile uint32_t g_u324GRbytes = 0;
 volatile uint32_t g_u324GRhead  = 0;

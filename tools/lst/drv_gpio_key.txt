@@ -15,10 +15,10 @@
 ;;;97     
 ;;;98     
 ;;;99     	if (!IsTimeOut(&SoftwareKeyScanTimer))
-000004  4840              LDR      r0,|L1.264|
+000004  4846              LDR      r0,|L1.288|
 000006  f7fffffe          BL       IsTimeOut
 00000a  2800              CMP      r0,#0
-00000c  d036              BEQ      |L1.124|
+00000c  d03c              BEQ      |L1.136|
 ;;;100    	{
 ;;;101    	    
 ;;;102    		return;
@@ -27,11 +27,11 @@
 ;;;105    	
 ;;;106    	TimeOutSet(&SoftwareKeyScanTimer, SOFTWARE_KEY_SCAN_TIME);
 00000e  210a              MOVS     r1,#0xa
-000010  483d              LDR      r0,|L1.264|
+000010  4843              LDR      r0,|L1.288|
 000012  f7fffffe          BL       TimeOutSet
 ;;;107    
 ;;;108    	if(!POWER_KEY)
-000016  483d              LDR      r0,|L1.268|
+000016  4843              LDR      r0,|L1.292|
 000018  68c1              LDR      r1,[r0,#0xc]
 00001a  2900              CMP      r1,#0
 00001c  d003              BEQ      |L1.38|
@@ -58,14 +58,14 @@
 ;;;119    
 ;;;120    
 ;;;121    	switch(SoftwareKeyState)
-00002c  4e36              LDR      r6,|L1.264|
+00002c  4e3c              LDR      r6,|L1.288|
 00002e  2700              MOVS     r7,#0
 000030  3e0c              SUBS     r6,r6,#0xc
 000032  7870              LDRB     r0,[r6,#1]  ; SoftwareKeyState
 000034  2800              CMP      r0,#0
 000036  d007              BEQ      |L1.72|
 000038  2801              CMP      r0,#1
-00003a  d00f              BEQ      |L1.92|
+00003a  d012              BEQ      |L1.98|
 ;;;122    	{
 ;;;123    		case SOFTWARE_KEY_STATE_IDLE:
 ;;;124    			if(KeyIndex == 0)
@@ -75,7 +75,7 @@
 ;;;128    
 ;;;129    			PreKeyIndex = KeyIndex;
 ;;;130    			TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_JTTER_TIME);
-;;;131    			//DBG(("GOTO JITTER!\n"));
+;;;131    			printf("GOTO JITTER!\n");
 ;;;132    			SoftwareKeyState = SOFTWARE_KEY_STATE_JITTER;
 ;;;133    				
 ;;;134    		case SOFTWARE_KEY_STATE_JITTER:
@@ -87,7 +87,7 @@
 ;;;140    			}
 ;;;141    			else if(IsTimeOut(&SoftwareKeyWaitTimer))
 ;;;142    			{
-;;;143    				//DBG(("GOTO PRESS_DOWN!\n"));
+;;;143    				printf("GOTO PRESS_DOWN!\n");
 ;;;144    				TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_CP_TIME);
 ;;;145    				SoftwareKeyState = SOFTWARE_KEY_STATE_PRESS_DOWN;
 ;;;146    			}
@@ -98,38 +98,42 @@
 ;;;151    			{
 ;;;152    
 ;;;153    				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][SoftwareKeyState - SOFTWARE_KEY_STATE_PRESS_DOWN];
-00003c  4d34              LDR      r5,|L1.272|
+00003c  4d3a              LDR      r5,|L1.296|
 00003e  2802              CMP      r0,#2                 ;121
-000040  d01d              BEQ      |L1.126|
+000040  d023              BEQ      |L1.138|
 000042  2804              CMP      r0,#4                 ;121
-000044  d124              BNE      |L1.144|
-000046  e039              B        |L1.188|
+000044  d12a              BNE      |L1.156|
+000046  e042              B        |L1.206|
                   |L1.72|
 000048  2c00              CMP      r4,#0                 ;124
-00004a  d017              BEQ      |L1.124|
-00004c  482e              LDR      r0,|L1.264|
+00004a  d01d              BEQ      |L1.136|
+00004c  4834              LDR      r0,|L1.288|
 00004e  7034              STRB     r4,[r6,#0]            ;129
 000050  2114              MOVS     r1,#0x14              ;130
 000052  3808              SUBS     r0,r0,#8              ;130
 000054  f7fffffe          BL       TimeOutSet
-000058  2001              MOVS     r0,#1                 ;132
-00005a  7070              STRB     r0,[r6,#1]            ;132
-                  |L1.92|
-00005c  7830              LDRB     r0,[r6,#0]            ;136  ; PreKeyIndex
-00005e  42a0              CMP      r0,r4                 ;136
-000060  d116              BNE      |L1.144|
-000062  4829              LDR      r0,|L1.264|
-000064  3808              SUBS     r0,r0,#8              ;141
-000066  f7fffffe          BL       IsTimeOut
-00006a  2800              CMP      r0,#0                 ;141
-00006c  d006              BEQ      |L1.124|
-00006e  4826              LDR      r0,|L1.264|
-000070  4928              LDR      r1,|L1.276|
-000072  3808              SUBS     r0,r0,#8              ;144
-000074  f7fffffe          BL       TimeOutSet
-000078  2002              MOVS     r0,#2                 ;145
-00007a  7070              STRB     r0,[r6,#1]            ;145
-                  |L1.124|
+000058  a034              ADR      r0,|L1.300|
+00005a  f7fffffe          BL       __2printf
+00005e  2001              MOVS     r0,#1                 ;132
+000060  7070              STRB     r0,[r6,#1]            ;132
+                  |L1.98|
+000062  7830              LDRB     r0,[r6,#0]            ;136  ; PreKeyIndex
+000064  42a0              CMP      r0,r4                 ;136
+000066  d119              BNE      |L1.156|
+000068  482d              LDR      r0,|L1.288|
+00006a  3808              SUBS     r0,r0,#8              ;141
+00006c  f7fffffe          BL       IsTimeOut
+000070  2800              CMP      r0,#0                 ;141
+000072  d009              BEQ      |L1.136|
+000074  a031              ADR      r0,|L1.316|
+000076  f7fffffe          BL       __2printf
+00007a  4829              LDR      r0,|L1.288|
+00007c  4934              LDR      r1,|L1.336|
+00007e  3808              SUBS     r0,r0,#8              ;144
+000080  f7fffffe          BL       TimeOutSet
+000084  2002              MOVS     r0,#2                 ;145
+000086  7070              STRB     r0,[r6,#1]            ;145
+                  |L1.136|
 ;;;154    				
 ;;;155    				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 ;;;156    				return;
@@ -137,7 +141,7 @@
 ;;;158    			else if(IsTimeOut(&SoftwareKeyWaitTimer))
 ;;;159    			{
 ;;;160    				//return key cp value
-;;;161    				//DBG(("KEY CP!******\n"));
+;;;161    				printf("KEY CP!******\n");
 ;;;162    				TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_CP_TIME);
 ;;;163    				
 ;;;164    				SoftwareKeyState = SOFTWARE_KEY_STATE_CP;
@@ -151,10 +155,10 @@
 ;;;172    		case SOFTWARE_KEY_STATE_CP:
 ;;;173    			if(PreKeyIndex != KeyIndex)
 ;;;174    			{
-;;;175    				//return key cp value
-;;;176    				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
-;;;177    				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][2];
-;;;178    				Global_datas.key_led_blink = 1;
+;;;175    				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
+;;;176    				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][2];
+;;;177    				Global_datas.key_led_blink = 1;
+;;;178    
 ;;;179    				return;
 ;;;180    			}
 ;;;181    			else if(IsTimeOut(&SoftwareKeyWaitTimer))
@@ -167,104 +171,133 @@
 ;;;188    				{
 ;;;189    					Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][1];
 ;;;190    				}
-;;;191    				
-;;;192    				return;
-;;;193    			}
-;;;194    			break;
-;;;195    
-;;;196    		default:
-;;;197    			SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
-;;;198    			break;
-;;;199    	}
-;;;200    }
-00007c  bdf8              POP      {r3-r7,pc}
-                  |L1.126|
-00007e  7830              LDRB     r0,[r6,#0]            ;150  ; PreKeyIndex
-000080  42a0              CMP      r0,r4                 ;150
-000082  d007              BEQ      |L1.148|
-000084  0041              LSLS     r1,r0,#1              ;153
-000086  1841              ADDS     r1,r0,r1              ;153
-000088  4823              LDR      r0,|L1.280|
-00008a  1808              ADDS     r0,r1,r0              ;153
-00008c  7800              LDRB     r0,[r0,#0]            ;153
-00008e  75e8              STRB     r0,[r5,#0x17]         ;153
-                  |L1.144|
-000090  7077              STRB     r7,[r6,#1]            ;197
-                  |L1.146|
-000092  bdf8              POP      {r3-r7,pc}
-                  |L1.148|
-000094  481c              LDR      r0,|L1.264|
-000096  3808              SUBS     r0,r0,#8              ;158
-000098  f7fffffe          BL       IsTimeOut
-00009c  2800              CMP      r0,#0                 ;158
-00009e  d0f8              BEQ      |L1.146|
-0000a0  4819              LDR      r0,|L1.264|
-0000a2  491c              LDR      r1,|L1.276|
-0000a4  3808              SUBS     r0,r0,#8              ;162
-0000a6  f7fffffe          BL       TimeOutSet
-0000aa  2004              MOVS     r0,#4                 ;164
-0000ac  7070              STRB     r0,[r6,#1]            ;164
-0000ae  7830              LDRB     r0,[r6,#0]            ;166  ; PreKeyIndex
-0000b0  0041              LSLS     r1,r0,#1              ;166
-0000b2  1841              ADDS     r1,r0,r1              ;166
-0000b4  4818              LDR      r0,|L1.280|
-0000b6  1808              ADDS     r0,r1,r0              ;166
-0000b8  7840              LDRB     r0,[r0,#1]            ;166
-0000ba  e008              B        |L1.206|
-                  |L1.188|
-0000bc  7830              LDRB     r0,[r6,#0]            ;173  ; PreKeyIndex
-0000be  42a0              CMP      r0,r4                 ;173
-0000c0  d009              BEQ      |L1.214|
-0000c2  0041              LSLS     r1,r0,#1              ;177
-0000c4  1841              ADDS     r1,r0,r1              ;177
-0000c6  4814              LDR      r0,|L1.280|
-0000c8  7077              STRB     r7,[r6,#1]            ;176
-0000ca  1808              ADDS     r0,r1,r0              ;177
-0000cc  7880              LDRB     r0,[r0,#2]            ;177
+;;;191    
+;;;192    				
+;;;193    				printf("KEY CP!******\n");
+;;;194    				
+;;;195    				return;
+;;;196    			}
+;;;197    			break;
+;;;198    
+;;;199    		default:
+;;;200    			SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
+;;;201    			break;
+;;;202    	}
+;;;203    }
+000088  bdf8              POP      {r3-r7,pc}
+                  |L1.138|
+00008a  7830              LDRB     r0,[r6,#0]            ;150  ; PreKeyIndex
+00008c  42a0              CMP      r0,r4                 ;150
+00008e  d007              BEQ      |L1.160|
+000090  0041              LSLS     r1,r0,#1              ;153
+000092  1841              ADDS     r1,r0,r1              ;153
+000094  482f              LDR      r0,|L1.340|
+000096  1808              ADDS     r0,r1,r0              ;153
+000098  7800              LDRB     r0,[r0,#0]            ;153
+00009a  75e8              STRB     r0,[r5,#0x17]         ;153
+                  |L1.156|
+00009c  7077              STRB     r7,[r6,#1]            ;200
+                  |L1.158|
+00009e  bdf8              POP      {r3-r7,pc}
+                  |L1.160|
+0000a0  481f              LDR      r0,|L1.288|
+0000a2  3808              SUBS     r0,r0,#8              ;158
+0000a4  f7fffffe          BL       IsTimeOut
+0000a8  2800              CMP      r0,#0                 ;158
+0000aa  d0f8              BEQ      |L1.158|
+0000ac  a02a              ADR      r0,|L1.344|
+0000ae  f7fffffe          BL       __2printf
+0000b2  481b              LDR      r0,|L1.288|
+0000b4  4926              LDR      r1,|L1.336|
+0000b6  3808              SUBS     r0,r0,#8              ;162
+0000b8  f7fffffe          BL       TimeOutSet
+0000bc  2004              MOVS     r0,#4                 ;164
+0000be  7070              STRB     r0,[r6,#1]            ;164
+0000c0  7830              LDRB     r0,[r6,#0]            ;166  ; PreKeyIndex
+0000c2  0041              LSLS     r1,r0,#1              ;166
+0000c4  1841              ADDS     r1,r0,r1              ;166
+0000c6  4823              LDR      r0,|L1.340|
+0000c8  1808              ADDS     r0,r1,r0              ;166
+0000ca  7840              LDRB     r0,[r0,#1]            ;166
+0000cc  e008              B        |L1.224|
                   |L1.206|
-0000ce  75e8              STRB     r0,[r5,#0x17]         ;177
-0000d0  2001              MOVS     r0,#1                 ;178
-0000d2  7428              STRB     r0,[r5,#0x10]         ;178
-                  |L1.212|
-0000d4  bdf8              POP      {r3-r7,pc}
-                  |L1.214|
-0000d6  480c              LDR      r0,|L1.264|
-0000d8  3808              SUBS     r0,r0,#8              ;181
-0000da  f7fffffe          BL       IsTimeOut
-0000de  2800              CMP      r0,#0                 ;181
-0000e0  d0f8              BEQ      |L1.212|
-0000e2  4809              LDR      r0,|L1.264|
-0000e4  490b              LDR      r1,|L1.276|
-0000e6  3808              SUBS     r0,r0,#8              ;185
-0000e8  f7fffffe          BL       TimeOutSet
-0000ec  2004              MOVS     r0,#4                 ;186
-0000ee  7070              STRB     r0,[r6,#1]            ;186
-0000f0  2c04              CMP      r4,#4                 ;187
-0000f2  d001              BEQ      |L1.248|
-0000f4  2c05              CMP      r4,#5                 ;187
-0000f6  d1ed              BNE      |L1.212|
-                  |L1.248|
-0000f8  7830              LDRB     r0,[r6,#0]            ;189  ; PreKeyIndex
-0000fa  0041              LSLS     r1,r0,#1              ;189
-0000fc  1841              ADDS     r1,r0,r1              ;189
-0000fe  4806              LDR      r0,|L1.280|
-000100  1808              ADDS     r0,r1,r0              ;189
-000102  7840              LDRB     r0,[r0,#1]            ;189
-000104  75e8              STRB     r0,[r5,#0x17]         ;189
-000106  bdf8              POP      {r3-r7,pc}
-;;;201    
+0000ce  7830              LDRB     r0,[r6,#0]            ;173  ; PreKeyIndex
+0000d0  42a0              CMP      r0,r4                 ;173
+0000d2  d009              BEQ      |L1.232|
+0000d4  0041              LSLS     r1,r0,#1              ;176
+0000d6  1841              ADDS     r1,r0,r1              ;176
+0000d8  481e              LDR      r0,|L1.340|
+0000da  7077              STRB     r7,[r6,#1]            ;175
+0000dc  1808              ADDS     r0,r1,r0              ;176
+0000de  7880              LDRB     r0,[r0,#2]            ;176
+                  |L1.224|
+0000e0  75e8              STRB     r0,[r5,#0x17]         ;176
+0000e2  2001              MOVS     r0,#1                 ;177
+0000e4  7428              STRB     r0,[r5,#0x10]         ;177
+                  |L1.230|
+0000e6  bdf8              POP      {r3-r7,pc}
+                  |L1.232|
+0000e8  480d              LDR      r0,|L1.288|
+0000ea  3808              SUBS     r0,r0,#8              ;181
+0000ec  f7fffffe          BL       IsTimeOut
+0000f0  2800              CMP      r0,#0                 ;181
+0000f2  d0f8              BEQ      |L1.230|
+0000f4  480a              LDR      r0,|L1.288|
+0000f6  4916              LDR      r1,|L1.336|
+0000f8  3808              SUBS     r0,r0,#8              ;185
+0000fa  f7fffffe          BL       TimeOutSet
+0000fe  2004              MOVS     r0,#4                 ;186
+000100  7070              STRB     r0,[r6,#1]            ;186
+000102  2c04              CMP      r4,#4                 ;187
+000104  d001              BEQ      |L1.266|
+000106  2c05              CMP      r4,#5                 ;187
+000108  d106              BNE      |L1.280|
+                  |L1.266|
+00010a  7830              LDRB     r0,[r6,#0]            ;189  ; PreKeyIndex
+00010c  0041              LSLS     r1,r0,#1              ;189
+00010e  1841              ADDS     r1,r0,r1              ;189
+000110  4810              LDR      r0,|L1.340|
+000112  1808              ADDS     r0,r1,r0              ;189
+000114  7840              LDRB     r0,[r0,#1]            ;189
+000116  75e8              STRB     r0,[r5,#0x17]         ;189
+                  |L1.280|
+000118  a00f              ADR      r0,|L1.344|
+00011a  f7fffffe          BL       __2printf
+00011e  bdf8              POP      {r3-r7,pc}
+;;;204    
                           ENDP
 
-                  |L1.264|
+                  |L1.288|
                           DCD      ||area_number.8||+0xc
-                  |L1.268|
+                  |L1.292|
                           DCD      0x50004280
-                  |L1.272|
+                  |L1.296|
                           DCD      Global_datas+0x20
-                  |L1.276|
+                  |L1.300|
+00012c  474f544f          DCB      "GOTO JITTER!\n",0
+000130  204a4954
+000134  54455221
+000138  0a00    
+00013a  00                DCB      0
+00013b  00                DCB      0
+                  |L1.316|
+00013c  474f544f          DCB      "GOTO PRESS_DOWN!\n",0
+000140  20505245
+000144  53535f44
+000148  4f574e21
+00014c  0a00    
+00014e  00                DCB      0
+00014f  00                DCB      0
+                  |L1.336|
                           DCD      0x000005dc
-                  |L1.280|
+                  |L1.340|
                           DCD      ||.constdata||
+                  |L1.344|
+000158  4b455920          DCB      "KEY CP!******\n",0
+00015c  4350212a
+000160  2a2a2a2a
+000164  2a0a00  
+000167  00                DCB      0
 
                           AREA ||i.HwKeyScanInit||, CODE, READONLY, ALIGN=2
 

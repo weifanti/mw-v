@@ -643,7 +643,8 @@ void si47xxFMRX_powerup(void)
 
 #if 1
 		cmd[0] = POWER_UP;
-		cmd[1] = 0xc0;
+		//cmd[0] = 0x11;
+		cmd[1] = 0xD0;// C0
 		cmd[2] = 0x05;	
 
 #else

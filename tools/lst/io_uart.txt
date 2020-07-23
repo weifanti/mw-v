@@ -2,226 +2,227 @@
 ; commandline ArmCC [--list --split_sections --debug -c --asm --interleave -o.\obj\io_uart.o --asm_dir=.\lst\ --list_dir=.\lst\ --depend=.\obj\io_uart.d --cpu=Cortex-M0 --apcs=interwork --diag_suppress=9931 -I..\lib\CMSIS\Include -I..\lib\Device\Nuvoton\NUC029xGE\Include -I..\lib\StdDriver\inc -I..\src\core\include -I..\src\driver\include -I..\src\io\include -I..\src\global -I..\src\server\include -I..\src\driver\audio -D__UVISION_VERSION=522 --omf_browse=.\obj\io_uart.crf ..\src\io\io_uart.c]
                           THUMB
 
-                          AREA ||i.Debug_Uart_Init||, CODE, READONLY, ALIGN=2
-
-                  Debug_Uart_Init PROC
-;;;344    /*---------------------------------------------------------------------------------------------------------*/
-;;;345    int32_t Debug_Uart_Init(void)
-000000  b510              PUSH     {r4,lr}
-;;;346    {
-;;;347    	printf("debug uart init!\n");
-000002  a005              ADR      r0,|L1.24|
-000004  f7fffffe          BL       __2printf
-;;;348        /* Init UART0 for printf and test */
-;;;349        UART0_Init();
-000008  f7fffffe          BL       UART0_Init
-;;;350    	
-;;;351        /* Enable UART RDA Interrupt */
-;;;352        UART_EnableInt(UART0, UART_INTEN_RDAIEN_Msk );
-00000c  2101              MOVS     r1,#1
-00000e  4807              LDR      r0,|L1.44|
-000010  f7fffffe          BL       UART_EnableInt
-;;;353    
-;;;354    
-;;;355        return 0;
-000014  2000              MOVS     r0,#0
-;;;356    }
-000016  bd10              POP      {r4,pc}
-;;;357    
-                          ENDP
-
-                  |L1.24|
-000018  64656275          DCB      "debug uart init!\n",0
-00001c  67207561
-000020  72742069
-000024  6e697421
-000028  0a00    
-00002a  00                DCB      0
-00002b  00                DCB      0
-                  |L1.44|
-                          DCD      0x40050000
-
                           AREA ||i.Hal_Uart2_Read||, CODE, READONLY, ALIGN=2
 
                   Hal_Uart2_Read PROC
-;;;428     */
-;;;429    int32_t Hal_Uart2_Read(uint8_t *dst, uint16_t len)
+;;;506     */
+;;;507    int32_t Hal_Uart2_Read(uint8_t *dst, uint16_t len)
 000000  b530              PUSH     {r4,r5,lr}
-;;;430    {
-;;;431     //   uint8_t  temp1, temp2;
-;;;432     //   int32_t  temp3;
-;;;433     	int i;
-;;;434    
-;;;435        if((dst == NULL) || (len == 0))
+;;;508    {
+;;;509     //   uint8_t  temp1, temp2;
+;;;510     //   int32_t  temp3;
+;;;511     	int i;
+;;;512    
+;;;513        if((dst == NULL) || (len == 0))
 000002  2800              CMP      r0,#0
-000004  d005              BEQ      |L2.18|
+000004  d005              BEQ      |L1.18|
 000006  2900              CMP      r1,#0
-000008  d003              BEQ      |L2.18|
-;;;436        {
-;;;437            return -1;
-;;;438        }
-;;;439    
-;;;440        //while(uart2_data.rx_ok == 0)
-;;;441        //{
-;;;442        //;
-;;;443        //}
-;;;444    #if 0
-;;;445        /* wait while data in buff is less than len */
-;;;446        do
-;;;447        {
-;;;448            temp1 = uart2_data.rx_head;
-;;;449            temp2 = (temp1 <= uart2_data.rx_tail) ? (uart2_data.rx_tail - temp1) : (uart2_data.rx_tail + UART2_TX_BUFF_LEN - temp1);
-;;;450        }
-;;;451        while(temp2 < len);
-;;;452    
-;;;453        temp3 = 0;
-;;;454        while(temp2)
-;;;455        {
-;;;456            dst[temp3] = uart2_data.rx_buff[temp1];
-;;;457            temp1++;
-;;;458            temp2--;
-;;;459            temp3++;
-;;;460    
-;;;461            if(temp1 >= UART2_RX_BUFF_LEN)
-;;;462            {
-;;;463                temp1 = temp1 - UART2_RX_BUFF_LEN;
-;;;464            }
-;;;465    
-;;;466            uart2_data.rx_head = temp1;
-;;;467        }
-;;;468    #endif
-;;;469    
-;;;470    	for(i = 0; i<=len; i++)
+000008  d003              BEQ      |L1.18|
+;;;514        {
+;;;515            return -1;
+;;;516        }
+;;;517    
+;;;518        //while(uart2_data.rx_ok == 0)
+;;;519        //{
+;;;520        //;
+;;;521        //}
+;;;522    #if 0
+;;;523        /* wait while data in buff is less than len */
+;;;524        do
+;;;525        {
+;;;526            temp1 = uart2_data.rx_head;
+;;;527            temp2 = (temp1 <= uart2_data.rx_tail) ? (uart2_data.rx_tail - temp1) : (uart2_data.rx_tail + UART2_TX_BUFF_LEN - temp1);
+;;;528        }
+;;;529        while(temp2 < len);
+;;;530    
+;;;531        temp3 = 0;
+;;;532        while(temp2)
+;;;533        {
+;;;534            dst[temp3] = uart2_data.rx_buff[temp1];
+;;;535            temp1++;
+;;;536            temp2--;
+;;;537            temp3++;
+;;;538    
+;;;539            if(temp1 >= UART2_RX_BUFF_LEN)
+;;;540            {
+;;;541                temp1 = temp1 - UART2_RX_BUFF_LEN;
+;;;542            }
+;;;543    
+;;;544            uart2_data.rx_head = temp1;
+;;;545        }
+;;;546    #endif
+;;;547    
+;;;548    	for(i = 0; i<=len; i++)
 00000a  2200              MOVS     r2,#0
 00000c  4613              MOV      r3,r2
-;;;471    	{
-;;;472    		dst[i] =uart2_get_data[i];
-00000e  4c07              LDR      r4,|L2.44|
-000010  e006              B        |L2.32|
-                  |L2.18|
-000012  2000              MOVS     r0,#0                 ;437
-000014  43c0              MVNS     r0,r0                 ;437
-;;;473    		uart2_get_data[i] = 0;
-;;;474    	}
-;;;475    	uart_counts = 0;
-;;;476    /*
-;;;477        for(i = 0; i<=len; i++)
-;;;478        {
-;;;479            dst[i] = uart2_data.rx_buff[i];
-;;;480        }
-;;;481    
-;;;482    
-;;;483        uart2_data.rx_ok = 0;
-;;;484        uart2_data.rx_head = 0;
-;;;485        uart2_data.rx_tail = 0;
-;;;486        UART_EnableInt(UART2, (UART_INTEN_RDAIEN_Msk | UART_INTEN_RXTOIEN_Msk));
-;;;487    */
-;;;488        return 0;//temp3;
-;;;489    }
+;;;549    	{
+;;;550    		dst[i] =uart2_get_data[i];
+00000e  4c07              LDR      r4,|L1.44|
+000010  e006              B        |L1.32|
+                  |L1.18|
+000012  2000              MOVS     r0,#0                 ;515
+000014  43c0              MVNS     r0,r0                 ;515
+;;;551    		uart2_get_data[i] = 0;
+;;;552    	}
+;;;553    	uart_counts = 0;
+;;;554    /*
+;;;555        for(i = 0; i<=len; i++)
+;;;556        {
+;;;557            dst[i] = uart2_data.rx_buff[i];
+;;;558        }
+;;;559    
+;;;560    
+;;;561        uart2_data.rx_ok = 0;
+;;;562        uart2_data.rx_head = 0;
+;;;563        uart2_data.rx_tail = 0;
+;;;564        UART_EnableInt(UART2, (UART_INTEN_RDAIEN_Msk | UART_INTEN_RXTOIEN_Msk));
+;;;565    */
+;;;566        return 0;//temp3;
+;;;567    }
 000016  bd30              POP      {r4,r5,pc}
-                  |L2.24|
-000018  5ca5              LDRB     r5,[r4,r2]            ;472
-00001a  5485              STRB     r5,[r0,r2]            ;472
-00001c  54a3              STRB     r3,[r4,r2]            ;473
-00001e  1c52              ADDS     r2,r2,#1              ;473
-                  |L2.32|
-000020  428a              CMP      r2,r1                 ;470
-000022  ddf9              BLE      |L2.24|
-000024  4802              LDR      r0,|L2.48|
-000026  7083              STRB     r3,[r0,#2]            ;475
-000028  2000              MOVS     r0,#0                 ;488
+                  |L1.24|
+000018  5ca5              LDRB     r5,[r4,r2]            ;550
+00001a  5485              STRB     r5,[r0,r2]            ;550
+00001c  54a3              STRB     r3,[r4,r2]            ;551
+00001e  1c52              ADDS     r2,r2,#1              ;551
+                  |L1.32|
+000020  428a              CMP      r2,r1                 ;548
+000022  ddf9              BLE      |L1.24|
+000024  4802              LDR      r0,|L1.48|
+000026  7083              STRB     r3,[r0,#2]            ;553
+000028  2000              MOVS     r0,#0                 ;566
 00002a  bd30              POP      {r4,r5,pc}
-;;;490    
+;;;568    
                           ENDP
 
-                  |L2.44|
-                          DCD      ||.bss||+0x400
-                  |L2.48|
-                          DCD      ||.data||
+                  |L1.44|
+                          DCD      ||.bss||
+                  |L1.48|
+                          DCD      ||area_number.19||
 
                           AREA ||i.Hal_Uart2_Write||, CODE, READONLY, ALIGN=2
 
                   Hal_Uart2_Write PROC
-;;;365     */
-;;;366    int32_t Hal_Uart2_Write(uint8_t *src, uint16_t len)
+;;;443     */
+;;;444    int32_t Hal_Uart2_Write(uint8_t *src, uint16_t len)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;367    {
+;;;445    {
 000002  460d              MOV      r5,r1
 000004  4606              MOV      r6,r0
-;;;368    //    uint8_t  temp1, temp2;
-;;;369        int32_t  temp3;
-;;;370    #if 0
-;;;371        if((src == NULL) || (len == 0))
-;;;372        {
-;;;373            return -1;
-;;;374        }
-;;;375    
-;;;376        /* wait for the last tx */
-;;;377        while(uart2_data.tx_ok == 0)
-;;;378        {
-;;;379            ;
-;;;380        }
-;;;381    
-;;;382        /* write to buffer */
-;;;383        temp1 = (UART2_TX_BUFF_LEN >= len) ? len : UART2_TX_BUFF_LEN;
-;;;384        temp3 = 0;
-;;;385    
-;;;386        while(temp1)
-;;;387        {
-;;;388            temp2 = uart2_data.tx_tail;
-;;;389            uart2_data.tx_buff[temp2] = src[temp3];
-;;;390            temp2++;
-;;;391            temp3++;
-;;;392            temp1--;
-;;;393    
-;;;394            if(temp2 >= UART2_TX_BUFF_LEN)
-;;;395            {
-;;;396                temp2 = temp2 - UART2_TX_BUFF_LEN;
-;;;397            }
-;;;398    
-;;;399            uart2_data.tx_tail = temp2;
-;;;400        }
-;;;401    
-;;;402        uart2_data.tx_ok = 0;
-;;;403        UART_EnableInt(UART2, UART_INTEN_THREIEN_Msk);
-;;;404    
-;;;405        /* wait for the finish */
-;;;406        while(uart2_data.tx_ok == 0)
-;;;407        {
-;;;408            ;
-;;;409        }
-;;;410    #endif
-;;;411    	for(temp3 = 0; temp3 < len; temp3++)
+;;;446    //    uint8_t  temp1, temp2;
+;;;447        int32_t  temp3;
+;;;448    #if 0
+;;;449        if((src == NULL) || (len == 0))
+;;;450        {
+;;;451            return -1;
+;;;452        }
+;;;453    
+;;;454        /* wait for the last tx */
+;;;455        while(uart2_data.tx_ok == 0)
+;;;456        {
+;;;457            ;
+;;;458        }
+;;;459    
+;;;460        /* write to buffer */
+;;;461        temp1 = (UART2_TX_BUFF_LEN >= len) ? len : UART2_TX_BUFF_LEN;
+;;;462        temp3 = 0;
+;;;463    
+;;;464        while(temp1)
+;;;465        {
+;;;466            temp2 = uart2_data.tx_tail;
+;;;467            uart2_data.tx_buff[temp2] = src[temp3];
+;;;468            temp2++;
+;;;469            temp3++;
+;;;470            temp1--;
+;;;471    
+;;;472            if(temp2 >= UART2_TX_BUFF_LEN)
+;;;473            {
+;;;474                temp2 = temp2 - UART2_TX_BUFF_LEN;
+;;;475            }
+;;;476    
+;;;477            uart2_data.tx_tail = temp2;
+;;;478        }
+;;;479    
+;;;480        uart2_data.tx_ok = 0;
+;;;481        UART_EnableInt(UART2, UART_INTEN_THREIEN_Msk);
+;;;482    
+;;;483        /* wait for the finish */
+;;;484        while(uart2_data.tx_ok == 0)
+;;;485        {
+;;;486            ;
+;;;487        }
+;;;488    #endif
+;;;489    	for(temp3 = 0; temp3 < len; temp3++)
 000006  2400              MOVS     r4,#0
-;;;412    	{
-;;;413    		UART_WRITE(UART2, src[temp3]);
-000008  4f06              LDR      r7,|L3.36|
-00000a  e007              B        |L3.28|
-                  |L3.12|
+;;;490    	{
+;;;491    		UART_WRITE(UART2, src[temp3]);
+000008  4f06              LDR      r7,|L2.36|
+00000a  e007              B        |L2.28|
+                  |L2.12|
 00000c  5d30              LDRB     r0,[r6,r4]
 00000e  6038              STR      r0,[r7,#0]
-;;;414    		TIMER_Delay(TIMER0, 2000);
+;;;492    		TIMER_Delay(TIMER0, 2000);
 000010  217d              MOVS     r1,#0x7d
 000012  0109              LSLS     r1,r1,#4
-000014  4804              LDR      r0,|L3.40|
+000014  4804              LDR      r0,|L2.40|
 000016  f7fffffe          BL       TIMER_Delay
 00001a  1c64              ADDS     r4,r4,#1
-                  |L3.28|
-00001c  42ac              CMP      r4,r5                 ;411
-00001e  dbf5              BLT      |L3.12|
-;;;415    		//printf("UART_WRITE: %x \n",src[temp3]);
-;;;416    	}
-;;;417        return temp3;
+                  |L2.28|
+00001c  42ac              CMP      r4,r5                 ;489
+00001e  dbf5              BLT      |L2.12|
+;;;493    		//printf("UART_WRITE: %x \n",src[temp3]);
+;;;494    	}
+;;;495        return temp3;
 000020  4620              MOV      r0,r4
-;;;418    }
+;;;496    }
 000022  bdf8              POP      {r3-r7,pc}
-;;;419    
+;;;497    
                           ENDP
 
-                  |L3.36|
+                  |L2.36|
                           DCD      0x40154000
-                  |L3.40|
+                  |L2.40|
                           DCD      0x40010000
+
+                          AREA ||i.PTE_Uart0_Init||, CODE, READONLY, ALIGN=2
+
+                  PTE_Uart0_Init PROC
+;;;422    /*---------------------------------------------------------------------------------------------------------*/
+;;;423    int32_t PTE_Uart0_Init(void)
+000000  b510              PUSH     {r4,lr}
+;;;424    {
+;;;425    	printf("pte uart0 init!\n");
+000002  a005              ADR      r0,|L3.24|
+000004  f7fffffe          BL       __2printf
+;;;426        /* Init UART0 for PTE uart */
+;;;427        UART0_Init();
+000008  f7fffffe          BL       UART0_Init
+;;;428    	
+;;;429        /* Enable UART RDA Interrupt */
+;;;430        UART_EnableInt(UART0, UART_INTEN_RDAIEN_Msk );
+00000c  2101              MOVS     r1,#1
+00000e  4807              LDR      r0,|L3.44|
+000010  f7fffffe          BL       UART_EnableInt
+;;;431    
+;;;432    
+;;;433        return 0;
+000014  2000              MOVS     r0,#0
+;;;434    }
+000016  bd10              POP      {r4,pc}
+;;;435    
+                          ENDP
+
+                  |L3.24|
+000018  70746520          DCB      "pte uart0 init!\n",0
+00001c  75617274
+000020  3020696e
+000024  6974210a
+000028  00      
+000029  00                DCB      0
+00002a  00                DCB      0
+00002b  00                DCB      0
+                  |L3.44|
+                          DCD      0x40050000
 
                           AREA ||i.Transfer_Uart_Init||, CODE, READONLY, ALIGN=2
 
@@ -229,125 +230,121 @@
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
                   Transfer_Uart_Init PROC
-;;;322    /*---------------------------------------------------------------------------------------------------------*/
-;;;323    int32_t Transfer_Uart_Init(void)
+;;;399    /*---------------------------------------------------------------------------------------------------------*/
+;;;400    int32_t Transfer_Uart_Init(void)
 000000  b510              PUSH     {r4,lr}
-;;;324    {
-;;;325    	printf("transfer uart init!\n");
-000002  a00c              ADR      r0,|L4.52|
+;;;401    {
+;;;402    	printf("transfer uart init!\n");
+000002  a00a              ADR      r0,|L4.44|
 000004  f7fffffe          BL       __2printf
-;;;326        /* Init UART0 for printf and test */
-;;;327        UART1_Init();
+;;;403        /* Init UART0 for printf and test */
+;;;404        UART1_Init();
 000008  f7fffffe          BL       UART1_Init
-;;;328    
-;;;329        /* Init UART0 for printf and test */
-;;;330        UART2_Init();
+;;;405    
+;;;406        /* Init UART0 for printf and test */
+;;;407        UART2_Init();
 00000c  f7fffffe          BL       UART2_Init
-;;;331    	
-;;;332        printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
-000010  480e              LDR      r0,|L4.76|
+;;;408    	
+;;;409        printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
+000010  480c              LDR      r0,|L4.68|
 000012  6801              LDR      r1,[r0,#0]  ; SystemCoreClock
-000014  a00e              ADR      r0,|L4.80|
+000014  a00c              ADR      r0,|L4.72|
 000016  f7fffffe          BL       __2printf
-;;;333        printf("\nUART Sample Program\n");
-00001a  a011              ADR      r0,|L4.96|
+;;;410        printf("\nUART Sample Program\n");
+00001a  a00f              ADR      r0,|L4.88|
 00001c  f7fffffe          BL       __2printf
-;;;334    	
-;;;335        /* Enable UART1 UART2 RDA Interrupt */
-;;;336    	UART_EnableInt(UART2, UART_INTEN_RDAIEN_Msk );
+;;;411    	
+;;;412        /* Enable UART1 UART2 RDA Interrupt */
+;;;413    	//UART_EnableInt(UART2, UART_INTEN_RDAIEN_Msk );
+;;;414    	UART_EnableInt(UART1, UART_INTEN_RDAIEN_Msk );
 000020  2101              MOVS     r1,#1
-000022  4815              LDR      r0,|L4.120|
+000022  4813              LDR      r0,|L4.112|
 000024  f7fffffe          BL       UART_EnableInt
-;;;337    	UART_EnableInt(UART1, UART_INTEN_RDAIEN_Msk );
-000028  2101              MOVS     r1,#1
-00002a  4814              LDR      r0,|L4.124|
-00002c  f7fffffe          BL       UART_EnableInt
-;;;338    
-;;;339        return 0;
-000030  2000              MOVS     r0,#0
-;;;340    }
-000032  bd10              POP      {r4,pc}
-;;;341    
+;;;415    	//UART_EnableInt(UART0, UART_INTEN_RDAIEN_Msk );
+;;;416    
+;;;417        return 0;
+000028  2000              MOVS     r0,#0
+;;;418    }
+00002a  bd10              POP      {r4,pc}
+;;;419    
                           ENDP
 
-                  |L4.52|
-000034  7472616e          DCB      "transfer uart init!\n",0
-000038  73666572
-00003c  20756172
-000040  7420696e
-000044  6974210a
-000048  00      
-000049  00                DCB      0
-00004a  00                DCB      0
-00004b  00                DCB      0
-                  |L4.76|
+                  |L4.44|
+00002c  7472616e          DCB      "transfer uart init!\n",0
+000030  73666572
+000034  20756172
+000038  7420696e
+00003c  6974210a
+000040  00      
+000041  00                DCB      0
+000042  00                DCB      0
+000043  00                DCB      0
+                  |L4.68|
                           DCD      SystemCoreClock
-                  |L4.80|
-000050  0a0a4350          DCB      "\n\nCPU @ %d Hz\n",0
-000054  55204020
-000058  25642048
-00005c  7a0a00  
-00005f  00                DCB      0
-                  |L4.96|
-000060  0a554152          DCB      "\nUART Sample Program\n",0
-000064  54205361
-000068  6d706c65
-00006c  2050726f
-000070  6772616d
-000074  0a00    
-000076  00                DCB      0
-000077  00                DCB      0
-                  |L4.120|
-                          DCD      0x40154000
-                  |L4.124|
+                  |L4.72|
+000048  0a0a4350          DCB      "\n\nCPU @ %d Hz\n",0
+00004c  55204020
+000050  25642048
+000054  7a0a00  
+000057  00                DCB      0
+                  |L4.88|
+000058  0a554152          DCB      "\nUART Sample Program\n",0
+00005c  54205361
+000060  6d706c65
+000064  2050726f
+000068  6772616d
+00006c  0a00    
+00006e  00                DCB      0
+00006f  00                DCB      0
+                  |L4.112|
                           DCD      0x40150000
 
                           AREA ||i.UART02_IRQHandler||, CODE, READONLY, ALIGN=1
 
                   UART02_IRQHandler PROC
-;;;304    /*---------------------------------------------------------------------------------------------------------*/
-;;;305    void UART02_IRQHandler(void)
+;;;380    /*---------------------------------------------------------------------------------------------------------*/
+;;;381    void UART02_IRQHandler(void)
 000000  b510              PUSH     {r4,lr}
-;;;306    {
-;;;307        UART_TEST_HANDLE();
+;;;382    {
+;;;383        UART_TEST_HANDLE();
 000002  f7fffffe          BL       UART_TEST_HANDLE
-;;;308    }
+;;;384    }
 000006  bd10              POP      {r4,pc}
-;;;309    
+;;;385    
                           ENDP
 
 
                           AREA ||i.UART0_Init||, CODE, READONLY, ALIGN=2
 
                   UART0_Init PROC
-;;;74     
-;;;75     void UART0_Init()
+;;;75     
+;;;76     void UART0_Init()
 000000  2005              MOVS     r0,#5
-;;;76     {
-;;;77         /* Reset UART0 */
-;;;78         SYS->IPRST1 |=  SYS_IPRST1_UART0RST_Msk;
+;;;77     {
+;;;78         /* Reset UART0 */
+;;;79         SYS->IPRST1 |=  SYS_IPRST1_UART0RST_Msk;
 000002  0700              LSLS     r0,r0,#28
 000004  68c2              LDR      r2,[r0,#0xc]
 000006  2101              MOVS     r1,#1
 000008  0409              LSLS     r1,r1,#16
 00000a  430a              ORRS     r2,r2,r1
 00000c  60c2              STR      r2,[r0,#0xc]
-;;;79         SYS->IPRST1 &= ~SYS_IPRST1_UART0RST_Msk;
+;;;80         SYS->IPRST1 &= ~SYS_IPRST1_UART0RST_Msk;
 00000e  68c2              LDR      r2,[r0,#0xc]
 000010  438a              BICS     r2,r2,r1
 000012  60c2              STR      r2,[r0,#0xc]
-;;;80     
-;;;81         /* Configure UART0 and set UART0 baud rate */
-;;;82         UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HXT, 115200);
+;;;81     
+;;;82         /* Configure UART0 and set UART0 baud rate */
+;;;83         UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HXT, 115200);
 000014  4803              LDR      r0,|L6.36|
 000016  4902              LDR      r1,|L6.32|
 000018  6241              STR      r1,[r0,#0x24]
-;;;83         UART0->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
+;;;84         UART0->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 00001a  2103              MOVS     r1,#3
 00001c  60c1              STR      r1,[r0,#0xc]
-;;;84     }
+;;;85     }
 00001e  4770              BX       lr
-;;;85     
+;;;86     
                           ENDP
 
                   |L6.32|
@@ -358,49 +355,50 @@
                           AREA ||i.UART1_IRQHandler||, CODE, READONLY, ALIGN=1
 
                   UART1_IRQHandler PROC
-;;;313    /*---------------------------------------------------------------------------------------------------------*/
-;;;314    void UART1_IRQHandler(void)
+;;;389    /*---------------------------------------------------------------------------------------------------------*/
+;;;390    void UART1_IRQHandler(void)
 000000  b510              PUSH     {r4,lr}
-;;;315    {
-;;;316        UART_4G_HANDLE();
+;;;391    {
+;;;392    
+;;;393        UART_4G_HANDLE();
 000002  f7fffffe          BL       UART_4G_HANDLE
-;;;317    }
+;;;394    }
 000006  bd10              POP      {r4,pc}
-;;;318    
+;;;395    
                           ENDP
 
 
                           AREA ||i.UART1_Init||, CODE, READONLY, ALIGN=2
 
                   UART1_Init PROC
-;;;85     
-;;;86     void UART1_Init()
+;;;86     
+;;;87     void UART1_Init()
 000000  2005              MOVS     r0,#5
-;;;87     {
-;;;88         /* Reset UART1 */
-;;;89         SYS->IPRST1 |=  SYS_IPRST1_UART1RST_Msk;
+;;;88     {
+;;;89         /* Reset UART1 */
+;;;90         SYS->IPRST1 |=  SYS_IPRST1_UART1RST_Msk;
 000002  0700              LSLS     r0,r0,#28
 000004  68c2              LDR      r2,[r0,#0xc]
 000006  2101              MOVS     r1,#1
 000008  0449              LSLS     r1,r1,#17
 00000a  430a              ORRS     r2,r2,r1
 00000c  60c2              STR      r2,[r0,#0xc]
-;;;90         SYS->IPRST1 &= ~SYS_IPRST1_UART1RST_Msk;
+;;;91         SYS->IPRST1 &= ~SYS_IPRST1_UART1RST_Msk;
 00000e  68c2              LDR      r2,[r0,#0xc]
 000010  438a              BICS     r2,r2,r1
 000012  60c2              STR      r2,[r0,#0xc]
-;;;91     
-;;;92         /* Configure UART0 and set UART0 baud rate */
-;;;93         UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HXT, 19200);
+;;;92     
+;;;93         /* Configure UART0 and set UART0 baud rate */
+;;;94         UART1->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HXT, 19200);
 000014  4803              LDR      r0,|L8.36|
 000016  4902              LDR      r1,|L8.32|
 000018  6241              STR      r1,[r0,#0x24]
-;;;94         UART1->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
+;;;95         UART1->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 00001a  2103              MOVS     r1,#3
 00001c  60c1              STR      r1,[r0,#0xc]
-;;;95     }
+;;;96     }
 00001e  4770              BX       lr
-;;;96     
+;;;97     
                           ENDP
 
                   |L8.32|
@@ -411,29 +409,29 @@
                           AREA ||i.UART2_Init||, CODE, READONLY, ALIGN=2
 
                   UART2_Init PROC
-;;;96     
-;;;97     void UART2_Init()
+;;;97     
+;;;98     void UART2_Init()
 000000  2005              MOVS     r0,#5
-;;;98     {
-;;;99         /* Reset UART0 */
-;;;100        SYS->IPRST1 |=  SYS_IPRST1_UART2RST_Msk;
+;;;99     {
+;;;100        /* Reset UART0 */
+;;;101        SYS->IPRST1 |=  SYS_IPRST1_UART2RST_Msk;
 000002  0700              LSLS     r0,r0,#28
 000004  68c2              LDR      r2,[r0,#0xc]
 000006  2101              MOVS     r1,#1
 000008  0489              LSLS     r1,r1,#18
 00000a  430a              ORRS     r2,r2,r1
 00000c  60c2              STR      r2,[r0,#0xc]
-;;;101        SYS->IPRST1 &= ~SYS_IPRST1_UART2RST_Msk;
+;;;102        SYS->IPRST1 &= ~SYS_IPRST1_UART2RST_Msk;
 00000e  68c2              LDR      r2,[r0,#0xc]
 000010  438a              BICS     r2,r2,r1
 000012  60c2              STR      r2,[r0,#0xc]
-;;;102    
-;;;103        /* Configure UART0 and set UART0 baud rate */
-;;;104        UART2->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HXT, 115200);
+;;;103    
+;;;104        /* Configure UART0 and set UART0 baud rate */
+;;;105        UART2->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(__HXT, 115200);
 000014  4808              LDR      r0,|L9.56|
 000016  4907              LDR      r1,|L9.52|
 000018  6241              STR      r1,[r0,#0x24]
-;;;105        UART2->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
+;;;106        UART2->LINE = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 00001a  2103              MOVS     r1,#3
 00001c  60c1              STR      r1,[r0,#0xc]
 00001e  4807              LDR      r0,|L9.60|
@@ -445,10 +443,10 @@
 00002a  7641              STRB     r1,[r0,#0x19]
 00002c  2101              MOVS     r1,#1
 00002e  76c1              STRB     r1,[r0,#0x1b]
-;;;106    	Hal_Uart2_Data_Init();
-;;;107    }
+;;;107    	Hal_Uart2_Data_Init();
+;;;108    }
 000030  4770              BX       lr
-;;;108    
+;;;109    
                           ENDP
 
 000032  0000              DCW      0x0000
@@ -457,366 +455,471 @@
                   |L9.56|
                           DCD      0x40154000
                   |L9.60|
-                          DCD      ||.bss||+0x556
+                          DCD      ||.bss||+0x156
 
                           AREA ||i.UART_4G_HANDLE||, CODE, READONLY, ALIGN=2
 
                   UART_4G_HANDLE PROC
-;;;212    /*---------------------------------------------------------------------------------------------------------*/
-;;;213    void UART_4G_HANDLE(void)
+;;;288    /*---------------------------------------------------------------------------------------------------------*/
+;;;289    void UART_4G_HANDLE(void)
 000000  b570              PUSH     {r4-r6,lr}
-;;;214    {
-;;;215        uint8_t u8InChar = 0xFF;
-;;;216    	static uint8_t nRxIndex=0;
-;;;217    	
-;;;218    	UART_ClearIntFlag(UART1, UART_INTEN_RDAIEN_Msk);
+;;;290    {
+;;;291        uint8_t u8InChar = 0xFF;
+;;;292    	static uint8_t nRxIndex=0;
+;;;293    	
+;;;294    	UART_ClearIntFlag(UART1, UART_INTEN_RDAIEN_Msk);
 000002  4c23              LDR      r4,|L10.144|
 000004  2101              MOVS     r1,#1
 000006  4620              MOV      r0,r4
 000008  f7fffffe          BL       UART_ClearIntFlag
-;;;219    
-;;;220    	if(UART_IS_RX_READY(UART1))
+;;;295    
+;;;296    	if(UART_IS_RX_READY(UART1))
 00000c  69e1              LDR      r1,[r4,#0x1c]
 00000e  07c9              LSLS     r1,r1,#31
 000010  d00f              BEQ      |L10.50|
-;;;221        {
-;;;222    	    u8InChar = UART_READ(UART1);
+;;;297        {
+;;;298    	    u8InChar = UART_READ(UART1);
 000012  6820              LDR      r0,[r4,#0]
-;;;223    //		u8InChar = UUART_WRITE(UUART0,u8InChar);
-;;;224    		switch (nRxIndex)
+;;;299    //		u8InChar = UUART_WRITE(UUART0,u8InChar);
+;;;300    		switch (nRxIndex)
 000014  4c1f              LDR      r4,|L10.148|
-000016  b2c0              UXTB     r0,r0                 ;222
-000018  78e2              LDRB     r2,[r4,#3]  ; nRxIndex
+000016  b2c0              UXTB     r0,r0                 ;298
+000018  79a2              LDRB     r2,[r4,#6]  ; nRxIndex
 00001a  2500              MOVS     r5,#0
-00001c  2101              MOVS     r1,#1                 ;218
+00001c  2101              MOVS     r1,#1                 ;294
 00001e  0013              MOVS     r3,r2
 000020  f7fffffe          BL       __ARM_common_switch8
 000024  0805080f          DCB      0x08,0x05,0x08,0x0f
 000028  161a1d20          DCB      0x16,0x1a,0x1d,0x20
 00002c  2725              DCB      0x27,0x25
-;;;225    		{
-;;;226    			case 0: 
-;;;227    				
-;;;228    				if(u8InChar==0xff) nRxIndex=1;
+;;;301    		{
+;;;302    			case 0: 
+;;;303    				
+;;;304    				if(u8InChar==0xff) nRxIndex=1;
 00002e  28ff              CMP      r0,#0xff
 000030  d02b              BEQ      |L10.138|
                   |L10.50|
-;;;229    				break;
-;;;230    				
-;;;231    			case 1: 
-;;;232    				if(u8InChar==0x55) nRxIndex=2;
-;;;233    				else
-;;;234    				{
-;;;235    					if(u8InChar==0xff) nRxIndex=1;
-;;;236    					else 
-;;;237    						nRxIndex=0;
-;;;238    				}
-;;;239    				break;
-;;;240    
-;;;241    			case 2: 
-;;;242    				if(u8InChar==0x04) nRxIndex=3;
-;;;243    				else
-;;;244    				{
-;;;245    					if(u8InChar==0xff) nRxIndex=1;
-;;;246    					else 
-;;;247    						nRxIndex=0;
-;;;248    				}
-;;;249    				break;
-;;;250    				
-;;;251    			case 3: 
-;;;252    				if(u8InChar==0x80) nRxIndex=4;
-;;;253    				else
-;;;254    				{
-;;;255    					if(u8InChar==0xff) nRxIndex=1;
-;;;256    					else 
-;;;257    						nRxIndex=0;
-;;;258    				}
-;;;259    				break;
-;;;260    			
-;;;261    			case 4:  
-;;;262    				uart1_cmd = u8InChar;
-;;;263    				
-;;;264    				nRxIndex=5;
-;;;265    				break;	
-;;;266    				
-;;;267    			case 5:
-;;;268    				uart1_dat = u8InChar;
-;;;269    				
-;;;270    				nRxIndex=6;
-;;;271    				break;
-;;;272    				
-;;;273    			case 6:  
-;;;274    				if(u8InChar==0x00) nRxIndex=7;  //
-;;;275    				else
-;;;276    				{
-;;;277    					if(u8InChar==0xff) nRxIndex=1;
-;;;278    					else 
-;;;279    						nRxIndex=0;
-;;;280    				}
-;;;281    				break;	
-;;;282    				
-;;;283    			case 7:
-;;;284    				if(u8InChar==0xff) nRxIndex=1;
-;;;285    				else 
-;;;286    				{
-;;;287    					Core_Msg_Send(MSG_4G_SYS_STATE_IND, uart1_cmd ,uart1_dat,0);
-;;;288    					uart1_cmd = 0xFF;
-;;;289    					uart1_dat = 0xFF;
-;;;290    					nRxIndex=0;
-;;;291    				}
-;;;292    				break;
-;;;293    					
-;;;294    			default:
-;;;295    				nRxIndex=0;
-;;;296    				break;
-;;;297    		} 
-;;;298    	}
-;;;299    
-;;;300    }
+;;;305    				break;
+;;;306    				
+;;;307    			case 1: 
+;;;308    				if(u8InChar==0x55) nRxIndex=2;
+;;;309    				else
+;;;310    				{
+;;;311    					if(u8InChar==0xff) nRxIndex=1;
+;;;312    					else 
+;;;313    						nRxIndex=0;
+;;;314    				}
+;;;315    				break;
+;;;316    
+;;;317    			case 2: 
+;;;318    				if(u8InChar==0x04) nRxIndex=3;
+;;;319    				else
+;;;320    				{
+;;;321    					if(u8InChar==0xff) nRxIndex=1;
+;;;322    					else 
+;;;323    						nRxIndex=0;
+;;;324    				}
+;;;325    				break;
+;;;326    				
+;;;327    			case 3: 
+;;;328    				if(u8InChar==0x80) nRxIndex=4;
+;;;329    				else
+;;;330    				{
+;;;331    					if(u8InChar==0xff) nRxIndex=1;
+;;;332    					else 
+;;;333    						nRxIndex=0;
+;;;334    				}
+;;;335    				break;
+;;;336    			
+;;;337    			case 4:  
+;;;338    				uart1_cmd = u8InChar;
+;;;339    				
+;;;340    				nRxIndex=5;
+;;;341    				break;	
+;;;342    				
+;;;343    			case 5:
+;;;344    				uart1_dat = u8InChar;
+;;;345    				
+;;;346    				nRxIndex=6;
+;;;347    				break;
+;;;348    				
+;;;349    			case 6:  
+;;;350    				if(u8InChar==0x00) nRxIndex=7;  //
+;;;351    				else
+;;;352    				{
+;;;353    					if(u8InChar==0xff) nRxIndex=1;
+;;;354    					else 
+;;;355    						nRxIndex=0;
+;;;356    				}
+;;;357    				break;	
+;;;358    				
+;;;359    			case 7:
+;;;360    				if(u8InChar==0xff) nRxIndex=1;
+;;;361    				else 
+;;;362    				{
+;;;363    					Core_Msg_Send(MSG_4G_SYS_STATE_IND, uart1_cmd ,uart1_dat,0);
+;;;364    					uart1_cmd = 0xFF;
+;;;365    					uart1_dat = 0xFF;
+;;;366    					nRxIndex=0;
+;;;367    				}
+;;;368    				break;
+;;;369    					
+;;;370    			default:
+;;;371    				nRxIndex=0;
+;;;372    				break;
+;;;373    		} 
+;;;374    	}
+;;;375    
+;;;376    }
 000032  bd70              POP      {r4-r6,pc}
-000034  2855              CMP      r0,#0x55              ;232
+000034  2855              CMP      r0,#0x55              ;308
 000036  d002              BEQ      |L10.62|
-000038  28ff              CMP      r0,#0xff              ;235
+000038  28ff              CMP      r0,#0xff              ;311
 00003a  d0fa              BEQ      |L10.50|
 00003c  e017              B        |L10.110|
                   |L10.62|
-00003e  2002              MOVS     r0,#2                 ;232
+00003e  2002              MOVS     r0,#2                 ;308
 000040  e013              B        |L10.106|
-000042  2804              CMP      r0,#4                 ;242
+000042  2804              CMP      r0,#4                 ;318
 000044  d101              BNE      |L10.74|
-000046  2003              MOVS     r0,#3                 ;242
+000046  2003              MOVS     r0,#3                 ;318
 000048  e00f              B        |L10.106|
                   |L10.74|
-00004a  28ff              CMP      r0,#0xff              ;245
+00004a  28ff              CMP      r0,#0xff              ;321
 00004c  d01d              BEQ      |L10.138|
 00004e  e00e              B        |L10.110|
-000050  2880              CMP      r0,#0x80              ;252
+000050  2880              CMP      r0,#0x80              ;328
 000052  d1fa              BNE      |L10.74|
-000054  2004              MOVS     r0,#4                 ;252
+000054  2004              MOVS     r0,#4                 ;328
 000056  e008              B        |L10.106|
-000058  7020              STRB     r0,[r4,#0]            ;262
-00005a  2005              MOVS     r0,#5                 ;264
+000058  7020              STRB     r0,[r4,#0]            ;338
+00005a  2005              MOVS     r0,#5                 ;340
 00005c  e005              B        |L10.106|
-00005e  7060              STRB     r0,[r4,#1]            ;268
-000060  2006              MOVS     r0,#6                 ;270
+00005e  7060              STRB     r0,[r4,#1]            ;344
+000060  2006              MOVS     r0,#6                 ;346
 000062  e002              B        |L10.106|
-000064  2800              CMP      r0,#0                 ;274
+000064  2800              CMP      r0,#0                 ;350
 000066  d1f0              BNE      |L10.74|
-000068  2007              MOVS     r0,#7                 ;274
+000068  2007              MOVS     r0,#7                 ;350
                   |L10.106|
-00006a  70e0              STRB     r0,[r4,#3]            ;274
+00006a  71a0              STRB     r0,[r4,#6]            ;350
 00006c  bd70              POP      {r4-r6,pc}
                   |L10.110|
-00006e  70e5              STRB     r5,[r4,#3]            ;279
+00006e  71a5              STRB     r5,[r4,#6]            ;355
 000070  bd70              POP      {r4-r6,pc}
-000072  28ff              CMP      r0,#0xff              ;284
+000072  28ff              CMP      r0,#0xff              ;360
 000074  d009              BEQ      |L10.138|
-000076  7862              LDRB     r2,[r4,#1]            ;287  ; uart1_dat
-000078  2300              MOVS     r3,#0                 ;287
-00007a  7821              LDRB     r1,[r4,#0]            ;287  ; uart1_cmd
-00007c  2001              MOVS     r0,#1                 ;287
+000076  7862              LDRB     r2,[r4,#1]            ;363  ; uart1_dat
+000078  2300              MOVS     r3,#0                 ;363
+00007a  7821              LDRB     r1,[r4,#0]            ;363  ; uart1_cmd
+00007c  2001              MOVS     r0,#1                 ;363
 00007e  f7fffffe          BL       Core_Msg_Send
-000082  20ff              MOVS     r0,#0xff              ;288
-000084  7020              STRB     r0,[r4,#0]            ;288
-000086  7060              STRB     r0,[r4,#1]            ;289
+000082  20ff              MOVS     r0,#0xff              ;364
+000084  7020              STRB     r0,[r4,#0]            ;364
+000086  7060              STRB     r0,[r4,#1]            ;365
 000088  e7f1              B        |L10.110|
                   |L10.138|
-00008a  70e1              STRB     r1,[r4,#3]            ;284
+00008a  71a1              STRB     r1,[r4,#6]            ;360
 00008c  bd70              POP      {r4-r6,pc}
-;;;301    
+;;;377    
                           ENDP
 
 00008e  0000              DCW      0x0000
                   |L10.144|
                           DCD      0x40150000
                   |L10.148|
-                          DCD      ||.data||
+                          DCD      ||area_number.19||
 
                           AREA ||i.UART_TEST_HANDLE||, CODE, READONLY, ALIGN=2
 
+                          REQUIRE _printf_percent
+                          REQUIRE _printf_x
+                          REQUIRE _printf_longlong_hex
                   UART_TEST_HANDLE PROC
-;;;111    /*---------------------------------------------------------------------------------------------------------*/
-;;;112    void UART_TEST_HANDLE()
-000000  b570              PUSH     {r4-r6,lr}
-;;;113    {
-;;;114        uint8_t u8InChar = 0xFF;	
-;;;115    	//static uint8_t nRxIndex=0;
-;;;116      //  uint8_t  temp1, temp2, cnt;
-;;;117    	
-;;;118        //uint32_t u32IntSts = UART0->INTSTS;
-;;;119    	UART_ClearIntFlag(UART0, UART_INTEN_RDAIEN_Msk);
-000002  4e1d              LDR      r6,|L11.120|
-000004  2101              MOVS     r1,#1
-000006  4630              MOV      r0,r6
-000008  f7fffffe          BL       UART_ClearIntFlag
-;;;120    	UART_ClearIntFlag(UART2, UART_INTEN_RDAIEN_Msk);
-00000c  4c1b              LDR      r4,|L11.124|
-00000e  2101              MOVS     r1,#1
-000010  4620              MOV      r0,r4
-000012  f7fffffe          BL       UART_ClearIntFlag
-;;;121    //  printf("\nuart02_Input:");
-;;;122        /* Get all the input characters */
-;;;123    	 if(UART_IS_RX_READY(UART0))
-000016  69f0              LDR      r0,[r6,#0x1c]
-000018  2500              MOVS     r5,#0
-00001a  07c0              LSLS     r0,r0,#31
-;;;124        {
-;;;125            /* Get the character from UART Buffer */
-;;;126            u8InChar = UART_READ(UART0);
-;;;127    //        printf("\nUART0_READ = %x ", u8InChar);
-;;;128    //		UART_WRITE(UART2,u8InChar);
-;;;129    //		UART_WRITE(UART0,u8InChar);
-;;;130    
-;;;131            if(u8InChar == '0')
-;;;132            {
-;;;133                g_bWait = FALSE;
-00001c  4b18              LDR      r3,|L11.128|
-00001e  2800              CMP      r0,#0                 ;123
-000020  d018              BEQ      |L11.84|
-000022  6830              LDR      r0,[r6,#0]            ;126
-000024  b2c0              UXTB     r0,r0                 ;126
-000026  2830              CMP      r0,#0x30              ;131
-000028  d100              BNE      |L11.44|
-00002a  60dd              STR      r5,[r3,#0xc]  ; g_bWait
-                  |L11.44|
-;;;134            }
-;;;135    
-;;;136            /* Check if buffer full */
-;;;137            if(g_u32comRbytes < RXBUFSIZE)
-00002c  6859              LDR      r1,[r3,#4]  ; g_u32comRbytes
-00002e  2201              MOVS     r2,#1
-000030  0292              LSLS     r2,r2,#10
-000032  4291              CMP      r1,r2
-000034  d20e              BCS      |L11.84|
-;;;138            {
-;;;139                /* Enqueue the character */
-;;;140                g_u8RecData[g_u32comRtail] = u8InChar;
-000036  4913              LDR      r1,|L11.132|
-000038  689a              LDR      r2,[r3,#8]  ; g_u32comRtail
-00003a  5488              STRB     r0,[r1,r2]
-;;;141                g_u32comRtail = (g_u32comRtail == (RXBUFSIZE - 1)) ? 0 : (g_u32comRtail + 1);
-00003c  6898              LDR      r0,[r3,#8]  ; g_u32comRtail
-00003e  4912              LDR      r1,|L11.136|
-000040  4288              CMP      r0,r1
-000042  d101              BNE      |L11.72|
-000044  2000              MOVS     r0,#0
-000046  e001              B        |L11.76|
-                  |L11.72|
-000048  6898              LDR      r0,[r3,#8]  ; g_u32comRtail
-00004a  1c40              ADDS     r0,r0,#1
-                  |L11.76|
-00004c  6098              STR      r0,[r3,#8]  ; g_u32comRtail
-;;;142                g_u32comRbytes++;
-00004e  6858              LDR      r0,[r3,#4]  ; g_u32comRbytes
-000050  1c40              ADDS     r0,r0,#1
-000052  6058              STR      r0,[r3,#4]  ; g_u32comRbytes
-                  |L11.84|
-;;;143            }
-;;;144        }
-;;;145    	 
+;;;114    /*---------------------------------------------------------------------------------------------------------*/
+;;;115    void UART_TEST_HANDLE(void)
+000000  b5f8              PUSH     {r3-r7,lr}
+;;;116    {
+;;;117    
+;;;118    
+;;;119    	
+;;;120    
+;;;121    
+;;;122    #if 0	
+;;;123    	   uint8_t u8InChar = 0xFF;    
+;;;124    	   //static uint8_t nRxIndex=0;
+;;;125    	 //  uint8_t  temp1, temp2, cnt;
+;;;126    	   
+;;;127    		  uint32_t u32IntSts = UART0->INTSTS;
+;;;128    	
+;;;129    	 UART_ClearIntFlag(UART0, UART_INTEN_RDAIEN_Msk);
+;;;130    		  
+;;;131    	 printf("\AAAAA_UART_03 test:");
+;;;132    	   
+;;;133    	// if(u32IntSts & UART_INTSTS_RDAINT_Msk)
+;;;134    	   {
+;;;135    		   // Get all the input characters 
+;;;136    		   if(UART_IS_RX_READY(UART0))
+;;;137    		   {
+;;;138    			   // Get the character from UART Buffer 
+;;;139    			   u8InChar = UART_READ(UART0);
+;;;140    			   UART_WRITE(UART0, u8InChar);
+;;;141    		   }   
+;;;142    		   
+;;;143    	
+;;;144    	   }
+;;;145    
 ;;;146    
-;;;147        /* check int reg */
-;;;148        if((UART2 -> INTSTS) & UART_INTSTS_RDAINT_Msk)
-000054  69e0              LDR      r0,[r4,#0x1c]
-000056  05c0              LSLS     r0,r0,#23
-000058  d50d              BPL      |L11.118|
-;;;149        {
-;;;150            /* Get all the input characters */
-;;;151            while(UART_IS_RX_READY(UART2))
-;;;152        	{
-;;;153    			uart2_get_data[uart_counts] = UART_READ(UART2);
-00005a  4a0c              LDR      r2,|L11.140|
-                  |L11.92|
-00005c  69e0              LDR      r0,[r4,#0x1c]         ;151
-00005e  07c0              LSLS     r0,r0,#31             ;151
-000060  d009              BEQ      |L11.118|
-000062  6820              LDR      r0,[r4,#0]
-000064  7899              LDRB     r1,[r3,#2]  ; uart_counts
-000066  5450              STRB     r0,[r2,r1]
-000068  1c49              ADDS     r1,r1,#1
-;;;154    			uart_counts++;
-00006a  b2c8              UXTB     r0,r1
-00006c  7098              STRB     r0,[r3,#2]
-;;;155    			if (uart_counts > 140)
-00006e  288c              CMP      r0,#0x8c
-000070  d9f4              BLS      |L11.92|
-;;;156    				uart_counts = 0;
-000072  709d              STRB     r5,[r3,#2]
-000074  e7f2              B        |L11.92|
-                  |L11.118|
-;;;157        	}
-;;;158    		/*
-;;;159            {
-;;;160                temp1 = uart2_data.rx_tail;
-;;;161                uart2_data.rx_buff[temp1] = UART_READ(UART2);
-;;;162    			//printf("\nuart2_data.rx_buff[%x] = %x ",temp1, uart2_data.rx_buff[temp1]);
-;;;163                temp1++;
-;;;164    
-;;;165                if(temp1 >= UART2_RX_BUFF_LEN)
-;;;166                {
-;;;167                    temp1 = temp1 - UART2_RX_BUFF_LEN;
-;;;168                }
-;;;169    
-;;;170                uart2_data.rx_tail = temp1;
-;;;171            }
-;;;172            */
-;;;173        }
-;;;174    #if 0
-;;;175        if((UART2 -> INTSTS) & UART_INTSTS_THREINT_Msk)
-;;;176        {
-;;;177            /* write data */
-;;;178            cnt = uart2_data.tx_head;
-;;;179            cnt = (uart2_data.tx_tail >= cnt) ? (uart2_data.tx_tail - cnt) : (uart2_data.tx_tail + UART2_TX_BUFF_LEN - cnt);
-;;;180    
-;;;181            while((!UART_IS_TX_FULL(UART2)) && cnt)
-;;;182            {
-;;;183                temp1 = uart2_data.tx_head;
-;;;184                temp2 = uart2_data.tx_buff[temp1];
-;;;185                UART_WRITE(UART2, temp2);
-;;;186                temp1++;
-;;;187    
-;;;188                if(temp1 >= UART2_TX_BUFF_LEN)
-;;;189                {
-;;;190                    temp1 = temp1 - UART2_TX_BUFF_LEN;
-;;;191                }
-;;;192    
-;;;193                uart2_data.tx_head = temp1;
-;;;194                cnt --;
-;;;195    
-;;;196                if(cnt == 0)
-;;;197                {
-;;;198                    /* when all tx bytes are in buffer, tx should be ok */
-;;;199                    uart2_data.tx_ok = 1;
-;;;200                    UART_DisableInt(UART2, UART_INTEN_THREIEN_Msk);
-;;;201                    /* now we should listen for the rx */
-;;;202                    UART_EnableInt(UART2, (UART_INTEN_RDAIEN_Msk | UART_INTEN_RXTOIEN_Msk));
-;;;203                }
-;;;204            }
-;;;205        }    
-;;;206    #endif
-;;;207      //  printf("\nuart02Transmission Test:");
-;;;208    }
-000076  bd70              POP      {r4-r6,pc}
-;;;209    
+;;;147    #else
+;;;148    
+;;;149    	  uint8_t u8InChar = 0xFF;
+;;;150    	
+;;;151    	
+;;;152    	  uint32_t temp0 = UART0->INTSTS;
+000002  4d32              LDR      r5,|L11.204|
+000004  69e8              LDR      r0,[r5,#0x1c]
+;;;153    	//	uint8_t  temp1, cnt;
+;;;154    	
+;;;155    	  uint8_t DataByte=0;
+000006  2400              MOVS     r4,#0
+;;;156    	  static uint8_t nRxIndex=0;
+;;;157    	  static uint8_t nDataLenTemp=0;
+;;;158    	  static uint8_t nDataLen=0;
+;;;159    	  static uint32_t rcr = 0;
+;;;160    	  uint8_t rcr_rx = 0;
+;;;161    
+;;;162    
+;;;163    
+;;;164    	UART_ClearIntFlag(UART0, UART_INTEN_RDAIEN_Msk);
+000008  2101              MOVS     r1,#1
+00000a  4628              MOV      r0,r5
+00000c  f7fffffe          BL       UART_ClearIntFlag
+;;;165    
+;;;166    	if(UART_IS_RX_READY(UART0))
+000010  69e8              LDR      r0,[r5,#0x1c]
+000012  07c0              LSLS     r0,r0,#31
+000014  d002              BEQ      |L11.28|
+;;;167    	{
+;;;168    		DataByte = UART_READ(UART0);
+000016  4628              MOV      r0,r5
+000018  6800              LDR      r0,[r0,#0]
+00001a  b2c4              UXTB     r4,r0
+                  |L11.28|
+;;;169    		//UART_WRITE(UART0, u8InChar);
+;;;170    	} 
+;;;171    
+;;;172    		
+;;;173    		switch (nRxIndex)
+00001c  4d2c              LDR      r5,|L11.208|
+00001e  2600              MOVS     r6,#0
+000020  78e8              LDRB     r0,[r5,#3]  ; nRxIndex
+;;;174    		{
+;;;175    			case 0: 
+;;;176    				
+;;;177    				printf("INDEX 0: %x\n",DataByte);
+;;;178    				if(DataByte==0x5A)
+;;;179    					nRxIndex=1;
+;;;180    				break;
+;;;181    			case 1: 
+;;;182    				
+;;;183    				printf("INDEX 1: %x\n",DataByte);
+;;;184    				if(DataByte==0xA5) nRxIndex=2;
+;;;185    				else
+;;;186    				{
+;;;187    					if(DataByte==0xff) nRxIndex=1;
+;;;188    					else nRxIndex=0;
+;;;189    				}
+;;;190    				break;
+;;;191    			case 2:  
+;;;192    				
+;;;193    				nDataLen=DataByte;
+;;;194    
+;;;195    				//nDataLen = 4; // modify the uart protocol 190716
+;;;196    				
+;;;197    				rcr = nDataLen;
+;;;198    				//nCurRecvLen0[nUart0Recv]=DataByte;  
+;;;199    				nDataLenTemp=0;
+;;;200    				nRxIndex=3;
+;;;201    
+;;;202    				
+;;;203    				
+;;;204    				break;		
+;;;205    			case 3:
+;;;206    				
+;;;207    				if(nDataLenTemp<nDataLen-1)
+;;;208    				{
+;;;209    					RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+nDataLenTemp]=DataByte;
+000022  4f2c              LDR      r7,|L11.212|
+000024  0003              MOVS     r3,r0                 ;173
+000026  f7fffffe          BL       __ARM_common_switch8
+00002a  0504              DCB      0x05,0x04
+00002c  0c181d38          DCB      0x0c,0x18,0x1d,0x38
+000030  1400              DCB      0x14,0x00
+000032  4621              MOV      r1,r4                 ;177
+000034  a028              ADR      r0,|L11.216|
+000036  f7fffffe          BL       __2printf
+00003a  2c5a              CMP      r4,#0x5a              ;178
+00003c  d13c              BNE      |L11.184|
+                  |L11.62|
+00003e  2001              MOVS     r0,#1                 ;179
+000040  e029              B        |L11.150|
+000042  4621              MOV      r1,r4                 ;183
+000044  a028              ADR      r0,|L11.232|
+000046  f7fffffe          BL       __2printf
+00004a  2ca5              CMP      r4,#0xa5              ;184
+00004c  d003              BEQ      |L11.86|
+00004e  2cff              CMP      r4,#0xff              ;187
+000050  d0f5              BEQ      |L11.62|
+000052  70ee              STRB     r6,[r5,#3]            ;188
+000054  e030              B        |L11.184|
+                  |L11.86|
+000056  2002              MOVS     r0,#2                 ;184
+000058  e01d              B        |L11.150|
+00005a  716c              STRB     r4,[r5,#5]            ;193
+00005c  60ac              STR      r4,[r5,#8]            ;199  ; rcr
+00005e  712e              STRB     r6,[r5,#4]            ;199
+000060  2003              MOVS     r0,#3                 ;200
+000062  e018              B        |L11.150|
+000064  796a              LDRB     r2,[r5,#5]            ;207  ; nDataLen
+000066  7928              LDRB     r0,[r5,#4]            ;207  ; nDataLenTemp
+000068  1e52              SUBS     r2,r2,#1
+00006a  4290              CMP      r0,r2                 ;207
+00006c  4922              LDR      r1,|L11.248|
+;;;210    					rcr +=DataByte;
+;;;211    					nDataLenTemp++;
+;;;212    					
+;;;213    				}
+;;;214    				else
+;;;215    				{
+;;;216    					RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+nDataLenTemp]=DataByte;
+00006e  783a              LDRB     r2,[r7,#0]  ; RxMsgCount_PTE
+000070  da09              BGE      |L11.134|
+000072  230c              MOVS     r3,#0xc               ;209
+000074  435a              MULS     r2,r3,r2              ;209
+000076  1812              ADDS     r2,r2,r0              ;209
+000078  548c              STRB     r4,[r1,r2]            ;209
+00007a  68a9              LDR      r1,[r5,#8]            ;210  ; rcr
+00007c  1909              ADDS     r1,r1,r4              ;210
+00007e  1c40              ADDS     r0,r0,#1              ;210
+000080  60a9              STR      r1,[r5,#8]            ;211  ; rcr
+000082  7128              STRB     r0,[r5,#4]            ;211
+000084  e018              B        |L11.184|
+                  |L11.134|
+000086  230c              MOVS     r3,#0xc
+000088  435a              MULS     r2,r3,r2
+00008a  1810              ADDS     r0,r2,r0
+00008c  540c              STRB     r4,[r1,r0]
+;;;217    					rcr+=DataByte;
+00008e  68a8              LDR      r0,[r5,#8]  ; rcr
+000090  1900              ADDS     r0,r0,r4
+;;;218    					nRxIndex=4;
+000092  60a8              STR      r0,[r5,#8]  ; rcr
+000094  2004              MOVS     r0,#4
+                  |L11.150|
+000096  70e8              STRB     r0,[r5,#3]
+000098  e00e              B        |L11.184|
+;;;219    				}
+;;;220    				break;
+;;;221    			case 4:
+;;;222    				
+;;;223    				   printf("INDEX 4: %x\n",DataByte);
+00009a  4621              MOV      r1,r4
+00009c  a017              ADR      r0,|L11.252|
+00009e  f7fffffe          BL       __2printf
+;;;224    				   rcr_rx = DataByte;
+;;;225    				   rcr = ~rcr + 1;
+0000a2  68a8              LDR      r0,[r5,#8]  ; rcr
+0000a4  43c1              MVNS     r1,r0
+0000a6  1c49              ADDS     r1,r1,#1
+;;;226    				   
+;;;227    				  printf("RCR: %x\n",rcr);
+0000a8  a018              ADR      r0,|L11.268|
+0000aa  60a9              STR      r1,[r5,#8]  ; rcr
+0000ac  f7fffffe          BL       __2printf
+;;;228    				  // if(rcr_rx == (rcr & 0xff))
+;;;229    				   {
+;;;230    					   nRxIndex=0;
+0000b0  70ee              STRB     r6,[r5,#3]
+;;;231    					   RxMsgCount_PTE++; 
+0000b2  7838              LDRB     r0,[r7,#0]  ; RxMsgCount_PTE
+0000b4  1c40              ADDS     r0,r0,#1
+0000b6  7038              STRB     r0,[r7,#0]
+                  |L11.184|
+;;;232    				   }
+;;;233    		
+;;;234    				   nRxIndex=0;
+;;;235    					break;
+;;;236    			default:
+;;;237    				nRxIndex=0;
+;;;238    				break;
+;;;239    		} 
+;;;240    
+;;;241    
+;;;242    
+;;;243    
+;;;244    #endif
+;;;245    
+;;;246    
+;;;247        if(UART0->FIFOSTS & (UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk | UART_FIFOSTS_PEF_Msk | UART_FIFOSTS_RXOVIF_Msk))
+0000b8  4804              LDR      r0,|L11.204|
+0000ba  6981              LDR      r1,[r0,#0x18]
+0000bc  2271              MOVS     r2,#0x71
+0000be  4211              TST      r1,r2
+0000c0  d003              BEQ      |L11.202|
+;;;248        {
+;;;249            UART_ClearIntFlag(UART0, (UART_INTSTS_RLSINT_Msk| UART_INTSTS_BUFERRINT_Msk));
+0000c2  2109              MOVS     r1,#9
+0000c4  0289              LSLS     r1,r1,#10
+0000c6  f7fffffe          BL       UART_ClearIntFlag
+                  |L11.202|
+;;;250        }
+;;;251    }
+0000ca  bdf8              POP      {r3-r7,pc}
+;;;252    
                           ENDP
 
-                  |L11.120|
+                  |L11.204|
                           DCD      0x40050000
-                  |L11.124|
-                          DCD      0x40154000
-                  |L11.128|
-                          DCD      ||.data||
-                  |L11.132|
-                          DCD      ||.bss||
-                  |L11.136|
-                          DCD      0x000003ff
-                  |L11.140|
-                          DCD      ||.bss||+0x400
+                  |L11.208|
+                          DCD      ||area_number.19||
+                  |L11.212|
+                          DCD      RxMsgCount_PTE
+                  |L11.216|
+0000d8  494e4445          DCB      "INDEX 0: %x\n",0
+0000dc  5820303a
+0000e0  2025780a
+0000e4  00      
+0000e5  00                DCB      0
+0000e6  00                DCB      0
+0000e7  00                DCB      0
+                  |L11.232|
+0000e8  494e4445          DCB      "INDEX 1: %x\n",0
+0000ec  5820313a
+0000f0  2025780a
+0000f4  00      
+0000f5  00                DCB      0
+0000f6  00                DCB      0
+0000f7  00                DCB      0
+                  |L11.248|
+                          DCD      RxBuff
+                  |L11.252|
+0000fc  494e4445          DCB      "INDEX 4: %x\n",0
+000100  5820343a
+000104  2025780a
+000108  00      
+000109  00                DCB      0
+00010a  00                DCB      0
+00010b  00                DCB      0
+                  |L11.268|
+00010c  5243523a          DCB      "RCR: %x\n",0
+000110  2025780a
+000114  00      
+000115  00                DCB      0
+000116  00                DCB      0
+000117  00                DCB      0
 
                           AREA ||.bss||, DATA, NOINIT, ALIGN=0
 
-                  g_u8RecData
-                          %        1024
                   uart2_get_data
                           %        150
                   uart2_data
@@ -824,6 +927,30 @@
 
                           AREA ||.data||, DATA, ALIGN=2
 
+                  g_u32comRbytes
+                          DCD      0x00000000
+
+                          AREA ||area_number.16||, DATA, ALIGN=2
+
+                          EXPORTAS ||area_number.16||, ||.data||
+                  g_u32comRhead
+                          DCD      0x00000000
+
+                          AREA ||area_number.17||, DATA, ALIGN=2
+
+                          EXPORTAS ||area_number.17||, ||.data||
+                  g_u32comRtail
+                          DCD      0x00000000
+
+                          AREA ||area_number.18||, DATA, ALIGN=2
+
+                          EXPORTAS ||area_number.18||, ||.data||
+                  g_bWait
+                          DCD      0x00000001
+
+                          AREA ||area_number.19||, DATA, ALIGN=2
+
+                          EXPORTAS ||area_number.19||, ||.data||
                   uart1_cmd
 000000  ff                DCB      0xff
                   uart1_dat
@@ -832,17 +959,13 @@
 000002  00                DCB      0x00
                   nRxIndex
 000003  00                DCB      0x00
-                  g_u32comRbytes
-                          DCD      0x00000000
-                  g_u32comRtail
-                          DCD      0x00000000
-                  g_bWait
-                          DCD      0x00000001
-
-                          AREA ||area_number.16||, DATA, ALIGN=2
-
-                          EXPORTAS ||area_number.16||, ||.data||
-                  g_u32comRhead
+                  nDataLenTemp
+000004  00                DCB      0x00
+                  nDataLen
+000005  00                DCB      0x00
+                  |symbol_number.50|
+000006  0000              DCB      0x00,0x00
+                  ||rcr||
                           DCD      0x00000000
 
                           AREA ||i.__ARM_common_switch8||, COMGROUP=__ARM_common_switch8, CODE, READONLY, ALIGN=1
@@ -854,9 +977,9 @@
 000006  7825              LDRB     r5,[r4,#0]
 000008  1c64              ADDS     r4,r4,#1
 00000a  42ab              CMP      r3,r5
-00000c  d200              BCS      |L76.16|
+00000c  d200              BCS      |L79.16|
 00000e  461d              MOV      r5,r3
-                  |L76.16|
+                  |L79.16|
 000010  5d63              LDRB     r3,[r4,r5]
 000012  005b              LSLS     r3,r3,#1
 000014  18e3              ADDS     r3,r4,r3
@@ -870,9 +993,9 @@
 #line 1 "..\\src\\io\\io_uart.c"
 	AREA ||.rev16_text||, CODE
 	THUMB
-	EXPORT |__asm___9_io_uart_c_a80fc96b____REV16|
+	EXPORT |__asm___9_io_uart_c_c78f08ea____REV16|
 #line 388 "..\\lib\\CMSIS\\Include\\cmsis_armcc.h"
-|__asm___9_io_uart_c_a80fc96b____REV16| PROC
+|__asm___9_io_uart_c_c78f08ea____REV16| PROC
 #line 389
 
  rev16 r0, r0
@@ -880,9 +1003,9 @@
 	ENDP
 	AREA ||.revsh_text||, CODE
 	THUMB
-	EXPORT |__asm___9_io_uart_c_a80fc96b____REVSH|
+	EXPORT |__asm___9_io_uart_c_c78f08ea____REVSH|
 #line 402
-|__asm___9_io_uart_c_a80fc96b____REVSH| PROC
+|__asm___9_io_uart_c_c78f08ea____REVSH| PROC
 #line 403
 
  revsh r0, r0

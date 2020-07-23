@@ -53,6 +53,9 @@ void battery_charge_disenable(void);
 void DcInDetect(void);
 void BatteryChargeStateChcek(void);
 void Bat_SelectPin_0_external_1_internal(uint8_t value); // 0 external, 1 internal
+void AdapterPowerModeCtrl(uint8_t value);
+
+
 
 #endif
 

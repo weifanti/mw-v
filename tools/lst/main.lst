@@ -3392,7 +3392,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50334,7 +50334,9 @@ N/*-----------------------uart param config end-----------------*/
 N
 N
 Nint32_t Transfer_Uart_Init(void);
-Nint32_t Debug_Uart_Init(void);
+N//int32_t Debug_Uart_Init(void);
+Nint32_t PTE_Uart0_Init(void);
+N
 Nint32_t USCI_Uart_Init(void);
 N
 Nvoid UART_TEST_HANDLE(void);
@@ -50609,6 +50611,9 @@ Nvoid battery_charge_disenable(void);
 Nvoid DcInDetect(void);
 Nvoid BatteryChargeStateChcek(void);
 Nvoid Bat_SelectPin_0_external_1_internal(uint8_t value); // 0 external, 1 internal
+Nvoid AdapterPowerModeCtrl(uint8_t value);
+N
+N
 N
 N#endif
 N
@@ -50698,6 +50703,16 @@ N	SYS_PLAY_STATE_FM,
 N	SYS_PLAY_STATE_AUX
 N
 N} SYS_STATE;
+N
+N
+Ntypedef enum
+N{
+N	NET_TYPE_NONE = 0,
+N	NET_TYPE_WIFI,
+N	NET_TYPE_4G,
+N
+N} NET_TYPE;
+N
 N
 N
 Ntypedef enum
@@ -50959,14 +50974,21 @@ N	uint8_t inputmessage;
 N	uint8_t fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
+N	NET_TYPE MW_radio_net_type;
 N	SubBoardStatus SubBoard;
 N	Fm_Data FmData;
 N	POWER_STATE PowerState;
+N	uint8_t ir_bak_key;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define MSG_MAX_LEN						(12)
+Nextern uint8_t RxBuff[60];
+Nextern uint8_t RxMsgCount_PTE;
+N
 N
 N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
@@ -51196,6 +51218,7 @@ Nextern TIMER ModeSwitchTimer;
 Nextern TIMER FmLoopTimer;
 Nextern TIMER FmStoreTimer;
 Nextern TIMER SysTimer_50ms;
+Nextern TIMER IrLongPressTimer;
 N
 N
 N//extern TIMER AdcTimer;
@@ -51867,33 +51890,58 @@ N
 Nvoid SYS_Clock_init(void)
 N{
 N
-N    
-N   // SYS->GPF_MFPL = SYS_GPF_MFPL_PF4MFP_XT1_IN | SYS_GPF_MFPL_PF3MFP_XT1_OUT | SYS_GPF_MFPL_PF1MFP_X32_IN | SYS_GPF_MFPL_PF0MFP_X32_OUT;
+N  #if 0
+S   // SYS->GPF_MFPL = SYS_GPF_MFPL_PF4MFP_XT1_IN | SYS_GPF_MFPL_PF3MFP_XT1_OUT | SYS_GPF_MFPL_PF1MFP_X32_IN | SYS_GPF_MFPL_PF0MFP_X32_OUT;
+S	/* Enable HIRC clock (Internal RC 22.1184MHz) */
+S    CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk);
+S
+S    /* Wait for HIRC clock ready */
+S    CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);
+S	    /* Select HCLK clock source as HIRC and HCLK clock divider as 1 */
+S    CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV0_HCLK(1));
+S
+S
+S    /* Enable HXT clock (external XTAL 12MHz) */
+S    CLK_EnableXtalRC(CLK_PWRCTL_HXTEN_Msk | CLK_PWRCTL_LXTEN_Msk);
+S//    CLK_EnableXtalRC(CLK_PWRCTL_HXTEN_Msk);
+S    /* Wait for HXT clock ready */
+S    CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk | CLK_STATUS_LXTSTB_Msk);
+S//    CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk);
+S    /* Set core clock as PLL_CLOCK from PLL and SysTick source to HCLK/2*/
+S    CLK_SetCoreClock(PLL_CLOCK);
+S    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);	
+S
+N	#else
+N
 N	/* Enable HIRC clock (Internal RC 22.1184MHz) */
 N    CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk);
 X    CLK_EnableXtalRC((0x1ul << (2)));
 N
 N    /* Wait for HIRC clock ready */
-N    CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);
-X    CLK_WaitClockReady((0x1ul << (4)));
+N    CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);	
+X    CLK_WaitClockReady((0x1ul << (4)));	
 N
 N    /* Select HCLK clock source as HIRC and HCLK clock divider as 1 */
-N    CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV0_HCLK(1));
-X    CLK_SetHCLK((0x07UL<<(0)), (((1)-1) << (0)));
+N    CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV0_HCLK(1));	
+X    CLK_SetHCLK((0x07UL<<(0)), (((1)-1) << (0)));	
+N
 N
 N    /* Enable HXT clock (external XTAL 12MHz) */
-N    CLK_EnableXtalRC(CLK_PWRCTL_HXTEN_Msk | CLK_PWRCTL_LXTEN_Msk);
-X    CLK_EnableXtalRC((0x1ul << (0)) | (0x1ul << (1)));
-N//    CLK_EnableXtalRC(CLK_PWRCTL_HXTEN_Msk);
+N    CLK_EnableXtalRC(CLK_PWRCTL_HXTEN_Msk);
+X    CLK_EnableXtalRC((0x1ul << (0)));
 N    /* Wait for HXT clock ready */
-N    CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk | CLK_STATUS_LXTSTB_Msk);
-X    CLK_WaitClockReady((0x1ul << (0)) | (0x1ul << (1)));
-N//    CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk);
+N    CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk);
+X    CLK_WaitClockReady((0x1ul << (0)));
 N    /* Set core clock as PLL_CLOCK from PLL and SysTick source to HCLK/2*/
 N    CLK_SetCoreClock(PLL_CLOCK);
 X    CLK_SetCoreClock(72000000);
-N    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);
-X    CLK_SetSysTickClockSrc((0x03UL<<(3)));
+N    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);	
+X    CLK_SetSysTickClockSrc((0x03UL<<(3)));	
+N	#endif
+N
+N
+N
+N
 N
 N    /* Enable UART module clock */
 N    CLK_EnableModuleClock(UART0_MODULE);
@@ -51958,7 +52006,8 @@ N
 N
 Nvoid SYS_BusInit(void)
 N{
-N	Debug_Uart_Init();
+N	// uart0 PTE, uart1 4G, uart2 debug printf, usic0 suboard.
+N	PTE_Uart0_Init(); // this port use for PTE uart
 N	
 N	Transfer_Uart_Init();
 N	
@@ -51967,6 +52016,79 @@ N
 N	Hal_I2c_Init();
 N	
 N}
+N
+N
+Nvoid SYS_Clock_Disable(void)
+N{
+N	/* Enable UART module clock */
+N	  CLK_DisableModuleClock(UART0_MODULE);
+X	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((16)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+N	  /* Enable UART module clock */
+N	  CLK_DisableModuleClock(UART1_MODULE);
+X	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((17)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+N	  
+N	  /* Enable USCI module clock */
+N	  CLK_DisableModuleClock(UART2_MODULE);
+X	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((18)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+N	  
+N	  /* Enable USCI module clock */
+N	  CLK_DisableModuleClock(USCI0_MODULE);
+X	  CLK_DisableModuleClock(((((2UL) & 0x03) << 30)|((((8)) & 0x1f) << 0)| (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+N	  
+N	  /* Enable I2C0 module clock */
+N	  CLK_DisableModuleClock(I2C0_MODULE);
+X	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((8)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+N	  
+N	  /* Enable I2C1 module clock */
+N	  CLK_DisableModuleClock(I2C1_MODULE);
+X	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((9)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+N	
+N	  /* Enable ADC module clock */
+N	 // CLK_EnableModuleClock(ADC_MODULE);
+N	
+N	  /* Enable PWM0 module clock */
+N	  CLK_DisableModuleClock(PWM0_MODULE);
+X	  CLK_DisableModuleClock(((((1) & 0x03) << 30)|((((20)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((1) & 0x07) << 25)|(((28) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+N
+N	
+N}
+N
+Nvoid SYS_Clock_Enable(void)
+N{
+N	/* Enable UART module clock */
+N	  CLK_EnableModuleClock(UART0_MODULE);
+X	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((16)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+N	  /* Enable UART module clock */
+N	  CLK_EnableModuleClock(UART1_MODULE);
+X	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((17)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+N	  
+N	  /* Enable USCI module clock */
+N	  CLK_EnableModuleClock(UART2_MODULE);
+X	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((18)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((3) & 0x07) << 25)|(((24) & 0x1f) << 20)| (((0) & 0x03) << 18)|(((0x0F) & 0xff) << 10)|(((8) & 0x1f) << 5)));
+N	  
+N	  /* Enable USCI module clock */
+N	  CLK_EnableModuleClock(USCI0_MODULE);
+X	  CLK_EnableModuleClock(((((2UL) & 0x03) << 30)|((((8)) & 0x1f) << 0)| (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+N	  
+N	  /* Enable I2C0 module clock */
+N	  CLK_EnableModuleClock(I2C0_MODULE);
+X	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((8)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+N	  
+N	  /* Enable I2C1 module clock */
+N	  CLK_EnableModuleClock(I2C1_MODULE);
+X	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((9)) & 0x1f) << 0) | (((0x0) & 0x03) << 28)|(((0x0) & 0x07) << 25)|(((0x0) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+N	
+N	  /* Enable ADC module clock */
+N	 // CLK_EnableModuleClock(ADC_MODULE);
+N	
+N	  /* Enable PWM0 module clock */
+N	  CLK_EnableModuleClock(PWM0_MODULE);
+X	  CLK_EnableModuleClock(((((1) & 0x03) << 30)|((((20)) & 0x1f) << 0)| (((1) & 0x03) << 28)|(((1) & 0x07) << 25)|(((28) & 0x1f) << 20)| (((0x0) & 0x03) << 18)|(((0x0) & 0xff) << 10)|(((0x0) & 0x1f) << 5)));
+N
+N	
+N}
+N
+N
 N
 N
 N
@@ -52033,7 +52155,7 @@ N	TYM_DriverInit();
 N	
 N	Core_Msg_Init();
 N
-W "..\main.c" 192 2 function "hal_fmc_init" declared implicitly
+W "..\main.c" 277 2 function "hal_fmc_init" declared implicitly
 N	hal_fmc_init();
 N
 N	AMP_FaultPinDetectInit();
@@ -52056,10 +52178,15 @@ N	Global_datas.SubBoard.subboard_online = 0;
 N
 N	Global_datas.FmData.Frequency = 8750;
 N	Global_datas.FmData.station_num = 0;
+N	Global_datas.ir_bak_key = IN_KEY_NONE;
+N	Global_datas.MW_radio_net_type = NET_TYPE_NONE;
 N
-W "..\main.c" 215 2 function "DataRead" declared implicitly
+W "..\main.c" 302 2 function "DataRead" declared implicitly
 N	DataRead();
 N	SendFmFreqToSubBoard();
+N
+N
+N	
 N	
 N}
 N
@@ -52090,7 +52217,7 @@ N
 N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N	drv_led_init();// led all off
-W "..\main.c" 246 2 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 336 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
 N	Global_datas.shoutting_down = 1;
 N	TimeOutSet(&PoweroffLedTimer, 5000);
@@ -52119,7 +52246,7 @@ N
 N	Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N	//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N	drv_led_init();// led all off
-W "..\main.c" 273 2 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 363 2 function "Drv_audio_powerdown" declared implicitly
 N	Drv_audio_powerdown();
 N	Global_datas.shoutting_down = 1;
 N	TimeOutSet(&PoweroffLedTimer, 5000);
@@ -52759,6 +52886,8 @@ N						{
 N		                	Global_datas.g_mode_status = BT_MODE;
 N							printf("0x06, msg.param1 = %x \n",msg.param1);
 N							//Drv_Dap_vol_set(VOLUME_DEFAULT);
+N							Global_datas.MW_radio_net_type = NET_TYPE_NONE;
+N							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);// net type
 N							
 N						}
 N					
@@ -52766,33 +52895,44 @@ N						if (msg.param1 == 0x07)
 N						{
 N		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
 N							printf("0x06, msg.param1 = %x \n",msg.param1);
+N							Global_datas.MW_radio_net_type = NET_TYPE_NONE;
 N						}
 N						if (msg.param1 == 0x02)
 N						{
 N		                	Global_datas.g_mode_status = WIFI_CONNECTED_MODE;
+N							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
 N							printf("0x06, msg.param1 = %x \n",msg.param1);
+N							
 N						}
 N						if (msg.param1 == 0x04)
 N						{
 N		                	Global_datas.g_mode_status = WIFI_MODE;
-N		                	
+N							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
+N							
+N							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);// net type
 N						printf("0x06, msg.param1 = %x \n",msg.param1);
 N						}
 N						if (msg.param1 == 0x05)
 N						{
 N		                	Global_datas.g_mode_status = WIFI_CONNECTING_MODE;
+N							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
 N		                	
 N						printf("0x06, msg.param1 = %x \n",msg.param1);
 N						}
 N						if (msg.param1 == 0x011)
 N						{
 N		                	Global_datas.g_mode_status = FOURG_CONNECTED_MODE;
+N							Global_datas.MW_radio_net_type = NET_TYPE_4G;
 N							printf("0x06, msg.param1 = %x \n",msg.param1);
 N						}
 N						if (msg.param1 == 0x012)
 N						{
 N		                	Global_datas.g_mode_status = FOURG_MODE;
+N							Global_datas.MW_radio_net_type = NET_TYPE_4G;
+N							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);// net type
+N							
 N							printf("0x06, msg.param1 = %x \n",msg.param1);
+N							
 N						}
 N						if (msg.param1 == 0x0B)
 N						{
@@ -52955,9 +53095,9 @@ N						 	//drv_SendAllstateToSubboard();
 N							SendFmFreqToSubBoard();
 N							printf("SUB BOARD ON\n");
 N
-W "..\main.c" 1107 38 enumerated type mixed with another type
+W "..\main.c" 1210 38 enumerated type mixed with another type
 N							Global_datas.SubBoard.eq_mode = msg.param2 >> 4;
-W "..\main.c" 1108 39 enumerated type mixed with another type
+W "..\main.c" 1211 39 enumerated type mixed with another type
 N							Global_datas.SubBoard.playmode = msg.param2 & 0x0f;
 N							Global_datas.SubBoard.subboard_online = 1;
 N							printf("msg.param1 = %d \n",msg.param2);
@@ -52977,7 +53117,7 @@ N	            default:
 N	             break;
 N	        }
 N    	}	
-W "..\main.c" 852 12 variable "bat_val"  was declared but never referenced
+W "..\main.c" 942 12 variable "bat_val"  was declared but never referenced
 N}
 N
 N
@@ -53008,16 +53148,31 @@ N
 N	SYS_Init();
 N 	SysIdle();
 N
+N	//SYS_Clock_Disable();
+N
 N  	printf("\nmain\n");
+N
+N	printf("compile time: %s %s\r\n", __DATE__, __TIME__);
+X	printf("compile time: %s %s\r\n", "Jul 23 2020", "16:59:13");
+N
+N	
+N	//Global_datas.inputmessage = IN_KEY_POWER_CP;
 N	
 N    while(1)
 N    {
+N
+N		if(IsTimeOut(&IrLongPressTimer))
+N		{
+N			Global_datas.ir_bak_key = IN_KEY_NONE;
+N		}
 N    	if(IsTimeOut(&SysTimer_50ms))
 N    	{
 N    		TimeOutSet(&SysTimer_50ms, 2000);
 N			ADC_FunctionTest();
 N			DcInDetect();
 N			BatteryChargeStateChcek();
+N			
+N			printf("volume = %d \n",Global_datas.volume);
 N
 N			if(Global_datas.PowerState.AdapterIn)
 N			{
@@ -53040,7 +53195,7 @@ N			}
 N			
 N			if((Global_datas.PowerState.battery_level == 0) && (Global_datas.state > SYS_PLAY_STATE_POWERUP) && (Global_datas.PowerState.AdapterIn == 0))
 N			{
-N				Global_datas.inputmessage =  IN_KEY_POWER_CP;
+N				//Global_datas.inputmessage =  IN_KEY_POWER_CP;
 N			}
 N			else if((Global_datas.PowerState.battery_level < BAT_LEVEL_20_PERCENT) && (Global_datas.PowerState.battery_data >  batlevel_table[0])  && (Global_datas.volume > 8) && (Global_datas.PowerState.AdapterIn == 0))
 N			{
@@ -53105,6 +53260,12 @@ N					TYM_SysPower12V_3V3_onoff(0);
 N
 N					Global_datas.shoutting_down = 0;
 N					Global_datas.state = SYS_PLAY_STATE_IDLE;
+N
+N				    /* Unlock protected registers */
+N			    //	SYS_UnlockReg();
+N					/* Disable PLL first to avoid unstable when setting PLL */
+N    			//	CLK_DisablePLL();
+N			   	// 	SYS_LockReg();
 N				}
 N				
 N			}
@@ -53165,14 +53326,89 @@ N		{
 N			MessageProcess();
 N		}
 N
+N		//Pte_ProcessData();
+N
+N
 N		Sysctrl();
 N
 N		
 N	}
 N
-W "..\main.c" 1147 10 variable "resume_timecount"  was declared but never referenced
+W "..\main.c" 1250 10 variable "resume_timecount"  was declared but never referenced
 N}
 N
+N
+N/*
+Nvoid Pte_ProcessData(void)
+N{
+N	uint8_t vol = 0;
+N	uint8_t temp = 0;
+N	uint8_t freq_hi = 0;
+N	uint8_t freq_low = 0;
+N
+N	while(RxMsgCount_PTE)
+N	{ 
+N		RxMsgCount_PTE--;
+N		
+N		if(RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+0] == 0x01)
+N		{
+N			switch(RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+1])  
+N			{
+N			   case 0x01: 
+N
+N				break;
+N
+N			   case 0x21:
+N
+N			    break;
+N
+N			   case 0x07:  
+N
+N				break;
+N
+N			   case 0x04:  
+N				
+N				break;
+N
+N			   case 0x0a: 
+N			   	
+N				break;
+N
+N			   case 0x0d: 
+N
+N				break;
+N
+N			   case 0x0e: 
+N			   	
+N				break;
+N
+N				case 0x01: 
+N				
+N				break;
+N
+N				case 0x02:
+N				
+N				break;
+N
+N				case 0x70: 
+N				
+N				break;		
+N
+N				case 0x71:  
+N				
+N				break;	
+N
+N				case 0x72: 
+N				
+N				break;	
+N
+N				default:break;
+N			}
+N		}
+N	}
+N}
+N
+N*/
 N
 N
 Nvoid Sysctrl(void)
@@ -53385,6 +53621,10 @@ N			if(Global_datas.state == SYS_PLAY_STATE_FM)
 N			{
 N				Global_datas.event = SYS_PLAY_EVENT_AUTO_SEARCH;
 N			}
+N			else if(Global_datas.state == SYS_PLAY_STATE_BT)
+N			{
+N				Global_datas.event = SYS_PLAY_EVENT_BT_PAIRING;
+N			}
 N			
 N			break;
 N
@@ -53412,10 +53652,27 @@ N		Global_datas.inputmessage = 0;
 N		Global_datas.key_led_blink = 1;
 N	}
 N
+N
 N	switch(Global_datas.event)
 N	{
 N	
 N		case SYS_PLAY_EVENT_POWERING_UP:
+N
+N
+N	//	SYS_UnlockReg();
+N
+N		
+N		/* Set core clock as PLL_CLOCK from PLL and SysTick source to HCLK/2*/
+N    //	CLK_SetCoreClock(PLL_CLOCK);
+N    //	CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);	
+N
+N	//	SYS_LockReg();
+N
+N
+N
+N
+N		
+N		   // SYS_Clock_Enable();
 N
 N			TYM_SysPower12V_3V3_onoff(1);
 N			Global_datas.state = SYS_PLAY_STATE_POWERUP;	
@@ -53425,6 +53682,9 @@ N			Global_datas.volume = VOLUME_DEFAULT;
 X			Global_datas.volume = 5;
 N			TYM_drv_powerkeepon(1);
 N			Drv_4GMoudle_PowerUp(1);
+N			
+N			AdapterPowerModeCtrl(1);
+N			
 N			Global_datas.power_4g = 1;
 N			drv_FourGmodel_power_key_SetHi();
 N			TimeOutSet(&ModulePowerUpPinTimer,3000);
@@ -53434,7 +53694,7 @@ N			Global_datas.shoutting_down = 0;
 N
 N			drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
 N
-W "..\main.c" 1566 4 function "Fm_Rest" declared implicitly
+W "..\main.c" 1788 4 function "Fm_Rest" declared implicitly
 N			Fm_Rest();
 N			
 N			break;
@@ -53451,6 +53711,7 @@ N			drv_FourGmodel_power_key_SetHi();
 N			TimeOutSet(&ModulePowerUpPinTimer,3000);
 N			TimeOutSet(&PoweroffLedTimer, 100);
 N			Global_datas.shoutting_down = 0;	
+N			drv_audio_4G_Channel();
 N			break;
 N
 N			
@@ -53464,7 +53725,7 @@ N			drv_Cmd_Send2NCU031(0x70, 0x15,0x00);// power off cmd to LCD board
 N			Cmd_Send2FourG( 0x03,0x55,0x00); // poweroff cmd to 4G
 N			//Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power, don't off here.
 N			drv_led_init();// led all off
-W "..\main.c" 1595 4 function "Drv_audio_powerdown" declared implicitly
+W "..\main.c" 1818 4 function "Drv_audio_powerdown" declared implicitly
 N			Drv_audio_powerdown();
 N			Global_datas.shoutting_down = 1;
 N			TimeOutSet(&PoweroffLedTimer, 5000);
@@ -53533,12 +53794,15 @@ N						Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 N						drv_audio_4G_Channel();
 N						break;
 N				}
+N
+N				Drv_Dap_vol_set(Global_datas.volume);
 N			}
 N			else
 N			{
 N				Cmd_Send2FourG(0x03,0x15,0);
 N				Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 N				drv_audio_4G_Channel();
+N				Drv_Dap_vol_set(Global_datas.volume);
 N			}
 N
 N			//drv_Cmd_Send2NCU031(0x08,0,0); send start CMD to sub board
@@ -53547,30 +53811,35 @@ N			break;
 N
 N		case SYS_PLAY_EVENT_MODE_SWITCH:
 N			srv_key_mode_handler();
+N			Drv_Dap_vol_set(Global_datas.volume);
 N			break;
 N
 N		case SYS_PLAY_EVENT_SW_TO_AUX_MODE:
 N			
-W "..\main.c" 1680 4 function "srv_key_mode_switch_to" declared implicitly
+W "..\main.c" 1907 4 function "srv_key_mode_switch_to" declared implicitly
 N			srv_key_mode_switch_to(SYS_PLAY_STATE_AUX);	
+N			Drv_Dap_vol_set(Global_datas.volume);
 N				
 N			break;
 N
 N		case SYS_PLAY_EVENT_SW_TO_FM_MODE:
 N			
 N			srv_key_mode_switch_to(SYS_PLAY_STATE_FM);	
+N			Drv_Dap_vol_set(Global_datas.volume);
 N			
 N			break;
 N			
 N		case SYS_PLAY_EVENT_SW_TO_BT_MODE:
 N			
 N			srv_key_mode_switch_to(SYS_PLAY_STATE_BT);	
+N			Drv_Dap_vol_set(Global_datas.volume);
 N			
 N			break;	
 N			
 N		case SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE:
 N			
-N			srv_key_mode_switch_to(SYS_PLAY_STATE_MW_RADIO);	
+N			srv_key_mode_switch_to(SYS_PLAY_STATE_MW_RADIO);
+N			Drv_Dap_vol_set(Global_datas.volume);
 N		
 N			break;		
 N
@@ -53653,7 +53922,7 @@ N
 N			if(Global_datas.eq_mode != EQ_MODE_OUTDOOR)
 N			{
 N				Global_datas.eq_mode = EQ_MODE_OUTDOOR;
-W "..\main.c" 1779 5 function "srv_key_eq_outdoor_switch_handler" declared implicitly
+W "..\main.c" 2010 5 function "srv_key_eq_outdoor_switch_handler" declared implicitly
 N				srv_key_eq_outdoor_switch_handler();
 N				Drv_audio_channel_switch();
 N			}
@@ -53665,7 +53934,7 @@ N
 N			if(Global_datas.eq_mode != EQ_MODE_INDOOR)
 N			{
 N				Global_datas.eq_mode = EQ_MODE_INDOOR;
-W "..\main.c" 1790 5 function "srv_key_eq_outdoor_switch_handler" declared implicitly
+W "..\main.c" 2021 5 function "srv_key_eq_outdoor_switch_handler" declared implicitly
 N				srv_key_eq_outdoor_switch_handler();
 N				Drv_audio_channel_switch();
 N			}
@@ -53692,12 +53961,24 @@ N			Global_datas.power_4g = 0;
 N
 N		    printf("\nTURN OFF 4G MOUDLE\n");
 N
+N			AdapterPowerModeCtrl(0);
+N
 N			if(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)
 N			{
 N				Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
 N				TYM_drv_powerkeepon(0); 
 N				TYM_SysPower12V_3V3_onoff(0);		
 N				Global_datas.state = SYS_PLAY_STATE_IDLE;
+N				drv_all_led_on(0);
+N
+N			/* Unlock protected registers */
+N			//   SYS_UnlockReg();
+N			/* Disable PLL first to avoid unstable when setting PLL */
+N    		//	CLK_DisablePLL();
+N			//    SYS_LockReg();
+N
+N
+N				
 N			}
 N			else if(Global_datas.state == SYS_PLAY_STATE_FM)
 N			{
@@ -53733,6 +54014,11 @@ N			if(Global_datas.FmData.fmstate == FM_STATE_ON)
 N			{
 N				Global_datas.FmData.fmstate = FM_STATE_SEEK_DOWN;
 N			}
+N			else if(Global_datas.FmData.fmstate == FM_STATE_SEEK_DOWN)
+N			{
+N				Global_datas.FmData.fmstate = FM_STATE_ON;
+N				Global_datas.FmData.FmNeedToStore = 1;
+N			}
 N			break;
 N
 N		
@@ -53741,7 +54027,12 @@ N
 N			if(Global_datas.FmData.fmstate == FM_STATE_ON)
 N			{
 N				Global_datas.FmData.fmstate = FM_STATE_SEEK_UP;
-N			}			
+N			}
+N			else if(Global_datas.FmData.fmstate == FM_STATE_SEEK_UP)
+N			{
+N				Global_datas.FmData.fmstate = FM_STATE_ON;
+N				Global_datas.FmData.FmNeedToStore = 1;
+N			}
 N			
 N			break;
 N
@@ -53766,7 +54057,7 @@ N
 N			if(Global_datas.state == SYS_PLAY_STATE_FM)
 N			{
 N				if(Global_datas.FmData.Frequency >= 8760)	Global_datas.FmData.Frequency -= 10;
-N				else Global_datas.FmData.Frequency = 10080;
+N				else Global_datas.FmData.Frequency = 10800;
 N				Global_datas.FmData.FmNeedToStore = 1;
 N				TimeOutSet(&FmStoreTimer, 2000);
 N				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
@@ -53892,7 +54183,7 @@ N			{
 N				if(Global_datas.FmData.FmNeedToStore)
 N				{
 N					Global_datas.FmData.FmNeedToStore = 0;
-W "..\main.c" 2015 6 function "DataStore" declared implicitly
+W "..\main.c" 2268 6 function "DataStore" declared implicitly
 N					DataStore();
 N				}
 N			}
@@ -53915,11 +54206,10 @@ N						Global_datas.FmData.Frequency += 10;
 N					}
 N					else
 N					{
-N						Global_datas.FmData.Frequency = 10800;
-N						Global_datas.FmData.fmstate = FM_STATE_ON;		
-N						//dis_mic(0);
+N						Global_datas.FmData.Frequency = 8750;
 N					}
 N
+N					SendFmFreqToSubBoard();
 N					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
 N					//FreqDisplay(Frequency);
 N					
@@ -53941,15 +54231,14 @@ N
 N					if(Global_datas.FmData.Frequency >= 8760)  Global_datas.FmData.Frequency -= 10;
 N					else 
 N					{
-N						Global_datas.FmData.Frequency = 8750;
-N						Global_datas.FmData.fmstate = FM_STATE_ON;		
-N						//dis_mic(0);
+N						Global_datas.FmData.Frequency = 10800;
+N						//Global_datas.FmData.fmstate = FM_STATE_ON;		
 N					}
 N
-N					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
-N					//FreqDisplay(Frequency);
 N					
-N
+N					SendFmFreqToSubBoard();
+N					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N					
 N					if(temp_valid)
 N					{
 N						//dis_mic(1);
@@ -53961,9 +54250,10 @@ N
 N				break;
 N
 N				case FM_STATE_AUTO_SEARCH:
-N 
+N
+N				
+N				SendFmFreqToSubBoard();
 N				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
-N				//FreqDisplay(Global_datas.FmData.Frequency);
 N				
 N				if(temp_valid)
 N				{
@@ -53995,11 +54285,8 @@ N
 N
 N						Global_datas.FmData.FmNeedToStore = 1;
 N						TimeOutSet(&FmStoreTimer, 1000);
-N						
-N						si47xxFMRX_tune(Global_datas.FmData.Frequency);
-N						
 N						SendFmFreqToSubBoard();
-N						//FreqDisplay(Frequency);
+N						si47xxFMRX_tune(Global_datas.FmData.Frequency);	
 N						Global_datas.FmData.fmstate = FM_STATE_ON;		
 N					}
 N				}	
@@ -54021,11 +54308,11 @@ N							Global_datas.FmData.Frequency = 8750;
 N							//dis_mic(0);
 N						}
 N
-W "..\main.c" 2142 7 function "DataStore" declared implicitly
-N						DataStore();
-N						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N						
 N						SendFmFreqToSubBoard();
-N						//FreqDisplay(Frequency);
+N						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+N						//DataStore();
+N						Global_datas.FmData.FmNeedToStore = 1;
 N						Global_datas.FmData.fmstate = FM_STATE_ON;		
 N					}
 N				}					

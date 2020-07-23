@@ -15,6 +15,8 @@
 #include "tym_gpio.h"
 #include "drv_irkey.h"
 #include "tym_global.h"
+#include "hal_timer0.h"
+
 
 uint32_t IrTimerCount = 0;
 uint8_t ir_data[33] = {0};
@@ -23,7 +25,7 @@ uint8_t DecodeStartFlag = 0;
 uint8_t DecodeFinishFlag = 0;
 uint8_t ir_data_rx_ok = 0;
 uint8_t LongKeyPress = 0;
-uint8_t key_value_bak = 0;
+//uint8_t key_value_bak = 0;
 
 
 void GPCDEF_IRQHandler(void)
@@ -44,14 +46,17 @@ void GPCDEF_IRQHandler(void)
 					i = 0;
 					repeat_time = 0;
 					LongKeyPress = 0;
-					key_value_bak = 0;
+					//key_value_bak = 0;
+					Global_datas.ir_bak_key = IN_KEY_NONE;
 			}
 			else if((IrTimerCount > 23) && (IrTimerCount < 120))
 			{
 				IrTimerCount = 0;
 				//printf("REPPPPPPPPPPPPPPP\n");
 
-				if((key_value_bak == IR_KEY_PLAY_PAUSE) || (key_value_bak == IR_KEY_POWER))
+				TimeOutSet(&IrLongPressTimer, 300);
+
+				if((Global_datas.ir_bak_key  == IR_KEY_PLAY_PAUSE) || (Global_datas.ir_bak_key == IR_KEY_POWER))
 				{
 					if(repeat_time < 15)
 					{
@@ -165,7 +170,8 @@ uint8_t Ircordpro(void)//红外码值处理函数
 			{
 				ir_key = IrKeyMap[temp][0];
 				printf("ir_key_num:%d\n", temp);
-				key_value_bak = ir_key;
+				Global_datas.ir_bak_key = ir_key;
+				TimeOutSet(&IrLongPressTimer, 500);
 				return ir_key;
 			}
 		}
@@ -181,7 +187,9 @@ uint8_t Ircordpro(void)//红外码值处理函数
 			{
 				ir_key = IrKeyMap_B[temp][0];
 				printf("ir_key_num:%d\n", temp);
-				key_value_bak = ir_key;
+				Global_datas.ir_bak_key = ir_key;
+				
+				TimeOutSet(&IrLongPressTimer, 500);
 				return ir_key;
 			}
 		}
@@ -214,7 +222,7 @@ uint8_t GetIrKey(void)
 	{
 		printf("longpress:%d\n", LongKeyPress);
 		LongKeyPress--;
-		switch(key_value_bak)
+		switch(Global_datas.ir_bak_key)
 		{
 			case IR_KEY_PLAY_PAUSE:
 				ir_key_hold = IR_KEY_PLAY_PAUSE_CP;

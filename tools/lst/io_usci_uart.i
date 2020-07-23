@@ -29343,7 +29343,9 @@ uint32_t UI2C_ReadMultiBytesTwoRegs(UI2C_T *ui2c, uint8_t u8SlaveAddr, uint16_t 
 
 
 int32_t Transfer_Uart_Init(void);
-int32_t Debug_Uart_Init(void);
+
+int32_t PTE_Uart0_Init(void);
+
 int32_t USCI_Uart_Init(void);
 
 void UART_TEST_HANDLE(void);
@@ -29466,6 +29468,16 @@ typedef enum
 	SYS_PLAY_STATE_AUX
 
 } SYS_STATE;
+
+
+typedef enum
+{
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
 
 
 typedef enum
@@ -29725,14 +29737,21 @@ typedef struct
 	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	uint8_t ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern uint8_t RxBuff[60];
+extern uint8_t RxMsgCount_PTE;
+
 
 
 
@@ -29752,7 +29771,7 @@ extern sGlobalData Global_datas;
  
  
  
-uint8_t g_uu8RecData[1024]  = {0};
+
 
 volatile uint32_t g_uu32comRbytes = 0;
 volatile uint32_t g_uu32comRhead  = 0;

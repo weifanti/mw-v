@@ -160,7 +160,7 @@
                   TYM_gpio_init PROC
 ;;;20      */
 ;;;21     void TYM_gpio_init(void)
-000000  4810              LDR      r0,|L2.68|
+000000  480f              LDR      r0,|L2.64|
 ;;;22     {
 ;;;23     	/* Disable the GPB7 & GPB15 digital input path to avoid the leakage current. */
 ;;;24     
@@ -183,43 +183,43 @@
 000018  071b              LSLS     r3,r3,#28
 00001a  431a              ORRS     r2,r2,r3
 00001c  63c2              STR      r2,[r0,#0x3c]
-;;;30     	SYS->GPB_MFPL |= SYS_GPB_MFPL_PB3MFP_USCI0_DAT1 | SYS_GPB_MFPL_PB2MFP_USCI0_DAT0 ;  // USIC0
+;;;30     	SYS->GPB_MFPL |= SYS_GPB_MFPL_PB3MFP_USCI0_DAT1 | SYS_GPB_MFPL_PB2MFP_USCI0_DAT0 | SYS_GPB_MFPL_PB0MFP_UART2_RXD |SYS_GPB_MFPL_PB1MFP_UART2_TXD;  // USIC0 PB2_tx, PB3_rx   to sub board
 00001e  6b82              LDR      r2,[r0,#0x38]
-000020  2311              MOVS     r3,#0x11
-000022  02db              LSLS     r3,r3,#11
-000024  431a              ORRS     r2,r2,r3
-000026  6382              STR      r2,[r0,#0x38]
+000020  4b08              LDR      r3,|L2.68|
+000022  431a              ORRS     r2,r2,r3
+000024  6382              STR      r2,[r0,#0x38]
 ;;;31     		
 ;;;32     	SYS->GPC_MFPH = SYS_GPC_MFPH_PC10MFP_I2C1_SDA | SYS_GPC_MFPH_PC9MFP_I2C1_SCL;  //I2C_1  pcm1862
-000028  2233              MOVS     r2,#0x33
-00002a  4807              LDR      r0,|L2.72|
-00002c  0112              LSLS     r2,r2,#4
-00002e  6042              STR      r2,[r0,#4]
+000026  2233              MOVS     r2,#0x33
+000028  4807              LDR      r0,|L2.72|
+00002a  0112              LSLS     r2,r2,#4
+00002c  6042              STR      r2,[r0,#4]
 ;;;33     	SYS->GPC_MFPL = 0x00000000;
-000030  6001              STR      r1,[r0,#0]
-;;;34     	SYS->GPD_MFPH = SYS_GPD_MFPH_PD9MFP_UART0_RXD;  // UART_0
-000032  2130              MOVS     r1,#0x30
-000034  60c1              STR      r1,[r0,#0xc]
+00002e  6001              STR      r1,[r0,#0]
+;;;34     	SYS->GPD_MFPH = SYS_GPD_MFPH_PD9MFP_UART0_RXD;  // UART_0  PTE
+000030  2130              MOVS     r1,#0x30
+000032  60c1              STR      r1,[r0,#0xc]
 ;;;35     	SYS->GPD_MFPL = SYS_GPD_MFPL_PD1MFP_UART0_TXD;
-000036  6081              STR      r1,[r0,#8]
+000034  6081              STR      r1,[r0,#8]
 ;;;36     	SYS->GPE_MFPH = SYS_GPE_MFPH_PE13MFP_I2C0_SDA | SYS_GPE_MFPH_PE12MFP_I2C0_SCL | SYS_GPE_MFPH_PE9MFP_UART1_RXD | SYS_GPE_MFPH_PE8MFP_UART1_TXD; //I2C_0: TSA5825 UART1:4G
-000038  4904              LDR      r1,|L2.76|
-00003a  6141              STR      r1,[r0,#0x14]
+000036  4905              LDR      r1,|L2.76|
+000038  6141              STR      r1,[r0,#0x14]
 ;;;37     	
 ;;;38     	SYS->GPE_MFPL = SYS_GPE_MFPL_PE7MFP_ICE_DAT | SYS_GPE_MFPL_PE6MFP_ICE_CLK;
-00003c  0609              LSLS     r1,r1,#24
-00003e  6101              STR      r1,[r0,#0x10]
+00003a  0609              LSLS     r1,r1,#24
+00003c  6101              STR      r1,[r0,#0x10]
 ;;;39     	//SYS->GPE_MFPL = SYS_GPE_MFPL_PE7MFP_GPIO | SYS_GPE_MFPL_PE6MFP_GPIO;
 ;;;40     	
 ;;;41     	return;
 ;;;42     }
-000040  4770              BX       lr
+00003e  4770              BX       lr
 ;;;43     
                           ENDP
 
-000042  0000              DCW      0x0000
-                  |L2.68|
+                  |L2.64|
                           DCD      0x50004040
+                  |L2.68|
+                          DCD      0x00008833
                   |L2.72|
                           DCD      0x50000040
                   |L2.76|

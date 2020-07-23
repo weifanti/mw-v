@@ -3388,7 +3388,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50300,10 +50300,9 @@ N/*-----------------------------------------------------------------------------
 N/* Global variables                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N
-N#define RXBUFSIZE 1024
+N//#define RXBUFSIZE 1024
 N
-Nuint8_t g_4G_u8RecData[RXBUFSIZE]  = {0};
-Xuint8_t g_4G_u8RecData[1024]  = {0};
+N//uint8_t g_4G_u8RecData[RXBUFSIZE]  = {0};
 N
 Nvolatile uint32_t g_u324GRbytes = 0;
 Nvolatile uint32_t g_u324GRhead  = 0;

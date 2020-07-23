@@ -180,13 +180,36 @@ void battery_charge_disenable(void)
 }
 
 
+void AdapterPowerCtrPin_init(void)
+{
+	GPIO_SetMode(PB, BIT8, GPIO_MODE_OUTPUT); // 1 HI POWER , 0 low power
+	AdapterPowerModeCtrl(0);  					// first low power
+}
+
+void AdapterPowerModeCtrl(uint8_t value)// 1 HI POWER , 0 low power  , set this pin low  when enter to powerdown mode
+{
+	if(value)
+	{
+		PB8 = 1;
+	}
+	else
+	{
+		PB8 = 0;
+	}
+}
+
+
 /*---------------------------------------------------------------------------------------------------------*/
 /* system power on                                                                                   */
 /*---------------------------------------------------------------------------------------------------------*/
 void TYM_sys_PowerManger_init(void)
 {
-	//battery 
 
+	// 24V adapter power mode control, 0 low power mode, 1 hi power mode
+	AdapterPowerCtrPin_init();
+	
+	
+	//battery 
 	BatteryChargeStateCheckInit();
 	DcInDetect_init();	
 	

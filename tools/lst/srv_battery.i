@@ -29412,6 +29412,9 @@ void battery_charge_disenable(void);
 void DcInDetect(void);
 void BatteryChargeStateChcek(void);
 void Bat_SelectPin_0_external_1_internal(uint8_t value); 
+void AdapterPowerModeCtrl(uint8_t value);
+
+
 
 
 
@@ -29500,6 +29503,16 @@ typedef enum
 	SYS_PLAY_STATE_AUX
 
 } SYS_STATE;
+
+
+typedef enum
+{
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
 
 
 typedef enum
@@ -29759,14 +29772,21 @@ typedef struct
 	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	uint8_t ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern uint8_t RxBuff[60];
+extern uint8_t RxMsgCount_PTE;
+
 
 
 

@@ -29421,6 +29421,16 @@ typedef enum
 
 typedef enum
 {
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
+
+
+typedef enum
+{
 	SYS_PLAY_EVENT_NONE = 0,
 	SYS_PLAY_EVENT_POWERING_UP,
 	SYS_PLAY_EVENT_SHUTTING_DOWN,
@@ -29676,14 +29686,21 @@ typedef struct
 	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	uint8_t ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern uint8_t RxBuff[60];
+extern uint8_t RxMsgCount_PTE;
+
 
 
 
@@ -30563,10 +30580,11 @@ void si47xxFMRX_powerup(void)
 
 
 		cmd[0] = 0x01;
-		cmd[1] = 0xc0;
+		
+		cmd[1] = 0xD0;
 		cmd[2] = 0x05;	
 
-#line 655 "..\\src\\driver\\MoudleFm.c"
+#line 656 "..\\src\\driver\\MoudleFm.c"
         
 		si47xx_command(3, cmd, 8, rsp);
         WaitMs(500);               

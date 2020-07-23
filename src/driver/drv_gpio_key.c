@@ -128,7 +128,7 @@ void GetKeyEvent(void)
 
 			PreKeyIndex = KeyIndex;
 			TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_JTTER_TIME);
-			//DBG(("GOTO JITTER!\n"));
+			printf("GOTO JITTER!\n");
 			SoftwareKeyState = SOFTWARE_KEY_STATE_JITTER;
 				
 		case SOFTWARE_KEY_STATE_JITTER:
@@ -140,7 +140,7 @@ void GetKeyEvent(void)
 			}
 			else if(IsTimeOut(&SoftwareKeyWaitTimer))
 			{
-				//DBG(("GOTO PRESS_DOWN!\n"));
+				printf("GOTO PRESS_DOWN!\n");
 				TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_CP_TIME);
 				SoftwareKeyState = SOFTWARE_KEY_STATE_PRESS_DOWN;
 			}
@@ -158,7 +158,7 @@ void GetKeyEvent(void)
 			else if(IsTimeOut(&SoftwareKeyWaitTimer))
 			{
 				//return key cp value
-				//DBG(("KEY CP!******\n"));
+				printf("KEY CP!******\n");
 				TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_CP_TIME);
 				
 				SoftwareKeyState = SOFTWARE_KEY_STATE_CP;
@@ -172,10 +172,10 @@ void GetKeyEvent(void)
 		case SOFTWARE_KEY_STATE_CP:
 			if(PreKeyIndex != KeyIndex)
 			{
-				//return key cp value
 				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][2];
 				Global_datas.key_led_blink = 1;
+
 				return;
 			}
 			else if(IsTimeOut(&SoftwareKeyWaitTimer))
@@ -188,6 +188,9 @@ void GetKeyEvent(void)
 				{
 					Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][1];
 				}
+
+				
+				printf("KEY CP!******\n");
 				
 				return;
 			}

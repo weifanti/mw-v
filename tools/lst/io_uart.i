@@ -29343,7 +29343,9 @@ uint32_t UI2C_ReadMultiBytesTwoRegs(UI2C_T *ui2c, uint8_t u8SlaveAddr, uint16_t 
 
 
 int32_t Transfer_Uart_Init(void);
-int32_t Debug_Uart_Init(void);
+
+int32_t PTE_Uart0_Init(void);
+
 int32_t USCI_Uart_Init(void);
 
 void UART_TEST_HANDLE(void);
@@ -29466,6 +29468,16 @@ typedef enum
 	SYS_PLAY_STATE_AUX
 
 } SYS_STATE;
+
+
+typedef enum
+{
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
 
 
 typedef enum
@@ -29725,14 +29737,21 @@ typedef struct
 	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	uint8_t ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern uint8_t RxBuff[60];
+extern uint8_t RxMsgCount_PTE;
+
 
 
 
@@ -29751,7 +29770,8 @@ extern sGlobalData Global_datas;
  
  
 
-uint8_t g_u8RecData[1024]  = {0};
+
+
 
 volatile uint32_t g_u32comRbytes = 0;
 volatile uint32_t g_u32comRhead  = 0;
@@ -29832,56 +29852,111 @@ void UART2_Init()
 	Hal_Uart2_Data_Init();
 }
 
+
+
  
  
  
-void UART_TEST_HANDLE()
+void UART_TEST_HANDLE(void)
 {
-    uint8_t u8InChar = 0xFF;	
+
+
 	
-  
+
+
+#line 148 "..\\src\\io\\io_uart.c"
+
+	  uint8_t u8InChar = 0xFF;
 	
-    
+	
+	  uint32_t temp0 = ((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->INTSTS;
+	
+	
+	  uint8_t DataByte=0;
+	  static uint8_t nRxIndex=0;
+	  static uint8_t nDataLenTemp=0;
+	  static uint8_t nDataLen=0;
+	  static uint32_t rcr = 0;
+	  uint8_t rcr_rx = 0;
+
+
+
 	UART_ClearIntFlag(((UART_T *) ((( uint32_t)0x40000000) + 0x50000)), (0x1ul << (0)));
-	UART_ClearIntFlag(((UART_T *) ((( uint32_t)0x40100000) + 0x54000)), (0x1ul << (0)));
 
-     
-	 if((((((UART_T *) ((( uint32_t)0x40000000) + 0x50000)))->INTSTS & (0x1ul << (0)))>>(0)))
-    {
-         
-        u8InChar = ((((UART_T *) ((( uint32_t)0x40000000) + 0x50000)))->DAT);
-
-
-
-
-        if(u8InChar == '0')
-        {
-            g_bWait = 0;
-        }
-
-         
-        if(g_u32comRbytes < 1024)
-        {
-             
-            g_u8RecData[g_u32comRtail] = u8InChar;
-            g_u32comRtail = (g_u32comRtail == (1024 - 1)) ? 0 : (g_u32comRtail + 1);
-            g_u32comRbytes++;
-        }
-    }
-	 
-
-     
-    if((((UART_T *) ((( uint32_t)0x40100000) + 0x54000)) -> INTSTS) & (0x1ul << (8)))
-    {
-         
-        while((((((UART_T *) ((( uint32_t)0x40100000) + 0x54000)))->INTSTS & (0x1ul << (0)))>>(0)))
-    	{
-			uart2_get_data[uart_counts] = ((((UART_T *) ((( uint32_t)0x40100000) + 0x54000)))->DAT);
-			uart_counts++;
-			if (uart_counts > 140)
-				uart_counts = 0;
-    	}
+	if((((((UART_T *) ((( uint32_t)0x40000000) + 0x50000)))->INTSTS & (0x1ul << (0)))>>(0)))
+	{
+		DataByte = ((((UART_T *) ((( uint32_t)0x40000000) + 0x50000)))->DAT);
 		
+	} 
+
+		
+		switch (nRxIndex)
+		{
+			case 0: 
+				
+				printf("INDEX 0: %x\n",DataByte);
+				if(DataByte==0x5A)
+					nRxIndex=1;
+				break;
+			case 1: 
+				
+				printf("INDEX 1: %x\n",DataByte);
+				if(DataByte==0xA5) nRxIndex=2;
+				else
+				{
+					if(DataByte==0xff) nRxIndex=1;
+					else nRxIndex=0;
+				}
+				break;
+			case 2:  
+				
+				nDataLen=DataByte;
+
+				
+				
+				rcr = nDataLen;
+				
+				nDataLenTemp=0;
+				nRxIndex=3;
+
+				
+				
+				break;		
+			case 3:
+				
+				if(nDataLenTemp<nDataLen-1)
+				{
+					RxBuff[RxMsgCount_PTE*(12)+nDataLenTemp]=DataByte;
+					rcr +=DataByte;
+					nDataLenTemp++;
+					
+				}
+				else
+				{
+					RxBuff[RxMsgCount_PTE*(12)+nDataLenTemp]=DataByte;
+					rcr+=DataByte;
+					nRxIndex=4;
+				}
+				break;
+			case 4:
+				
+				   printf("INDEX 4: %x\n",DataByte);
+				   rcr_rx = DataByte;
+				   rcr = ~rcr + 1;
+				   
+				  printf("RCR: %x\n",rcr);
+				  
+				   {
+					   nRxIndex=0;
+					   RxMsgCount_PTE++; 
+				   }
+		
+				   nRxIndex=0;
+					break;
+			default:
+				nRxIndex=0;
+				break;
+		} 
 
 
 
@@ -29889,18 +29964,45 @@ void UART_TEST_HANDLE()
 
 
 
-
-
-
-
-
-
- 
+    if(((UART_T *) ((( uint32_t)0x40000000) + 0x50000))->FIFOSTS & ((0x1ul << (6)) | (0x1ul << (5)) | (0x1ul << (4)) | (0x1ul << (0))))
+    {
+        UART_ClearIntFlag(((UART_T *) ((( uint32_t)0x40000000) + 0x50000)), ((0x1ul << (10))| (0x1ul << (13))));
     }
-#line 207 "..\\src\\io\\io_uart.c"
-  
 }
 
+
+
+
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
  
  
  
@@ -30007,6 +30109,7 @@ void UART02_IRQHandler(void)
  
 void UART1_IRQHandler(void)
 {
+
     UART_4G_HANDLE();
 }
 
@@ -30027,8 +30130,9 @@ int32_t Transfer_Uart_Init(void)
     printf("\nUART Sample Program\n");
 	
      
-	UART_EnableInt(((UART_T *) ((( uint32_t)0x40100000) + 0x54000)), (0x1ul << (0)) );
+	
 	UART_EnableInt(((UART_T *) ((( uint32_t)0x40100000) + 0x50000)), (0x1ul << (0)) );
+	
 
     return 0;
 }
@@ -30036,9 +30140,9 @@ int32_t Transfer_Uart_Init(void)
  
  
  
-int32_t Debug_Uart_Init(void)
+int32_t PTE_Uart0_Init(void)
 {
-	printf("debug uart init!\n");
+	printf("pte uart0 init!\n");
      
     UART0_Init();
 	
@@ -30061,7 +30165,7 @@ int32_t Hal_Uart2_Write(uint8_t *src, uint16_t len)
 {
 
     int32_t  temp3;
-#line 411 "..\\src\\io\\io_uart.c"
+#line 489 "..\\src\\io\\io_uart.c"
 	for(temp3 = 0; temp3 < len; temp3++)
 	{
 		((((UART_T *) ((( uint32_t)0x40100000) + 0x54000)))->DAT = (src[temp3]));
@@ -30095,7 +30199,7 @@ int32_t Hal_Uart2_Read(uint8_t *dst, uint16_t len)
     
     
     
-#line 469 "..\\src\\io\\io_uart.c"
+#line 547 "..\\src\\io\\io_uart.c"
 
 	for(i = 0; i<=len; i++)
 	{

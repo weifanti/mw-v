@@ -53,7 +53,7 @@
 
 00000e  0000              DCW      0x0000
                   |L1.16|
-                          DCD      0x40050000
+                          DCD      0x40154000
 
                           AREA ||i.Hard_Fault_Handler||, CODE, READONLY, ALIGN=2
 
@@ -107,7 +107,7 @@
 
 00000a  0000              DCW      0x0000
                   |L3.12|
-                          DCD      0x40050000
+                          DCD      0x40154000
 
                           AREA ||i.SendChar||, CODE, READONLY, ALIGN=1
 
@@ -178,7 +178,7 @@
 
 00001a  0000              DCW      0x0000
                   |L5.28|
-                          DCD      0x40050000
+                          DCD      0x40154000
 
                           AREA ||i._ttywrch||, CODE, READONLY, ALIGN=1
 
@@ -262,7 +262,7 @@
 
 00000a  0000              DCW      0x0000
                   |L10.12|
-                          DCD      0x40050000
+                          DCD      0x40154000
 
                           AREA ||i.stackDump||, CODE, READONLY, ALIGN=2
 

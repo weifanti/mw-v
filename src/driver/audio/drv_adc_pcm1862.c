@@ -162,13 +162,7 @@ void drv_Adc_pcm1862_Init(void)
 {
 	/* load data */
 	printf("Adc_pcm1862_Init\n");
-
-	
 	I2S_select_pin_dac();
-	//drv_audio_4G_Channel(); // first 4g channel
-	
-//	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
-//	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
     drv_PM1862_reg_Load();
 }
 

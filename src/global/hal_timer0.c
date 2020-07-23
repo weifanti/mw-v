@@ -29,6 +29,7 @@ TIMER PoweroffLedTimer;
 TIMER ModeSwitchTimer;
 TIMER FmLoopTimer;
 TIMER FmStoreTimer;
+TIMER IrLongPressTimer;
 
 
 
@@ -140,6 +141,7 @@ void Hal_Timer1_Init(void)
 	TimeOutSet(&FmLoopTimer, 100);
 	TimeOutSet(&FmStoreTimer, 100);
 	TimeOutSet(&SysTimer_50ms, 100);
+	TimeOutSet(&IrLongPressTimer, 100);
 
 
 //	TimeOutSet(&KeyScanTimer, 10);

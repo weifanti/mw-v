@@ -29439,6 +29439,7 @@ extern TIMER ModeSwitchTimer;
 extern TIMER FmLoopTimer;
 extern TIMER FmStoreTimer;
 extern TIMER SysTimer_50ms;
+extern TIMER IrLongPressTimer;
 
 
 
@@ -29533,6 +29534,16 @@ typedef enum
 	SYS_PLAY_STATE_AUX
 
 } SYS_STATE;
+
+
+typedef enum
+{
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
 
 
 typedef enum
@@ -29792,14 +29803,21 @@ typedef struct
 	unsigned char fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	unsigned char ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern unsigned char RxBuff[60];
+extern unsigned char RxMsgCount_PTE;
+
 
 
 
@@ -29920,7 +29938,7 @@ void GetKeyEvent(void)
 
 			PreKeyIndex = KeyIndex;
 			TimeOutSet(&SoftwareKeyWaitTimer, 20);
-			
+			printf("GOTO JITTER!\n");
 			SoftwareKeyState = SOFTWARE_KEY_STATE_JITTER;
 				
 		case SOFTWARE_KEY_STATE_JITTER:
@@ -29932,7 +29950,7 @@ void GetKeyEvent(void)
 			}
 			else if(IsTimeOut(&SoftwareKeyWaitTimer))
 			{
-				
+				printf("GOTO PRESS_DOWN!\n");
 				TimeOutSet(&SoftwareKeyWaitTimer, 1500);
 				SoftwareKeyState = SOFTWARE_KEY_STATE_PRESS_DOWN;
 			}
@@ -29950,7 +29968,7 @@ void GetKeyEvent(void)
 			else if(IsTimeOut(&SoftwareKeyWaitTimer))
 			{
 				
-				
+				printf("KEY CP!******\n");
 				TimeOutSet(&SoftwareKeyWaitTimer, 1500);
 				
 				SoftwareKeyState = SOFTWARE_KEY_STATE_CP;
@@ -29964,10 +29982,10 @@ void GetKeyEvent(void)
 		case SOFTWARE_KEY_STATE_CP:
 			if(PreKeyIndex != KeyIndex)
 			{
-				
 				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][2];
 				Global_datas.key_led_blink = 1;
+
 				return;
 			}
 			else if(IsTimeOut(&SoftwareKeyWaitTimer))
@@ -29980,6 +29998,9 @@ void GetKeyEvent(void)
 				{
 					Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][1];
 				}
+
+				
+				printf("KEY CP!******\n");
 				
 				return;
 			}

@@ -29572,6 +29572,11 @@ void drv_5825_gpio012_config(void);
 
 
 
+
+
+
+
+
 void drv_pcm1862_input_channel(uint8_t pcm_channel);
 
 
@@ -29721,6 +29726,16 @@ typedef enum
 	SYS_PLAY_STATE_AUX
 
 } SYS_STATE;
+
+
+typedef enum
+{
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
 
 
 typedef enum
@@ -29980,14 +29995,21 @@ typedef struct
 	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	uint8_t ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern uint8_t RxBuff[60];
+extern uint8_t RxMsgCount_PTE;
+
 
 
 
@@ -30052,8 +30074,18 @@ void Drv_Dap_init(void)
  
 void Drv_Dap_vol_set(uint8_t value)
 {
-	drv_5825_vol_set(value);
-	drv_dap_3251_vol_set(value);
+	if((Global_datas.state == SYS_PLAY_STATE_AUX) || (Global_datas.state == SYS_PLAY_STATE_FM))
+	{
+		drv_5825_vol_set(value);
+		drv_dap_3251_vol_set(value);
+
+	}
+	else
+	{
+		drv_5825_vol_set_wifi_bt(value);
+		drv_dap_3251_vol_set_wifi_bt(value);
+	}
+
 }
 
 
@@ -30072,7 +30104,7 @@ void Drv_Dap_vol_mute(uint8_t value)
 void drv_audio_AuxIn_Channel(void)
 {
 
-	drv_pcm1862_PGA_VAL_SET(0x21);
+	drv_pcm1862_PGA_VAL_SET(0x17);
 	drv_pcm1862_input_channel((1 << (1-1)));
 	I2S_select_pin_dac();
 
@@ -30090,7 +30122,7 @@ void drv_audio_4G_Channel(void)
 
 void drv_audio_FM_Channel(void)
 {
-	drv_pcm1862_PGA_VAL_SET(0x2b);
+	drv_pcm1862_PGA_VAL_SET(0x21);
 	drv_pcm1862_input_channel((1 << (2-1)));
 	I2S_select_pin_dac();
 
@@ -30142,8 +30174,10 @@ void Drv_audio_init(void)
 	drv_5825_powerdown_pin_init(); 
 	drv_Adc_pcm1862_Init();
   	drv_audio_Null_Channel();
+
 	
-	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),5);
+	
+	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),5000);
 	Drv_Dap_init();
 
 	if(Global_datas.state == SYS_PLAY_STATE_FM)
@@ -30158,6 +30192,7 @@ void Drv_audio_init(void)
 	{
 		drv_audio_4G_Channel();
 	}
+
 }
 
 void Drv_audio_channel_switch(void)

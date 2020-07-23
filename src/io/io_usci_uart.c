@@ -20,13 +20,13 @@
 #define PLLCTL_SETTING  CLK_PLLCTL_72MHz_HXT
 #define PLL_CLOCK       72000000
 
-#define RXBUFSIZE 1024
+//#define RXBUFSIZE 1024
 #define UUART_CMD_LEN 7
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global variables                                                                                        */
 /*---------------------------------------------------------------------------------------------------------*/
-uint8_t g_uu8RecData[RXBUFSIZE]  = {0};
+//uint8_t g_uu8RecData[RXBUFSIZE]  = {0};
 
 volatile uint32_t g_uu32comRbytes = 0;
 volatile uint32_t g_uu32comRhead  = 0;

@@ -70,8 +70,18 @@ void Drv_Dap_init(void)
  */
 void Drv_Dap_vol_set(uint8_t value)
 {
-	drv_5825_vol_set(value);
-	drv_dap_3251_vol_set(value);
+	if((Global_datas.state == SYS_PLAY_STATE_AUX) || (Global_datas.state == SYS_PLAY_STATE_FM))
+	{
+		drv_5825_vol_set(value);
+		drv_dap_3251_vol_set(value);
+
+	}
+	else
+	{
+		drv_5825_vol_set_wifi_bt(value);
+		drv_dap_3251_vol_set_wifi_bt(value);
+	}
+
 }
 
 /**
@@ -160,8 +170,10 @@ void Drv_audio_init(void)
 	drv_5825_powerdown_pin_init(); // 5825 powerdown pin set hi befor i2s is ready
 	drv_Adc_pcm1862_Init();
   	drv_audio_Null_Channel();
+
 	
-	TIMER_Delay(TIMER0,5);
+	
+	TIMER_Delay(TIMER0,5000);
 	Drv_Dap_init();
 
 	if(Global_datas.state == SYS_PLAY_STATE_FM)
@@ -176,6 +188,7 @@ void Drv_audio_init(void)
 	{
 		drv_audio_4G_Channel();
 	}
+
 }
 
 void Drv_audio_channel_switch(void)

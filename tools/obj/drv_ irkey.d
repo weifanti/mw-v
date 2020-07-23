@@ -36,3 +36,4 @@
 .\obj\drv_ irkey.o: ..\src\io\include\tym_gpio.h
 .\obj\drv_ irkey.o: ..\src\driver\include\drv_irkey.h
 .\obj\drv_ irkey.o: ..\src\global\tym_global.h
+.\obj\drv_ irkey.o: ..\src\global\hal_timer0.h

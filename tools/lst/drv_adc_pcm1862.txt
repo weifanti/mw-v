@@ -13,9 +13,7 @@
 ;;;164    	printf("Adc_pcm1862_Init\n");
 000002  a00b              ADR      r0,|L1.48|
 000004  f7fffffe          BL       __2printf
-;;;165    
-;;;166    	
-;;;167    	I2S_select_pin_dac();
+;;;165    	I2S_select_pin_dac();
 000008  f7fffffe          BL       I2S_select_pin_dac
 00000c  2400              MOVS     r4,#0
 00000e  4d0d              LDR      r5,|L1.68|
@@ -33,14 +31,10 @@
 000026  b2e4              UXTB     r4,r4
 000028  2c06              CMP      r4,#6
 00002a  d3f2              BCC      |L1.18|
-;;;168    	//drv_audio_4G_Channel(); // first 4g channel
-;;;169    	
-;;;170    //	GPIO_SetMode(PE, BIT10, GPIO_MODE_OUTPUT);	
-;;;171    //	GPIO_SetMode(PE, BIT11, GPIO_MODE_OUTPUT);
-;;;172        drv_PM1862_reg_Load();
-;;;173    }
+;;;166        drv_PM1862_reg_Load();
+;;;167    }
 00002c  bdf8              POP      {r3-r7,pc}
-;;;174    
+;;;168    
                           ENDP
 
 00002e  0000              DCW      0x0000

@@ -3392,7 +3392,7 @@ N/*-----------------------------------------------------------------------------
 N/* Macro Definition                                                                                        */
 N/*---------------------------------------------------------------------------------------------------------*/
 N#ifndef DEBUG_PORT
-N# define DEBUG_PORT      UART0       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
+N# define DEBUG_PORT      UART2       /*!< Select Debug Port which is used for retarget.c to output debug message to UART */
 N#endif
 N
 N/**
@@ -50412,6 +50412,7 @@ Nextern TIMER ModeSwitchTimer;
 Nextern TIMER FmLoopTimer;
 Nextern TIMER FmStoreTimer;
 Nextern TIMER SysTimer_50ms;
+Nextern TIMER IrLongPressTimer;
 N
 N
 N//extern TIMER AdcTimer;
@@ -50507,6 +50508,16 @@ N	SYS_PLAY_STATE_FM,
 N	SYS_PLAY_STATE_AUX
 N
 N} SYS_STATE;
+N
+N
+Ntypedef enum
+N{
+N	NET_TYPE_NONE = 0,
+N	NET_TYPE_WIFI,
+N	NET_TYPE_4G,
+N
+N} NET_TYPE;
+N
 N
 N
 Ntypedef enum
@@ -50801,14 +50812,24 @@ N	uint8_t fm_delay_time;
 X	unsigned char fm_delay_time;
 N	SYS_STATE state;
 N	SYS_EVENT event;
+N	NET_TYPE MW_radio_net_type;
 N	SubBoardStatus SubBoard;
 N	Fm_Data FmData;
 N	POWER_STATE PowerState;
+N	uint8_t ir_bak_key;
+X	unsigned char ir_bak_key;
 N	
 N
 N}sGlobalData;
 N
 Nextern sGlobalData Global_datas;
+N
+N#define MSG_MAX_LEN						(12)
+Nextern uint8_t RxBuff[60];
+Xextern unsigned char RxBuff[60];
+Nextern uint8_t RxMsgCount_PTE;
+Xextern unsigned char RxMsgCount_PTE;
+N
 N
 N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
@@ -50940,7 +50961,7 @@ N
 N			PreKeyIndex = KeyIndex;
 N			TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_JTTER_TIME);
 X			TimeOutSet(&SoftwareKeyWaitTimer, 20);
-N			//DBG(("GOTO JITTER!\n"));
+N			printf("GOTO JITTER!\n");
 N			SoftwareKeyState = SOFTWARE_KEY_STATE_JITTER;
 N				
 N		case SOFTWARE_KEY_STATE_JITTER:
@@ -50952,7 +50973,7 @@ N				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 N			}
 N			else if(IsTimeOut(&SoftwareKeyWaitTimer))
 N			{
-N				//DBG(("GOTO PRESS_DOWN!\n"));
+N				printf("GOTO PRESS_DOWN!\n");
 N				TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_CP_TIME);
 X				TimeOutSet(&SoftwareKeyWaitTimer, 1500);
 N				SoftwareKeyState = SOFTWARE_KEY_STATE_PRESS_DOWN;
@@ -50971,7 +50992,7 @@ N			}
 N			else if(IsTimeOut(&SoftwareKeyWaitTimer))
 N			{
 N				//return key cp value
-N				//DBG(("KEY CP!******\n"));
+N				printf("KEY CP!******\n");
 N				TimeOutSet(&SoftwareKeyWaitTimer, SOFTWARE_KEY_CP_TIME);
 X				TimeOutSet(&SoftwareKeyWaitTimer, 1500);
 N				
@@ -50986,10 +51007,10 @@ N
 N		case SOFTWARE_KEY_STATE_CP:
 N			if(PreKeyIndex != KeyIndex)
 N			{
-N				//return key cp value
 N				SoftwareKeyState = SOFTWARE_KEY_STATE_IDLE;
 N				Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][2];
 N				Global_datas.key_led_blink = 1;
+N
 N				return;
 N			}
 N			else if(IsTimeOut(&SoftwareKeyWaitTimer))
@@ -51003,6 +51024,9 @@ N				if((KeyIndex == 4) || (KeyIndex ==5))
 N				{
 N					Global_datas.inputmessage = SoftwareKeyEvent[PreKeyIndex][1];
 N				}
+N
+N				
+N				printf("KEY CP!******\n");
 N				
 N				return;
 N			}

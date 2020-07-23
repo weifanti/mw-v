@@ -29447,6 +29447,16 @@ typedef enum
 
 typedef enum
 {
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
+
+
+typedef enum
+{
 	SYS_PLAY_EVENT_NONE = 0,
 	SYS_PLAY_EVENT_POWERING_UP,
 	SYS_PLAY_EVENT_SHUTTING_DOWN,
@@ -29702,14 +29712,21 @@ typedef struct
 	uint8_t fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	uint8_t ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern uint8_t RxBuff[60];
+extern uint8_t RxMsgCount_PTE;
+
 
 
 
@@ -29734,7 +29751,7 @@ void TYM_gpio_init(void)
 	((SYS_T *) ((( uint32_t)0x50000000) + 0x00000))->GPA_MFPH = 0x00000000;
 	((SYS_T *) ((( uint32_t)0x50000000) + 0x00000))->GPA_MFPL = 0x00000000;
 	((SYS_T *) ((( uint32_t)0x50000000) + 0x00000))->GPB_MFPH |= (0x1UL<<(28));
-	((SYS_T *) ((( uint32_t)0x50000000) + 0x00000))->GPB_MFPL |= (0x8UL<<(12)) | (0x8UL<<(8)) ;  
+	((SYS_T *) ((( uint32_t)0x50000000) + 0x00000))->GPB_MFPL |= (0x8UL<<(12)) | (0x8UL<<(8)) | (0x3UL<<(0)) |(0x3UL<<(4));  
 		
 	((SYS_T *) ((( uint32_t)0x50000000) + 0x00000))->GPC_MFPH = (0x3UL<<(8)) | (0x3UL<<(4));  
 	((SYS_T *) ((( uint32_t)0x50000000) + 0x00000))->GPC_MFPL = 0x00000000;

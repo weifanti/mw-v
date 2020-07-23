@@ -50,16 +50,16 @@ volatile sys_err_e sys_err = SYS_ERR_NONE;
 void SYS_Clock_init(void)
 {
 
-    
+  #if 0
    // SYS->GPF_MFPL = SYS_GPF_MFPL_PF4MFP_XT1_IN | SYS_GPF_MFPL_PF3MFP_XT1_OUT | SYS_GPF_MFPL_PF1MFP_X32_IN | SYS_GPF_MFPL_PF0MFP_X32_OUT;
 	/* Enable HIRC clock (Internal RC 22.1184MHz) */
     CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk);
 
     /* Wait for HIRC clock ready */
     CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);
-
-    /* Select HCLK clock source as HIRC and HCLK clock divider as 1 */
+	    /* Select HCLK clock source as HIRC and HCLK clock divider as 1 */
     CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV0_HCLK(1));
+
 
     /* Enable HXT clock (external XTAL 12MHz) */
     CLK_EnableXtalRC(CLK_PWRCTL_HXTEN_Msk | CLK_PWRCTL_LXTEN_Msk);
@@ -69,7 +69,32 @@ void SYS_Clock_init(void)
 //    CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk);
     /* Set core clock as PLL_CLOCK from PLL and SysTick source to HCLK/2*/
     CLK_SetCoreClock(PLL_CLOCK);
-    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);
+    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);	
+
+	#else
+
+	/* Enable HIRC clock (Internal RC 22.1184MHz) */
+    CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk);
+
+    /* Wait for HIRC clock ready */
+    CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);	
+
+    /* Select HCLK clock source as HIRC and HCLK clock divider as 1 */
+    CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV0_HCLK(1));	
+
+
+    /* Enable HXT clock (external XTAL 12MHz) */
+    CLK_EnableXtalRC(CLK_PWRCTL_HXTEN_Msk);
+    /* Wait for HXT clock ready */
+    CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk);
+    /* Set core clock as PLL_CLOCK from PLL and SysTick source to HCLK/2*/
+    CLK_SetCoreClock(PLL_CLOCK);
+    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);	
+	#endif
+
+
+
+
 
     /* Enable UART module clock */
     CLK_EnableModuleClock(UART0_MODULE);
@@ -121,7 +146,8 @@ void SYS_Clock_init(void)
 
 void SYS_BusInit(void)
 {
-	Debug_Uart_Init();
+	// uart0 PTE, uart1 4G, uart2 debug printf, usic0 suboard.
+	PTE_Uart0_Init(); // this port use for PTE uart
 	
 	Transfer_Uart_Init();
 	
@@ -130,6 +156,65 @@ void SYS_BusInit(void)
 	Hal_I2c_Init();
 	
 }
+
+
+void SYS_Clock_Disable(void)
+{
+	/* Enable UART module clock */
+	  CLK_DisableModuleClock(UART0_MODULE);
+	  /* Enable UART module clock */
+	  CLK_DisableModuleClock(UART1_MODULE);
+	  
+	  /* Enable USCI module clock */
+	  CLK_DisableModuleClock(UART2_MODULE);
+	  
+	  /* Enable USCI module clock */
+	  CLK_DisableModuleClock(USCI0_MODULE);
+	  
+	  /* Enable I2C0 module clock */
+	  CLK_DisableModuleClock(I2C0_MODULE);
+	  
+	  /* Enable I2C1 module clock */
+	  CLK_DisableModuleClock(I2C1_MODULE);
+	
+	  /* Enable ADC module clock */
+	 // CLK_EnableModuleClock(ADC_MODULE);
+	
+	  /* Enable PWM0 module clock */
+	  CLK_DisableModuleClock(PWM0_MODULE);
+
+	
+}
+
+void SYS_Clock_Enable(void)
+{
+	/* Enable UART module clock */
+	  CLK_EnableModuleClock(UART0_MODULE);
+	  /* Enable UART module clock */
+	  CLK_EnableModuleClock(UART1_MODULE);
+	  
+	  /* Enable USCI module clock */
+	  CLK_EnableModuleClock(UART2_MODULE);
+	  
+	  /* Enable USCI module clock */
+	  CLK_EnableModuleClock(USCI0_MODULE);
+	  
+	  /* Enable I2C0 module clock */
+	  CLK_EnableModuleClock(I2C0_MODULE);
+	  
+	  /* Enable I2C1 module clock */
+	  CLK_EnableModuleClock(I2C1_MODULE);
+	
+	  /* Enable ADC module clock */
+	 // CLK_EnableModuleClock(ADC_MODULE);
+	
+	  /* Enable PWM0 module clock */
+	  CLK_EnableModuleClock(PWM0_MODULE);
+
+	
+}
+
+
 
 
 
@@ -211,9 +296,14 @@ void SysIdle(void)
 
 	Global_datas.FmData.Frequency = 8750;
 	Global_datas.FmData.station_num = 0;
+	Global_datas.ir_bak_key = IN_KEY_NONE;
+	Global_datas.MW_radio_net_type = NET_TYPE_NONE;
 
 	DataRead();
 	SendFmFreqToSubBoard();
+
+
+	
 	
 }
 
@@ -908,6 +998,8 @@ void MessageProcess(void)
 		                	Global_datas.g_mode_status = BT_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
 							//Drv_Dap_vol_set(VOLUME_DEFAULT);
+							Global_datas.MW_radio_net_type = NET_TYPE_NONE;
+							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);// net type
 							
 						}
 					
@@ -915,33 +1007,44 @@ void MessageProcess(void)
 						{
 		                	Global_datas.g_mode_status = BT_CONNECTED_MODE;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
+							Global_datas.MW_radio_net_type = NET_TYPE_NONE;
 						}
 						if (msg.param1 == 0x02)
 						{
 		                	Global_datas.g_mode_status = WIFI_CONNECTED_MODE;
+							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
+							
 						}
 						if (msg.param1 == 0x04)
 						{
 		                	Global_datas.g_mode_status = WIFI_MODE;
-		                	
+							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
+							
+							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);// net type
 						printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x05)
 						{
 		                	Global_datas.g_mode_status = WIFI_CONNECTING_MODE;
+							Global_datas.MW_radio_net_type = NET_TYPE_WIFI;
 		                	
 						printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x011)
 						{
 		                	Global_datas.g_mode_status = FOURG_CONNECTED_MODE;
+							Global_datas.MW_radio_net_type = NET_TYPE_4G;
 							printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						if (msg.param1 == 0x012)
 						{
 		                	Global_datas.g_mode_status = FOURG_MODE;
+							Global_datas.MW_radio_net_type = NET_TYPE_4G;
+							drv_Cmd_Send2NCU031(0x70, 0x1d,Global_datas.MW_radio_net_type);// net type
+							
 							printf("0x06, msg.param1 = %x \n",msg.param1);
+							
 						}
 						if (msg.param1 == 0x0B)
 						{
@@ -1151,16 +1254,30 @@ int32_t main(void)
 	SYS_Init();
  	SysIdle();
 
+	//SYS_Clock_Disable();
+
   	printf("\nmain\n");
+
+	printf("compile time: %s %s\r\n", __DATE__, __TIME__);
+
+	
+	//Global_datas.inputmessage = IN_KEY_POWER_CP;
 	
     while(1)
     {
+
+		if(IsTimeOut(&IrLongPressTimer))
+		{
+			Global_datas.ir_bak_key = IN_KEY_NONE;
+		}
     	if(IsTimeOut(&SysTimer_50ms))
     	{
     		TimeOutSet(&SysTimer_50ms, 2000);
 			ADC_FunctionTest();
 			DcInDetect();
 			BatteryChargeStateChcek();
+			
+			printf("volume = %d \n",Global_datas.volume);
 
 			if(Global_datas.PowerState.AdapterIn)
 			{
@@ -1183,7 +1300,7 @@ int32_t main(void)
 			
 			if((Global_datas.PowerState.battery_level == 0) && (Global_datas.state > SYS_PLAY_STATE_POWERUP) && (Global_datas.PowerState.AdapterIn == 0))
 			{
-				Global_datas.inputmessage =  IN_KEY_POWER_CP;
+				//Global_datas.inputmessage =  IN_KEY_POWER_CP;
 			}
 			else if((Global_datas.PowerState.battery_level < BAT_LEVEL_20_PERCENT) && (Global_datas.PowerState.battery_data >  batlevel_table[0])  && (Global_datas.volume > 8) && (Global_datas.PowerState.AdapterIn == 0))
 			{
@@ -1239,6 +1356,12 @@ int32_t main(void)
 
 					Global_datas.shoutting_down = 0;
 					Global_datas.state = SYS_PLAY_STATE_IDLE;
+
+				    /* Unlock protected registers */
+			    //	SYS_UnlockReg();
+					/* Disable PLL first to avoid unstable when setting PLL */
+    			//	CLK_DisablePLL();
+			   	// 	SYS_LockReg();
 				}
 				
 			}
@@ -1298,6 +1421,9 @@ int32_t main(void)
 			MessageProcess();
 		}
 
+		//Pte_ProcessData();
+
+
 		Sysctrl();
 
 		
@@ -1305,6 +1431,78 @@ int32_t main(void)
 
 }
 
+
+/*
+void Pte_ProcessData(void)
+{
+	uint8_t vol = 0;
+	uint8_t temp = 0;
+	uint8_t freq_hi = 0;
+	uint8_t freq_low = 0;
+
+	while(RxMsgCount_PTE)
+	{ 
+		RxMsgCount_PTE--;
+		
+		if(RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+0] == 0x01)
+		{
+			switch(RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+1])  
+			{
+			   case 0x01: 
+
+				break;
+
+			   case 0x21:
+
+			    break;
+
+			   case 0x07:  
+
+				break;
+
+			   case 0x04:  
+				
+				break;
+
+			   case 0x0a: 
+			   	
+				break;
+
+			   case 0x0d: 
+
+				break;
+
+			   case 0x0e: 
+			   	
+				break;
+
+				case 0x01: 
+				
+				break;
+
+				case 0x02:
+				
+				break;
+
+				case 0x70: 
+				
+				break;		
+
+				case 0x71:  
+				
+				break;	
+
+				case 0x72: 
+				
+				break;	
+
+				default:break;
+			}
+		}
+	}
+}
+
+*/
 
 
 void Sysctrl(void)
@@ -1515,6 +1713,10 @@ void Sysctrl(void)
 			{
 				Global_datas.event = SYS_PLAY_EVENT_AUTO_SEARCH;
 			}
+			else if(Global_datas.state == SYS_PLAY_STATE_BT)
+			{
+				Global_datas.event = SYS_PLAY_EVENT_BT_PAIRING;
+			}
 			
 			break;
 
@@ -1542,10 +1744,27 @@ void Sysctrl(void)
 		Global_datas.key_led_blink = 1;
 	}
 
+
 	switch(Global_datas.event)
 	{
 	
 		case SYS_PLAY_EVENT_POWERING_UP:
+
+
+	//	SYS_UnlockReg();
+
+		
+		/* Set core clock as PLL_CLOCK from PLL and SysTick source to HCLK/2*/
+    //	CLK_SetCoreClock(PLL_CLOCK);
+    //	CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);	
+
+	//	SYS_LockReg();
+
+
+
+
+		
+		   // SYS_Clock_Enable();
 
 			TYM_SysPower12V_3V3_onoff(1);
 			Global_datas.state = SYS_PLAY_STATE_POWERUP;	
@@ -1554,6 +1773,9 @@ void Sysctrl(void)
 			Global_datas.volume = VOLUME_DEFAULT;
 			TYM_drv_powerkeepon(1);
 			Drv_4GMoudle_PowerUp(1);
+			
+			AdapterPowerModeCtrl(1);
+			
 			Global_datas.power_4g = 1;
 			drv_FourGmodel_power_key_SetHi();
 			TimeOutSet(&ModulePowerUpPinTimer,3000);
@@ -1579,6 +1801,7 @@ void Sysctrl(void)
 			TimeOutSet(&ModulePowerUpPinTimer,3000);
 			TimeOutSet(&PoweroffLedTimer, 100);
 			Global_datas.shoutting_down = 0;	
+			drv_audio_4G_Channel();
 			break;
 
 			
@@ -1659,12 +1882,15 @@ void Sysctrl(void)
 						drv_audio_4G_Channel();
 						break;
 				}
+
+				Drv_Dap_vol_set(Global_datas.volume);
 			}
 			else
 			{
 				Cmd_Send2FourG(0x03,0x15,0);
 				Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
 				drv_audio_4G_Channel();
+				Drv_Dap_vol_set(Global_datas.volume);
 			}
 
 			//drv_Cmd_Send2NCU031(0x08,0,0); send start CMD to sub board
@@ -1673,29 +1899,34 @@ void Sysctrl(void)
 
 		case SYS_PLAY_EVENT_MODE_SWITCH:
 			srv_key_mode_handler();
+			Drv_Dap_vol_set(Global_datas.volume);
 			break;
 
 		case SYS_PLAY_EVENT_SW_TO_AUX_MODE:
 			
 			srv_key_mode_switch_to(SYS_PLAY_STATE_AUX);	
+			Drv_Dap_vol_set(Global_datas.volume);
 				
 			break;
 
 		case SYS_PLAY_EVENT_SW_TO_FM_MODE:
 			
 			srv_key_mode_switch_to(SYS_PLAY_STATE_FM);	
+			Drv_Dap_vol_set(Global_datas.volume);
 			
 			break;
 			
 		case SYS_PLAY_EVENT_SW_TO_BT_MODE:
 			
 			srv_key_mode_switch_to(SYS_PLAY_STATE_BT);	
+			Drv_Dap_vol_set(Global_datas.volume);
 			
 			break;	
 			
 		case SYS_PLAY_EVENT_SW_TO_MW_RADIO_MODE:
 			
-			srv_key_mode_switch_to(SYS_PLAY_STATE_MW_RADIO);	
+			srv_key_mode_switch_to(SYS_PLAY_STATE_MW_RADIO);
+			Drv_Dap_vol_set(Global_datas.volume);
 		
 			break;		
 
@@ -1813,12 +2044,24 @@ void Sysctrl(void)
 
 		    printf("\nTURN OFF 4G MOUDLE\n");
 
+			AdapterPowerModeCtrl(0);
+
 			if(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN)
 			{
 				Drv_4GMoudle_PowerUp(0);  // wait for 4g modle ready ,than turn off power
 				TYM_drv_powerkeepon(0); 
 				TYM_SysPower12V_3V3_onoff(0);		
 				Global_datas.state = SYS_PLAY_STATE_IDLE;
+				drv_all_led_on(0);
+
+			/* Unlock protected registers */
+			//   SYS_UnlockReg();
+			/* Disable PLL first to avoid unstable when setting PLL */
+    		//	CLK_DisablePLL();
+			//    SYS_LockReg();
+
+
+				
 			}
 			else if(Global_datas.state == SYS_PLAY_STATE_FM)
 			{
@@ -1853,6 +2096,11 @@ void Sysctrl(void)
 			{
 				Global_datas.FmData.fmstate = FM_STATE_SEEK_DOWN;
 			}
+			else if(Global_datas.FmData.fmstate == FM_STATE_SEEK_DOWN)
+			{
+				Global_datas.FmData.fmstate = FM_STATE_ON;
+				Global_datas.FmData.FmNeedToStore = 1;
+			}
 			break;
 
 		
@@ -1861,7 +2109,12 @@ void Sysctrl(void)
 			if(Global_datas.FmData.fmstate == FM_STATE_ON)
 			{
 				Global_datas.FmData.fmstate = FM_STATE_SEEK_UP;
-			}			
+			}
+			else if(Global_datas.FmData.fmstate == FM_STATE_SEEK_UP)
+			{
+				Global_datas.FmData.fmstate = FM_STATE_ON;
+				Global_datas.FmData.FmNeedToStore = 1;
+			}
 			
 			break;
 
@@ -1886,7 +2139,7 @@ void Sysctrl(void)
 			if(Global_datas.state == SYS_PLAY_STATE_FM)
 			{
 				if(Global_datas.FmData.Frequency >= 8760)	Global_datas.FmData.Frequency -= 10;
-				else Global_datas.FmData.Frequency = 10080;
+				else Global_datas.FmData.Frequency = 10800;
 				Global_datas.FmData.FmNeedToStore = 1;
 				TimeOutSet(&FmStoreTimer, 2000);
 				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
@@ -2034,11 +2287,10 @@ void Sysctrl(void)
 					}
 					else
 					{
-						Global_datas.FmData.Frequency = 10800;
-						Global_datas.FmData.fmstate = FM_STATE_ON;		
-						//dis_mic(0);
+						Global_datas.FmData.Frequency = 8750;
 					}
 
+					SendFmFreqToSubBoard();
 					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
 					//FreqDisplay(Frequency);
 					
@@ -2060,15 +2312,14 @@ void Sysctrl(void)
 					if(Global_datas.FmData.Frequency >= 8760)  Global_datas.FmData.Frequency -= 10;
 					else 
 					{
-						Global_datas.FmData.Frequency = 8750;
-						Global_datas.FmData.fmstate = FM_STATE_ON;		
-						//dis_mic(0);
+						Global_datas.FmData.Frequency = 10800;
+						//Global_datas.FmData.fmstate = FM_STATE_ON;		
 					}
 
-					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
-					//FreqDisplay(Frequency);
 					
-
+					SendFmFreqToSubBoard();
+					temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
+					
 					if(temp_valid)
 					{
 						//dis_mic(1);
@@ -2080,9 +2331,10 @@ void Sysctrl(void)
 				break;
 
 				case FM_STATE_AUTO_SEARCH:
- 
+
+				
+				SendFmFreqToSubBoard();
 				temp_valid = si47xxFMRX_tune(Global_datas.FmData.Frequency);
-				//FreqDisplay(Global_datas.FmData.Frequency);
 				
 				if(temp_valid)
 				{
@@ -2113,11 +2365,8 @@ void Sysctrl(void)
 
 						Global_datas.FmData.FmNeedToStore = 1;
 						TimeOutSet(&FmStoreTimer, 1000);
-						
-						si47xxFMRX_tune(Global_datas.FmData.Frequency);
-						
 						SendFmFreqToSubBoard();
-						//FreqDisplay(Frequency);
+						si47xxFMRX_tune(Global_datas.FmData.Frequency);	
 						Global_datas.FmData.fmstate = FM_STATE_ON;		
 					}
 				}	
@@ -2139,10 +2388,11 @@ void Sysctrl(void)
 							//dis_mic(0);
 						}
 
-						DataStore();
-						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+						
 						SendFmFreqToSubBoard();
-						//FreqDisplay(Frequency);
+						si47xxFMRX_tune(Global_datas.FmData.Frequency);
+						//DataStore();
+						Global_datas.FmData.FmNeedToStore = 1;
 						Global_datas.FmData.fmstate = FM_STATE_ON;		
 					}
 				}					

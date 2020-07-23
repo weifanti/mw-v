@@ -29357,6 +29357,7 @@ extern TIMER ModeSwitchTimer;
 extern TIMER FmLoopTimer;
 extern TIMER FmStoreTimer;
 extern TIMER SysTimer_50ms;
+extern TIMER IrLongPressTimer;
 
 
 
@@ -29451,6 +29452,16 @@ typedef enum
 	SYS_PLAY_STATE_AUX
 
 } SYS_STATE;
+
+
+typedef enum
+{
+	NET_TYPE_NONE = 0,
+	NET_TYPE_WIFI,
+	NET_TYPE_4G,
+
+} NET_TYPE;
+
 
 
 typedef enum
@@ -29710,14 +29721,21 @@ typedef struct
 	unsigned char fm_delay_time;
 	SYS_STATE state;
 	SYS_EVENT event;
+	NET_TYPE MW_radio_net_type;
 	SubBoardStatus SubBoard;
 	Fm_Data FmData;
 	POWER_STATE PowerState;
+	unsigned char ir_bak_key;
 	
 
 }sGlobalData;
 
 extern sGlobalData Global_datas;
+
+
+extern unsigned char RxBuff[60];
+extern unsigned char RxMsgCount_PTE;
+
 
 
 
@@ -29847,6 +29865,7 @@ TIMER PoweroffLedTimer;
 TIMER ModeSwitchTimer;
 TIMER FmLoopTimer;
 TIMER FmStoreTimer;
+TIMER IrLongPressTimer;
 
 
 
@@ -29958,6 +29977,7 @@ void Hal_Timer1_Init(void)
 	TimeOutSet(&FmLoopTimer, 100);
 	TimeOutSet(&FmStoreTimer, 100);
 	TimeOutSet(&SysTimer_50ms, 100);
+	TimeOutSet(&IrLongPressTimer, 100);
 
 
 

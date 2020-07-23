@@ -17,7 +17,9 @@
 
 
 int32_t Transfer_Uart_Init(void);
-int32_t Debug_Uart_Init(void);
+//int32_t Debug_Uart_Init(void);
+int32_t PTE_Uart0_Init(void);
+
 int32_t USCI_Uart_Init(void);
 
 void UART_TEST_HANDLE(void);

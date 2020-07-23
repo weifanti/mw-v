@@ -14,9 +14,9 @@
 /* Global variables                                                                                        */
 /*---------------------------------------------------------------------------------------------------------*/
 
-#define RXBUFSIZE 1024
+//#define RXBUFSIZE 1024
 
-uint8_t g_4G_u8RecData[RXBUFSIZE]  = {0};
+//uint8_t g_4G_u8RecData[RXBUFSIZE]  = {0};
 
 volatile uint32_t g_u324GRbytes = 0;
 volatile uint32_t g_u324GRhead  = 0;
