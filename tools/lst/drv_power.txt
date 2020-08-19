@@ -526,11 +526,11 @@
                   |L17.44|
                           DCD      0x50004280
 
-                          AREA ||i.battery_charge_disenable||, CODE, READONLY, ALIGN=2
+                          AREA ||i.battery_charge_disable||, CODE, READONLY, ALIGN=2
 
-                  battery_charge_disenable PROC
+                  battery_charge_disable PROC
 ;;;176    
-;;;177    void battery_charge_disenable(void)
+;;;177    void battery_charge_disable(void)
 000000  4901              LDR      r1,|L18.8|
 ;;;178    {
 ;;;179    	PC8 = 0;

@@ -29408,7 +29408,7 @@ void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
 void TYM_SysPower12V_3V3_onoff(uint8_t on);
 void battery_charge_enable(void);
-void battery_charge_disenable(void);
+void battery_charge_disable(void);
 void DcInDetect(void);
 void BatteryChargeStateChcek(void);
 void Bat_SelectPin_0_external_1_internal(uint8_t value); 
@@ -29427,6 +29427,9 @@ void AdapterPowerModeCtrl(uint8_t value);
 
 
  
+
+
+
 
 
 
@@ -29660,7 +29663,7 @@ typedef enum _KEY_EVENT
 	IN_KEY_DEFAULT_VOLUME_SET,
 	
 
-	IR_KEY_POWER,
+	IR_KEY_POWER = 101,
 	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
@@ -29778,6 +29781,23 @@ typedef struct
 	POWER_STATE PowerState;
 	uint8_t ir_bak_key;
 	
+	uint8_t bt_name[40];
+	uint8_t  bt_name_len;
+	uint8_t bt_mac[40];
+	uint8_t  bt_mac_len;
+	
+	uint8_t FourG_version[40];
+	uint8_t FourG_version_len;
+	uint8_t FourG_mac[40];
+	uint8_t FourG_mac_len;
+	uint8_t build_data[20];
+	uint8_t build_time[20];
+	uint8_t PteTestMode;
+	uint8_t PteKeyTestMode;
+	uint8_t SN[40];
+	uint8_t sn_len;
+	uint8_t LedTestMode;
+	
 
 }sGlobalData;
 
@@ -29792,6 +29812,8 @@ extern uint8_t RxMsgCount_PTE;
 
 
 
+extern uint8_t mcu_version[6];
+extern uint8_t dsp_version[6];
 
 
 #line 18 "..\\src\\server\\battery\\srv_battery.c"

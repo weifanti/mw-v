@@ -11,12 +11,26 @@
 
                           EXPORTAS ||area_number.3||, ||.bss||
                   Global_datas
-                          %        156
+                          %        404
 
                           AREA ||.data||, DATA, ALIGN=0
 
                   RxMsgCount_PTE
 000000  00                DCB      0x00
+
+                          AREA ||area_number.6||, DATA, ALIGN=0
+
+                          EXPORTAS ||area_number.6||, ||.data||
+                  mcu_version
+000000  56322e31          DCB      0x56,0x32,0x2e,0x31
+000004  2e31              DCB      0x2e,0x31
+
+                          AREA ||area_number.7||, DATA, ALIGN=0
+
+                          EXPORTAS ||area_number.7||, ||.data||
+                  dsp_version
+000000  56312e31          DCB      0x56,0x31,0x2e,0x31
+000004  2e31              DCB      0x2e,0x31
 
 ;*** Start embedded assembler ***
 

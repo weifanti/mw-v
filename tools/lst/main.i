@@ -29640,7 +29640,7 @@ void drv_power_status_updata(void);
 void TYM_drv_powerkeepon(uint8_t onoff); 
 void TYM_SysPower12V_3V3_onoff(uint8_t on);
 void battery_charge_enable(void);
-void battery_charge_disenable(void);
+void battery_charge_disable(void);
 void DcInDetect(void);
 void BatteryChargeStateChcek(void);
 void Bat_SelectPin_0_external_1_internal(uint8_t value); 
@@ -29659,6 +29659,9 @@ void AdapterPowerModeCtrl(uint8_t value);
 
 
  
+
+
+
 
 
 
@@ -29892,7 +29895,7 @@ typedef enum _KEY_EVENT
 	IN_KEY_DEFAULT_VOLUME_SET,
 	
 
-	IR_KEY_POWER,
+	IR_KEY_POWER = 101,
 	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
@@ -30010,6 +30013,23 @@ typedef struct
 	POWER_STATE PowerState;
 	uint8_t ir_bak_key;
 	
+	uint8_t bt_name[40];
+	uint8_t  bt_name_len;
+	uint8_t bt_mac[40];
+	uint8_t  bt_mac_len;
+	
+	uint8_t FourG_version[40];
+	uint8_t FourG_version_len;
+	uint8_t FourG_mac[40];
+	uint8_t FourG_mac_len;
+	uint8_t build_data[20];
+	uint8_t build_time[20];
+	uint8_t PteTestMode;
+	uint8_t PteKeyTestMode;
+	uint8_t SN[40];
+	uint8_t sn_len;
+	uint8_t LedTestMode;
+	
 
 }sGlobalData;
 
@@ -30024,6 +30044,8 @@ extern uint8_t RxMsgCount_PTE;
 
 
 
+extern uint8_t mcu_version[6];
+extern uint8_t dsp_version[6];
 
 
 #line 23 "..\\main.c"
@@ -30084,6 +30106,8 @@ void drv_led_init(void);
 
 void drv_led_state1_onoff_red(uint8_t on);
 void drv_led_state1_onoff_green(uint8_t on);
+
+
 
 
 #line 27 "..\\main.c"
@@ -30707,6 +30731,7 @@ unsigned char IsCurrentStationNunValid(void);
 
 
 void WaitMs(unsigned int time);
+extern unsigned char RSSI;
 
 #line 38 "..\\main.c"
 #line 1 "..\\src\\driver\\include\\hal_adc.h"
@@ -30735,6 +30760,8 @@ void ntc_value_get(unsigned int dat);
 
 void Sysctrl(void);
 void SendFmFreqToSubBoard(void);
+void drv_Cmd_Send2Pte(unsigned char cmd, unsigned char param0, unsigned char param1);
+void Pte_ProcessData(void);
 
 
 volatile sys_err_e sys_err = SYS_ERR_NONE;
@@ -30742,10 +30769,12 @@ volatile sys_err_e sys_err = SYS_ERR_NONE;
 
 
 
+
+
 void SYS_Clock_init(void)
 {
 
-#line 75 "..\\main.c"
+#line 79 "..\\main.c"
 
 	 
     CLK_EnableXtalRC((0x1ul << (2)));
@@ -30763,6 +30792,8 @@ void SYS_Clock_init(void)
     CLK_WaitClockReady((0x1ul << (0)));
      
     CLK_SetCoreClock(72000000);
+    
+   
     CLK_SetSysTickClockSrc((0x03UL<<(3)));	
 
 
@@ -30963,6 +30994,15 @@ void SysIdle(void)
 	Global_datas.mode_switching = 0;
 	Global_datas.power_4g = 0;
 	Global_datas.mute = 0;
+	Global_datas.PteKeyTestMode = 0;
+	Global_datas.PteTestMode = 0;
+	Global_datas.LedTestMode = 0;
+	
+	Global_datas.bt_name_len = 0;
+	Global_datas.bt_mac_len = 0;
+	Global_datas.FourG_version_len = 0;
+	Global_datas.FourG_mac_len = 0;
+	
 	
 	drv_FourGmodel_power_key_SetLow();  
 	TimeOutSet(&SysTimer_1s,1000);
@@ -30975,10 +31015,6 @@ void SysIdle(void)
 
 	DataRead();
 	SendFmFreqToSubBoard();
-
-
-	
-	
 }
 
 void SYS_Status(void)
@@ -31103,7 +31139,7 @@ void IoKeyProcess(void)
 		
 }
 
-#line 938 "..\\main.c"
+#line 949 "..\\main.c"
 void MessageProcess(void)
 {
 	sCoreMsg msg;
@@ -31228,6 +31264,40 @@ void MessageProcess(void)
 						printf("0x06, msg.param1 = %x \n",msg.param1);
 						}
 						
+					}
+					else if(msg.param0 == 0x10)
+					{
+						switch(msg.param1)
+						{
+ 							case 0x01: 
+								
+							drv_Cmd_Send2Pte(0x18, Global_datas.bt_mac_len, 0);
+							break;
+							
+ 							case 0x02: 
+								
+							drv_Cmd_Send2Pte(0x19, Global_datas.bt_name_len, 0);
+							break;		
+							
+ 							case 0x03: 
+								
+							drv_Cmd_Send2Pte(0x1a, Global_datas.FourG_version_len, 0);
+							break;
+							
+ 							case 0x04: 
+								
+							drv_Cmd_Send2Pte(0x1b, Global_datas.FourG_mac_len, 0);
+							break;	
+
+							case 0x09:
+								
+							drv_Cmd_Send2Pte(0x20,msg.param2, 0); 
+							break;
+
+							
+							default:break;
+						}
+
 					}
 					else if(msg.param0 == 0x20) 
 					{
@@ -31410,6 +31480,465 @@ void SendFmFreqToSubBoard(void)
 }
 
 
+void drv_Cmd_Send2Pte(unsigned char cmd, unsigned char param0, unsigned char param1)
+{
+	unsigned char checksum;
+	unsigned char count = 0;
+	unsigned char tx_data = 0;
+	unsigned char *p_tx;
+
+	((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (0x5a));
+	TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);
+	((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (0xa5));
+	TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);
+	((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (0x04));
+	TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);
+	((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (0x02));
+	TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);
+	((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (cmd));
+	TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);
+	((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (param0));
+	TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);
+	((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (param1));
+	TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);
+	checksum = 0 -( 0x04 + 0x02 + cmd + param0 + param1);
+	((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (checksum));
+
+	if(cmd == 0x18)  
+	{
+		p_tx = &Global_datas.bt_mac[0];
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+		}
+	}
+
+	
+	else if(cmd == 0x19)  
+	{
+		
+		p_tx = &Global_datas.bt_name[0];
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+
+		}
+	}	
+	else if(cmd == 0x1a)  
+	{
+		p_tx = &Global_datas.FourG_version[0];
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+
+		}
+
+	}
+	else if(cmd == 0x1b)  
+	{
+		p_tx = &Global_datas.FourG_mac[0];
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+
+		}
+
+	}
+	if(cmd == 0x02)  
+	{
+		p_tx = &mcu_version[0];
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+		}
+	}	
+
+	if(cmd == 0x03)  
+	{
+		p_tx = &dsp_version[0];
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+		}
+	}
+	if(cmd == 0x21)  
+	{
+		p_tx = "Aug 19 2020";
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+		}
+	}
+
+	if(cmd == 0x22)  
+	{
+		p_tx = "15:25:28";
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+		}
+	}
+	
+	if(cmd == 0x11)  
+	{
+		p_tx = Global_datas.SN;
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			((((UART_T *) ((( unsigned int)0x40000000) + 0x50000)))->DAT = (tx_data));
+			TIMER_Delay(((TIMER_T *) ((( unsigned int)0x40000000) + 0x10000)), 1000);	
+			p_tx++;
+		}
+	}	
+	
+}
+
+
+
+
+void Pte_ProcessData(void)
+{
+	unsigned char vol = 0;
+	unsigned char temp = 0;
+	unsigned char freq_hi = 0;
+	unsigned char freq_low = 0;
+	unsigned char temp_cmd = 0;
+	unsigned char temp_param0 = 0;
+	unsigned int temp_freq = 0;
+
+
+	while(RxMsgCount_PTE)
+	{ 
+		
+		RxMsgCount_PTE--;
+		temp_cmd = RxBuff[RxMsgCount_PTE*(12)+1];
+		temp_param0 = RxBuff[RxMsgCount_PTE*(12)+2];
+		
+		if(RxBuff[RxMsgCount_PTE*(12)+0] == 0x01)
+		{
+			switch(temp_cmd)  
+			{
+			   case 0x01:printf("Enter test mode\n");drv_Cmd_Send2Pte(0x01,0x00,0x00);Global_datas.PteTestMode = 1;break;
+			   case 0x02:printf("Read mcu version\n");drv_Cmd_Send2Pte(0x02,sizeof(mcu_version),0);break;
+			   case 0x03:printf("Read dsp version\n");drv_Cmd_Send2Pte(0x03,sizeof(dsp_version),0);break;
+			   case 0x04:
+			   	printf("internal bat\n");
+			    if(temp_param0)
+			    {
+			    	battery_charge_enable();
+			    }
+				else
+				{
+					battery_charge_disable();
+				}
+			    drv_Cmd_Send2Pte(0x04,temp_param0,0); 
+			   break;
+
+				case 0x05:
+				 printf("read ntc value\n");
+				 drv_Cmd_Send2Pte(0x05,Global_datas.PowerState.NTC_level,0); 
+				break;
+
+				case 0x06:
+				 printf("read battery value\n");
+				 drv_Cmd_Send2Pte(0x06,Global_datas.PowerState.battery_level,0); 
+				break;	
+				
+				case 0x07:
+				 printf("PTE mic mode\n");
+
+				 if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+				 {
+					 if(temp_param0)
+					 {
+						Cmd_Send2FourG(0x03,0x63,0);
+						printf("PTE mic key long press\n");
+					 }
+					 else
+					 {
+					 	Cmd_Send2FourG(0x03,0x64,0);					 
+					 	printf("PTE mic key long release\n");
+					 }
+					 
+					 drv_Cmd_Send2Pte(0x07,temp_param0,0); 
+				}
+
+				break;	
+
+				case 0x08:
+				 printf("PTE enter aux mode\n");
+				 drv_Cmd_Send2Pte(0x08,0,0); 
+				 Global_datas.inputmessage = IN_KEY_AUX_MODE_S;
+				break;	
+				
+				case 0x09:                          
+				 printf("PTE enter mw radio mode\n");  
+				 if(Global_datas.state != SYS_PLAY_STATE_MW_RADIO)
+				 {
+					Global_datas.inputmessage = IN_KEY_MW_RADIO_MODE_S;
+				 }
+				 
+				 	drv_Cmd_Send2Pte(0x09,0,0);
+
+				break;	
+
+				case 0x0A:
+				 printf("PTE enter BT mode\n");
+				 Global_datas.inputmessage = IN_KEY_BT_MODE_S;
+				 drv_Cmd_Send2Pte(0x0a,0,0);
+				break;	
+				
+				case 0x0b:
+				 printf("PTE enter FM mode\n");
+				 Global_datas.inputmessage = IN_KEY_FM_MODE_S;
+				 drv_Cmd_Send2Pte(0x0b,0,0);
+				break;	
+
+				case 0x0c:
+				 printf("PTE set fm freq\n"); 
+
+				 if(Global_datas.state == SYS_PLAY_STATE_FM)
+				 {
+					if(temp_param0 == 1)
+					{
+						temp_freq = 8750;
+					}
+					else if(temp_param0 == 2)
+					{
+						temp_freq = 9800;
+					}
+					else if(temp_param0 == 3)
+					{
+						temp_freq = 10800;
+					}
+
+					si47xxFMRX_tune(temp_freq); 
+				 	
+				 	drv_Cmd_Send2Pte(0x0c,temp_param0,RSSI);
+				 }
+				break;	
+
+				case 0x0d:
+				 printf("PTE set volume\n");
+				
+				if(temp_param0)
+				{
+					Global_datas.volume = temp_param0;
+					Drv_Dap_vol_set(Global_datas.volume);
+					Global_datas.mute = 0;
+					drv_5825_mute_pin_set(1);
+				}
+				else
+				{
+					Global_datas.volume = 0;
+					Drv_Dap_vol_set(Global_datas.volume);
+					Global_datas.mute = 1;
+					drv_5825_mute_pin_set(0);
+				}
+
+				
+				drv_Cmd_Send2Pte(0x0d,temp_param0,0);
+				break;	
+
+				case 0x0e:
+				 printf("PTE read volume\n"); 
+				 drv_Cmd_Send2Pte(0x0e,Global_datas.volume,0);
+				break;	
+
+
+				case 0x0f: 
+				 printf("PTE turn on led\n");
+				 
+				 switch(temp_param0)
+				 {
+					case 1:(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((13)<<2)))) = 0;break; 
+					case 2:(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((15)<<2)))) = 0;break; 
+					case 3:(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((12)<<2)))) = 0;break; 
+					case 4:(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2))))  = 0;break; 
+					case 5:(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(5))) + ((6)<<2))))  = 0;break; 
+					case 6:(*((volatile unsigned int *)(((((( unsigned int)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((1)<<2))))  = 0;break; 
+					case 7:drv_led_state1_onoff_red(1);break;
+					case 8:drv_led_state1_onoff_green(1);break;
+					default:break;
+				 }
+				 
+				 drv_Cmd_Send2Pte(0x0f,temp_param0,0);
+				break;	
+				
+				case 0x10: 
+				 printf("PTE led all off\n");
+				 
+				 drv_all_led_on(0);
+				 drv_led_state1_onoff_red(0);
+				 drv_led_state1_onoff_green(0);
+				 
+				 drv_Cmd_Send2Pte(0x10,0,0);
+				break;	
+
+				case 0x11: 
+				 printf("PTE read sn\n");
+				 drv_Cmd_Send2Pte(0x11,Global_datas.sn_len,0);
+				break;	
+
+				case 0x12: 
+				printf("PTE write sn\n");
+				drv_Cmd_Send2Pte(0x12,0,0);
+				DataStore();
+				break;	
+
+				case 0x13:
+
+				if(Global_datas.MW_radio_net_type == NET_TYPE_WIFI)
+				{
+					drv_Cmd_Send2Pte(0x13,1,0);
+				}
+				else if(Global_datas.MW_radio_net_type == NET_TYPE_4G)
+				{
+					drv_Cmd_Send2Pte(0x13,2,0);
+				}
+				else 
+				{
+					drv_Cmd_Send2Pte(0x13,0,0);
+				}
+				break;
+
+				case 0x14:
+				
+					if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+					{
+						Global_datas.inputmessage = IN_KEY_RADIO_NET_SWITCH_S;
+					}
+					drv_Cmd_Send2Pte(0x14,0,0);
+
+					break;
+
+				
+
+				case 0x15: 
+
+				Global_datas.PteKeyTestMode = 1;
+				drv_Cmd_Send2Pte(0x15,0,0);
+				break;
+
+				case 0x16: 
+
+				
+				Global_datas.PteKeyTestMode = 0;
+				drv_Cmd_Send2Pte(0x16,0,0);
+				break;
+
+
+					
+
+				case 0x18: printf("GetBtmac\n");		Cmd_Send2FourG( 0x10,0x01,0x00); break;
+				case 0x19: printf("GetBtName\n");		Cmd_Send2FourG( 0x10,0x02,0x00); break;
+				case 0x1a: printf("Get4Gversion\n");	Cmd_Send2FourG( 0x10,0x03,0x00); break;
+				case 0x1b: printf("Get4G mac\n");		Cmd_Send2FourG( 0x10,0x04,0x00); break;
+				
+				case 0x1c: printf("factroy rest\n");	Cmd_Send2FourG( 0x10,0x05,0x00); drv_Cmd_Send2Pte(0x1c,0, 0); break;
+				case 0x1d: printf("bt tone\n");			Cmd_Send2FourG( 0x10,0x06,0x00); drv_Cmd_Send2Pte(0x1d,0, 0); break;
+				case 0x1e: printf("bt pairing\n");		Cmd_Send2FourG( 0x10,0x07,0x00); drv_Cmd_Send2Pte(0x1e,0, 0); break;
+				case 0x1f: printf("bt record clear\n");	Cmd_Send2FourG( 0x10,0x08,0x00); drv_Cmd_Send2Pte(0x1f,0, 0); break;
+				
+				case 0x20: printf("get 4G mobileDbm\n");Cmd_Send2FourG( 0x10,0x09,0x00); break;
+				case 0x21: printf("GetBuildDate\n");	drv_Cmd_Send2Pte( 0x21,sizeof("Aug 19 2020"),0); break;
+				case 0x22: printf("GetBuildTime\n");	drv_Cmd_Send2Pte( 0x22,sizeof("15:25:28"),0); break;
+				
+				case 0x24: 
+					printf("power on/off\n");
+				    Global_datas.inputmessage = IR_KEY_POWER;
+				    drv_Cmd_Send2Pte( 0x24,0,0); break;
+				    break;
+					
+				case 0x25: 
+					printf("exit pte test mode\n");
+				    Global_datas.PteTestMode = 0;
+				    drv_Cmd_Send2Pte( 0x25,0,0); break;
+				    break;
+
+				case 0x26: 
+					
+					if(temp_param0)
+					{
+				    	Global_datas.LedTestMode = 1;
+						printf("enter led test mode\n");
+						drv_Cmd_Send2Pte( 0x26,1,0);
+					}
+					else
+					{
+				   	 	Global_datas.LedTestMode = 0;
+						printf("exit led test mode\n");
+						drv_Cmd_Send2Pte( 0x26,0,0);
+					}
+				    
+				    break;		
+
+				case 0x28:
+					
+					drv_Cmd_Send2Pte( 0x28,Global_datas.state,Global_datas.g_4g_initing);
+
+				default:break;
+			}
+		}
+	}
+}
+
+
+void PllSetMode(unsigned char mode)  
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+}
+
+
+
+
  
  
  
@@ -31417,6 +31946,7 @@ int32_t main(void)
 {
 	unsigned char ledtimecount = 0;
 	unsigned char resume_timecount = 0;
+	unsigned char pte_rest_test_count = 3;
 	
 	 
 
@@ -31424,12 +31954,32 @@ int32_t main(void)
  	SysIdle();
 
 	
+	PllSetMode(0); 
+
+
+	
 
   	printf("\nmain\n");
 
-	printf("compile time: %s %s\r\n", "Jul 23 2020", "16:59:12");
+	printf("compile time: %s %s\r\n", "Aug 19 2020", "15:25:28");
 
 	
+	printf("compile time: %d %s\r\n", Global_datas.sn_len, Global_datas.SN);
+
+	
+	
+
+	
+	
+	
+	
+
+	
+
+
+	
+	
+
 	
 	
     while(1)
@@ -31481,14 +32031,20 @@ int32_t main(void)
 		if(IsTimeOut(&SysTimer_1s))
 		{
 			TimeOutSet(&SysTimer_1s, 500);
-	        if(Global_datas.g_4g_initing)
+
+			if(Global_datas.LedTestMode == 0)
 			{
-				srv_led_sys_initing();
+		       
+		       if((Global_datas.state == SYS_PLAY_STATE_POWERUP) || (Global_datas.state == SYS_PLAY_STATE_REBOOT))
+				{
+					srv_led_sys_initing();
+				}
+				else
+				{
+					srv_led_change_handler();
+				}
 			}
-			else
-			{
-				srv_led_change_handler();
-			}
+
 
 			if(IsTimeOut(&ModulePowerUpPinTimer))
 			{
@@ -31531,6 +32087,9 @@ int32_t main(void)
 					 
     			
 			   	
+
+					
+					PllSetMode(0); 
 				}
 				
 			}
@@ -31545,11 +32104,14 @@ int32_t main(void)
 		if(Global_datas.key_led_blink)
 		{
 			Global_datas.key_led_blink = 0;
-			drv_err_led_on(1);
-			TimeOutSet(&LedKeyBlinkTimer, 100);
+			if(Global_datas.LedTestMode == 0)
+			{
+				drv_err_led_on(1);
+				TimeOutSet(&LedKeyBlinkTimer, 100);
+			}
 		}
 
-		if(IsTimeOut(&LedKeyBlinkTimer))
+		if(IsTimeOut(&LedKeyBlinkTimer) && (Global_datas.LedTestMode == 0))
 		{
 			drv_err_led_on(0);
 		}
@@ -31572,11 +32134,35 @@ int32_t main(void)
 		if(Global_datas.inputmessage == IN_KEY_NONE)  
 		{
 			Global_datas.inputmessage = GetIrKey();
+			if(Global_datas.PteKeyTestMode)
+			{
+				if((Global_datas.inputmessage >= IR_KEY_POWER) && (Global_datas.inputmessage <= IR_KEY_EQ))
+				{
+					drv_Cmd_Send2Pte(0x27,Global_datas.inputmessage,0x00);
+
+					Global_datas.inputmessage  = IN_KEY_NONE;
+				}
+			}
 		}
 		
 		if( Global_datas.inputmessage == IN_KEY_NONE)  
 		{
 			GetKeyEvent();
+
+			if(Global_datas.PteKeyTestMode)
+			{
+				if(Global_datas.inputmessage == IN_KEY_POWER_SP)
+				{
+					drv_Cmd_Send2Pte(0x15,0x01,0x00);
+					Global_datas.inputmessage = IN_KEY_NONE;
+				}
+				else if(Global_datas.inputmessage == IN_KEY_PAIR_SP)
+				{
+					drv_Cmd_Send2Pte(0x15,0x02,0x00);
+					Global_datas.inputmessage = IN_KEY_NONE;
+				}
+			}
+
 			
 			if(((Global_datas.state == SYS_PLAY_STATE_IDLE || Global_datas.state == SYS_PLAY_STATE_POWERUP )&&(IN_KEY_POWER_CP != Global_datas.inputmessage)) || 				(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN))
 
@@ -31590,7 +32176,17 @@ int32_t main(void)
 			MessageProcess();
 		}
 
-		
+
+		if(Global_datas.inputmessage == IN_KEY_NONE) 
+		{
+			Pte_ProcessData();
+			if(pte_rest_test_count)
+			{
+				pte_rest_test_count--;
+				drv_Cmd_Send2Pte(0x23,0,0); 
+			}
+		}		
+
 
 
 		Sysctrl();
@@ -31605,73 +32201,6 @@ int32_t main(void)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 
 
 void Sysctrl(void)
@@ -31934,8 +32463,11 @@ void Sysctrl(void)
 
 		
 		   
-
+		   
+			PllSetMode(1); 
+			WaitMs(500);
 			TYM_SysPower12V_3V3_onoff(1);
+			WaitMs(500);
 			Global_datas.state = SYS_PLAY_STATE_POWERUP;	
 			Global_datas.g_4g_initing = 1;
 			Global_datas.eq_mode = EQ_MODE_INDOOR;
@@ -31955,6 +32487,15 @@ void Sysctrl(void)
 			drv_Cmd_Send2NCU031(0x70, 0x16,0x00);
 
 			Fm_Rest();
+
+            
+		
+
+
+
+
+ 
+				
 			
 			break;
 			
@@ -32056,10 +32597,18 @@ void Sysctrl(void)
 			}
 			else
 			{
-				Cmd_Send2FourG(0x03,0x15,0);
-				Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
-				drv_audio_4G_Channel();
-				Drv_Dap_vol_set(Global_datas.volume);
+				if((Global_datas.PteTestMode) && ((Global_datas.state == SYS_PLAY_STATE_AUX) || (Global_datas.state == SYS_PLAY_STATE_FM)))
+				{
+					  
+				}
+				else
+				{
+					Cmd_Send2FourG(0x03,0x15,0);
+					Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+					drv_audio_4G_Channel();
+					Drv_Dap_vol_set(Global_datas.volume);
+				}
+
 			}
 
 			
@@ -32228,6 +32777,9 @@ void Sysctrl(void)
 			 
     		
 			
+
+			
+			PllSetMode(0); 
 
 
 				

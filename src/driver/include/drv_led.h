@@ -28,4 +28,6 @@ void drv_led_init(void);
 void drv_led_state1_onoff_red(uint8_t on);
 void drv_led_state1_onoff_green(uint8_t on);
 
+#define LED_ON  0
+#define LED_OFF 1
 

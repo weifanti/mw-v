@@ -29365,6 +29365,9 @@ uint32_t UI2C_ReadMultiBytesTwoRegs(UI2C_T *ui2c, uint8_t u8SlaveAddr, uint16_t 
 
 
 
+
+
+
 typedef enum
 {
     SYS_ERR_NONE       = 0,
@@ -29578,7 +29581,7 @@ typedef enum _KEY_EVENT
 	IN_KEY_DEFAULT_VOLUME_SET,
 	
 
-	IR_KEY_POWER,
+	IR_KEY_POWER = 101,
 	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
@@ -29696,6 +29699,23 @@ typedef struct
 	POWER_STATE PowerState;
 	uint8_t ir_bak_key;
 	
+	uint8_t bt_name[40];
+	uint8_t  bt_name_len;
+	uint8_t bt_mac[40];
+	uint8_t  bt_mac_len;
+	
+	uint8_t FourG_version[40];
+	uint8_t FourG_version_len;
+	uint8_t FourG_mac[40];
+	uint8_t FourG_mac_len;
+	uint8_t build_data[20];
+	uint8_t build_time[20];
+	uint8_t PteTestMode;
+	uint8_t PteKeyTestMode;
+	uint8_t SN[40];
+	uint8_t sn_len;
+	uint8_t LedTestMode;
+	
 
 }sGlobalData;
 
@@ -29710,6 +29730,8 @@ extern uint8_t RxMsgCount_PTE;
 
 
 
+extern uint8_t mcu_version[6];
+extern uint8_t dsp_version[6];
 
 
 #line 12 "..\\src\\driver\\hal_adc.c"

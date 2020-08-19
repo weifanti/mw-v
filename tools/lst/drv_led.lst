@@ -50301,11 +50301,12 @@ N
 Nvoid drv_led_state1_onoff_red(uint8_t on);
 Nvoid drv_led_state1_onoff_green(uint8_t on);
 N
+N#define LED_ON  0
+N#define LED_OFF 1
 N
 L 12 "..\src\driver\drv_led.c" 2
 N
-N#define LED_ON  0
-N#define LED_OFF 1
+N
 N
 Nvoid drv_wifi_led_on(uint8_t value)
 N{
@@ -50427,8 +50428,6 @@ X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40
 N
 N		PA2 = LED_ON;  //err
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 0;  
-N		PA3 = LED_ON;  //wireless mic
-X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((3)<<2)))) = 0;  
 N	}
 N	else
 N	{
@@ -50445,8 +50444,6 @@ X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40
 N		
 N		PA2 = LED_OFF;	//err
 X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 1;	
-N		PA3 = LED_OFF;	//wireless mic
-X		(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((3)<<2)))) = 1;	
 N	}
 N	
 N}
@@ -50482,11 +50479,6 @@ N	PC15 = LED_OFF;  //FM
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(2))) + ((15)<<2)))) = 1;  
 N	PF6 = LED_OFF;  //4G
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(5))) + ((6)<<2)))) = 1;  
-N
-N	PA2 = LED_OFF;  //err
-X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((2)<<2)))) = 1;  
-N	PA3 = LED_OFF;  //wireless mic
-X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((3)<<2)))) = 1;  
 N	
 N	PA14 = LED_OFF;  //STAT1 RED
 X	(*((volatile uint32_t *)(((((( uint32_t)0x50000000) + 0x4000) + 0x0200)+(0x40*(0))) + ((14)<<2)))) = 1;  

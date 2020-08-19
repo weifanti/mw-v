@@ -174,7 +174,7 @@ void battery_charge_enable(void)
 	PC8 = 1;
 }
 
-void battery_charge_disenable(void)
+void battery_charge_disable(void)
 {
 	PC8 = 0;
 }

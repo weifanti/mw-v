@@ -29396,6 +29396,9 @@ extern TIMER IrLongPressTimer;
 
 
 
+
+
+
 typedef enum
 {
     SYS_ERR_NONE       = 0,
@@ -29609,7 +29612,7 @@ typedef enum _KEY_EVENT
 	IN_KEY_DEFAULT_VOLUME_SET,
 	
 
-	IR_KEY_POWER,
+	IR_KEY_POWER = 101,
 	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
@@ -29727,6 +29730,23 @@ typedef struct
 	POWER_STATE PowerState;
 	unsigned char ir_bak_key;
 	
+	unsigned char bt_name[40];
+	unsigned char  bt_name_len;
+	unsigned char bt_mac[40];
+	unsigned char  bt_mac_len;
+	
+	unsigned char FourG_version[40];
+	unsigned char FourG_version_len;
+	unsigned char FourG_mac[40];
+	unsigned char FourG_mac_len;
+	unsigned char build_data[20];
+	unsigned char build_time[20];
+	unsigned char PteTestMode;
+	unsigned char PteKeyTestMode;
+	unsigned char SN[40];
+	unsigned char sn_len;
+	unsigned char LedTestMode;
+	
 
 }sGlobalData;
 
@@ -29741,6 +29761,8 @@ extern unsigned char RxMsgCount_PTE;
 
 
 
+extern unsigned char mcu_version[6];
+extern unsigned char dsp_version[6];
 
 
 #line 13 "..\\src\\global\\hal_timer0.c"

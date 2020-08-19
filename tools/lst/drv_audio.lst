@@ -50795,6 +50795,9 @@ N
 N#define FM_MAX_STATION_NUM			15
 N#define FM_DELAY_TIME				10
 N
+N#define MAX_SN_LEN			40
+N#define DEFAULT_SN	"18675205335_kim.wei"
+N
 N
 N#define GPIO_HIGH  1
 N#define GPIO_LOW   0
@@ -51012,7 +51015,7 @@ N	IN_KEY_REBOOT_4G_MOUDLE,
 N	IN_KEY_DEFAULT_VOLUME_SET,
 N	
 N
-N	IR_KEY_POWER,
+N	IR_KEY_POWER = 101,
 N	IR_KEY_POWER_CP,
 N	IR_KEY_MODE,
 N	IR_KEY_VOLUME_UP,
@@ -51132,6 +51135,24 @@ N	Fm_Data FmData;
 N	POWER_STATE PowerState;
 N	uint8_t ir_bak_key;
 N	
+N	uint8_t bt_name[40];
+N	uint8_t  bt_name_len;
+N	uint8_t bt_mac[40];
+N	uint8_t  bt_mac_len;
+N	
+N	uint8_t FourG_version[40];
+N	uint8_t FourG_version_len;
+N	uint8_t FourG_mac[40];
+N	uint8_t FourG_mac_len;
+N	uint8_t build_data[20];
+N	uint8_t build_time[20];
+N	uint8_t PteTestMode;
+N	uint8_t PteKeyTestMode;
+N	uint8_t SN[MAX_SN_LEN];
+X	uint8_t SN[40];
+N	uint8_t sn_len;
+N	uint8_t LedTestMode;
+N	
 N
 N}sGlobalData;
 N
@@ -51146,6 +51167,8 @@ N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
+Nextern uint8_t mcu_version[6];
+Nextern uint8_t dsp_version[6];
 N
 N
 N#endif
@@ -51325,8 +51348,8 @@ N  	drv_audio_Null_Channel();
 N
 N	
 N	
-N	TIMER_Delay(TIMER0,5000);
-X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),5000);
+N	TIMER_Delay(TIMER0,50000);
+X	TIMER_Delay(((TIMER_T *) ((( uint32_t)0x40000000) + 0x10000)),50000);
 N	Drv_Dap_init();
 N
 N	if(Global_datas.state == SYS_PLAY_STATE_FM)

@@ -90,26 +90,26 @@
                           AREA ||i.IsCurrentStationNunValid||, CODE, READONLY, ALIGN=2
 
                   IsCurrentStationNunValid PROC
-;;;1260   
-;;;1261   uint8_t IsCurrentStationNunValid(void)
+;;;1264   
+;;;1265   uint8_t IsCurrentStationNunValid(void)
 000000  4905              LDR      r1,|L3.24|
-;;;1262   {
-;;;1263   	if((Global_datas.FmData.current_station <= FM_MAX_STATION_NUM) && (Global_datas.FmData.current_station <= Global_datas.FmData.station_num))
+;;;1266   {
+;;;1267   	if((Global_datas.FmData.current_station <= FM_MAX_STATION_NUM) && (Global_datas.FmData.current_station <= Global_datas.FmData.station_num))
 000002  7988              LDRB     r0,[r1,#6]  ; Global_datas
 000004  280f              CMP      r0,#0xf
 000006  d804              BHI      |L3.18|
 000008  7909              LDRB     r1,[r1,#4]  ; Global_datas
 00000a  4288              CMP      r0,r1
 00000c  d801              BHI      |L3.18|
-;;;1264   		return 1;
+;;;1268   		return 1;
 00000e  2001              MOVS     r0,#1
-;;;1265   	else return 0;
-;;;1266   }
+;;;1269   	else return 0;
+;;;1270   }
 000010  4770              BX       lr
                   |L3.18|
-000012  2000              MOVS     r0,#0                 ;1265
+000012  2000              MOVS     r0,#0                 ;1269
 000014  4770              BX       lr
-;;;1267   
+;;;1271   
                           ENDP
 
 000016  0000              DCW      0x0000
@@ -119,27 +119,27 @@
                           AREA ||i.IsFreqValid||, CODE, READONLY, ALIGN=2
 
                   IsFreqValid PROC
-;;;1244   
-;;;1245   uint8_t IsFreqValid(void)
+;;;1248   
+;;;1249   uint8_t IsFreqValid(void)
 000000  4805              LDR      r0,|L4.24|
-;;;1246   {
-;;;1247   	if(Global_datas.FmData.Frequency >= 8750 && Global_datas.FmData.Frequency <= 10800)
+;;;1250   {
+;;;1251   	if(Global_datas.FmData.Frequency >= 8750 && Global_datas.FmData.Frequency <= 10800)
 000002  4906              LDR      r1,|L4.28|
 000004  6c00              LDR      r0,[r0,#0x40]  ; Global_datas
 000006  1840              ADDS     r0,r0,r1
 000008  4905              LDR      r1,|L4.32|
 00000a  4288              CMP      r0,r1
 00000c  d801              BHI      |L4.18|
-;;;1248   		return 1;
+;;;1252   		return 1;
 00000e  2001              MOVS     r0,#1
-;;;1249   	else
-;;;1250   		return 0;
-;;;1251   }
+;;;1253   	else
+;;;1254   		return 0;
+;;;1255   }
 000010  4770              BX       lr
                   |L4.18|
-000012  2000              MOVS     r0,#0                 ;1250
+000012  2000              MOVS     r0,#0                 ;1254
 000014  4770              BX       lr
-;;;1252   
+;;;1256   
                           ENDP
 
 000016  0000              DCW      0x0000
@@ -153,23 +153,23 @@
                           AREA ||i.IsStationNumValid||, CODE, READONLY, ALIGN=2
 
                   IsStationNumValid PROC
-;;;1252   
-;;;1253   uint8_t IsStationNumValid(void)
+;;;1256   
+;;;1257   uint8_t IsStationNumValid(void)
 000000  4803              LDR      r0,|L5.16|
-;;;1254   {
-;;;1255   	if(Global_datas.FmData.station_num <= FM_MAX_STATION_NUM)
+;;;1258   {
+;;;1259   	if(Global_datas.FmData.station_num <= FM_MAX_STATION_NUM)
 000002  7900              LDRB     r0,[r0,#4]  ; Global_datas
 000004  280f              CMP      r0,#0xf
 000006  d801              BHI      |L5.12|
-;;;1256   		return 1;
+;;;1260   		return 1;
 000008  2001              MOVS     r0,#1
-;;;1257   	else return 0;
-;;;1258   }
+;;;1261   	else return 0;
+;;;1262   }
 00000a  4770              BX       lr
                   |L5.12|
-00000c  2000              MOVS     r0,#0                 ;1257
+00000c  2000              MOVS     r0,#0                 ;1261
 00000e  4770              BX       lr
-;;;1259   
+;;;1263   
                           ENDP
 
                   |L5.16|
@@ -178,14 +178,14 @@
                           AREA ||i.WaitMs||, CODE, READONLY, ALIGN=2
 
                   WaitMs PROC
-;;;128    
-;;;129    void WaitMs(uint32_t time)
+;;;132    
+;;;133    void WaitMs(uint32_t time)
 000000  2200              MOVS     r2,#0
-;;;130    {
-;;;131    	uint32_t i,j;
-;;;132    	for(i=0;i<time;i++)
-;;;133    	{
-;;;134    		for(j=0;j<10000;j++);
+;;;134    {
+;;;135    	uint32_t i,j;
+;;;136    	for(i=0;i<time;i++)
+;;;137    	{
+;;;138    		for(j=0;j<10000;j++);
 000002  4b05              LDR      r3,|L6.24|
 000004  e004              B        |L6.16|
                   |L6.6|
@@ -196,12 +196,12 @@
 00000c  d3fc              BCC      |L6.8|
 00000e  1c52              ADDS     r2,r2,#1
                   |L6.16|
-000010  4282              CMP      r2,r0                 ;132
+000010  4282              CMP      r2,r0                 ;136
 000012  d3f8              BCC      |L6.6|
-;;;135    	}
-;;;136    }
+;;;139    	}
+;;;140    }
 000014  4770              BX       lr
-;;;137    
+;;;141    
                           ENDP
 
 000016  0000              DCW      0x0000
@@ -211,99 +211,99 @@
                           AREA ||i.die||, CODE, READONLY, ALIGN=1
 
                   ||die|| PROC
-;;;148    //-----------------------------------------------------------------------------
-;;;149    void die(void)
+;;;152    //-----------------------------------------------------------------------------
+;;;153    void die(void)
 000000  2000              MOVS     r0,#0
                   |L7.2|
-;;;150    {
-;;;151    	uint8_t i;
-;;;152    	for(i=0;i<5;i++);
+;;;154    {
+;;;155    	uint8_t i;
+;;;156    	for(i=0;i<5;i++);
 000002  1c40              ADDS     r0,r0,#1
 000004  b2c0              UXTB     r0,r0
 000006  2805              CMP      r0,#5
 000008  d3fb              BCC      |L7.2|
-;;;153      // ;; _nop_(); // put breakpoint here during debug.
-;;;154    }
+;;;157      // ;; _nop_(); // put breakpoint here during debug.
+;;;158    }
 00000a  4770              BX       lr
-;;;155    
+;;;159    
                           ENDP
 
 
                           AREA ||i.fmRsqStatus||, CODE, READONLY, ALIGN=2
 
                   fmRsqStatus PROC
-;;;1154   //-----------------------------------------------------------------------------
-;;;1155   void fmRsqStatus(uint8_t intack)
+;;;1158   //-----------------------------------------------------------------------------
+;;;1159   void fmRsqStatus(uint8_t intack)
 000000  b510              PUSH     {r4,lr}
-;;;1156   {
-;;;1157       // Put the ID for the command in the first byte.
-;;;1158       cmd[0] = FM_RSQ_STATUS;
+;;;1160   {
+;;;1161       // Put the ID for the command in the first byte.
+;;;1162       cmd[0] = FM_RSQ_STATUS;
 000002  4916              LDR      r1,|L8.92|
 000004  2223              MOVS     r2,#0x23
 000006  700a              STRB     r2,[r1,#0]
-;;;1159   
-;;;1160   	// Put the flags if the bit was set for the input parameters.
-;;;1161   	cmd[1] = 0;
+;;;1163   
+;;;1164   	// Put the flags if the bit was set for the input parameters.
+;;;1165   	cmd[1] = 0;
 000008  2200              MOVS     r2,#0
 00000a  704a              STRB     r2,[r1,#1]
-;;;1162   	if(intack) cmd[1] |= FM_RSQ_STATUS_IN_INTACK;
+;;;1166   	if(intack) cmd[1] |= FM_RSQ_STATUS_IN_INTACK;
 00000c  2800              CMP      r0,#0
 00000e  d001              BEQ      |L8.20|
 000010  2001              MOVS     r0,#1
 000012  7048              STRB     r0,[r1,#1]
                   |L8.20|
-;;;1163   
-;;;1164       // Invoke the command
-;;;1165   	si47xx_command(2, cmd, 8, rsp);
+;;;1167   
+;;;1168       // Invoke the command
+;;;1169   	si47xx_command(2, cmd, 8, rsp);
 000014  4b12              LDR      r3,|L8.96|
 000016  2208              MOVS     r2,#8
 000018  4910              LDR      r1,|L8.92|
 00001a  2002              MOVS     r0,#2
 00001c  f7fffffe          BL       si47xx_command
-;;;1166   
-;;;1167       // Parse the results
-;;;1168   	Status  = rsp[0];
+;;;1170   
+;;;1171       // Parse the results
+;;;1172   	Status  = rsp[0];
 000020  490f              LDR      r1,|L8.96|
 000022  480e              LDR      r0,|L8.92|
 000024  780a              LDRB     r2,[r1,#0]  ; rsp
 000026  3818              SUBS     r0,r0,#0x18
 000028  70c2              STRB     r2,[r0,#3]
-;;;1169       RsqInts = rsp[1];
+;;;1173       RsqInts = rsp[1];
 00002a  784a              LDRB     r2,[r1,#1]  ; rsp
 00002c  7102              STRB     r2,[r0,#4]
-;;;1170       SMUTE   = !!(rsp[2] & FM_RSQ_STATUS_OUT_SMUTE);
+;;;1174       SMUTE   = !!(rsp[2] & FM_RSQ_STATUS_OUT_SMUTE);
 00002e  788a              LDRB     r2,[r1,#2]  ; rsp
 000030  0713              LSLS     r3,r2,#28
 000032  0fdb              LSRS     r3,r3,#31
 000034  7183              STRB     r3,[r0,#6]
-;;;1171       AFCRL   = !!(rsp[2] & FM_RSQ_STATUS_OUT_AFCRL);
+;;;1175       AFCRL   = !!(rsp[2] & FM_RSQ_STATUS_OUT_AFCRL);
 000036  0793              LSLS     r3,r2,#30
 000038  0fdb              LSRS     r3,r3,#31
-;;;1172       Valid   = !!(rsp[2] & FM_RSQ_STATUS_OUT_VALID);
+;;;1176       Valid   = !!(rsp[2] & FM_RSQ_STATUS_OUT_VALID);
 00003a  07d2              LSLS     r2,r2,#31
-00003c  7203              STRB     r3,[r0,#8]            ;1171
+00003c  7203              STRB     r3,[r0,#8]            ;1175
 00003e  0fd2              LSRS     r2,r2,#31
 000040  7242              STRB     r2,[r0,#9]
-;;;1173       Pilot   = !!(rsp[3] & FM_RSQ_STATUS_OUT_PILOT);
+;;;1177       Pilot   = !!(rsp[3] & FM_RSQ_STATUS_OUT_PILOT);
 000042  78ca              LDRB     r2,[r1,#3]  ; rsp
 000044  09d3              LSRS     r3,r2,#7
-;;;1174       Blend   = rsp[3] & FM_RSQ_STATUS_OUT_STBLEND;
+;;;1178       Blend   = rsp[3] & FM_RSQ_STATUS_OUT_STBLEND;
 000046  0652              LSLS     r2,r2,#25
-000048  7283              STRB     r3,[r0,#0xa]          ;1173
+000048  7283              STRB     r3,[r0,#0xa]          ;1177
 00004a  0e52              LSRS     r2,r2,#25
 00004c  72c2              STRB     r2,[r0,#0xb]
-;;;1175       RSSI    = rsp[4];
+;;;1179       RSSI    = rsp[4];
 00004e  790a              LDRB     r2,[r1,#4]  ; rsp
 000050  7302              STRB     r2,[r0,#0xc]
-;;;1176       ASNR    = rsp[5];
+;;;1180       ASNR    = rsp[5];
 000052  794a              LDRB     r2,[r1,#5]  ; rsp
 000054  7342              STRB     r2,[r0,#0xd]
-;;;1177       FreqOff = rsp[7];   
+;;;1181       FreqOff = rsp[7];   
 000056  79c9              LDRB     r1,[r1,#7]  ; rsp
 000058  7381              STRB     r1,[r0,#0xe]
-;;;1178   }
+;;;1182   }
 00005a  bd10              POP      {r4,pc}
-;;;1179   
+;;;1183   
                           ENDP
 
                   |L8.92|
@@ -314,27 +314,27 @@
                           AREA ||i.fmSeekStart||, CODE, READONLY, ALIGN=2
 
                   fmSeekStart PROC
-;;;1072   //-----------------------------------------------------------------------------
-;;;1073   void fmSeekStart(uint8_t seekUp, uint8_t wrap)
+;;;1076   //-----------------------------------------------------------------------------
+;;;1077   void fmSeekStart(uint8_t seekUp, uint8_t wrap)
 000000  b510              PUSH     {r4,lr}
-;;;1074   {
-;;;1075       // Put the ID for the command in the first byte.
-;;;1076       cmd[0] = FM_SEEK_START;
+;;;1078   {
+;;;1079       // Put the ID for the command in the first byte.
+;;;1080       cmd[0] = FM_SEEK_START;
 000002  4a0b              LDR      r2,|L9.48|
 000004  2321              MOVS     r3,#0x21
 000006  7013              STRB     r3,[r2,#0]
-;;;1077   
-;;;1078   	// Put the flags if the bit was set for the input parameters.
-;;;1079   	cmd[1] = 0;
+;;;1081   
+;;;1082   	// Put the flags if the bit was set for the input parameters.
+;;;1083   	cmd[1] = 0;
 000008  2300              MOVS     r3,#0
 00000a  7053              STRB     r3,[r2,#1]
-;;;1080       if(seekUp) cmd[1] |= FM_SEEK_START_IN_SEEKUP;
+;;;1084       if(seekUp) cmd[1] |= FM_SEEK_START_IN_SEEKUP;
 00000c  2800              CMP      r0,#0
 00000e  d001              BEQ      |L9.20|
 000010  2008              MOVS     r0,#8
 000012  7050              STRB     r0,[r2,#1]
                   |L9.20|
-;;;1081   	if(wrap)   cmd[1] |= FM_SEEK_START_IN_WRAP;
+;;;1085   	if(wrap)   cmd[1] |= FM_SEEK_START_IN_WRAP;
 000014  2900              CMP      r1,#0
 000016  d003              BEQ      |L9.32|
 000018  7850              LDRB     r0,[r2,#1]  ; cmd
@@ -342,17 +342,17 @@
 00001c  4308              ORRS     r0,r0,r1
 00001e  7050              STRB     r0,[r2,#1]
                   |L9.32|
-;;;1082   
-;;;1083       // Invoke the command
-;;;1084   	si47xx_command(2, cmd, 1, rsp);
+;;;1086   
+;;;1087       // Invoke the command
+;;;1088   	si47xx_command(2, cmd, 1, rsp);
 000020  4b04              LDR      r3,|L9.52|
 000022  2201              MOVS     r2,#1
 000024  4902              LDR      r1,|L9.48|
 000026  2002              MOVS     r0,#2
 000028  f7fffffe          BL       si47xx_command
-;;;1085   }
+;;;1089   }
 00002c  bd10              POP      {r4,pc}
-;;;1086   
+;;;1090   
                           ENDP
 
 00002e  0000              DCW      0x0000
@@ -364,41 +364,41 @@
                           AREA ||i.fmTuneFreq||, CODE, READONLY, ALIGN=2
 
                   fmTuneFreq PROC
-;;;1045   //-----------------------------------------------------------------------------
-;;;1046   void fmTuneFreq(uint32_t frequency)
+;;;1049   //-----------------------------------------------------------------------------
+;;;1050   void fmTuneFreq(uint32_t frequency)
 000000  b510              PUSH     {r4,lr}
-;;;1047   {
-;;;1048       // Put the ID for the command in the first byte.
-;;;1049       cmd[0] = FM_TUNE_FREQ;
+;;;1051   {
+;;;1052       // Put the ID for the command in the first byte.
+;;;1053       cmd[0] = FM_TUNE_FREQ;
 000002  4907              LDR      r1,|L10.32|
 000004  2220              MOVS     r2,#0x20
 000006  700a              STRB     r2,[r1,#0]
-;;;1050   
-;;;1051   	// Initialize the reserved section to 0
-;;;1052       cmd[1] = 0;
+;;;1054   
+;;;1055   	// Initialize the reserved section to 0
+;;;1056       cmd[1] = 0;
 000008  2200              MOVS     r2,#0
 00000a  704a              STRB     r2,[r1,#1]
-;;;1053   
-;;;1054   	// Put the frequency in the second and third bytes.
-;;;1055       cmd[2] = (uint8_t)(frequency >> 8);
+;;;1057   
+;;;1058   	// Put the frequency in the second and third bytes.
+;;;1059       cmd[2] = (uint8_t)(frequency >> 8);
 00000c  0a03              LSRS     r3,r0,#8
 00000e  708b              STRB     r3,[r1,#2]
-;;;1056   	cmd[3] = (uint8_t)(frequency & 0x00FF);
+;;;1060   	cmd[3] = (uint8_t)(frequency & 0x00FF);
 000010  70c8              STRB     r0,[r1,#3]
-;;;1057   
-;;;1058   	// Set the antenna calibration value.
-;;;1059       cmd[4] = (uint8_t)0;  // Auto
+;;;1061   
+;;;1062   	// Set the antenna calibration value.
+;;;1063       cmd[4] = (uint8_t)0;  // Auto
 000012  710a              STRB     r2,[r1,#4]
-;;;1060   
-;;;1061       // Invoke the command
-;;;1062   	si47xx_command(5, cmd, 1, rsp);
+;;;1064   
+;;;1065       // Invoke the command
+;;;1066   	si47xx_command(5, cmd, 1, rsp);
 000014  4b03              LDR      r3,|L10.36|
 000016  2201              MOVS     r2,#1
 000018  2005              MOVS     r0,#5
 00001a  f7fffffe          BL       si47xx_command
-;;;1063   }
+;;;1067   }
 00001e  bd10              POP      {r4,pc}
-;;;1064   
+;;;1068   
                           ENDP
 
                   |L10.32|
@@ -412,29 +412,29 @@
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
                   fmTuneStatus PROC
-;;;1103   //-----------------------------------------------------------------------------
-;;;1104   void fmTuneStatus(uint8_t cancel, uint8_t intack)
+;;;1107   //-----------------------------------------------------------------------------
+;;;1108   void fmTuneStatus(uint8_t cancel, uint8_t intack)
 000000  b510              PUSH     {r4,lr}
-;;;1105   {
-;;;1106   
-;;;1107   
-;;;1108       // Put the ID for the command in the first byte.
-;;;1109       cmd[0] = FM_TUNE_STATUS;
+;;;1109   {
+;;;1110   
+;;;1111   
+;;;1112       // Put the ID for the command in the first byte.
+;;;1113       cmd[0] = FM_TUNE_STATUS;
 000002  4a1e              LDR      r2,|L11.124|
 000004  2322              MOVS     r3,#0x22
 000006  7013              STRB     r3,[r2,#0]
-;;;1110   
-;;;1111   	// Put the flags if the bit was set for the input parameters.
-;;;1112   	cmd[1] = 0;
+;;;1114   
+;;;1115   	// Put the flags if the bit was set for the input parameters.
+;;;1116   	cmd[1] = 0;
 000008  2300              MOVS     r3,#0
 00000a  7053              STRB     r3,[r2,#1]
-;;;1113       if(cancel) cmd[1] |= FM_TUNE_STATUS_IN_CANCEL;
+;;;1117       if(cancel) cmd[1] |= FM_TUNE_STATUS_IN_CANCEL;
 00000c  2800              CMP      r0,#0
 00000e  d001              BEQ      |L11.20|
 000010  2002              MOVS     r0,#2
 000012  7050              STRB     r0,[r2,#1]
                   |L11.20|
-;;;1114   	if(intack) cmd[1] |= FM_TUNE_STATUS_IN_INTACK;
+;;;1118   	if(intack) cmd[1] |= FM_TUNE_STATUS_IN_INTACK;
 000014  2900              CMP      r1,#0
 000016  d003              BEQ      |L11.32|
 000018  7850              LDRB     r0,[r2,#1]  ; cmd
@@ -442,17 +442,17 @@
 00001c  4308              ORRS     r0,r0,r1
 00001e  7050              STRB     r0,[r2,#1]
                   |L11.32|
-;;;1115   
-;;;1116       // Invoke the command
-;;;1117   	si47xx_command(2, cmd, 8, rsp);
+;;;1119   
+;;;1120       // Invoke the command
+;;;1121   	si47xx_command(2, cmd, 8, rsp);
 000020  4b17              LDR      r3,|L11.128|
 000022  2208              MOVS     r2,#8
 000024  4915              LDR      r1,|L11.124|
 000026  2002              MOVS     r0,#2
 000028  f7fffffe          BL       si47xx_command
-;;;1118   
-;;;1119       // Parse the results
-;;;1120       STC    = !!(rsp[0] & STCINT);
+;;;1122   
+;;;1123       // Parse the results
+;;;1124       STC    = !!(rsp[0] & STCINT);
 00002c  4814              LDR      r0,|L11.128|
 00002e  4c13              LDR      r4,|L11.124|
 000030  7801              LDRB     r1,[r0,#0]  ; rsp
@@ -460,51 +460,51 @@
 000034  07c9              LSLS     r1,r1,#31
 000036  0fc9              LSRS     r1,r1,#31
 000038  7161              STRB     r1,[r4,#5]
-;;;1121       BLTF   = !!(rsp[1] & FM_TUNE_STATUS_OUT_BTLF);
+;;;1125       BLTF   = !!(rsp[1] & FM_TUNE_STATUS_OUT_BTLF);
 00003a  7841              LDRB     r1,[r0,#1]  ; rsp
 00003c  09ca              LSRS     r2,r1,#7
 00003e  71e2              STRB     r2,[r4,#7]
-;;;1122       AFCRL  = !!(rsp[1] & FM_TUNE_STATUS_OUT_AFCRL);
+;;;1126       AFCRL  = !!(rsp[1] & FM_TUNE_STATUS_OUT_AFCRL);
 000040  078a              LSLS     r2,r1,#30
 000042  0fd2              LSRS     r2,r2,#31
-;;;1123       Valid  = !!(rsp[1] & FM_TUNE_STATUS_OUT_VALID);
+;;;1127       Valid  = !!(rsp[1] & FM_TUNE_STATUS_OUT_VALID);
 000044  07c9              LSLS     r1,r1,#31
-000046  7222              STRB     r2,[r4,#8]            ;1122
+000046  7222              STRB     r2,[r4,#8]            ;1126
 000048  0fc9              LSRS     r1,r1,#31
 00004a  7261              STRB     r1,[r4,#9]
-;;;1124       Freq   = ((uint32_t)rsp[2] << 8) | (uint32_t)rsp[3];
+;;;1128       Freq   = ((uint32_t)rsp[2] << 8) | (uint32_t)rsp[3];
 00004c  78c1              LDRB     r1,[r0,#3]  ; rsp
 00004e  7882              LDRB     r2,[r0,#2]  ; rsp
 000050  0209              LSLS     r1,r1,#8
 000052  4311              ORRS     r1,r1,r2
 000054  ba49              REV16    r1,r1
-;;;1125       RSSI   = rsp[4];
+;;;1129       RSSI   = rsp[4];
 000056  6121              STR      r1,[r4,#0x10]  ; Freq
 000058  7902              LDRB     r2,[r0,#4]  ; rsp
 00005a  7322              STRB     r2,[r4,#0xc]
-;;;1126       ASNR   = rsp[5];
+;;;1130       ASNR   = rsp[5];
 00005c  7942              LDRB     r2,[r0,#5]  ; rsp
 00005e  7362              STRB     r2,[r4,#0xd]
-;;;1127       AntCap = rsp[7];   
+;;;1131       AntCap = rsp[7];   
 000060  79c0              LDRB     r0,[r0,#7]  ; rsp
-;;;1128   
-;;;1129   	printf("read freq: %d\n", Freq);
+;;;1132   
+;;;1133   	printf("read freq: %d\n", Freq);
 000062  6160              STR      r0,[r4,#0x14]  ; AntCap
 000064  a007              ADR      r0,|L11.132|
 000066  f7fffffe          BL       __2printf
-;;;1130   	printf("Is valid: %d\n", Valid);
+;;;1134   	printf("Is valid: %d\n", Valid);
 00006a  7a61              LDRB     r1,[r4,#9]  ; Valid
 00006c  a009              ADR      r0,|L11.148|
 00006e  f7fffffe          BL       __2printf
-;;;1131   	printf("RSSI: %d\n", RSSI);
+;;;1135   	printf("RSSI: %d\n", RSSI);
 000072  7b21              LDRB     r1,[r4,#0xc]  ; RSSI
 000074  a00b              ADR      r0,|L11.164|
 000076  f7fffffe          BL       __2printf
-;;;1132   
-;;;1133   	
-;;;1134   }
+;;;1136   
+;;;1137   	
+;;;1138   }
 00007a  bd10              POP      {r4,pc}
-;;;1135   
+;;;1139   
                           ENDP
 
                   |L11.124|
@@ -534,66 +534,66 @@
                           AREA ||i.getIntStatus||, CODE, READONLY, ALIGN=1
 
                   getIntStatus PROC
-;;;527    //-----------------------------------------------------------------------------
-;;;528    uint8_t getIntStatus(void)
+;;;531    //-----------------------------------------------------------------------------
+;;;532    uint8_t getIntStatus(void)
 000000  b51c              PUSH     {r2-r4,lr}
-;;;529    {
-;;;530        uint8_t  cmd[1] = {0};
+;;;533    {
+;;;534        uint8_t  cmd[1] = {0};
 000002  2000              MOVS     r0,#0
-;;;531        uint8_t  rsp[1] = {0};
+;;;535        uint8_t  rsp[1] = {0};
 000004  9000              STR      r0,[sp,#0]
-;;;532    
-;;;533        // Put the ID for the command in the first byte.
-;;;534        cmd[0] = GET_INT_STATUS;
+;;;536    
+;;;537        // Put the ID for the command in the first byte.
+;;;538        cmd[0] = GET_INT_STATUS;
 000006  9001              STR      r0,[sp,#4]
 000008  2014              MOVS     r0,#0x14
 00000a  4669              MOV      r1,sp
 00000c  7008              STRB     r0,[r1,#0]
-;;;535    
-;;;536        // Invoke the command
-;;;537    	si47xx_command(1, cmd, 1, rsp);
+;;;539    
+;;;540        // Invoke the command
+;;;541    	si47xx_command(1, cmd, 1, rsp);
 00000e  2201              MOVS     r2,#1
 000010  ab01              ADD      r3,sp,#4
 000012  4610              MOV      r0,r2
 000014  f7fffffe          BL       si47xx_command
-;;;538    
-;;;539    	// Return the status
-;;;540    	return rsp[0];
+;;;542    
+;;;543    	// Return the status
+;;;544    	return rsp[0];
 000018  4669              MOV      r1,sp
 00001a  7908              LDRB     r0,[r1,#4]
-;;;541    }
+;;;545    }
 00001c  bd1c              POP      {r2-r4,pc}
-;;;542    
+;;;546    
                           ENDP
 
 
                           AREA ||i.io2w_read||, CODE, READONLY, ALIGN=1
 
                   io2w_read PROC
-;;;402    //-----------------------------------------------------------------------------
-;;;403    void io2w_read(int number_bytes, uint8_t *data_in)
+;;;406    //-----------------------------------------------------------------------------
+;;;407    void io2w_read(int number_bytes, uint8_t *data_in)
 000000  b570              PUSH     {r4-r6,lr}
-;;;404    {
+;;;408    {
 000002  460c              MOV      r4,r1
 000004  4605              MOV      r5,r0
-;;;405        uint8_t addr;
-;;;406    
-;;;407    	
-;;;408    
-;;;409        // issue the START condition with address lsb set for reads
-;;;410        io2w_start(SI4730_ADDRESS, READ);
+;;;409        uint8_t addr;
+;;;410    
+;;;411    	
+;;;412    
+;;;413        // issue the START condition with address lsb set for reads
+;;;414        io2w_start(SI4730_ADDRESS, READ);
 000006  2101              MOVS     r1,#1
 000008  2022              MOVS     r0,#0x22
 00000a  f7fffffe          BL       io2w_start
-;;;411    
-;;;412    
-;;;413    
-;;;414        // loop until the specified number of bytes have been read
-;;;415        while(number_bytes--)
+;;;415    
+;;;416    
+;;;417    
+;;;418        // loop until the specified number of bytes have been read
+;;;419        while(number_bytes--)
 00000e  e004              B        |L13.26|
                   |L13.16|
-;;;416        {
-;;;417            *data_in++ = io2w_read_byte(number_bytes);
+;;;420        {
+;;;421            *data_in++ = io2w_read_byte(number_bytes);
 000010  b2e8              UXTB     r0,r5
 000012  f7fffffe          BL       io2w_read_byte
 000016  7020              STRB     r0,[r4,#0]
@@ -601,96 +601,96 @@
                   |L13.26|
 00001a  1e6d              SUBS     r5,r5,#1
 00001c  d2f8              BCS      |L13.16|
-;;;418        }
-;;;419    
-;;;420        // issue the STOP condition
-;;;421        io2w_stop();
-00001e  f7fffffe          BL       io2w_stop
-;;;422    }
-000022  bd70              POP      {r4-r6,pc}
+;;;422        }
 ;;;423    
+;;;424        // issue the STOP condition
+;;;425        io2w_stop();
+00001e  f7fffffe          BL       io2w_stop
+;;;426    }
+000022  bd70              POP      {r4-r6,pc}
+;;;427    
                           ENDP
 
 
                           AREA ||i.io2w_read_byte||, CODE, READONLY, ALIGN=2
 
                   io2w_read_byte PROC
-;;;315    //-----------------------------------------------------------------------------
-;;;316    static uint8_t io2w_read_byte(uint8_t remaining_bytes)
-000000  b5f0              PUSH     {r4-r7,lr}
-;;;317    {
-;;;318        uint8_t i;
-;;;319        uint8_t rddata = 0;
-000002  2400              MOVS     r4,#0
-;;;320    
-;;;321       // SDIO_OUT &= ~(SDIO_HEX);  // Configure SDIO as open-drain
-;;;322        for( i = 0; i < 8; i++ )
-;;;323        {
-;;;324            SCLK = 0;
-000004  4b13              LDR      r3,|L14.84|
-000006  4607              MOV      r7,r0                 ;317
-000008  4622              MOV      r2,r4                 ;322
-00000a  4626              MOV      r6,r4                 ;322
-;;;325            SDIO = 1;                        // Configure P0^7(SDIO) as a digital input
-00000c  2501              MOVS     r5,#1
-                  |L14.14|
-00000e  62de              STR      r6,[r3,#0x2c]         ;324
-000010  629d              STR      r5,[r3,#0x28]
-;;;326            wait_us(1);                      // tf:IN
-000012  2001              MOVS     r0,#1
-000014  f7fffffe          BL       wait_us
-;;;327            wait_us(2);                      // tLOW
-000018  2002              MOVS     r0,#2
-00001a  f7fffffe          BL       wait_us
-;;;328            SCLK = 1;
-00001e  62dd              STR      r5,[r3,#0x2c]
-;;;329            wait_us(1);                      // tf:IN + tHIGH
-000020  2001              MOVS     r0,#1
-000022  f7fffffe          BL       wait_us
-;;;330            rddata = ((rddata << 1) | SDIO);
-000026  6a99              LDR      r1,[r3,#0x28]
-000028  0060              LSLS     r0,r4,#1
-00002a  4308              ORRS     r0,r0,r1
-00002c  1c52              ADDS     r2,r2,#1
-00002e  b2d2              UXTB     r2,r2                 ;322
-000030  b2c4              UXTB     r4,r0
-000032  2a08              CMP      r2,#8                 ;322
-000034  d3eb              BCC      |L14.14|
-;;;331    
-;;;332    		
-;;;333        }
-;;;334        // set the acknowledge
-;;;335        SCLK = 0;
-000036  62de              STR      r6,[r3,#0x2c]
-;;;336    
-;;;337       // SDIO_OUT |= SDIO_HEX;   // Configure SDIO as push-pull
-;;;338    
-;;;339        if (remaining_bytes == 0)
-000038  2f00              CMP      r7,#0
+;;;319    //-----------------------------------------------------------------------------
+;;;320    static uint8_t io2w_read_byte(uint8_t remaining_bytes)
+000000  b5f1              PUSH     {r0,r4-r7,lr}
+;;;321    {
+;;;322        uint8_t i;
+;;;323        uint8_t rddata = 0;
+000002  2500              MOVS     r5,#0
+;;;324    
+;;;325       // SDIO_OUT &= ~(SDIO_HEX);  // Configure SDIO as open-drain
+;;;326        for( i = 0; i < 8; i++ )
+;;;327        {
+;;;328            SCLK = 0;
+000004  4c13              LDR      r4,|L14.84|
+000006  462b              MOV      r3,r5                 ;326
+000008  462f              MOV      r7,r5                 ;326
+;;;329            SDIO = 1;                        // Configure P0^7(SDIO) as a digital input
+00000a  2601              MOVS     r6,#1
+                  |L14.12|
+00000c  62e7              STR      r7,[r4,#0x2c]         ;328
+00000e  62a6              STR      r6,[r4,#0x28]
+;;;330            wait_us(1);                      // tf:IN
+000010  2001              MOVS     r0,#1
+000012  f7fffffe          BL       wait_us
+;;;331            wait_us(2);                      // tLOW
+000016  2002              MOVS     r0,#2
+000018  f7fffffe          BL       wait_us
+;;;332            SCLK = 1;
+00001c  62e6              STR      r6,[r4,#0x2c]
+;;;333            wait_us(1);                      // tf:IN + tHIGH
+00001e  2001              MOVS     r0,#1
+000020  f7fffffe          BL       wait_us
+;;;334            rddata = ((rddata << 1) | SDIO);
+000024  6aa1              LDR      r1,[r4,#0x28]
+000026  0068              LSLS     r0,r5,#1
+000028  4308              ORRS     r0,r0,r1
+00002a  1c5b              ADDS     r3,r3,#1
+00002c  b2db              UXTB     r3,r3                 ;326
+00002e  b2c5              UXTB     r5,r0
+000030  2b08              CMP      r3,#8                 ;326
+000032  d3eb              BCC      |L14.12|
+;;;335    
+;;;336    		
+;;;337        }
+;;;338        // set the acknowledge
+;;;339        SCLK = 0;
+000034  62e7              STR      r7,[r4,#0x2c]
+;;;340    
+;;;341       // SDIO_OUT |= SDIO_HEX;   // Configure SDIO as push-pull
+;;;342    
+;;;343        if (remaining_bytes == 0)
+000036  9800              LDR      r0,[sp,#0]
+000038  2800              CMP      r0,#0
 00003a  d009              BEQ      |L14.80|
-;;;340            SDIO = 1;
-;;;341        else
-;;;342            SDIO = 0;
-00003c  629e              STR      r6,[r3,#0x28]
+;;;344            SDIO = 1;
+;;;345        else
+;;;346            SDIO = 0;
+00003c  62a7              STR      r7,[r4,#0x28]
                   |L14.62|
-;;;343    
-;;;344        wait_us(2); // tf:IN + tLOW
+;;;347    
+;;;348        wait_us(2); // tf:IN + tLOW
 00003e  2002              MOVS     r0,#2
 000040  f7fffffe          BL       wait_us
-;;;345        SCLK = 1;
-000044  62dd              STR      r5,[r3,#0x2c]
-;;;346        wait_us(1); // tf:IN + tHIGH
+;;;349        SCLK = 1;
+000044  62e6              STR      r6,[r4,#0x2c]
+;;;350        wait_us(1); // tf:IN + tHIGH
 000046  2001              MOVS     r0,#1
 000048  f7fffffe          BL       wait_us
-;;;347    
-;;;348        return rddata;
-00004c  4620              MOV      r0,r4
-;;;349    }
-00004e  bdf0              POP      {r4-r7,pc}
+;;;351    
+;;;352        return rddata;
+00004c  4628              MOV      r0,r5
+;;;353    }
+00004e  bdf8              POP      {r3-r7,pc}
                   |L14.80|
-000050  629d              STR      r5,[r3,#0x28]         ;340
+000050  62a6              STR      r6,[r4,#0x28]         ;344
 000052  e7f4              B        |L14.62|
-;;;350    
+;;;354    
                           ENDP
 
                   |L14.84|
@@ -699,124 +699,124 @@
                           AREA ||i.io2w_start||, CODE, READONLY, ALIGN=2
 
                   io2w_start PROC
-;;;170    //-----------------------------------------------------------------------------
-;;;171    void io2w_start(uint8_t io2w_address, uint8_t operation)
-000000  b570              PUSH     {r4-r6,lr}
-;;;172    {
-;;;173        int i;
-;;;174    	int j = 0;
-;;;175    
-;;;176    	SCLK = 1;
+;;;174    //-----------------------------------------------------------------------------
+;;;175    void io2w_start(uint8_t io2w_address, uint8_t operation)
+000000  b5f8              PUSH     {r3-r7,lr}
+;;;176    {
+;;;177        int i;
+;;;178    	int j = 0;
+;;;179    
+;;;180    	SCLK = 1;
 000002  4b1b              LDR      r3,|L15.112|
-000004  2601              MOVS     r6,#1
-000006  460a              MOV      r2,r1                 ;172
-000008  4604              MOV      r4,r0                 ;172
-00000a  62de              STR      r6,[r3,#0x2c]
-;;;177    	//FM_SDA_OUTPUT_SET;
-;;;178    
-;;;179        // issue the START condition
-;;;180        wait_us(1); // tSU:STA
-00000c  4630              MOV      r0,r6
+000004  2401              MOVS     r4,#1
+000006  460f              MOV      r7,r1                 ;176
+000008  4606              MOV      r6,r0                 ;176
+00000a  62dc              STR      r4,[r3,#0x2c]
+;;;181    	//FM_SDA_OUTPUT_SET;
+;;;182    
+;;;183        // issue the START condition
+;;;184        wait_us(1); // tSU:STA
+00000c  4620              MOV      r0,r4
 00000e  f7fffffe          BL       wait_us
-;;;181        SDIO = 0;
+;;;185        SDIO = 0;
 000012  2500              MOVS     r5,#0
 000014  629d              STR      r5,[r3,#0x28]
-;;;182        wait_us(1); // tHD:STA
+;;;186        wait_us(1); // tHD:STA
 000016  2001              MOVS     r0,#1
 000018  f7fffffe          BL       wait_us
-;;;183        SCLK = 0;
+;;;187        SCLK = 0;
 00001c  62dd              STR      r5,[r3,#0x2c]
-;;;184    
-;;;185        // Set the least significant bit to indicate read or write
-;;;186        io2w_address = (io2w_address & 0xFE) | (operation & 0x01);
-00001e  07d0              LSLS     r0,r2,#31
-000020  43b4              BICS     r4,r4,r6
+;;;188    
+;;;189        // Set the least significant bit to indicate read or write
+;;;190        io2w_address = (io2w_address & 0xFE) | (operation & 0x01);
+00001e  07f8              LSLS     r0,r7,#31
+000020  43a6              BICS     r6,r6,r4
 000022  0fc0              LSRS     r0,r0,#31
-000024  4304              ORRS     r4,r4,r0
-;;;187    
-;;;188    	
-;;;189    
-;;;190        // issue the control word (7 bit chip address + R/W* bit)
-;;;191        // Note that tr:IN + tLOW + tf:IN + tHIGH = 2500 ns = 400 kHz
-;;;192        for ( i = 7; i >= 0; i-- )
-000026  2207              MOVS     r2,#7
+000024  4306              ORRS     r6,r6,r0
+;;;191    
+;;;192    	
+;;;193    
+;;;194        // issue the control word (7 bit chip address + R/W* bit)
+;;;195        // Note that tr:IN + tLOW + tf:IN + tHIGH = 2500 ns = 400 kHz
+;;;196        for ( i = 7; i >= 0; i-- )
+000026  2707              MOVS     r7,#7
                   |L15.40|
-;;;193        {
-;;;194            SCLK = 0;
+;;;197        {
+;;;198            SCLK = 0;
 000028  62dd              STR      r5,[r3,#0x2c]
-;;;195            wait_us(1); // tf:IN
+;;;199            wait_us(1); // tf:IN
 00002a  2001              MOVS     r0,#1
 00002c  f7fffffe          BL       wait_us
-000030  4620              MOV      r0,r4
-;;;196            SDIO = ((io2w_address >> i) & 0x01);
-000032  40d0              LSRS     r0,r0,r2
+000030  4630              MOV      r0,r6
+;;;200            SDIO = ((io2w_address >> i) & 0x01);
+000032  40f8              LSRS     r0,r0,r7
 000034  07c0              LSLS     r0,r0,#31
 000036  0fc0              LSRS     r0,r0,#31
 000038  6298              STR      r0,[r3,#0x28]
-;;;197            wait_us(1); // tLOW
+;;;201            wait_us(1); // tLOW
 00003a  2001              MOVS     r0,#1
 00003c  f7fffffe          BL       wait_us
-;;;198            SCLK = 1;
-000040  62de              STR      r6,[r3,#0x2c]
-;;;199            wait_us(1); // tf:IN + tHIGH
+;;;202            SCLK = 1;
+000040  62dc              STR      r4,[r3,#0x2c]
+;;;203            wait_us(1); // tf:IN + tHIGH
 000042  2001              MOVS     r0,#1
 000044  f7fffffe          BL       wait_us
-000048  1e52              SUBS     r2,r2,#1
+000048  1e7f              SUBS     r7,r7,#1
 00004a  d5ed              BPL      |L15.40|
-;;;200    
-;;;201        }
-;;;202    
-;;;203    
 ;;;204    
-;;;205        // check the acknowledge
-;;;206    	//SDIO_OUT &= ~(SDIO_HEX);   // Configure SDIO as open-drain
+;;;205        }
+;;;206    
 ;;;207    
-;;;208        SCLK = 0;
+;;;208    
+;;;209        // check the acknowledge
+;;;210    	//SDIO_OUT &= ~(SDIO_HEX);   // Configure SDIO as open-drain
+;;;211    
+;;;212        SCLK = 0;
 00004c  62dd              STR      r5,[r3,#0x2c]
-;;;209        SDIO = 1;
-00004e  629e              STR      r6,[r3,#0x28]
-;;;210        wait_us(2); // tf:IN + tLOW
+;;;213        SDIO = 1;
+00004e  629c              STR      r4,[r3,#0x28]
+;;;214        wait_us(2); // tf:IN + tLOW
 000050  2002              MOVS     r0,#2
 000052  f7fffffe          BL       wait_us
-;;;211        SCLK = 1;
-000056  62de              STR      r6,[r3,#0x2c]
-;;;212        wait_us(1); // tf:IN + tHIGH
+;;;215        SCLK = 1;
+000056  62dc              STR      r4,[r3,#0x2c]
+;;;216        wait_us(1); // tf:IN + tHIGH
 000058  2001              MOVS     r0,#1
 00005a  f7fffffe          BL       wait_us
-;;;213    
-;;;214    
-;;;215    	//while(SDIO);
-;;;216    	
-;;;217    /*	while(SDIO)
-;;;218    	{
-;;;219    	
-;;;220    	for(j=0;j<100;j++)
-;;;221    	{
-;;;222    		wait_us(10);
-;;;223    	}
-;;;224    
-;;;225    	if(j>50) break;
-;;;226    
+;;;217    
+;;;218    
+;;;219    	//while(SDIO);
+;;;220    	
+;;;221    /*	while(SDIO)
+;;;222    	{
+;;;223    	
+;;;224    	for(j=0;j<100;j++)
+;;;225    	{
+;;;226    		wait_us(10);
 ;;;227    	}
-;;;228    */
-;;;229    
-;;;230    	
-;;;231        if (SDIO != 0)
+;;;228    
+;;;229    	if(j>50) break;
+;;;230    
+;;;231    	}
+;;;232    */
+;;;233    
+;;;234    	
+;;;235        if (SDIO != 0)
 00005e  6a98              LDR      r0,[r3,#0x28]
 000060  2800              CMP      r0,#0
 000062  d004              BEQ      |L15.110|
-;;;232        {
-;;;233    		die();	// ack not received.  This should never happen. Device isn't responding.
+;;;236        {
+;;;237    		die();	// ack not received.  This should never happen. Device isn't responding.
 000064  f7fffffe          BL       ||die||
-;;;234    		
-;;;235    		printf(" die in start function \n");
+;;;238    		
+;;;239    		printf(" die in start function \n");
 000068  a002              ADR      r0,|L15.116|
 00006a  f7fffffe          BL       __2printf
                   |L15.110|
-;;;236    	}
-;;;237    }
-00006e  bd70              POP      {r4-r6,pc}
-;;;238    
+;;;240    	}
+;;;241    }
+00006e  bdf8              POP      {r3-r7,pc}
+;;;242    
                           ENDP
 
                   |L15.112|
@@ -836,34 +836,34 @@
                           AREA ||i.io2w_stop||, CODE, READONLY, ALIGN=2
 
                   io2w_stop PROC
-;;;246    //-----------------------------------------------------------------------------
-;;;247    static void io2w_stop(void)
-000000  b500              PUSH     {lr}
-;;;248    {
-;;;249       // SDIO_OUT |= SDIO_HEX;  // Configure SDIO as push-pull
-;;;250    	SCLK = 0;
-000002  4a08              LDR      r2,|L16.36|
-000004  2300              MOVS     r3,#0
-000006  62d3              STR      r3,[r2,#0x2c]
-;;;251        wait_us(2); // tf:IN + tLOW
+;;;250    //-----------------------------------------------------------------------------
+;;;251    static void io2w_stop(void)
+000000  b510              PUSH     {r4,lr}
+;;;252    {
+;;;253       // SDIO_OUT |= SDIO_HEX;  // Configure SDIO as push-pull
+;;;254    	SCLK = 0;
+000002  4b08              LDR      r3,|L16.36|
+000004  2400              MOVS     r4,#0
+000006  62dc              STR      r4,[r3,#0x2c]
+;;;255        wait_us(2); // tf:IN + tLOW
 000008  2002              MOVS     r0,#2
 00000a  f7fffffe          BL       wait_us
-;;;252        SDIO = 0;
-00000e  6293              STR      r3,[r2,#0x28]
-;;;253        wait_us(1);
+;;;256        SDIO = 0;
+00000e  629c              STR      r4,[r3,#0x28]
+;;;257        wait_us(1);
 000010  2001              MOVS     r0,#1
 000012  f7fffffe          BL       wait_us
-;;;254        SCLK = 1;
-000016  2301              MOVS     r3,#1
-000018  62d3              STR      r3,[r2,#0x2c]
-;;;255        wait_us(1); // tf:IN + tSU:STO
-00001a  4618              MOV      r0,r3
+;;;258        SCLK = 1;
+000016  2401              MOVS     r4,#1
+000018  62dc              STR      r4,[r3,#0x2c]
+;;;259        wait_us(1); // tf:IN + tSU:STO
+00001a  4620              MOV      r0,r4
 00001c  f7fffffe          BL       wait_us
-;;;256        SDIO = 1;
-000020  6293              STR      r3,[r2,#0x28]
-;;;257    }
-000022  bd00              POP      {pc}
-;;;258    
+;;;260        SDIO = 1;
+000020  629c              STR      r4,[r3,#0x28]
+;;;261    }
+000022  bd10              POP      {r4,pc}
+;;;262    
                           ENDP
 
                   |L16.36|
@@ -872,116 +872,116 @@
                           AREA ||i.io2w_write||, CODE, READONLY, ALIGN=1
 
                   io2w_write PROC
-;;;378    //-----------------------------------------------------------------------------
-;;;379    void io2w_write(int number_bytes, uint8_t *data_out)
+;;;382    //-----------------------------------------------------------------------------
+;;;383    void io2w_write(int number_bytes, uint8_t *data_out)
 000000  b570              PUSH     {r4-r6,lr}
-;;;380    {
+;;;384    {
 000002  460c              MOV      r4,r1
 000004  4605              MOV      r5,r0
-;;;381    
-;;;382        // issue the START condition with address lsb cleared for writes
-;;;383        io2w_start(SI4730_ADDRESS, WRITE);
+;;;385    
+;;;386        // issue the START condition with address lsb cleared for writes
+;;;387        io2w_start(SI4730_ADDRESS, WRITE);
 000006  2100              MOVS     r1,#0
 000008  2022              MOVS     r0,#0x22
 00000a  f7fffffe          BL       io2w_start
-;;;384    
-;;;385        // loop writing all bytes in the data_out array
-;;;386        while(number_bytes--)
+;;;388    
+;;;389        // loop writing all bytes in the data_out array
+;;;390        while(number_bytes--)
 00000e  e003              B        |L17.24|
                   |L17.16|
-;;;387        {
-;;;388            io2w_write_byte(*data_out++);
+;;;391        {
+;;;392            io2w_write_byte(*data_out++);
 000010  7820              LDRB     r0,[r4,#0]
 000012  1c64              ADDS     r4,r4,#1
 000014  f7fffffe          BL       io2w_write_byte
                   |L17.24|
 000018  1e6d              SUBS     r5,r5,#1
 00001a  d2f9              BCS      |L17.16|
-;;;389        }
-;;;390    
-;;;391        // issue the STOP condition
-;;;392        io2w_stop();
-00001c  f7fffffe          BL       io2w_stop
-;;;393    }
-000020  bd70              POP      {r4-r6,pc}
+;;;393        }
 ;;;394    
+;;;395        // issue the STOP condition
+;;;396        io2w_stop();
+00001c  f7fffffe          BL       io2w_stop
+;;;397    }
+000020  bd70              POP      {r4-r6,pc}
+;;;398    
                           ENDP
 
 
                           AREA ||i.io2w_write_byte||, CODE, READONLY, ALIGN=2
 
                   io2w_write_byte PROC
-;;;268    //-----------------------------------------------------------------------------
-;;;269    static void io2w_write_byte(uint8_t wrdata)
-000000  b570              PUSH     {r4-r6,lr}
-;;;270    {
-;;;271        int i;
-;;;272    
-;;;273        //SDIO_OUT |= SDIO_HEX;  // Configure SDIO as push-pull
-;;;274        for ( i = 7; i >= 0; i-- )
-000002  2207              MOVS     r2,#7
+;;;272    //-----------------------------------------------------------------------------
+;;;273    static void io2w_write_byte(uint8_t wrdata)
+000000  b5f8              PUSH     {r3-r7,lr}
+;;;274    {
+;;;275        int i;
+;;;276    
+;;;277        //SDIO_OUT |= SDIO_HEX;  // Configure SDIO as push-pull
+;;;278        for ( i = 7; i >= 0; i-- )
+000002  2307              MOVS     r3,#7
 000004  2600              MOVS     r6,#0
-;;;275        {
-;;;276            SCLK = 0;
-000006  4b13              LDR      r3,|L18.84|
-000008  4604              MOV      r4,r0                 ;270
-;;;277            wait_us(1); // tf:IN
+;;;279        {
+;;;280            SCLK = 0;
+000006  4c13              LDR      r4,|L18.84|
+000008  4607              MOV      r7,r0                 ;274
+;;;281            wait_us(1); // tf:IN
 00000a  2501              MOVS     r5,#1
                   |L18.12|
-00000c  62de              STR      r6,[r3,#0x2c]         ;276
+00000c  62e6              STR      r6,[r4,#0x2c]         ;280
 00000e  2001              MOVS     r0,#1
 000010  f7fffffe          BL       wait_us
-000014  4620              MOV      r0,r4
-;;;278            SDIO = ((wrdata >> i) & 0x01);
-000016  40d0              LSRS     r0,r0,r2
+000014  4638              MOV      r0,r7
+;;;282            SDIO = ((wrdata >> i) & 0x01);
+000016  40d8              LSRS     r0,r0,r3
 000018  07c0              LSLS     r0,r0,#31
 00001a  0fc0              LSRS     r0,r0,#31
-00001c  6298              STR      r0,[r3,#0x28]
-;;;279            wait_us(2); // tLOW
+00001c  62a0              STR      r0,[r4,#0x28]
+;;;283            wait_us(2); // tLOW
 00001e  2002              MOVS     r0,#2
 000020  f7fffffe          BL       wait_us
-;;;280            SCLK = 1;
-000024  62dd              STR      r5,[r3,#0x2c]
-;;;281            wait_us(1); // tf:IN + tHIGH
+;;;284            SCLK = 1;
+000024  62e5              STR      r5,[r4,#0x2c]
+;;;285            wait_us(1); // tf:IN + tHIGH
 000026  2001              MOVS     r0,#1
 000028  f7fffffe          BL       wait_us
-00002c  1e52              SUBS     r2,r2,#1
+00002c  1e5b              SUBS     r3,r3,#1
 00002e  d5ed              BPL      |L18.12|
-;;;282        }
-;;;283        // check the acknowledge
-;;;284    	//SDIO_OUT &= ~(SDIO_HEX);  // Configure SDIO as open-drain
-;;;285        SCLK = 0;
-000030  62de              STR      r6,[r3,#0x2c]
-;;;286        SDIO = 1;   // Configure P0^7(SDIO) as a digital input
-000032  629d              STR      r5,[r3,#0x28]
-;;;287        wait_us(2); // tf:IN + tLOW
+;;;286        }
+;;;287        // check the acknowledge
+;;;288    	//SDIO_OUT &= ~(SDIO_HEX);  // Configure SDIO as open-drain
+;;;289        SCLK = 0;
+000030  62e6              STR      r6,[r4,#0x2c]
+;;;290        SDIO = 1;   // Configure P0^7(SDIO) as a digital input
+000032  62a5              STR      r5,[r4,#0x28]
+;;;291        wait_us(2); // tf:IN + tLOW
 000034  2002              MOVS     r0,#2
 000036  f7fffffe          BL       wait_us
-;;;288        SCLK = 1;
-00003a  62dd              STR      r5,[r3,#0x2c]
-;;;289        wait_us(1); // tf:IN + tHIGH
+;;;292        SCLK = 1;
+00003a  62e5              STR      r5,[r4,#0x2c]
+;;;293        wait_us(1); // tf:IN + tHIGH
 00003c  2001              MOVS     r0,#1
 00003e  f7fffffe          BL       wait_us
-;;;290    
-;;;291     //   if (SDIO != 0)
-;;;292     //       die();  // ack not received.  This should never happen. Device isn't responding.
-;;;293    
-;;;294        if (SDIO != 0)
-000042  6a98              LDR      r0,[r3,#0x28]
+;;;294    
+;;;295     //   if (SDIO != 0)
+;;;296     //       die();  // ack not received.  This should never happen. Device isn't responding.
+;;;297    
+;;;298        if (SDIO != 0)
+000042  6aa0              LDR      r0,[r4,#0x28]
 000044  2800              CMP      r0,#0
 000046  d004              BEQ      |L18.82|
-;;;295        {
-;;;296    		die();	// ack not received.  This should never happen. Device isn't responding.
+;;;299        {
+;;;300    		die();	// ack not received.  This should never happen. Device isn't responding.
 000048  f7fffffe          BL       ||die||
-;;;297    		
-;;;298    		printf(" die in write byte function \n");
+;;;301    		
+;;;302    		printf(" die in write byte function \n");
 00004c  a002              ADR      r0,|L18.88|
 00004e  f7fffffe          BL       __2printf
                   |L18.82|
-;;;299    	}	
-;;;300    }
-000052  bd70              POP      {r4-r6,pc}
-;;;301    
+;;;303    	}	
+;;;304    }
+000052  bdf8              POP      {r3-r7,pc}
+;;;305    
                           ENDP
 
                   |L18.84|
@@ -1001,38 +1001,38 @@
                           AREA ||i.quickAFTune||, CODE, READONLY, ALIGN=2
 
                   quickAFTune PROC
-;;;1021   //-----------------------------------------------------------------------------
-;;;1022   uint8_t quickAFTune(uint32_t freq)
+;;;1025   //-----------------------------------------------------------------------------
+;;;1026   uint8_t quickAFTune(uint32_t freq)
 000000  b570              PUSH     {r4-r6,lr}
-;;;1023   {
+;;;1027   {
 000002  4605              MOV      r5,r0
-;;;1024   	uint32_t current_freq = 0;
-;;;1025   	uint8_t  current_rssi = 0;
-;;;1026   
-;;;1027   	// Get the current frequency from the part
-;;;1028       fmTuneStatus(0, 0);
+;;;1028   	uint32_t current_freq = 0;
+;;;1029   	uint8_t  current_rssi = 0;
+;;;1030   
+;;;1031   	// Get the current frequency from the part
+;;;1032       fmTuneStatus(0, 0);
 000004  2100              MOVS     r1,#0
 000006  4608              MOV      r0,r1
 000008  f7fffffe          BL       fmTuneStatus
-;;;1029   	current_freq = Freq;
+;;;1033   	current_freq = Freq;
 00000c  4805              LDR      r0,|L19.36|
-;;;1030   
-;;;1031       // Tune to the AF frequency, check the RSSI, tune back
-;;;1032       current_rssi = si47xxFMRX_tune(freq);
+;;;1034   
+;;;1035       // Tune to the AF frequency, check the RSSI, tune back
+;;;1036       current_rssi = si47xxFMRX_tune(freq);
 00000e  6904              LDR      r4,[r0,#0x10]  ; Freq
 000010  4628              MOV      r0,r5
 000012  f7fffffe          BL       si47xxFMRX_tune
 000016  4605              MOV      r5,r0
-;;;1033   
-;;;1034       // Return to the original channel
-;;;1035       si47xxFMRX_tune(current_freq);
+;;;1037   
+;;;1038       // Return to the original channel
+;;;1039       si47xxFMRX_tune(current_freq);
 000018  4620              MOV      r0,r4
 00001a  f7fffffe          BL       si47xxFMRX_tune
-;;;1036       return current_rssi;
+;;;1040       return current_rssi;
 00001e  4628              MOV      r0,r5
-;;;1037   }
+;;;1041   }
 000020  bd70              POP      {r4-r6,pc}
-;;;1038   
+;;;1042   
                           ENDP
 
 000022  0000              DCW      0x0000
@@ -1042,8 +1042,8 @@
                           AREA ||i.si47xxFMRX_configure||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_configure PROC
-;;;818    //-----------------------------------------------------------------------------
-;;;819    void si47xxFMRX_configure(void)
+;;;822    //-----------------------------------------------------------------------------
+;;;823    void si47xxFMRX_configure(void)
 000000  b510              PUSH     {r4,lr}
 000002  2105              MOVS     r1,#5
 000004  2001              MOVS     r0,#1
@@ -1062,17 +1062,17 @@
 000026  2110              MOVS     r1,#0x10
 000028  1c40              ADDS     r0,r0,#1
 00002a  f7fffffe          BL       si47xx_set_property
-;;;820    {
-;;;821        // Configure all other registers
-;;;822        si47xxFMRX_hardware_cfg();
-;;;823        si47xxFMRX_general_cfg();
-;;;824        si47xxFMRX_regional_cfg(USA);
+;;;824    {
+;;;825        // Configure all other registers
+;;;826        si47xxFMRX_hardware_cfg();
+;;;827        si47xxFMRX_general_cfg();
+;;;828        si47xxFMRX_regional_cfg(USA);
 00002e  2000              MOVS     r0,#0
 000030  f7fffffe          BL       si47xxFMRX_regional_cfg
-;;;825    
-;;;826    }
+;;;829    
+;;;830    }
 000034  bd10              POP      {r4,pc}
-;;;827    
+;;;831    
                           ENDP
 
 000036  0000              DCW      0x0000
@@ -1084,20 +1084,20 @@
                           AREA ||i.si47xxFMRX_digtal_cfg||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_digtal_cfg PROC
-;;;807    
-;;;808    void si47xxFMRX_digtal_cfg(void)
+;;;811    
+;;;812    void si47xxFMRX_digtal_cfg(void)
 000000  b510              PUSH     {r4,lr}
-;;;809    {
-;;;810    
-;;;811    	si47xx_set_property(0x0104, 0xbb80);
+;;;813    {
+;;;814    
+;;;815    	si47xx_set_property(0x0104, 0xbb80);
 000002  20ff              MOVS     r0,#0xff
 000004  4902              LDR      r1,|L21.16|
 000006  3005              ADDS     r0,#5
 000008  f7fffffe          BL       si47xx_set_property
-;;;812    
-;;;813    }
+;;;816    
+;;;817    }
 00000c  bd10              POP      {r4,pc}
-;;;814    
+;;;818    
                           ENDP
 
 00000e  0000              DCW      0x0000
@@ -1107,23 +1107,23 @@
                           AREA ||i.si47xxFMRX_get_frequency||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_get_frequency PROC
-;;;987    //-----------------------------------------------------------------------------
-;;;988    uint32_t si47xxFMRX_get_frequency()
+;;;991    //-----------------------------------------------------------------------------
+;;;992    uint32_t si47xxFMRX_get_frequency()
 000000  b510              PUSH     {r4,lr}
-;;;989    {
-;;;990    	// Get the tune status which contains the current frequency
-;;;991        fmTuneStatus(0, 0);
+;;;993    {
+;;;994    	// Get the tune status which contains the current frequency
+;;;995        fmTuneStatus(0, 0);
 000002  2100              MOVS     r1,#0
 000004  4608              MOV      r0,r1
 000006  f7fffffe          BL       fmTuneStatus
-;;;992    
-;;;993        // Return the frequency
-;;;994        return Freq;
+;;;996    
+;;;997        // Return the frequency
+;;;998        return Freq;
 00000a  4801              LDR      r0,|L22.16|
 00000c  6900              LDR      r0,[r0,#0x10]  ; Freq
-;;;995    }
+;;;999    }
 00000e  bd10              POP      {r4,pc}
-;;;996    
+;;;1000   
                           ENDP
 
                   |L22.16|
@@ -1132,22 +1132,22 @@
                           AREA ||i.si47xxFMRX_get_rssi||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_get_rssi PROC
-;;;1002   //-----------------------------------------------------------------------------
-;;;1003   uint8_t si47xxFMRX_get_rssi()
+;;;1006   //-----------------------------------------------------------------------------
+;;;1007   uint8_t si47xxFMRX_get_rssi()
 000000  b510              PUSH     {r4,lr}
-;;;1004   {
-;;;1005   	// Get the tune status which contains the current frequency
-;;;1006   	fmRsqStatus(0);
+;;;1008   {
+;;;1009   	// Get the tune status which contains the current frequency
+;;;1010   	fmRsqStatus(0);
 000002  2000              MOVS     r0,#0
 000004  f7fffffe          BL       fmRsqStatus
-;;;1007   
-;;;1008       // Return the RSSI level
-;;;1009       return RSSI;
+;;;1011   
+;;;1012       // Return the RSSI level
+;;;1013       return RSSI;
 000008  4801              LDR      r0,|L23.16|
 00000a  7b00              LDRB     r0,[r0,#0xc]  ; RSSI
-;;;1010   }
+;;;1014   }
 00000c  bd10              POP      {r4,pc}
-;;;1011   
+;;;1015   
                           ENDP
 
 00000e  0000              DCW      0x0000
@@ -1157,31 +1157,31 @@
                           AREA ||i.si47xxFMRX_initialize||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_initialize PROC
-;;;836    //-----------------------------------------------------------------------------
-;;;837    void si47xxFMRX_initialize(void)
+;;;840    //-----------------------------------------------------------------------------
+;;;841    void si47xxFMRX_initialize(void)
 000000  b510              PUSH     {r4,lr}
-;;;838    {
-;;;839        // Zero status registers.
-;;;840    	PowerUp = 0;
+;;;842    {
+;;;843        // Zero status registers.
+;;;844    	PowerUp = 0;
 000002  4905              LDR      r1,|L24.24|
 000004  2000              MOVS     r0,#0
 000006  7008              STRB     r0,[r1,#0]
-;;;841    
-;;;842        // Perform a hardware reset, power up the device, and then perform the
-;;;843        // initial configuration.
-;;;844        si47xx_reset();
-;;;845        si47xxFMRX_powerup();
+;;;845    
+;;;846        // Perform a hardware reset, power up the device, and then perform the
+;;;847        // initial configuration.
+;;;848        si47xx_reset();
+;;;849        si47xxFMRX_powerup();
 000008  f7fffffe          BL       si47xxFMRX_powerup
-;;;846    	printf("POWER UP\n");
+;;;850    	printf("POWER UP\n");
 00000c  a003              ADR      r0,|L24.28|
 00000e  f7fffffe          BL       __2printf
-;;;847        
-;;;848       // si47xxFMRX_digtal_cfg();
-;;;849    	si47xxFMRX_configure();
+;;;851        
+;;;852       // si47xxFMRX_digtal_cfg();
+;;;853    	si47xxFMRX_configure();
 000012  f7fffffe          BL       si47xxFMRX_configure
-;;;850    }
+;;;854    }
 000016  bd10              POP      {r4,pc}
-;;;851    
+;;;855    
                           ENDP
 
                   |L24.24|
@@ -1196,28 +1196,28 @@
                           AREA ||i.si47xxFMRX_mute||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_mute PROC
-;;;876    //-----------------------------------------------------------------------------
-;;;877    void si47xxFMRX_mute(uint8_t mute)
+;;;880    //-----------------------------------------------------------------------------
+;;;881    void si47xxFMRX_mute(uint8_t mute)
 000000  b510              PUSH     {r4,lr}
-;;;878    {
-;;;879        if(mute)
-;;;880        	si47xx_set_property(RX_HARD_MUTE, 
+;;;882    {
+;;;883        if(mute)
+;;;884        	si47xx_set_property(RX_HARD_MUTE, 
 000002  4a05              LDR      r2,|L25.24|
-000004  2800              CMP      r0,#0                 ;879
+000004  2800              CMP      r0,#0                 ;883
 000006  d001              BEQ      |L25.12|
 000008  2103              MOVS     r1,#3
 00000a  e000              B        |L25.14|
                   |L25.12|
-;;;881                                    RX_HARD_MUTE_RMUTE_MASK | RX_HARD_MUTE_LMUTE_MASK);
-;;;882        else
-;;;883        	si47xx_set_property(RX_HARD_MUTE, 0);
+;;;885                                    RX_HARD_MUTE_RMUTE_MASK | RX_HARD_MUTE_LMUTE_MASK);
+;;;886        else
+;;;887        	si47xx_set_property(RX_HARD_MUTE, 0);
 00000c  2100              MOVS     r1,#0
                   |L25.14|
-00000e  4610              MOV      r0,r2                 ;880
+00000e  4610              MOV      r0,r2                 ;884
 000010  f7fffffe          BL       si47xx_set_property
-;;;884    }
+;;;888    }
 000014  bd10              POP      {r4,pc}
-;;;885    
+;;;889    
                           ENDP
 
 000016  0000              DCW      0x0000
@@ -1227,41 +1227,41 @@
                           AREA ||i.si47xxFMRX_powerdown||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_powerdown PROC
-;;;669    //-----------------------------------------------------------------------------
-;;;670    void si47xxFMRX_powerdown(void)
+;;;673    //-----------------------------------------------------------------------------
+;;;674    void si47xxFMRX_powerdown(void)
 000000  b510              PUSH     {r4,lr}
-;;;671    {
-;;;672    
-;;;673    	// Check to see if the device is powered up.  If not do not do anything.
-;;;674        if(PowerUp)
+;;;675    {
+;;;676    
+;;;677    	// Check to see if the device is powered up.  If not do not do anything.
+;;;678        if(PowerUp)
 000002  4808              LDR      r0,|L26.36|
 000004  7801              LDRB     r1,[r0,#0]  ; PowerUp
 000006  2900              CMP      r1,#0
 000008  d00a              BEQ      |L26.32|
-;;;675        {   
-;;;676            // Set the powered up variable to 0
-;;;677            PowerUp = 0;
+;;;679        {   
+;;;680            // Set the powered up variable to 0
+;;;681            PowerUp = 0;
 00000a  2100              MOVS     r1,#0
 00000c  7001              STRB     r1,[r0,#0]
-;;;678    
-;;;679    	    // Put the ID for the command in the first byte.
-;;;680    	    cmd[0] = POWER_DOWN;
+;;;682    
+;;;683    	    // Put the ID for the command in the first byte.
+;;;684    	    cmd[0] = POWER_DOWN;
 00000e  4905              LDR      r1,|L26.36|
 000010  2011              MOVS     r0,#0x11
 000012  3118              ADDS     r1,r1,#0x18
 000014  7008              STRB     r0,[r1,#0]
-;;;681    
-;;;682    	    // Invoke the command
-;;;683    		si47xx_command(1, cmd, 1, rsp);
+;;;685    
+;;;686    	    // Invoke the command
+;;;687    		si47xx_command(1, cmd, 1, rsp);
 000016  2201              MOVS     r2,#1
 000018  4b03              LDR      r3,|L26.40|
 00001a  4610              MOV      r0,r2
 00001c  f7fffffe          BL       si47xx_command
                   |L26.32|
-;;;684        }
-;;;685    }
+;;;688        }
+;;;689    }
 000020  bd10              POP      {r4,pc}
-;;;686    
+;;;690    
                           ENDP
 
 000022  0000              DCW      0x0000
@@ -1273,78 +1273,78 @@
                           AREA ||i.si47xxFMRX_powerup||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_powerup PROC
-;;;619    //-----------------------------------------------------------------------------
-;;;620    void si47xxFMRX_powerup(void)
+;;;623    //-----------------------------------------------------------------------------
+;;;624    void si47xxFMRX_powerup(void)
 000000  b570              PUSH     {r4-r6,lr}
-;;;621    {
-;;;622    
-;;;623        // Check if the device is already powered up.
-;;;624        if (PowerUp) 
+;;;625    {
+;;;626    
+;;;627        // Check if the device is already powered up.
+;;;628        if (PowerUp) 
 000002  4d0c              LDR      r5,|L27.52|
 000004  7828              LDRB     r0,[r5,#0]  ; PowerUp
 000006  2800              CMP      r0,#0
 000008  d112              BNE      |L27.48|
-;;;625    	{
-;;;626    	
-;;;627        }
-;;;628    	else 
 ;;;629    	{
-;;;630            // Put the ID for the command in the first byte.
-;;;631            cmd[0] = POWER_UP;
+;;;630    	
+;;;631        }
+;;;632    	else 
+;;;633    	{
+;;;634            // Put the ID for the command in the first byte.
+;;;635            cmd[0] = POWER_UP;
 00000a  4628              MOV      r0,r5
 00000c  2401              MOVS     r4,#1
 00000e  3018              ADDS     r0,r0,#0x18
 000010  7004              STRB     r4,[r0,#0]
-;;;632    
-;;;633    		// Enable the GPO2OEN on the part because it will be used to determine
-;;;634            // RDS Sync timing.
-;;;635            cmd[1] = POWER_UP_IN_GPO2OEN;
 ;;;636    
-;;;637    		// The device is being powered up in FM RX mode.
-;;;638            cmd[1] |= POWER_UP_IN_FUNC_FMRX;
-;;;639    
-;;;640    		// The opmode needs to be set to analog mode
-;;;641            cmd[2] = POWER_UP_IN_OPMODE_RX_DIGITAL;
-;;;642    
+;;;637    		// Enable the GPO2OEN on the part because it will be used to determine
+;;;638            // RDS Sync timing.
+;;;639            cmd[1] = POWER_UP_IN_GPO2OEN;
+;;;640    
+;;;641    		// The device is being powered up in FM RX mode.
+;;;642            cmd[1] |= POWER_UP_IN_FUNC_FMRX;
 ;;;643    
-;;;644    #if 1
-;;;645    		cmd[0] = POWER_UP;
-;;;646    		//cmd[0] = 0x11;
-;;;647    		cmd[1] = 0xD0;// C0
+;;;644    		// The opmode needs to be set to analog mode
+;;;645            cmd[2] = POWER_UP_IN_OPMODE_RX_DIGITAL;
+;;;646    
+;;;647    
+;;;648    #if 1
+;;;649    		cmd[0] = POWER_UP;
+;;;650    		//cmd[0] = 0x11;
+;;;651    		cmd[1] = 0xD0;// C0
 000012  21d0              MOVS     r1,#0xd0
 000014  7041              STRB     r1,[r0,#1]
-;;;648    		cmd[2] = 0x05;	
+;;;652    		cmd[2] = 0x05;	
 000016  2105              MOVS     r1,#5
 000018  7081              STRB     r1,[r0,#2]
-;;;649    
-;;;650    #else
-;;;651    
-;;;652    		cmd[0] = POWER_UP;
-;;;653    		cmd[1] = 0xc0;
-;;;654    		cmd[2] = 0xb0;
-;;;655    #endif		
-;;;656            // Powerup the device
-;;;657    		si47xx_command(3, cmd, 8, rsp);
+;;;653    
+;;;654    #else
+;;;655    
+;;;656    		cmd[0] = POWER_UP;
+;;;657    		cmd[1] = 0xc0;
+;;;658    		cmd[2] = 0xb0;
+;;;659    #endif		
+;;;660            // Powerup the device
+;;;661    		si47xx_command(3, cmd, 8, rsp);
 00001a  4601              MOV      r1,r0
 00001c  4b06              LDR      r3,|L27.56|
 00001e  2208              MOVS     r2,#8
 000020  2003              MOVS     r0,#3
 000022  f7fffffe          BL       si47xx_command
-;;;658            WaitMs(500);               // wait for si47xx to powerup
+;;;662            WaitMs(500);               // wait for si47xx to powerup
 000026  20ff              MOVS     r0,#0xff
 000028  30f5              ADDS     r0,r0,#0xf5
 00002a  f7fffffe          BL       WaitMs
-;;;659    
-;;;660            // Since we did not boot the part in query mode the result will not
-;;;661            // contain the part information.
-;;;662    
-;;;663    		PowerUp = 1;
+;;;663    
+;;;664            // Since we did not boot the part in query mode the result will not
+;;;665            // contain the part information.
+;;;666    
+;;;667    		PowerUp = 1;
 00002e  702c              STRB     r4,[r5,#0]
                   |L27.48|
-;;;664        }
-;;;665    }
+;;;668        }
+;;;669    }
 000030  bd70              POP      {r4-r6,pc}
-;;;666    
+;;;670    
                           ENDP
 
 000032  0000              DCW      0x0000
@@ -1356,115 +1356,115 @@
                           AREA ||i.si47xxFMRX_regional_cfg||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_regional_cfg PROC
-;;;748    //-----------------------------------------------------------------------------
-;;;749    void si47xxFMRX_regional_cfg(country_enum country)
+;;;752    //-----------------------------------------------------------------------------
+;;;753    void si47xxFMRX_regional_cfg(country_enum country)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;750    {
-;;;751        // Typically the settings used for stereo blend are determined by the 
-;;;752        // designer and not exposed to the end user. They should be adjusted here.
-;;;753        // If the user wishes to force mono set both of these values to 127.
-;;;754        // si47xx_set_property(FM_BLEND_MONO_THRESHOLD, 30);
-;;;755        // si47xx_set_property(FM_BLEND_STEREO_THRESHOLD, 49);
-;;;756    
-;;;757        // Depending on the country, set the de-emphasis, band, and space settings
-;;;758        // Also optionally enable RDS for countries that support it
-;;;759        switch (country) {
-;;;760        case USA :
-;;;761            // This interrupt will be used to determine when RDS is available.
-;;;762            si47xx_set_property(FM_RDS_INTERRUPT_SOURCE, 
+;;;754    {
+;;;755        // Typically the settings used for stereo blend are determined by the 
+;;;756        // designer and not exposed to the end user. They should be adjusted here.
+;;;757        // If the user wishes to force mono set both of these values to 127.
+;;;758        // si47xx_set_property(FM_BLEND_MONO_THRESHOLD, 30);
+;;;759        // si47xx_set_property(FM_BLEND_STEREO_THRESHOLD, 49);
+;;;760    
+;;;761        // Depending on the country, set the de-emphasis, band, and space settings
+;;;762        // Also optionally enable RDS for countries that support it
+;;;763        switch (country) {
+;;;764        case USA :
+;;;765            // This interrupt will be used to determine when RDS is available.
+;;;766            si47xx_set_property(FM_RDS_INTERRUPT_SOURCE, 
 000002  2215              MOVS     r2,#0x15
 000004  0212              LSLS     r2,r2,#8
-;;;763    					FM_RDS_INTERRUPT_SOURCE_SYNCFOUND_MASK); // RDS Interrupt
-;;;764    
-;;;765    		// Enable the RDS and allow all blocks so we can compute the error
-;;;766            // rate later.
-;;;767            si47xx_set_property(FM_RDS_CONFIG, FM_RDS_CONFIG_RDSEN_MASK |
-;;;768    			(3 << FM_RDS_CONFIG_BLETHA_SHFT) |
-;;;769    			(3 << FM_RDS_CONFIG_BLETHB_SHFT) |
-;;;770    			(3 << FM_RDS_CONFIG_BLETHC_SHFT) |
-;;;771    			(3 << FM_RDS_CONFIG_BLETHD_SHFT));
-;;;772    
-;;;773            si47xx_set_property(FM_DEEMPHASIS, FM_DEEMPH_75US); // Deemphasis
+;;;767    					FM_RDS_INTERRUPT_SOURCE_SYNCFOUND_MASK); // RDS Interrupt
+;;;768    
+;;;769    		// Enable the RDS and allow all blocks so we can compute the error
+;;;770            // rate later.
+;;;771            si47xx_set_property(FM_RDS_CONFIG, FM_RDS_CONFIG_RDSEN_MASK |
+;;;772    			(3 << FM_RDS_CONFIG_BLETHA_SHFT) |
+;;;773    			(3 << FM_RDS_CONFIG_BLETHB_SHFT) |
+;;;774    			(3 << FM_RDS_CONFIG_BLETHC_SHFT) |
+;;;775    			(3 << FM_RDS_CONFIG_BLETHD_SHFT));
+;;;776    
+;;;777            si47xx_set_property(FM_DEEMPHASIS, FM_DEEMPH_75US); // Deemphasis
 000006  2611              MOVS     r6,#0x11
 000008  4c1a              LDR      r4,|L28.116|
-00000a  1c95              ADDS     r5,r2,#2              ;767
+00000a  1c95              ADDS     r5,r2,#2              ;771
 00000c  0236              LSLS     r6,r6,#8
-00000e  2800              CMP      r0,#0                 ;759
+00000e  2800              CMP      r0,#0                 ;763
 000010  d00d              BEQ      |L28.46|
-;;;774            // Band is already set to 87.5-107.9MHz (US)
-;;;775            // Space is already set to 200kHz (US)
-;;;776            break;
-;;;777        case JAPAN :
-;;;778            si47xx_set_property(FM_RDS_CONFIG, 0);              // Disable RDS
-;;;779            si47xx_set_property(FM_DEEMPHASIS, FM_DEEMPH_50US); // Deemphasis
-;;;780            si47xx_set_property(FM_SEEK_BAND_BOTTOM, 7600);     // 76 MHz Bottom
-;;;781            si47xx_set_property(FM_SEEK_BAND_TOP, 9000);        // 90 MHz Top
-;;;782            si47xx_set_property(FM_SEEK_FREQ_SPACING, 10);      // 100 kHz Spacing
+;;;778            // Band is already set to 87.5-107.9MHz (US)
+;;;779            // Space is already set to 200kHz (US)
+;;;780            break;
+;;;781        case JAPAN :
+;;;782            si47xx_set_property(FM_RDS_CONFIG, 0);              // Disable RDS
+;;;783            si47xx_set_property(FM_DEEMPHASIS, FM_DEEMPH_50US); // Deemphasis
+;;;784            si47xx_set_property(FM_SEEK_BAND_BOTTOM, 7600);     // 76 MHz Bottom
+;;;785            si47xx_set_property(FM_SEEK_BAND_TOP, 9000);        // 90 MHz Top
+;;;786            si47xx_set_property(FM_SEEK_FREQ_SPACING, 10);      // 100 kHz Spacing
 000012  4f19              LDR      r7,|L28.120|
-000014  2802              CMP      r0,#2                 ;759
+000014  2802              CMP      r0,#2                 ;763
 000016  d015              BEQ      |L28.68|
-;;;783            break;
-;;;784        case EUROPE :
-;;;785        default:
-;;;786            // This interrupt will be used to determine when RDS is available.
-;;;787            si47xx_set_property(FM_RDS_INTERRUPT_SOURCE, 
+;;;787            break;
+;;;788        case EUROPE :
+;;;789        default:
+;;;790            // This interrupt will be used to determine when RDS is available.
+;;;791            si47xx_set_property(FM_RDS_INTERRUPT_SOURCE, 
 000018  2104              MOVS     r1,#4
 00001a  4610              MOV      r0,r2
 00001c  f7fffffe          BL       si47xx_set_property
-;;;788    			FM_RDS_INTERRUPT_SOURCE_SYNCFOUND_MASK); // RDS Interrupt
-;;;789    
-;;;790    	    // Enable the RDS and allow all blocks so we can compute the error
-;;;791            // rate later.
-;;;792            si47xx_set_property(FM_RDS_CONFIG, FM_RDS_CONFIG_RDSEN_MASK |
+;;;792    			FM_RDS_INTERRUPT_SOURCE_SYNCFOUND_MASK); // RDS Interrupt
+;;;793    
+;;;794    	    // Enable the RDS and allow all blocks so we can compute the error
+;;;795            // rate later.
+;;;796            si47xx_set_property(FM_RDS_CONFIG, FM_RDS_CONFIG_RDSEN_MASK |
 000020  4621              MOV      r1,r4
 000022  4628              MOV      r0,r5
 000024  f7fffffe          BL       si47xx_set_property
-;;;793    		    (3 << FM_RDS_CONFIG_BLETHA_SHFT) |
-;;;794    			(3 << FM_RDS_CONFIG_BLETHB_SHFT) |
-;;;795    			(3 << FM_RDS_CONFIG_BLETHC_SHFT) |
-;;;796    			(3 << FM_RDS_CONFIG_BLETHD_SHFT));
-;;;797    
-;;;798            si47xx_set_property(FM_DEEMPHASIS, FM_DEEMPH_50US); // Deemphasis
+;;;797    		    (3 << FM_RDS_CONFIG_BLETHA_SHFT) |
+;;;798    			(3 << FM_RDS_CONFIG_BLETHB_SHFT) |
+;;;799    			(3 << FM_RDS_CONFIG_BLETHC_SHFT) |
+;;;800    			(3 << FM_RDS_CONFIG_BLETHD_SHFT));
+;;;801    
+;;;802            si47xx_set_property(FM_DEEMPHASIS, FM_DEEMPH_50US); // Deemphasis
 000028  2101              MOVS     r1,#1
 00002a  4630              MOV      r0,r6
-;;;799            // Band is already set to 87.5-107.9MHz (Europe)
-;;;800            si47xx_set_property(FM_SEEK_FREQ_SPACING, 10);      // 100 kHz Spacing
-;;;801            break;
+;;;803            // Band is already set to 87.5-107.9MHz (Europe)
+;;;804            si47xx_set_property(FM_SEEK_FREQ_SPACING, 10);      // 100 kHz Spacing
+;;;805            break;
 00002c  e01a              B        |L28.100|
                   |L28.46|
-00002e  2104              MOVS     r1,#4                 ;762
-000030  4610              MOV      r0,r2                 ;762
+00002e  2104              MOVS     r1,#4                 ;766
+000030  4610              MOV      r0,r2                 ;766
 000032  f7fffffe          BL       si47xx_set_property
-000036  4621              MOV      r1,r4                 ;767
-000038  4628              MOV      r0,r5                 ;767
+000036  4621              MOV      r1,r4                 ;771
+000038  4628              MOV      r0,r5                 ;771
 00003a  f7fffffe          BL       si47xx_set_property
-00003e  2102              MOVS     r1,#2                 ;773
-000040  4630              MOV      r0,r6                 ;773
+00003e  2102              MOVS     r1,#2                 ;777
+000040  4630              MOV      r0,r6                 ;777
 000042  e013              B        |L28.108|
                   |L28.68|
-000044  2100              MOVS     r1,#0                 ;778
-000046  4628              MOV      r0,r5                 ;778
+000044  2100              MOVS     r1,#0                 ;782
+000046  4628              MOV      r0,r5                 ;782
 000048  f7fffffe          BL       si47xx_set_property
-00004c  2101              MOVS     r1,#1                 ;779
-00004e  4630              MOV      r0,r6                 ;779
+00004c  2101              MOVS     r1,#1                 ;783
+00004e  4630              MOV      r0,r6                 ;783
 000050  f7fffffe          BL       si47xx_set_property
-000054  2005              MOVS     r0,#5                 ;780
+000054  2005              MOVS     r0,#5                 ;784
 000056  4909              LDR      r1,|L28.124|
-000058  0280              LSLS     r0,r0,#10             ;780
+000058  0280              LSLS     r0,r0,#10             ;784
 00005a  f7fffffe          BL       si47xx_set_property
 00005e  4806              LDR      r0,|L28.120|
 000060  4907              LDR      r1,|L28.128|
-000062  1e40              SUBS     r0,r0,#1              ;781
+000062  1e40              SUBS     r0,r0,#1              ;785
                   |L28.100|
 000064  f7fffffe          BL       si47xx_set_property
-000068  210a              MOVS     r1,#0xa               ;800
-00006a  4638              MOV      r0,r7                 ;800
+000068  210a              MOVS     r1,#0xa               ;804
+00006a  4638              MOV      r0,r7                 ;804
                   |L28.108|
 00006c  f7fffffe          BL       si47xx_set_property
-;;;802        }
-;;;803    }
+;;;806        }
+;;;807    }
 000070  bdf8              POP      {r3-r7,pc}
-;;;804    
+;;;808    
                           ENDP
 
 000072  0000              DCW      0x0000
@@ -1480,66 +1480,66 @@
                           AREA ||i.si47xxFMRX_seek||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_seek PROC
-;;;950    //-----------------------------------------------------------------------------
-;;;951    uint8_t si47xxFMRX_seek(uint8_t seekup, uint8_t seekmode)
+;;;954    //-----------------------------------------------------------------------------
+;;;955    uint8_t si47xxFMRX_seek(uint8_t seekup, uint8_t seekmode)
 000000  b510              PUSH     {r4,lr}
-;;;952    {
-;;;953    	// Enable the bit used for the interrupt of STC.
-;;;954    	SeekTuneInProc = 1;
+;;;956    {
+;;;957    	// Enable the bit used for the interrupt of STC.
+;;;958    	SeekTuneInProc = 1;
 000002  2201              MOVS     r2,#1
 000004  4c0c              LDR      r4,|L29.56|
-;;;955    
-;;;956    	// Call the tune command to start the seek.
-;;;957     	WaitSTCInterrupt = 1;
-;;;958        fmSeekStart(seekup, !seekmode);
+;;;959    
+;;;960    	// Call the tune command to start the seek.
+;;;961     	WaitSTCInterrupt = 1;
+;;;962        fmSeekStart(seekup, !seekmode);
 000006  2900              CMP      r1,#0
-000008  70a2              STRB     r2,[r4,#2]            ;954
-00000a  7062              STRB     r2,[r4,#1]            ;957
+000008  70a2              STRB     r2,[r4,#2]            ;958
+00000a  7062              STRB     r2,[r4,#1]            ;961
 00000c  d011              BEQ      |L29.50|
 00000e  2100              MOVS     r1,#0
                   |L29.16|
 000010  f7fffffe          BL       fmSeekStart
-000014  7860              LDRB     r0,[r4,#1]            ;954
+000014  7860              LDRB     r0,[r4,#1]            ;958
                   |L29.22|
-;;;959    
-;;;960        // wait for the interrupt before continuing
-;;;961        // If you do not wish to use interrupts but wish to poll the part
-;;;962        // then comment out these two lines.
-;;;963        while (WaitSTCInterrupt); // Wait for interrupt to clear the bit
+;;;963    
+;;;964        // wait for the interrupt before continuing
+;;;965        // If you do not wish to use interrupts but wish to poll the part
+;;;966        // then comment out these two lines.
+;;;967        while (WaitSTCInterrupt); // Wait for interrupt to clear the bit
 000016  2800              CMP      r0,#0
 000018  d1fd              BNE      |L29.22|
                   |L29.26|
-;;;964    
-;;;965        // Wait for stc bit to be set
-;;;966        // If there is a display to update seek progress, then you could
-;;;967        // call fmTuneStatus in this loop to get the current frequency.
-;;;968        // When calling fmTuneStatus here make sure intack is zero.
-;;;969        while (!(getIntStatus() & STCINT));
+;;;968    
+;;;969        // Wait for stc bit to be set
+;;;970        // If there is a display to update seek progress, then you could
+;;;971        // call fmTuneStatus in this loop to get the current frequency.
+;;;972        // When calling fmTuneStatus here make sure intack is zero.
+;;;973        while (!(getIntStatus() & STCINT));
 00001a  f7fffffe          BL       getIntStatus
 00001e  07c0              LSLS     r0,r0,#31
 000020  d0fb              BEQ      |L29.26|
-;;;970    
-;;;971    	// Clear the STC bit and get the results of the tune.
-;;;972        fmTuneStatus(0, 1);
+;;;974    
+;;;975    	// Clear the STC bit and get the results of the tune.
+;;;976        fmTuneStatus(0, 1);
 000022  2101              MOVS     r1,#1
 000024  2000              MOVS     r0,#0
 000026  f7fffffe          BL       fmTuneStatus
-;;;973    
-;;;974    	// Disable the bit used for the interrupt of STC.
-;;;975    	SeekTuneInProc = 0;
+;;;977    
+;;;978    	// Disable the bit used for the interrupt of STC.
+;;;979    	SeekTuneInProc = 0;
 00002a  2000              MOVS     r0,#0
 00002c  70a0              STRB     r0,[r4,#2]
-;;;976    
-;;;977        // The tuner is now set to the newly found channel if one was available
-;;;978        // as indicated by the seek-fail bit.
-;;;979        return BLTF; //return seek fail indicator
+;;;980    
+;;;981        // The tuner is now set to the newly found channel if one was available
+;;;982        // as indicated by the seek-fail bit.
+;;;983        return BLTF; //return seek fail indicator
 00002e  79e0              LDRB     r0,[r4,#7]  ; BLTF
-;;;980    }
+;;;984    }
 000030  bd10              POP      {r4,pc}
                   |L29.50|
-000032  2101              MOVS     r1,#1                 ;958
+000032  2101              MOVS     r1,#1                 ;962
 000034  e7ec              B        |L29.16|
-;;;981    
+;;;985    
                           ENDP
 
 000036  0000              DCW      0x0000
@@ -1549,27 +1549,27 @@
                           AREA ||i.si47xxFMRX_set_volume||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_set_volume PROC
-;;;860    //-----------------------------------------------------------------------------
-;;;861    void si47xxFMRX_set_volume(uint8_t volume)
+;;;864    //-----------------------------------------------------------------------------
+;;;865    void si47xxFMRX_set_volume(uint8_t volume)
 000000  b510              PUSH     {r4,lr}
-;;;862    {
+;;;866    {
 000002  4604              MOV      r4,r0
-;;;863        // Turn off the mute
-;;;864        si47xx_set_property(RX_HARD_MUTE, 0);
+;;;867        // Turn off the mute
+;;;868        si47xx_set_property(RX_HARD_MUTE, 0);
 000004  2100              MOVS     r1,#0
 000006  4805              LDR      r0,|L30.28|
 000008  f7fffffe          BL       si47xx_set_property
-;;;865    
-;;;866        // Set the volume to the passed value
-;;;867        si47xx_set_property(RX_VOLUME, (uint32_t)volume & RX_VOLUME_MASK);
+;;;869    
+;;;870        // Set the volume to the passed value
+;;;871        si47xx_set_property(RX_VOLUME, (uint32_t)volume & RX_VOLUME_MASK);
 00000c  06a1              LSLS     r1,r4,#26
 00000e  2001              MOVS     r0,#1
 000010  0e89              LSRS     r1,r1,#26
 000012  0380              LSLS     r0,r0,#14
 000014  f7fffffe          BL       si47xx_set_property
-;;;868    }
+;;;872    }
 000018  bd10              POP      {r4,pc}
-;;;869    
+;;;873    
                           ENDP
 
 00001a  0000              DCW      0x0000
@@ -1579,88 +1579,88 @@
                           AREA ||i.si47xxFMRX_tune||, CODE, READONLY, ALIGN=2
 
                   si47xxFMRX_tune PROC
-;;;894    //-----------------------------------------------------------------------------
-;;;895    uint8_t si47xxFMRX_tune(uint32_t frequency)
+;;;898    //-----------------------------------------------------------------------------
+;;;899    uint8_t si47xxFMRX_tune(uint32_t frequency)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;896    {
-;;;897    	int temp = 300;
-;;;898    	// Enable the bit used for the interrupt of STC.
-;;;899    	SeekTuneInProc = 1;
+;;;900    {
+;;;901    	int temp = 300;
+;;;902    	// Enable the bit used for the interrupt of STC.
+;;;903    	SeekTuneInProc = 1;
 000002  4e12              LDR      r6,|L31.76|
 000004  2501              MOVS     r5,#1
-000006  24ff              MOVS     r4,#0xff              ;897
+000006  24ff              MOVS     r4,#0xff              ;901
 000008  70b5              STRB     r5,[r6,#2]
-00000a  342d              ADDS     r4,r4,#0x2d           ;897
-;;;900    
-;;;901    	// Call the tune command to start the tune.
-;;;902     	WaitSTCInterrupt = 1;
-00000c  7075              STRB     r5,[r6,#1]
-;;;903        fmTuneFreq(frequency);
-00000e  f7fffffe          BL       fmTuneFreq
+00000a  342d              ADDS     r4,r4,#0x2d           ;901
 ;;;904    
-;;;905        // wait for the interrupt before continuing
-;;;906        // If you do not wish to use interrupts but wish to poll the part
-;;;907        // then comment out this line.
-;;;908        
-;;;909        WaitMs(100);
+;;;905    	// Call the tune command to start the tune.
+;;;906     	WaitSTCInterrupt = 1;
+00000c  7075              STRB     r5,[r6,#1]
+;;;907        fmTuneFreq(frequency);
+00000e  f7fffffe          BL       fmTuneFreq
+;;;908    
+;;;909        // wait for the interrupt before continuing
+;;;910        // If you do not wish to use interrupts but wish to poll the part
+;;;911        // then comment out this line.
+;;;912        
+;;;913        WaitMs(100);
 000012  2064              MOVS     r0,#0x64
 000014  f7fffffe          BL       WaitMs
 000018  2700              MOVS     r7,#0
-;;;910    	
-;;;911       // while (WaitSTCInterrupt); // Wait for interrupt to clear the bit
-;;;912    
-;;;913        // Wait for stc bit to be set
-;;;914        
-;;;915       // while (!(getIntStatus() & STCINT));
-;;;916        
-;;;917        // Loop until CTS is found or stop due to the counter running out.
-;;;918        while ((temp--) && !(getIntStatus() & STCINT))
-;;;919        {
-;;;920            wait_us(500);
-;;;921    		if(temp < 2) 
-;;;922    		{
-;;;923    			Global_datas.FmData.FmError = 1;
+;;;914    	
+;;;915       // while (WaitSTCInterrupt); // Wait for interrupt to clear the bit
+;;;916    
+;;;917        // Wait for stc bit to be set
+;;;918        
+;;;919       // while (!(getIntStatus() & STCINT));
+;;;920        
+;;;921        // Loop until CTS is found or stop due to the counter running out.
+;;;922        while ((temp--) && !(getIntStatus() & STCINT))
+;;;923        {
+;;;924            wait_us(500);
+;;;925    		if(temp < 2) 
+;;;926    		{
+;;;927    			Global_datas.FmData.FmError = 1;
 00001a  4d0d              LDR      r5,|L31.80|
 00001c  e008              B        |L31.48|
                   |L31.30|
-00001e  20ff              MOVS     r0,#0xff              ;920
-000020  30f5              ADDS     r0,r0,#0xf5           ;920
+00001e  20ff              MOVS     r0,#0xff              ;924
+000020  30f5              ADDS     r0,r0,#0xf5           ;924
 000022  f7fffffe          BL       wait_us
-000026  2c02              CMP      r4,#2                 ;921
+000026  2c02              CMP      r4,#2                 ;925
 000028  da02              BGE      |L31.48|
 00002a  2001              MOVS     r0,#1
 00002c  7128              STRB     r0,[r5,#4]
-;;;924    			PowerUp = 0;
+;;;928    			PowerUp = 0;
 00002e  7037              STRB     r7,[r6,#0]
                   |L31.48|
 000030  1e64              SUBS     r4,r4,#1
 000032  d303              BCC      |L31.60|
 000034  f7fffffe          BL       getIntStatus
-000038  07c0              LSLS     r0,r0,#31             ;918
+000038  07c0              LSLS     r0,r0,#31             ;922
 00003a  d0f0              BEQ      |L31.30|
                   |L31.60|
-;;;925    		}
-;;;926        }
-;;;927    
-;;;928    	
-;;;929    
-;;;930    	// Clear the STC bit and get the results of the tune.
-;;;931        fmTuneStatus(0, 1);
+;;;929    		}
+;;;930        }
+;;;931    
+;;;932    	
+;;;933    
+;;;934    	// Clear the STC bit and get the results of the tune.
+;;;935        fmTuneStatus(0, 1);
 00003c  2101              MOVS     r1,#1
 00003e  2000              MOVS     r0,#0
 000040  f7fffffe          BL       fmTuneStatus
-;;;932    
-;;;933    	// Disable the bit used for the interrupt of STC.
-;;;934    	SeekTuneInProc = 0;
+;;;936    
+;;;937    	// Disable the bit used for the interrupt of STC.
+;;;938    	SeekTuneInProc = 0;
 000044  70b7              STRB     r7,[r6,#2]
-;;;935    
-;;;936        // Return the RSSI level
-;;;937      //  return RSSI;
-;;;938      return Valid;
+;;;939    
+;;;940        // Return the RSSI level
+;;;941      //  return RSSI;
+;;;942      return Valid;
 000046  7a70              LDRB     r0,[r6,#9]  ; Valid
-;;;939    }
+;;;943    }
 000048  bdf8              POP      {r3-r7,pc}
-;;;940    
+;;;944    
                           ENDP
 
 00004a  0000              DCW      0x0000
@@ -1672,45 +1672,45 @@
                           AREA ||i.si47xx_command||, CODE, READONLY, ALIGN=1
 
                   si47xx_command PROC
-;;;483    //-----------------------------------------------------------------------------
-;;;484    void si47xx_command(uint8_t cmd_size, uint8_t *cmd, uint8_t reply_size, uint8_t  *reply)
+;;;487    //-----------------------------------------------------------------------------
+;;;488    void si47xx_command(uint8_t cmd_size, uint8_t *cmd, uint8_t reply_size, uint8_t  *reply)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;485    {
+;;;489    {
 000002  461e              MOV      r6,r3
 000004  4614              MOV      r4,r2
 000006  460d              MOV      r5,r1
 000008  4607              MOV      r7,r0
-;;;486        // It is always a good idea to check for cts prior to sending a command to
-;;;487        // the part.
-;;;488        si47xx_waitForCTS();
+;;;490        // It is always a good idea to check for cts prior to sending a command to
+;;;491        // the part.
+;;;492        si47xx_waitForCTS();
 00000a  f7fffffe          BL       si47xx_waitForCTS
-;;;489    
-;;;490    	
-;;;491    
-;;;492        // Write the command to the part
-;;;493        si47xx_lowWrite(cmd_size, cmd);
+;;;493    
+;;;494    	
+;;;495    
+;;;496        // Write the command to the part
+;;;497        si47xx_lowWrite(cmd_size, cmd);
 00000e  4629              MOV      r1,r5
 000010  4638              MOV      r0,r7
 000012  f7fffffe          BL       si47xx_lowWrite
-;;;494    
-;;;495        // Wait for CTS after sending the command
-;;;496        si47xx_waitForCTS();
+;;;498    
+;;;499        // Wait for CTS after sending the command
+;;;500        si47xx_waitForCTS();
 000016  f7fffffe          BL       si47xx_waitForCTS
-;;;497    
-;;;498        // If the calling function would like to have results then read them.
-;;;499        if(reply_size)
+;;;501    
+;;;502        // If the calling function would like to have results then read them.
+;;;503        if(reply_size)
 00001a  2c00              CMP      r4,#0
 00001c  d003              BEQ      |L32.38|
-;;;500        {
-;;;501            si47xx_lowRead(reply_size, reply);
+;;;504        {
+;;;505            si47xx_lowRead(reply_size, reply);
 00001e  4631              MOV      r1,r6
 000020  4620              MOV      r0,r4
 000022  f7fffffe          BL       si47xx_lowRead
                   |L32.38|
-;;;502        }
-;;;503    }
+;;;506        }
+;;;507    }
 000026  bdf8              POP      {r3-r7,pc}
-;;;504    
+;;;508    
                           ENDP
 
 
@@ -1720,65 +1720,65 @@
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
                   si47xx_getPartInformation PROC
-;;;573    //-----------------------------------------------------------------------------
-;;;574    void si47xx_getPartInformation(void)
+;;;577    //-----------------------------------------------------------------------------
+;;;578    void si47xx_getPartInformation(void)
 000000  b510              PUSH     {r4,lr}
-;;;575    {
-;;;576    	uint8_t partNumber;
-;;;577    	char fwMajor;
-;;;578    	char fwMinor;
-;;;579    	uint32_t  patchID;
-;;;580    	char cmpMajor;
-;;;581    	char cmpMinor;
-;;;582    	char chipRev;
-;;;583    
-;;;584    	// NOTE:  This routine should only be called when the part is powered up.
-;;;585    	// If you wish to retrieve some of the part information without fully
-;;;586    	// powering up the part call the POWER_UP command on the part with the
-;;;587    	// FUNC_DEBUG flag.
-;;;588    
-;;;589    	// Put the ID for the command in the first byte.
-;;;590    	cmd[0] = GET_REV;
+;;;579    {
+;;;580    	uint8_t partNumber;
+;;;581    	char fwMajor;
+;;;582    	char fwMinor;
+;;;583    	uint32_t  patchID;
+;;;584    	char cmpMajor;
+;;;585    	char cmpMinor;
+;;;586    	char chipRev;
+;;;587    
+;;;588    	// NOTE:  This routine should only be called when the part is powered up.
+;;;589    	// If you wish to retrieve some of the part information without fully
+;;;590    	// powering up the part call the POWER_UP command on the part with the
+;;;591    	// FUNC_DEBUG flag.
+;;;592    
+;;;593    	// Put the ID for the command in the first byte.
+;;;594    	cmd[0] = GET_REV;
 000002  490b              LDR      r1,|L33.48|
 000004  2010              MOVS     r0,#0x10
 000006  7008              STRB     r0,[r1,#0]
-;;;591    
-;;;592    	// Invoke the command
-;;;593    	si47xx_command(1, cmd, 9, rsp);
+;;;595    
+;;;596    	// Invoke the command
+;;;597    	si47xx_command(1, cmd, 9, rsp);
 000008  4b0a              LDR      r3,|L33.52|
 00000a  2209              MOVS     r2,#9
 00000c  2001              MOVS     r0,#1
 00000e  f7fffffe          BL       si47xx_command
-;;;594    
-;;;595    	// Now take the result and put in the variables we have declared
-;;;596    	// Status is in the first element of the array so skip that.
-;;;597    	partNumber = rsp[1];
+;;;598    
+;;;599    	// Now take the result and put in the variables we have declared
+;;;600    	// Status is in the first element of the array so skip that.
+;;;601    	partNumber = rsp[1];
 000012  4c08              LDR      r4,|L33.52|
-;;;598    	fwMajor  = (char)rsp[2];
-;;;599    	fwMinor  = (char)rsp[3];
-;;;600    	patchID  = (uint32_t)(rsp[4] << 8) | (uint32_t)rsp[5];
-;;;601    	cmpMajor = (char)rsp[6];
-;;;602    	cmpMinor = (char)rsp[7];
-;;;603    	chipRev  = (char)rsp[8]; 
-;;;604    
-;;;605    	printf("partNumber: %d\n", partNumber);
+;;;602    	fwMajor  = (char)rsp[2];
+;;;603    	fwMinor  = (char)rsp[3];
+;;;604    	patchID  = (uint32_t)(rsp[4] << 8) | (uint32_t)rsp[5];
+;;;605    	cmpMajor = (char)rsp[6];
+;;;606    	cmpMinor = (char)rsp[7];
+;;;607    	chipRev  = (char)rsp[8]; 
+;;;608    
+;;;609    	printf("partNumber: %d\n", partNumber);
 000014  a008              ADR      r0,|L33.56|
-000016  7861              LDRB     r1,[r4,#1]            ;597  ; rsp
+000016  7861              LDRB     r1,[r4,#1]            ;601  ; rsp
 000018  f7fffffe          BL       __2printf
-;;;606    
-;;;607    	printf("patchID_H: %d\n", rsp[4]);
+;;;610    
+;;;611    	printf("patchID_H: %d\n", rsp[4]);
 00001c  7921              LDRB     r1,[r4,#4]  ; rsp
 00001e  a00a              ADR      r0,|L33.72|
 000020  f7fffffe          BL       __2printf
-;;;608    	printf("patchID_L: %d\n", rsp[5]);
+;;;612    	printf("patchID_L: %d\n", rsp[5]);
 000024  7961              LDRB     r1,[r4,#5]  ; rsp
 000026  a00c              ADR      r0,|L33.88|
 000028  f7fffffe          BL       __2printf
-;;;609    
-;;;610    	
-;;;611    }
+;;;613    
+;;;614    	
+;;;615    }
 00002c  bd10              POP      {r4,pc}
-;;;612    
+;;;616    
                           ENDP
 
 00002e  0000              DCW      0x0000
@@ -1807,112 +1807,112 @@
                           AREA ||i.si47xx_lowRead||, CODE, READONLY, ALIGN=1
 
                   si47xx_lowRead PROC
-;;;516    //-----------------------------------------------------------------------------
-;;;517    void si47xx_lowRead(uint8_t number_bytes, uint8_t *data_in)
+;;;520    //-----------------------------------------------------------------------------
+;;;521    void si47xx_lowRead(uint8_t number_bytes, uint8_t *data_in)
 000000  b510              PUSH     {r4,lr}
-;;;518    {
-;;;519        io2w_read(number_bytes, data_in);
+;;;522    {
+;;;523        io2w_read(number_bytes, data_in);
 000002  f7fffffe          BL       io2w_read
-;;;520    }
+;;;524    }
 000006  bd10              POP      {r4,pc}
-;;;521    
+;;;525    
                           ENDP
 
 
                           AREA ||i.si47xx_lowWrite||, CODE, READONLY, ALIGN=1
 
                   si47xx_lowWrite PROC
-;;;508    //-----------------------------------------------------------------------------
-;;;509    void si47xx_lowWrite(uint8_t number_bytes, uint8_t *data_out)
+;;;512    //-----------------------------------------------------------------------------
+;;;513    void si47xx_lowWrite(uint8_t number_bytes, uint8_t *data_out)
 000000  b510              PUSH     {r4,lr}
-;;;510    {
-;;;511            io2w_write(number_bytes, data_out);}
+;;;514    {
+;;;515            io2w_write(number_bytes, data_out);}
 000002  f7fffffe          BL       io2w_write
 000006  bd10              POP      {r4,pc}
-;;;512    
+;;;516    
                           ENDP
 
 
                           AREA ||i.si47xx_readStatus||, CODE, READONLY, ALIGN=1
 
                   si47xx_readStatus PROC
-;;;444    //-----------------------------------------------------------------------------
-;;;445    uint8_t si47xx_readStatus()
+;;;448    //-----------------------------------------------------------------------------
+;;;449    uint8_t si47xx_readStatus()
 000000  b508              PUSH     {r3,lr}
-;;;446    {
-;;;447        uint8_t status;
-;;;448       
-;;;449        si47xx_lowRead(1, &status);
+;;;450    {
+;;;451        uint8_t status;
+;;;452       
+;;;453        si47xx_lowRead(1, &status);
 000002  4669              MOV      r1,sp
 000004  2001              MOVS     r0,#1
 000006  f7fffffe          BL       si47xx_lowRead
-;;;450    
-;;;451    
-;;;452        return status;
+;;;454    
+;;;455    
+;;;456        return status;
 00000a  4668              MOV      r0,sp
 00000c  7800              LDRB     r0,[r0,#0]
-;;;453    }
+;;;457    }
 00000e  bd08              POP      {r3,pc}
-;;;454    
+;;;458    
                           ENDP
 
 
                           AREA ||i.si47xx_reset||, CODE, READONLY, ALIGN=1
 
                   si47xx_reset PROC
-;;;435    //-----------------------------------------------------------------------------
-;;;436    void si47xx_reset(void)
+;;;439    //-----------------------------------------------------------------------------
+;;;440    void si47xx_reset(void)
 000000  4770              BX       lr
-;;;437    {
-;;;438    
-;;;439    
-;;;440    }
-;;;441    
+;;;441    {
+;;;442    
+;;;443    
+;;;444    }
+;;;445    
                           ENDP
 
 
                           AREA ||i.si47xx_set_property||, CODE, READONLY, ALIGN=2
 
                   si47xx_set_property PROC
-;;;549    //-----------------------------------------------------------------------------
-;;;550    void si47xx_set_property(uint32_t propNumber, uint32_t propValue)
+;;;553    //-----------------------------------------------------------------------------
+;;;554    void si47xx_set_property(uint32_t propNumber, uint32_t propValue)
 000000  b510              PUSH     {r4,lr}
-;;;551    {
-;;;552        // Put the ID for the command in the first byte.
-;;;553        cmd[0] = SET_PROPERTY;
+;;;555    {
+;;;556        // Put the ID for the command in the first byte.
+;;;557        cmd[0] = SET_PROPERTY;
 000002  4a09              LDR      r2,|L38.40|
 000004  2312              MOVS     r3,#0x12
 000006  7013              STRB     r3,[r2,#0]
-;;;554    
-;;;555    	// Initialize the reserved section to 0
-;;;556        cmd[1] = 0;
+;;;558    
+;;;559    	// Initialize the reserved section to 0
+;;;560        cmd[1] = 0;
 000008  2300              MOVS     r3,#0
 00000a  7053              STRB     r3,[r2,#1]
-;;;557    
-;;;558    	// Put the property number in the third and fourth bytes.
-;;;559        cmd[2] = (uint8_t)(propNumber >> 8);
+;;;561    
+;;;562    	// Put the property number in the third and fourth bytes.
+;;;563        cmd[2] = (uint8_t)(propNumber >> 8);
 00000c  0a03              LSRS     r3,r0,#8
 00000e  7093              STRB     r3,[r2,#2]
-;;;560    	cmd[3] = (uint8_t)(propNumber & 0x00FF);
+;;;564    	cmd[3] = (uint8_t)(propNumber & 0x00FF);
 000010  70d0              STRB     r0,[r2,#3]
-;;;561    
-;;;562    	// Put the property value in the fifth and sixth bytes.
-;;;563        cmd[4] = (uint8_t)(propValue >> 8);
+;;;565    
+;;;566    	// Put the property value in the fifth and sixth bytes.
+;;;567        cmd[4] = (uint8_t)(propValue >> 8);
 000012  0a08              LSRS     r0,r1,#8
 000014  7110              STRB     r0,[r2,#4]
-;;;564        cmd[5] = (uint8_t)(propValue & 0x00FF);
+;;;568        cmd[5] = (uint8_t)(propValue & 0x00FF);
 000016  7151              STRB     r1,[r2,#5]
-;;;565    
-;;;566        // Invoke the command
-;;;567    	si47xx_command(6, cmd, 0, NULL);
+;;;569    
+;;;570        // Invoke the command
+;;;571    	si47xx_command(6, cmd, 0, NULL);
 000018  2300              MOVS     r3,#0
 00001a  461a              MOV      r2,r3
 00001c  4902              LDR      r1,|L38.40|
 00001e  2006              MOVS     r0,#6
 000020  f7fffffe          BL       si47xx_command
-;;;568    }
+;;;572    }
 000024  bd10              POP      {r4,pc}
-;;;569    
+;;;573    
                           ENDP
 
 000026  0000              DCW      0x0000
@@ -1922,74 +1922,74 @@
                           AREA ||i.si47xx_waitForCTS||, CODE, READONLY, ALIGN=1
 
                   si47xx_waitForCTS PROC
-;;;457    //-----------------------------------------------------------------------------
-;;;458    void si47xx_waitForCTS()
+;;;461    //-----------------------------------------------------------------------------
+;;;462    void si47xx_waitForCTS()
 000000  b570              PUSH     {r4-r6,lr}
-;;;459    {
-;;;460        char i=250;
+;;;463    {
+;;;464        char i=250;
 000002  24fa              MOVS     r4,#0xfa
-;;;461    
-;;;462    	
-;;;463        // Loop until CTS is found or stop due to the counter running out.
-;;;464        while ((i--) && !(si47xx_readStatus() & CTS))
-;;;465        {
-;;;466            wait_us(500);
+;;;465    
+;;;466    	
+;;;467        // Loop until CTS is found or stop due to the counter running out.
+;;;468        while ((i--) && !(si47xx_readStatus() & CTS))
+;;;469        {
+;;;470            wait_us(500);
 000004  0065              LSLS     r5,r4,#1
 000006  e002              B        |L39.14|
                   |L39.8|
 000008  4628              MOV      r0,r5
 00000a  f7fffffe          BL       wait_us
                   |L39.14|
-00000e  4621              MOV      r1,r4                 ;464
-000010  1e64              SUBS     r4,r4,#1              ;464
-000012  b2e4              UXTB     r4,r4                 ;464
-000014  2900              CMP      r1,#0                 ;464
+00000e  4621              MOV      r1,r4                 ;468
+000010  1e64              SUBS     r4,r4,#1              ;468
+000012  b2e4              UXTB     r4,r4                 ;468
+000014  2900              CMP      r1,#0                 ;468
 000016  d003              BEQ      |L39.32|
 000018  f7fffffe          BL       si47xx_readStatus
-00001c  0600              LSLS     r0,r0,#24             ;464
+00001c  0600              LSLS     r0,r0,#24             ;468
 00001e  d5f3              BPL      |L39.8|
                   |L39.32|
-;;;467        }
-;;;468    
-;;;469     //   while (!(si47xx_readStatus() & CTS))
-;;;470     //   {
-;;;471     //      wait_us(500);
-;;;472     //   }
-;;;473    
-;;;474    	
-;;;475    
-;;;476        // If the i is equal to 0 then something must have happened.
-;;;477        // It is recommended that the controller do some type of error
-;;;478        // handling in this case.
-;;;479    }
+;;;471        }
+;;;472    
+;;;473     //   while (!(si47xx_readStatus() & CTS))
+;;;474     //   {
+;;;475     //      wait_us(500);
+;;;476     //   }
+;;;477    
+;;;478    	
+;;;479    
+;;;480        // If the i is equal to 0 then something must have happened.
+;;;481        // It is recommended that the controller do some type of error
+;;;482        // handling in this case.
+;;;483    }
 000020  bd70              POP      {r4-r6,pc}
-;;;480    
+;;;484    
                           ENDP
 
 
                           AREA ||i.test_FMRXtune||, CODE, READONLY, ALIGN=2
 
                   test_FMRXtune PROC
-;;;1235   
-;;;1236   void test_FMRXtune(void)
+;;;1239   
+;;;1240   void test_FMRXtune(void)
 000000  b510              PUSH     {r4,lr}
-;;;1237   {
-;;;1238       si47xxFMRX_initialize();
+;;;1241   {
+;;;1242       si47xxFMRX_initialize();
 000002  f7fffffe          BL       si47xxFMRX_initialize
-;;;1239       si47xxFMRX_set_volume(63);     // full volume, turn off mute
+;;;1243       si47xxFMRX_set_volume(63);     // full volume, turn off mute
 000006  203f              MOVS     r0,#0x3f
 000008  f7fffffe          BL       si47xxFMRX_set_volume
-;;;1240       si47xxFMRX_tune(Global_datas.FmData.Frequency);        // tune to a station
+;;;1244       si47xxFMRX_tune(Global_datas.FmData.Frequency);        // tune to a station
 00000c  4804              LDR      r0,|L40.32|
 00000e  6c00              LDR      r0,[r0,#0x40]  ; Global_datas
 000010  f7fffffe          BL       si47xxFMRX_tune
-;;;1241       WaitMs(300);
+;;;1245       WaitMs(300);
 000014  20ff              MOVS     r0,#0xff
 000016  302d              ADDS     r0,r0,#0x2d
 000018  f7fffffe          BL       WaitMs
-;;;1242   }
+;;;1246   }
 00001c  bd10              POP      {r4,pc}
-;;;1243   
+;;;1247   
                           ENDP
 
 00001e  0000              DCW      0x0000
@@ -2001,20 +2001,30 @@
                   wait_us PROC
 ;;;120    
 ;;;121    void wait_us(uint32_t  us)
-000000  2100              MOVS     r1,#0
+000000  2200              MOVS     r2,#0
 ;;;122    {
-000002  e000              B        |L41.6|
+000002  e005              B        |L41.16|
                   |L41.4|
-000004  1c49              ADDS     r1,r1,#1
-                  |L41.6|
 ;;;123    	uint32_t i = 0;
-;;;124    
-;;;125    	for(i=0;i< us; i++);
-000006  4281              CMP      r1,r0
-000008  d3fc              BCC      |L41.4|
-;;;126    }
-00000a  4770              BX       lr
-;;;127    
+;;;124    	uint8_t j = 0;
+;;;125    
+;;;126    	for(i=0;i< us; i++)
+;;;127    	{
+;;;128    		for(j=0;j<10;j++);
+000004  2100              MOVS     r1,#0
+                  |L41.6|
+000006  1c49              ADDS     r1,r1,#1
+000008  b2c9              UXTB     r1,r1
+00000a  290a              CMP      r1,#0xa
+00000c  d3fb              BCC      |L41.6|
+00000e  1c52              ADDS     r2,r2,#1
+                  |L41.16|
+000010  4282              CMP      r2,r0                 ;126
+000012  d3f7              BCC      |L41.4|
+;;;129    	}
+;;;130    }
+000014  4770              BX       lr
+;;;131    
                           ENDP
 
 

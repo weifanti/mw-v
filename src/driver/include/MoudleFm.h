@@ -339,5 +339,6 @@ uint8_t IsCurrentStationNunValid(void);
 
 
 void WaitMs(uint32_t time);
+extern uint8_t RSSI;
 
 #endif

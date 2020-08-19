@@ -50348,6 +50348,9 @@ N
 N#define FM_MAX_STATION_NUM			15
 N#define FM_DELAY_TIME				10
 N
+N#define MAX_SN_LEN			40
+N#define DEFAULT_SN	"18675205335_kim.wei"
+N
 N
 N#define GPIO_HIGH  1
 N#define GPIO_LOW   0
@@ -50565,7 +50568,7 @@ N	IN_KEY_REBOOT_4G_MOUDLE,
 N	IN_KEY_DEFAULT_VOLUME_SET,
 N	
 N
-N	IR_KEY_POWER,
+N	IR_KEY_POWER = 101,
 N	IR_KEY_POWER_CP,
 N	IR_KEY_MODE,
 N	IR_KEY_VOLUME_UP,
@@ -50719,6 +50722,38 @@ N	POWER_STATE PowerState;
 N	uint8_t ir_bak_key;
 X	unsigned char ir_bak_key;
 N	
+N	uint8_t bt_name[40];
+X	unsigned char bt_name[40];
+N	uint8_t  bt_name_len;
+X	unsigned char  bt_name_len;
+N	uint8_t bt_mac[40];
+X	unsigned char bt_mac[40];
+N	uint8_t  bt_mac_len;
+X	unsigned char  bt_mac_len;
+N	
+N	uint8_t FourG_version[40];
+X	unsigned char FourG_version[40];
+N	uint8_t FourG_version_len;
+X	unsigned char FourG_version_len;
+N	uint8_t FourG_mac[40];
+X	unsigned char FourG_mac[40];
+N	uint8_t FourG_mac_len;
+X	unsigned char FourG_mac_len;
+N	uint8_t build_data[20];
+X	unsigned char build_data[20];
+N	uint8_t build_time[20];
+X	unsigned char build_time[20];
+N	uint8_t PteTestMode;
+X	unsigned char PteTestMode;
+N	uint8_t PteKeyTestMode;
+X	unsigned char PteKeyTestMode;
+N	uint8_t SN[MAX_SN_LEN];
+X	unsigned char SN[40];
+N	uint8_t sn_len;
+X	unsigned char sn_len;
+N	uint8_t LedTestMode;
+X	unsigned char LedTestMode;
+N	
 N
 N}sGlobalData;
 N
@@ -50735,6 +50770,10 @@ N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
+Nextern uint8_t mcu_version[6];
+Xextern unsigned char mcu_version[6];
+Nextern uint8_t dsp_version[6];
+Xextern unsigned char dsp_version[6];
 N
 N
 N#endif

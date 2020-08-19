@@ -121,8 +121,12 @@ void wait_ns(uint32_t ns);
 void wait_us(uint32_t  us)
 {
 	uint32_t i = 0;
+	uint8_t j = 0;
 
-	for(i=0;i< us; i++);
+	for(i=0;i< us; i++)
+	{
+		for(j=0;j<10;j++);
+	}
 }
 
 

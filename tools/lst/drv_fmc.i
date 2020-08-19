@@ -29359,6 +29359,9 @@ uint32_t UI2C_ReadMultiBytesTwoRegs(UI2C_T *ui2c, uint8_t u8SlaveAddr, uint16_t 
 
 
 
+
+
+
 typedef enum
 {
     SYS_ERR_NONE       = 0,
@@ -29572,7 +29575,7 @@ typedef enum _KEY_EVENT
 	IN_KEY_DEFAULT_VOLUME_SET,
 	
 
-	IR_KEY_POWER,
+	IR_KEY_POWER = 101,
 	IR_KEY_POWER_CP,
 	IR_KEY_MODE,
 	IR_KEY_VOLUME_UP,
@@ -29690,6 +29693,23 @@ typedef struct
 	POWER_STATE PowerState;
 	uint8_t ir_bak_key;
 	
+	uint8_t bt_name[40];
+	uint8_t  bt_name_len;
+	uint8_t bt_mac[40];
+	uint8_t  bt_mac_len;
+	
+	uint8_t FourG_version[40];
+	uint8_t FourG_version_len;
+	uint8_t FourG_mac[40];
+	uint8_t FourG_mac_len;
+	uint8_t build_data[20];
+	uint8_t build_time[20];
+	uint8_t PteTestMode;
+	uint8_t PteKeyTestMode;
+	uint8_t SN[40];
+	uint8_t sn_len;
+	uint8_t LedTestMode;
+	
 
 }sGlobalData;
 
@@ -29704,6 +29724,8 @@ extern uint8_t RxMsgCount_PTE;
 
 
 
+extern uint8_t mcu_version[6];
+extern uint8_t dsp_version[6];
 
 
 #line 6 "..\\src\\driver\\drv_fmc.c"
@@ -29939,6 +29961,7 @@ uint8_t IsCurrentStationNunValid(void);
 
 
 void WaitMs(uint32_t time);
+extern uint8_t RSSI;
 
 #line 7 "..\\src\\driver\\drv_fmc.c"
 #line 1 "..\\src\\driver\\include\\drv_fmc.h"
@@ -29962,6 +29985,11 @@ void DataRead(void);
 
 
 #line 8 "..\\src\\driver\\drv_fmc.c"
+
+
+
+
+
 
 
 
@@ -30073,6 +30101,16 @@ void DataStore(void)
 		FMC_Write(0x03f804, Global_datas.FmData.current_station);		
 	}
 
+
+	add = 0x03f884;
+	FMC_Write(0x03f880, Global_datas.sn_len);
+	
+	for(i=0; i< Global_datas.sn_len; i++ )
+	{
+		FMC_Write(add, Global_datas.SN[i]);
+		add += 4;
+	}
+
     SYS_LockReg();
 
 
@@ -30084,6 +30122,8 @@ void DataRead(void)
 	uint32_t i;
 	uint32_t temp_data;
 	uint32_t add;
+	uint8_t x = 0, y = 0;
+	uint8_t *p_sn;
 	
     SYS_UnlockReg();
 
@@ -30095,6 +30135,11 @@ void DataRead(void)
 
 	temp_data = FMC_Read(0x03f808);
 	Global_datas.FmData.Frequency = (temp_data & 0xffff);	
+
+	
+	temp_data = FMC_Read(0x03f880);
+	Global_datas.sn_len = (temp_data & 0xff);	
+	
 
 	add = 0x03f820;
 	
@@ -30116,9 +30161,37 @@ void DataRead(void)
 		Global_datas.FmData.Frequency = 8750;
 		Global_datas.FmData.station_num = 0;
 		Global_datas.FmData.current_station = 0;
-		FMC_Write(0x03f808, Global_datas.FmData.Frequency);
-		FMC_Write(0x03f800, Global_datas.FmData.station_num);
-		FMC_Write(0x03f804, Global_datas.FmData.current_station);			
+		
+		
+		
+		Global_datas.FmData.FmNeedToStore = 1;
+	}
+
+	
+	add = 0x03f884;
+
+	if(Global_datas.sn_len <= 40)
+	{
+		for(i=0;i<Global_datas.sn_len;i++)
+		{
+			
+			temp_data = FMC_Read(add);
+			add +=4;
+			Global_datas.SN[i] = (uint8_t)temp_data;
+		}
+	}
+	else
+	{
+		p_sn= "18675205335_kim.wei";
+		Global_datas.sn_len = sizeof("18675205335_kim.wei");
+		
+		for(i=0; i < Global_datas.sn_len;i++)
+		{
+			Global_datas.SN[i] = *p_sn;
+			p_sn++;
+		}
+		
+		Global_datas.FmData.FmNeedToStore = 1;
 	}
 
     SYS_LockReg();

@@ -40,11 +40,15 @@
 
 void Sysctrl(void);
 void SendFmFreqToSubBoard(void);
+void drv_Cmd_Send2Pte(uint8_t cmd, uint8_t param0, uint8_t param1);
+void Pte_ProcessData(void);
 
 
 volatile sys_err_e sys_err = SYS_ERR_NONE;
 #define PLLCTL_SETTING  CLK_PLLCTL_72MHz_HXT
 #define PLL_CLOCK       72000000
+
+
 
 
 void SYS_Clock_init(void)
@@ -89,6 +93,8 @@ void SYS_Clock_init(void)
     CLK_WaitClockReady(CLK_STATUS_HXTSTB_Msk);
     /* Set core clock as PLL_CLOCK from PLL and SysTick source to HCLK/2*/
     CLK_SetCoreClock(PLL_CLOCK);
+    
+   // CLK_SetCoreClock(FREQ_25MHZ);
     CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_HCLK_DIV2);	
 	#endif
 
@@ -289,6 +295,15 @@ void SysIdle(void)
 	Global_datas.mode_switching = 0;
 	Global_datas.power_4g = 0;
 	Global_datas.mute = 0;
+	Global_datas.PteKeyTestMode = 0;
+	Global_datas.PteTestMode = 0;
+	Global_datas.LedTestMode = 0;
+	
+	Global_datas.bt_name_len = 0;
+	Global_datas.bt_mac_len = 0;
+	Global_datas.FourG_version_len = 0;
+	Global_datas.FourG_mac_len = 0;
+	
 	
 	drv_FourGmodel_power_key_SetLow();  // when powerup , need to pull hi 3 second then pull down.
 	TimeOutSet(&SysTimer_1s,1000);
@@ -301,10 +316,6 @@ void SysIdle(void)
 
 	DataRead();
 	SendFmFreqToSubBoard();
-
-
-	
-	
 }
 
 void SYS_Status(void)
@@ -1060,6 +1071,40 @@ void MessageProcess(void)
 						}
 						
 					}
+					else if(msg.param0 == 0x10)
+					{
+						switch(msg.param1)
+						{
+ 							case 0x01: //send bt mac to PTE
+								
+							drv_Cmd_Send2Pte(0x18, Global_datas.bt_mac_len, 0);
+							break;
+							
+ 							case 0x02: //send bt name to PTE
+								
+							drv_Cmd_Send2Pte(0x19, Global_datas.bt_name_len, 0);
+							break;		
+							
+ 							case 0x03: //send 4G versoin to PTE
+								
+							drv_Cmd_Send2Pte(0x1a, Global_datas.FourG_version_len, 0);
+							break;
+							
+ 							case 0x04: //send 4G mac to PTE
+								
+							drv_Cmd_Send2Pte(0x1b, Global_datas.FourG_mac_len, 0);
+							break;	
+
+							case 0x09:
+								
+							drv_Cmd_Send2Pte(0x20,msg.param2, 0); // send 4G MobileDbm to PTE
+							break;
+
+							
+							default:break;
+						}
+
+					}
 					else if(msg.param0 == 0x20) // check version
 					{
 						Cmd_Send2FourG(0x20,0x0,0x1);  //version 0.0.1
@@ -1241,6 +1286,465 @@ void SendFmFreqToSubBoard(void)
 }
 
 
+void drv_Cmd_Send2Pte(uint8_t cmd, uint8_t param0, uint8_t param1)
+{
+	uint8_t checksum;
+	uint8_t count = 0;
+	uint8_t tx_data = 0;
+	uint8_t *p_tx;
+
+	UART_WRITE(UART0,0x5a);
+	TIMER_Delay(TIMER0, 1000);
+	UART_WRITE(UART0,0xa5);
+	TIMER_Delay(TIMER0, 1000);
+	UART_WRITE(UART0,0x04);
+	TIMER_Delay(TIMER0, 1000);
+	UART_WRITE(UART0,0x02);
+	TIMER_Delay(TIMER0, 1000);
+	UART_WRITE(UART0,cmd);
+	TIMER_Delay(TIMER0, 1000);
+	UART_WRITE(UART0,param0);
+	TIMER_Delay(TIMER0, 1000);
+	UART_WRITE(UART0,param1);
+	TIMER_Delay(TIMER0, 1000);
+	checksum = 0 -( 0x04 + 0x02 + cmd + param0 + param1);
+	UART_WRITE(UART0,checksum);
+
+	if(cmd == 0x18)  // bt_mac
+	{
+		p_tx = &Global_datas.bt_mac[0];
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+		}
+	}
+
+	
+	else if(cmd == 0x19)  // bt_name
+	{
+		
+		p_tx = &Global_datas.bt_name[0];
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+
+		}
+	}	
+	else if(cmd == 0x1a)  // 4G verson
+	{
+		p_tx = &Global_datas.FourG_version[0];
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+
+		}
+
+	}
+	else if(cmd == 0x1b)  // 4G mac
+	{
+		p_tx = &Global_datas.FourG_mac[0];
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+
+		}
+
+	}
+	if(cmd == 0x02)  // read mcu version
+	{
+		p_tx = &mcu_version[0];
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+		}
+	}	
+
+	if(cmd == 0x03)  // read dsp version
+	{
+		p_tx = &dsp_version[0];
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+		}
+	}
+	if(cmd == 0x21)  // read dsp version
+	{
+		p_tx = __DATE__;
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+		}
+	}
+
+	if(cmd == 0x22)  // read dsp version
+	{
+		p_tx = __TIME__;
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+		}
+	}
+	
+	if(cmd == 0x11)  // read sn
+	{
+		p_tx = Global_datas.SN;
+		
+		for(count = 0; count < param0;count++)
+		{ 
+			tx_data = *p_tx;
+			UART_WRITE(UART0,tx_data);
+			TIMER_Delay(TIMER0, 1000);	
+			p_tx++;
+		}
+	}	
+	
+}
+
+
+
+
+void Pte_ProcessData(void)
+{
+	uint8_t vol = 0;
+	uint8_t temp = 0;
+	uint8_t freq_hi = 0;
+	uint8_t freq_low = 0;
+	uint8_t temp_cmd = 0;
+	uint8_t temp_param0 = 0;
+	uint32_t temp_freq = 0;
+
+
+	while(RxMsgCount_PTE)
+	{ 
+		
+		RxMsgCount_PTE--;
+		temp_cmd = RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+1];
+		temp_param0 = RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+2];
+		
+		if(RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+0] == 0x01)
+		{
+			switch(temp_cmd)  
+			{
+			   case 0x01:printf("Enter test mode\n");drv_Cmd_Send2Pte(0x01,0x00,0x00);Global_datas.PteTestMode = 1;break;
+			   case 0x02:printf("Read mcu version\n");drv_Cmd_Send2Pte(0x02,sizeof(mcu_version),0);break;
+			   case 0x03:printf("Read dsp version\n");drv_Cmd_Send2Pte(0x03,sizeof(dsp_version),0);break;
+			   case 0x04:
+			   	printf("internal bat\n");
+			    if(temp_param0)
+			    {
+			    	battery_charge_enable();
+			    }
+				else
+				{
+					battery_charge_disable();
+				}
+			    drv_Cmd_Send2Pte(0x04,temp_param0,0); // return enable/disable
+			   break;
+
+				case 0x05:
+				 printf("read ntc value\n");
+				 drv_Cmd_Send2Pte(0x05,Global_datas.PowerState.NTC_level,0); // read ntc value
+				break;
+
+				case 0x06:
+				 printf("read battery value\n");
+				 drv_Cmd_Send2Pte(0x06,Global_datas.PowerState.battery_level,0); // read battery value
+				break;	
+				
+				case 0x07:
+				 printf("PTE mic mode\n");
+
+				 if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+				 {
+					 if(temp_param0)
+					 {
+						Cmd_Send2FourG(0x03,0x63,0);
+						printf("PTE mic key long press\n");
+					 }
+					 else
+					 {
+					 	Cmd_Send2FourG(0x03,0x64,0);					 
+					 	printf("PTE mic key long release\n");
+					 }
+					 
+					 drv_Cmd_Send2Pte(0x07,temp_param0,0); // return to pte
+				}
+
+				break;	
+
+				case 0x08:
+				 printf("PTE enter aux mode\n");
+				 drv_Cmd_Send2Pte(0x08,0,0); // read battery value
+				 Global_datas.inputmessage = IN_KEY_AUX_MODE_S;
+				break;	
+				
+				case 0x09:                          
+				 printf("PTE enter mw radio mode\n");  // change to mw-radio mode
+				 if(Global_datas.state != SYS_PLAY_STATE_MW_RADIO)
+				 {
+					Global_datas.inputmessage = IN_KEY_MW_RADIO_MODE_S;
+				 }
+				 
+				 	drv_Cmd_Send2Pte(0x09,0,0);
+
+				break;	
+
+				case 0x0A:
+				 printf("PTE enter BT mode\n");
+				 Global_datas.inputmessage = IN_KEY_BT_MODE_S;
+				 drv_Cmd_Send2Pte(0x0a,0,0);
+				break;	
+				
+				case 0x0b:
+				 printf("PTE enter FM mode\n");
+				 Global_datas.inputmessage = IN_KEY_FM_MODE_S;
+				 drv_Cmd_Send2Pte(0x0b,0,0);
+				break;	
+
+				case 0x0c:
+				 printf("PTE set fm freq\n"); // 1: 8750, 2:9800,3:10800
+
+				 if(Global_datas.state == SYS_PLAY_STATE_FM)
+				 {
+					if(temp_param0 == 1)
+					{
+						temp_freq = 8750;
+					}
+					else if(temp_param0 == 2)
+					{
+						temp_freq = 9800;
+					}
+					else if(temp_param0 == 3)
+					{
+						temp_freq = 10800;
+					}
+
+					si47xxFMRX_tune(temp_freq); 
+				 	
+				 	drv_Cmd_Send2Pte(0x0c,temp_param0,RSSI);
+				 }
+				break;	
+
+				case 0x0d:
+				 printf("PTE set volume\n");
+				
+				if(temp_param0)
+				{
+					Global_datas.volume = temp_param0;
+					Drv_Dap_vol_set(Global_datas.volume);
+					Global_datas.mute = 0;
+					drv_5825_mute_pin_set(1);
+				}
+				else
+				{
+					Global_datas.volume = 0;
+					Drv_Dap_vol_set(Global_datas.volume);
+					Global_datas.mute = 1;
+					drv_5825_mute_pin_set(0);
+				}
+
+				
+				drv_Cmd_Send2Pte(0x0d,temp_param0,0);
+				break;	
+
+				case 0x0e:
+				 printf("PTE read volume\n"); 
+				 drv_Cmd_Send2Pte(0x0e,Global_datas.volume,0);
+				break;	
+
+
+				case 0x0f: // 1,white , 2 green,3 orange ,4 red,5 purple,6,blue, 7 red_2, 8 green_2
+				 printf("PTE turn on led\n");
+				 
+				 switch(temp_param0)
+				 {
+					case 1:PA13 = LED_ON;break; //white -- wifi
+					case 2:PC15 = LED_ON;break; // green -- fm
+					case 3:PA12 = LED_ON;break; // orange --aux
+					case 4:PA2  = LED_ON;break; // red  -- err
+					case 5:PF6  = LED_ON;break; // purple -- 4G
+					case 6:PA1  = LED_ON;break; // blue -- bt		
+					case 7:drv_led_state1_onoff_red(1);break;
+					case 8:drv_led_state1_onoff_green(1);break;
+					default:break;
+				 }
+				 
+				 drv_Cmd_Send2Pte(0x0f,temp_param0,0);
+				break;	
+				
+				case 0x10: //
+				 printf("PTE led all off\n");
+				 
+				 drv_all_led_on(0);
+				 drv_led_state1_onoff_red(0);
+				 drv_led_state1_onoff_green(0);
+				 
+				 drv_Cmd_Send2Pte(0x10,0,0);
+				break;	
+
+				case 0x11: // read SN NUM
+				 printf("PTE read sn\n");
+				 drv_Cmd_Send2Pte(0x11,Global_datas.sn_len,0);
+				break;	
+
+				case 0x12: // write SN NUM
+				printf("PTE write sn\n");
+				drv_Cmd_Send2Pte(0x12,0,0);
+				DataStore();
+				break;	
+
+				case 0x13:// get current net type     // 1 wifi ,2 4G 3 NONE
+
+				if(Global_datas.MW_radio_net_type == NET_TYPE_WIFI)
+				{
+					drv_Cmd_Send2Pte(0x13,1,0);
+				}
+				else if(Global_datas.MW_radio_net_type == NET_TYPE_4G)
+				{
+					drv_Cmd_Send2Pte(0x13,2,0);
+				}
+				else 
+				{
+					drv_Cmd_Send2Pte(0x13,0,0);
+				}
+				break;
+
+				case 0x14:// switch  net type	  // 
+				
+					if(Global_datas.state == SYS_PLAY_STATE_MW_RADIO)
+					{
+						Global_datas.inputmessage = IN_KEY_RADIO_NET_SWITCH_S;
+					}
+					drv_Cmd_Send2Pte(0x14,0,0);
+
+					break;
+
+				
+
+				case 0x15: // Enter Key test mode
+
+				Global_datas.PteKeyTestMode = 1;
+				drv_Cmd_Send2Pte(0x15,0,0);
+				break;
+
+				case 0x16: // exit key test mode
+
+				
+				Global_datas.PteKeyTestMode = 0;
+				drv_Cmd_Send2Pte(0x16,0,0);
+				break;
+
+
+					
+
+				case 0x18: printf("GetBtmac\n");		Cmd_Send2FourG( 0x10,0x01,0x00); break;//Get Bt mac 
+				case 0x19: printf("GetBtName\n");		Cmd_Send2FourG( 0x10,0x02,0x00); break;//Get Bt name 
+				case 0x1a: printf("Get4Gversion\n");	Cmd_Send2FourG( 0x10,0x03,0x00); break;//Get 4g version
+				case 0x1b: printf("Get4G mac\n");		Cmd_Send2FourG( 0x10,0x04,0x00); break;//Get 4g mac
+				
+				case 0x1c: printf("factroy rest\n");	Cmd_Send2FourG( 0x10,0x05,0x00); drv_Cmd_Send2Pte(0x1c,0, 0); break;//factory
+				case 0x1d: printf("bt tone\n");			Cmd_Send2FourG( 0x10,0x06,0x00); drv_Cmd_Send2Pte(0x1d,0, 0); break;//bt tone
+				case 0x1e: printf("bt pairing\n");		Cmd_Send2FourG( 0x10,0x07,0x00); drv_Cmd_Send2Pte(0x1e,0, 0); break;//start pairing
+				case 0x1f: printf("bt record clear\n");	Cmd_Send2FourG( 0x10,0x08,0x00); drv_Cmd_Send2Pte(0x1f,0, 0); break;//bt record clear
+				
+				case 0x20: printf("get 4G mobileDbm\n");Cmd_Send2FourG( 0x10,0x09,0x00); break;//get 4G mobileDbm 
+				case 0x21: printf("GetBuildDate\n");	drv_Cmd_Send2Pte( 0x21,sizeof(__DATE__),0); break;//build date
+				case 0x22: printf("GetBuildTime\n");	drv_Cmd_Send2Pte( 0x22,sizeof(__TIME__),0); break;// build time 
+				
+				case 0x24: 
+					printf("power on/off\n");
+				    Global_datas.inputmessage = IR_KEY_POWER;
+				    drv_Cmd_Send2Pte( 0x24,0,0); break;
+				    break;
+					
+				case 0x25: 
+					printf("exit pte test mode\n");
+				    Global_datas.PteTestMode = 0;
+				    drv_Cmd_Send2Pte( 0x25,0,0); break;
+				    break;
+
+				case 0x26: 
+					
+					if(temp_param0)
+					{
+				    	Global_datas.LedTestMode = 1;
+						printf("enter led test mode\n");
+						drv_Cmd_Send2Pte( 0x26,1,0);
+					}
+					else
+					{
+				   	 	Global_datas.LedTestMode = 0;
+						printf("exit led test mode\n");
+						drv_Cmd_Send2Pte( 0x26,0,0);
+					}
+				    
+				    break;		
+
+				case 0x28:
+					
+					drv_Cmd_Send2Pte( 0x28,Global_datas.state,Global_datas.g_4g_initing);
+
+				default:break;
+			}
+		}
+	}
+}
+
+
+void PllSetMode(uint8_t mode)  // 0 low 25m, 1 HI 72M
+{
+/*
+    SYS_UnlockReg();
+	
+	if(mode)
+	{
+		CLK_SetCoreClock(FREQ_72MHZ);
+	}
+	else
+	{
+		CLK_SetCoreClock(FREQ_25MHZ);
+	}
+
+    SYS_LockReg();	
+
+	
+    printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
+*/
+
+}
+
+
+
+
 /*---------------------------------------------------------------------------------------------------------*/
 /*  Main Function                                                                                          */
 /*---------------------------------------------------------------------------------------------------------*/
@@ -1248,11 +1752,16 @@ int32_t main(void)
 {
 	uint8_t ledtimecount = 0;
 	uint8_t resume_timecount = 0;
+	uint8_t pte_rest_test_count = 3;
 	
 	/* Init System, peripheral clock and multi-function I/O */
 
 	SYS_Init();
  	SysIdle();
+
+	
+	PllSetMode(0); // low 25Mhz
+
 
 	//SYS_Clock_Disable();
 
@@ -1261,7 +1770,23 @@ int32_t main(void)
 	printf("compile time: %s %s\r\n", __DATE__, __TIME__);
 
 	
+	printf("compile time: %d %s\r\n", Global_datas.sn_len, Global_datas.SN);
+
+	
 	//Global_datas.inputmessage = IN_KEY_POWER_CP;
+
+	//Global_datas.bt_mac= "bt mac:12345678";
+	//Global_datas.bt_name = s"bt name:MW-V";
+	//Global_datas.name = "bt mac:12345678";
+	//Global_datas.builddate = __DATE__;
+
+	
+//	printf("compile time: %s\r\n", Global_datas.name);
+
+	
+	//drv_Cmd_Send2Pte(0x19, 10, 0);
+
+	
 	
     while(1)
     {
@@ -1312,14 +1837,20 @@ int32_t main(void)
 		if(IsTimeOut(&SysTimer_1s))
 		{
 			TimeOutSet(&SysTimer_1s, 500);
-	        if(Global_datas.g_4g_initing)
+
+			if(Global_datas.LedTestMode == 0)
 			{
-				srv_led_sys_initing();
+		       // if(Global_datas.g_4g_initing)
+		       if((Global_datas.state == SYS_PLAY_STATE_POWERUP) || (Global_datas.state == SYS_PLAY_STATE_REBOOT))
+				{
+					srv_led_sys_initing();
+				}
+				else
+				{
+					srv_led_change_handler();
+				}
 			}
-			else
-			{
-				srv_led_change_handler();
-			}
+
 
 			if(IsTimeOut(&ModulePowerUpPinTimer))
 			{
@@ -1362,6 +1893,9 @@ int32_t main(void)
 					/* Disable PLL first to avoid unstable when setting PLL */
     			//	CLK_DisablePLL();
 			   	// 	SYS_LockReg();
+
+					
+					PllSetMode(0); // 25Mhz
 				}
 				
 			}
@@ -1376,11 +1910,14 @@ int32_t main(void)
 		if(Global_datas.key_led_blink)
 		{
 			Global_datas.key_led_blink = 0;
-			drv_err_led_on(1);
-			TimeOutSet(&LedKeyBlinkTimer, 100);
+			if(Global_datas.LedTestMode == 0)
+			{
+				drv_err_led_on(1);
+				TimeOutSet(&LedKeyBlinkTimer, 100);
+			}
 		}
 
-		if(IsTimeOut(&LedKeyBlinkTimer))
+		if(IsTimeOut(&LedKeyBlinkTimer) && (Global_datas.LedTestMode == 0))
 		{
 			drv_err_led_on(0);
 		}
@@ -1403,11 +1940,35 @@ int32_t main(void)
 		if(Global_datas.inputmessage == IN_KEY_NONE)  // read IR key
 		{
 			Global_datas.inputmessage = GetIrKey();
+			if(Global_datas.PteKeyTestMode)
+			{
+				if((Global_datas.inputmessage >= IR_KEY_POWER) && (Global_datas.inputmessage <= IR_KEY_EQ))
+				{
+					drv_Cmd_Send2Pte(0x27,Global_datas.inputmessage,0x00);
+
+					Global_datas.inputmessage  = IN_KEY_NONE;
+				}
+			}
 		}
 		
 		if( Global_datas.inputmessage == IN_KEY_NONE)  // read gpio key
 		{
 			GetKeyEvent();
+
+			if(Global_datas.PteKeyTestMode)
+			{
+				if(Global_datas.inputmessage == IN_KEY_POWER_SP)
+				{
+					drv_Cmd_Send2Pte(0x15,0x01,0x00);
+					Global_datas.inputmessage = IN_KEY_NONE;
+				}
+				else if(Global_datas.inputmessage == IN_KEY_PAIR_SP)
+				{
+					drv_Cmd_Send2Pte(0x15,0x02,0x00);
+					Global_datas.inputmessage = IN_KEY_NONE;
+				}
+			}
+
 			
 			if(((Global_datas.state == SYS_PLAY_STATE_IDLE || Global_datas.state == SYS_PLAY_STATE_POWERUP )&&(IN_KEY_POWER_CP != Global_datas.inputmessage)) || \
 				(Global_datas.state == SYS_PLAY_STATE_SHUTTING_DOWN))
@@ -1421,7 +1982,17 @@ int32_t main(void)
 			MessageProcess();
 		}
 
-		//Pte_ProcessData();
+
+		if(Global_datas.inputmessage == IN_KEY_NONE) // message deal
+		{
+			Pte_ProcessData();
+			if(pte_rest_test_count)
+			{
+				pte_rest_test_count--;
+				drv_Cmd_Send2Pte(0x23,0,0); // REST CMD TO PTE
+			}
+		}		
+
 
 
 		Sysctrl();
@@ -1432,77 +2003,10 @@ int32_t main(void)
 }
 
 
-/*
-void Pte_ProcessData(void)
-{
-	uint8_t vol = 0;
-	uint8_t temp = 0;
-	uint8_t freq_hi = 0;
-	uint8_t freq_low = 0;
 
-	while(RxMsgCount_PTE)
-	{ 
-		RxMsgCount_PTE--;
-		
-		if(RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+0] == 0x01)
-		{
-			switch(RxBuff[RxMsgCount_PTE*MSG_MAX_LEN+1])  
-			{
-			   case 0x01: 
 
-				break;
 
-			   case 0x21:
 
-			    break;
-
-			   case 0x07:  
-
-				break;
-
-			   case 0x04:  
-				
-				break;
-
-			   case 0x0a: 
-			   	
-				break;
-
-			   case 0x0d: 
-
-				break;
-
-			   case 0x0e: 
-			   	
-				break;
-
-				case 0x01: 
-				
-				break;
-
-				case 0x02:
-				
-				break;
-
-				case 0x70: 
-				
-				break;		
-
-				case 0x71:  
-				
-				break;	
-
-				case 0x72: 
-				
-				break;	
-
-				default:break;
-			}
-		}
-	}
-}
-
-*/
 
 
 void Sysctrl(void)
@@ -1765,8 +2269,11 @@ void Sysctrl(void)
 
 		
 		   // SYS_Clock_Enable();
-
+		   
+			PllSetMode(1); // hi 72Mhz
+			WaitMs(500);
 			TYM_SysPower12V_3V3_onoff(1);
+			WaitMs(500);
 			Global_datas.state = SYS_PLAY_STATE_POWERUP;	
 			Global_datas.g_4g_initing = 1;
 			Global_datas.eq_mode = EQ_MODE_INDOOR;
@@ -1786,6 +2293,15 @@ void Sysctrl(void)
 			drv_Cmd_Send2NCU031(0x70, 0x16,0x00);// power on cmd to LCD board
 
 			Fm_Rest();
+
+            
+		/*	WaitMs(500);
+			Global_datas.FmData.Frequency = 9710;	
+			drv_audio_FM_Channel();
+			test_FMRXtune();
+			Global_datas.g_4g_initing = 0;
+			Global_datas.state = SYS_PLAY_STATE_FM;	*/
+				
 			
 			break;
 			
@@ -1887,10 +2403,18 @@ void Sysctrl(void)
 			}
 			else
 			{
-				Cmd_Send2FourG(0x03,0x15,0);
-				Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
-				drv_audio_4G_Channel();
-				Drv_Dap_vol_set(Global_datas.volume);
+				if((Global_datas.PteTestMode) && ((Global_datas.state == SYS_PLAY_STATE_AUX) || (Global_datas.state == SYS_PLAY_STATE_FM)))
+				{
+					  // DO NOT CHANGE MODE
+				}
+				else
+				{
+					Cmd_Send2FourG(0x03,0x15,0);
+					Global_datas.state = SYS_PLAY_STATE_MW_RADIO;
+					drv_audio_4G_Channel();
+					Drv_Dap_vol_set(Global_datas.volume);
+				}
+
 			}
 
 			//drv_Cmd_Send2NCU031(0x08,0,0); send start CMD to sub board
@@ -2059,6 +2583,9 @@ void Sysctrl(void)
 			/* Disable PLL first to avoid unstable when setting PLL */
     		//	CLK_DisablePLL();
 			//    SYS_LockReg();
+
+			
+			PllSetMode(0); // 25Mhz
 
 
 				

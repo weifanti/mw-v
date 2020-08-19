@@ -10,8 +10,7 @@
 #include "NUC029xGE.h"
 #include "drv_led.h"
 
-#define LED_ON  0
-#define LED_OFF 1
+
 
 void drv_wifi_led_on(uint8_t value)
 {
@@ -95,7 +94,6 @@ void drv_all_led_on(uint8_t value)
 		PF6 = LED_ON;  //4G
 
 		PA2 = LED_ON;  //err
-		PA3 = LED_ON;  //wireless mic
 	}
 	else
 	{
@@ -106,7 +104,6 @@ void drv_all_led_on(uint8_t value)
 		PF6 = LED_OFF;	//4G
 		
 		PA2 = LED_OFF;	//err
-		PA3 = LED_OFF;	//wireless mic
 	}
 	
 }
@@ -128,9 +125,6 @@ void drv_led_init(void)
 	PA1 = LED_OFF;  //bt
 	PC15 = LED_OFF;  //FM
 	PF6 = LED_OFF;  //4G
-
-	PA2 = LED_OFF;  //err
-	PA3 = LED_OFF;  //wireless mic
 	
 	PA14 = LED_OFF;  //STAT1 RED
 	PA15 = LED_OFF;  //STAT1 GREEN

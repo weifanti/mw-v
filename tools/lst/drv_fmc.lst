@@ -50317,6 +50317,9 @@ N
 N#define FM_MAX_STATION_NUM			15
 N#define FM_DELAY_TIME				10
 N
+N#define MAX_SN_LEN			40
+N#define DEFAULT_SN	"18675205335_kim.wei"
+N
 N
 N#define GPIO_HIGH  1
 N#define GPIO_LOW   0
@@ -50534,7 +50537,7 @@ N	IN_KEY_REBOOT_4G_MOUDLE,
 N	IN_KEY_DEFAULT_VOLUME_SET,
 N	
 N
-N	IR_KEY_POWER,
+N	IR_KEY_POWER = 101,
 N	IR_KEY_POWER_CP,
 N	IR_KEY_MODE,
 N	IR_KEY_VOLUME_UP,
@@ -50654,6 +50657,24 @@ N	Fm_Data FmData;
 N	POWER_STATE PowerState;
 N	uint8_t ir_bak_key;
 N	
+N	uint8_t bt_name[40];
+N	uint8_t  bt_name_len;
+N	uint8_t bt_mac[40];
+N	uint8_t  bt_mac_len;
+N	
+N	uint8_t FourG_version[40];
+N	uint8_t FourG_version_len;
+N	uint8_t FourG_mac[40];
+N	uint8_t FourG_mac_len;
+N	uint8_t build_data[20];
+N	uint8_t build_time[20];
+N	uint8_t PteTestMode;
+N	uint8_t PteKeyTestMode;
+N	uint8_t SN[MAX_SN_LEN];
+X	uint8_t SN[40];
+N	uint8_t sn_len;
+N	uint8_t LedTestMode;
+N	
 N
 N}sGlobalData;
 N
@@ -50668,6 +50689,8 @@ N#define VOLUME_DEFAULT  5
 N#define VOLUME_MAX		16
 N#define VOLUME_MIN		0
 N
+Nextern uint8_t mcu_version[6];
+Nextern uint8_t dsp_version[6];
 N
 N
 N#endif
@@ -51016,6 +51039,7 @@ Nuint8_t IsCurrentStationNunValid(void);
 N
 N
 Nvoid WaitMs(uint32_t time);
+Nextern uint8_t RSSI;
 N
 N#endif
 L 7 "..\src\driver\drv_fmc.c" 2
@@ -51051,6 +51075,11 @@ N#define CURRENT_STATION_ADDR		0x03f804
 N#define FREQUENCY_ADDR				0x03f808
 N
 N#define STATION_TABLE_BASE_ADDR     0x03f820
+N
+N#define SN_LEN_ADDR     		0x03f880
+N#define SN_BASE_ADDR     			0x03f884
+N
+N
 N//#define DATA_FLASH_TEST_END         0x4000      /* 16KB */
 N//#define TEST_PATTERN                0x5A5A5A5A
 N
@@ -51089,7 +51118,7 @@ N    printf("\nSet Data Flash base as 0x%x.\n", DATA_FLASH_TEST_BASE);
 X    printf("\nSet Data Flash base as 0x%x.\n", 0x03f800);
 N
 N    /* To check if all the debug messages are finished */
-W "..\src\driver\drv_fmc.c" 54 12 function "IsDebugFifoEmpty" declared implicitly
+W "..\src\driver\drv_fmc.c" 59 12 function "IsDebugFifoEmpty" declared implicitly
 N    while(!IsDebugFifoEmpty());
 N
 N    /* Perform chip reset to make new User Config take effect */
@@ -51165,6 +51194,18 @@ N		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);
 X		FMC_Write(0x03f804, Global_datas.FmData.current_station);		
 N	}
 N
+N
+N	add = SN_BASE_ADDR;
+X	add = 0x03f884;
+N	FMC_Write(SN_LEN_ADDR, Global_datas.sn_len);
+X	FMC_Write(0x03f880, Global_datas.sn_len);
+N	
+N	for(i=0; i< Global_datas.sn_len; i++ )
+N	{
+N		FMC_Write(add, Global_datas.SN[i]);
+N		add += 4;
+N	}
+N
 N    SYS_LockReg();
 N
 N
@@ -51176,6 +51217,8 @@ N{
 N	uint32_t i;
 N	uint32_t temp_data;
 N	uint32_t add;
+N	uint8_t x = 0, y = 0;
+N	uint8_t *p_sn;
 N	
 N    SYS_UnlockReg();
 N
@@ -51190,6 +51233,12 @@ N
 N	temp_data = FMC_Read(FREQUENCY_ADDR);
 X	temp_data = FMC_Read(0x03f808);
 N	Global_datas.FmData.Frequency = (temp_data & 0xffff);	
+N
+N	
+N	temp_data = FMC_Read(SN_LEN_ADDR);
+X	temp_data = FMC_Read(0x03f880);
+N	Global_datas.sn_len = (temp_data & 0xff);	
+N	
 N
 N	add = STATION_TABLE_BASE_ADDR;
 X	add = 0x03f820;
@@ -51213,17 +51262,48 @@ N
 N		Global_datas.FmData.Frequency = 8750;
 N		Global_datas.FmData.station_num = 0;
 N		Global_datas.FmData.current_station = 0;
-N		FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
-X		FMC_Write(0x03f808, Global_datas.FmData.Frequency);
-N		FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
-X		FMC_Write(0x03f800, Global_datas.FmData.station_num);
-N		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);			
-X		FMC_Write(0x03f804, Global_datas.FmData.current_station);			
+N		//FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
+N		//FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
+N		//FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);		
+N		Global_datas.FmData.FmNeedToStore = 1;
+N	}
+N
+N	
+N	add = SN_BASE_ADDR;
+X	add = 0x03f884;
+N
+N	if(Global_datas.sn_len <= MAX_SN_LEN)
+X	if(Global_datas.sn_len <= 40)
+N	{
+N		for(i=0;i<Global_datas.sn_len;i++)
+N		{
+N			
+N			temp_data = FMC_Read(add);
+N			add +=4;
+N			Global_datas.SN[i] = (uint8_t)temp_data;
+N		}
+N	}
+N	else
+N	{
+N		p_sn= DEFAULT_SN;
+X		p_sn= "18675205335_kim.wei";
+N		Global_datas.sn_len = sizeof(DEFAULT_SN);
+X		Global_datas.sn_len = sizeof("18675205335_kim.wei");
+N		
+N		for(i=0; i < Global_datas.sn_len;i++)
+N		{
+N			Global_datas.SN[i] = *p_sn;
+N			p_sn++;
+N		}
+N		
+N		Global_datas.FmData.FmNeedToStore = 1;
 N	}
 N
 N    SYS_LockReg();
 N
 N
+W "..\src\driver\drv_fmc.c" 145 10 variable "x"  was declared but never referenced
+W "..\src\driver\drv_fmc.c" 145 17 variable "y"  was declared but never referenced
 N}
 N
 N

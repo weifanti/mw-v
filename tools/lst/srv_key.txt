@@ -54,7 +54,7 @@
 ;;;360    		case IR_KEY_POWER:
 ;;;361    			
 ;;;362    		Global_datas.key_led_blink = 1;
-000006  381d              SUBS     r0,r0,#0x1d
+000006  3865              SUBS     r0,r0,#0x65
 000008  2201              MOVS     r2,#1
 00000a  4928              LDR      r1,|L3.172|
 00000c  0003              MOVS     r3,r0                 ;358

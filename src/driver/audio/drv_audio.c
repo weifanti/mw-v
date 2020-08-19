@@ -173,7 +173,7 @@ void Drv_audio_init(void)
 
 	
 	
-	TIMER_Delay(TIMER0,5000);
+	TIMER_Delay(TIMER0,50000);
 	Drv_Dap_init();
 
 	if(Global_datas.state == SYS_PLAY_STATE_FM)

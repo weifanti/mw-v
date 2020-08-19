@@ -178,7 +178,7 @@
 ;;;173    
 ;;;174    	
 ;;;175    	
-;;;176    	TIMER_Delay(TIMER0,5000);
+;;;176    	TIMER_Delay(TIMER0,50000);
 00000e  490a              LDR      r1,|L5.56|
 000010  480a              LDR      r0,|L5.60|
 000012  f7fffffe          BL       TIMER_Delay
@@ -217,7 +217,7 @@
                           ENDP
 
                   |L5.56|
-                          DCD      0x00001388
+                          DCD      0x0000c350
                   |L5.60|
                           DCD      0x40010000
                   |L5.64|

@@ -5,268 +5,391 @@
                           AREA ||i.DataRead||, CODE, READONLY, ALIGN=2
 
                   DataRead PROC
-;;;124    
-;;;125    void DataRead(void)
+;;;139    
+;;;140    void DataRead(void)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;126    {
-;;;127    	uint32_t i;
-;;;128    	uint32_t temp_data;
-;;;129    	uint32_t add;
-;;;130    	
-;;;131        SYS_UnlockReg();
+;;;141    {
+;;;142    	uint32_t i;
+;;;143    	uint32_t temp_data;
+;;;144    	uint32_t add;
+;;;145    	uint8_t x = 0, y = 0;
+;;;146    	uint8_t *p_sn;
+;;;147    	
+;;;148        SYS_UnlockReg();
 000002  f7fffffe          BL       SYS_UnlockReg
-;;;132    
-;;;133    	temp_data = FMC_Read(STATION_NUM_ADDR);
+;;;149    
+;;;150    	temp_data = FMC_Read(STATION_NUM_ADDR);
 000006  207f              MOVS     r0,#0x7f
 000008  02c0              LSLS     r0,r0,#11
 00000a  f7fffffe          BL       FMC_Read
-;;;134    	Global_datas.FmData.station_num = (temp_data & 0xff);
-00000e  4c22              LDR      r4,|L1.152|
-000010  7120              STRB     r0,[r4,#4]
-;;;135    
-;;;136    	temp_data = FMC_Read(CURRENT_STATION_ADDR);
-000012  4822              LDR      r0,|L1.156|
+;;;151    	Global_datas.FmData.station_num = (temp_data & 0xff);
+00000e  4d37              LDR      r5,|L1.236|
+000010  7128              STRB     r0,[r5,#4]
+;;;152    
+;;;153    	temp_data = FMC_Read(CURRENT_STATION_ADDR);
+000012  4837              LDR      r0,|L1.240|
 000014  f7fffffe          BL       FMC_Read
-;;;137    	Global_datas.FmData.current_station = (temp_data & 0xff);		
-000018  71a0              STRB     r0,[r4,#6]
-;;;138    
-;;;139    	temp_data = FMC_Read(FREQUENCY_ADDR);
-00001a  4820              LDR      r0,|L1.156|
+;;;154    	Global_datas.FmData.current_station = (temp_data & 0xff);		
+000018  71a8              STRB     r0,[r5,#6]
+;;;155    
+;;;156    	temp_data = FMC_Read(FREQUENCY_ADDR);
+00001a  4835              LDR      r0,|L1.240|
 00001c  1d00              ADDS     r0,r0,#4
 00001e  f7fffffe          BL       FMC_Read
-;;;140    	Global_datas.FmData.Frequency = (temp_data & 0xffff);	
-000022  4627              MOV      r7,r4
-000024  b280              UXTH     r0,r0
-000026  3f80              SUBS     r7,r7,#0x80
-;;;141    
-;;;142    	add = STATION_TABLE_BASE_ADDR;
-000028  4e1c              LDR      r6,|L1.156|
-;;;143    	
-;;;144    	if(Global_datas.FmData.station_num < FM_MAX_STATION_NUM)
-00002a  6438              STR      r0,[r7,#0x40]  ; Global_datas
-00002c  7920              LDRB     r0,[r4,#4]  ; Global_datas
-00002e  361c              ADDS     r6,r6,#0x1c           ;142
-000030  280f              CMP      r0,#0xf
-000032  d20c              BCS      |L1.78|
-;;;145    	{
-;;;146    		for(i=0;i<Global_datas.FmData.station_num;i++)
-000034  2500              MOVS     r5,#0
-000036  e007              B        |L1.72|
-                  |L1.56|
-;;;147    		{
-;;;148    
-;;;149    			Global_datas.FmData.station_table[i] = FMC_Read(add);
-000038  4630              MOV      r0,r6
-00003a  f7fffffe          BL       FMC_Read
-00003e  00a9              LSLS     r1,r5,#2
-000040  19c9              ADDS     r1,r1,r7
-000042  1c6d              ADDS     r5,r5,#1
-000044  1d36              ADDS     r6,r6,#4
-000046  6488              STR      r0,[r1,#0x48]
-                  |L1.72|
-000048  7920              LDRB     r0,[r4,#4]            ;146  ; Global_datas
-00004a  42a8              CMP      r0,r5                 ;146
-00004c  d8f4              BHI      |L1.56|
-                  |L1.78|
-;;;150    			add += 4;
-;;;151    		}
-;;;152    	}
-;;;153    
-;;;154    	if( (!IsFreqValid())|| (!IsStationNumValid()) || (!IsCurrentStationNunValid()))
-00004e  f7fffffe          BL       IsFreqValid
-000052  2500              MOVS     r5,#0
-000054  2800              CMP      r0,#0
-000056  d007              BEQ      |L1.104|
-000058  f7fffffe          BL       IsStationNumValid
-00005c  2800              CMP      r0,#0
-00005e  d003              BEQ      |L1.104|
-000060  f7fffffe          BL       IsCurrentStationNunValid
-000064  2800              CMP      r0,#0
-000066  d113              BNE      |L1.144|
-                  |L1.104|
-;;;155    	{
-;;;156    		
-;;;157    		printf("Init FM param!\n");
-000068  a00d              ADR      r0,|L1.160|
-00006a  f7fffffe          BL       __2printf
+;;;157    	Global_datas.FmData.Frequency = (temp_data & 0xffff);	
+000022  b281              UXTH     r1,r0
+000024  4628              MOV      r0,r5
+000026  3880              SUBS     r0,r0,#0x80
 ;;;158    
-;;;159    		Global_datas.FmData.Frequency = 8750;
-00006e  4910              LDR      r1,|L1.176|
-;;;160    		Global_datas.FmData.station_num = 0;
-000070  6439              STR      r1,[r7,#0x40]  ; Global_datas
-;;;161    		Global_datas.FmData.current_station = 0;
-;;;162    		FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
-000072  480a              LDR      r0,|L1.156|
-000074  7125              STRB     r5,[r4,#4]            ;160
-000076  71a5              STRB     r5,[r4,#6]            ;161
-000078  1d00              ADDS     r0,r0,#4
-00007a  f7fffffe          BL       FMC_Write
-;;;163    		FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
-00007e  207f              MOVS     r0,#0x7f
-000080  7921              LDRB     r1,[r4,#4]  ; Global_datas
-000082  02c0              LSLS     r0,r0,#11
-000084  f7fffffe          BL       FMC_Write
-;;;164    		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);			
-000088  79a1              LDRB     r1,[r4,#6]  ; Global_datas
-00008a  4804              LDR      r0,|L1.156|
-00008c  f7fffffe          BL       FMC_Write
-                  |L1.144|
-000090  4808              LDR      r0,|L1.180|
-000092  6005              STR      r5,[r0,#0]
-;;;165    	}
-;;;166    
-;;;167        SYS_LockReg();
-;;;168    
-;;;169    
-;;;170    }
-000094  bdf8              POP      {r3-r7,pc}
-;;;171    
+;;;159    	
+;;;160    	temp_data = FMC_Read(SN_LEN_ADDR);
+000028  6401              STR      r1,[r0,#0x40]  ; Global_datas
+00002a  4831              LDR      r0,|L1.240|
+00002c  307c              ADDS     r0,r0,#0x7c
+00002e  f7fffffe          BL       FMC_Read
+;;;161    	Global_datas.sn_len = (temp_data & 0xff);	
+000032  1dee              ADDS     r6,r5,#7
+000034  36f9              ADDS     r6,r6,#0xf9
+000036  73f0              STRB     r0,[r6,#0xf]
+;;;162    	
+;;;163    
+;;;164    	add = STATION_TABLE_BASE_ADDR;
+000038  4f2d              LDR      r7,|L1.240|
+;;;165    	
+;;;166    	if(Global_datas.FmData.station_num < FM_MAX_STATION_NUM)
+00003a  7928              LDRB     r0,[r5,#4]  ; Global_datas
+00003c  371c              ADDS     r7,r7,#0x1c           ;164
+00003e  280f              CMP      r0,#0xf
+000040  d20e              BCS      |L1.96|
+;;;167    	{
+;;;168    		for(i=0;i<Global_datas.FmData.station_num;i++)
+000042  2400              MOVS     r4,#0
+000044  e009              B        |L1.90|
+                  |L1.70|
+;;;169    		{
+;;;170    
+;;;171    			Global_datas.FmData.station_table[i] = FMC_Read(add);
+000046  4638              MOV      r0,r7
+000048  f7fffffe          BL       FMC_Read
+00004c  4927              LDR      r1,|L1.236|
+00004e  00a2              LSLS     r2,r4,#2
+000050  3980              SUBS     r1,r1,#0x80
+000052  1851              ADDS     r1,r2,r1
+000054  1c64              ADDS     r4,r4,#1
+000056  1d3f              ADDS     r7,r7,#4
+000058  6488              STR      r0,[r1,#0x48]
+                  |L1.90|
+00005a  7928              LDRB     r0,[r5,#4]            ;168  ; Global_datas
+00005c  42a0              CMP      r0,r4                 ;168
+00005e  d8f2              BHI      |L1.70|
+                  |L1.96|
+;;;172    			add += 4;
+;;;173    		}
+;;;174    	}
+;;;175    
+;;;176    	if( (!IsFreqValid())|| (!IsStationNumValid()) || (!IsCurrentStationNunValid()))
+000060  f7fffffe          BL       IsFreqValid
+000064  4c21              LDR      r4,|L1.236|
+;;;177    	{
+;;;178    		
+;;;179    		printf("Init FM param!\n");
+;;;180    
+;;;181    		Global_datas.FmData.Frequency = 8750;
+;;;182    		Global_datas.FmData.station_num = 0;
+;;;183    		Global_datas.FmData.current_station = 0;
+;;;184    		//FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
+;;;185    		//FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
+;;;186    		//FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);		
+;;;187    		Global_datas.FmData.FmNeedToStore = 1;
+000066  2701              MOVS     r7,#1
+000068  3c40              SUBS     r4,r4,#0x40           ;151
+00006a  2800              CMP      r0,#0                 ;176
+00006c  d007              BEQ      |L1.126|
+00006e  f7fffffe          BL       IsStationNumValid
+000072  2800              CMP      r0,#0                 ;176
+000074  d003              BEQ      |L1.126|
+000076  f7fffffe          BL       IsCurrentStationNunValid
+00007a  2800              CMP      r0,#0                 ;176
+00007c  d10a              BNE      |L1.148|
+                  |L1.126|
+00007e  a01d              ADR      r0,|L1.244|
+000080  f7fffffe          BL       __2printf
+000084  4819              LDR      r0,|L1.236|
+000086  491f              LDR      r1,|L1.260|
+000088  3880              SUBS     r0,r0,#0x80           ;181
+00008a  6401              STR      r1,[r0,#0x40]         ;182  ; Global_datas
+00008c  2000              MOVS     r0,#0                 ;182
+00008e  7128              STRB     r0,[r5,#4]            ;182
+000090  71a8              STRB     r0,[r5,#6]            ;183
+000092  7167              STRB     r7,[r4,#5]
+                  |L1.148|
+;;;188    	}
+;;;189    
+;;;190    	
+;;;191    	add = SN_BASE_ADDR;
+000094  4d16              LDR      r5,|L1.240|
+;;;192    
+;;;193    	if(Global_datas.sn_len <= MAX_SN_LEN)
+000096  7bf0              LDRB     r0,[r6,#0xf]  ; Global_datas
+000098  3580              ADDS     r5,r5,#0x80           ;191
+00009a  2828              CMP      r0,#0x28
+00009c  d810              BHI      |L1.192|
+00009e  4f13              LDR      r7,|L1.236|
+;;;194    	{
+;;;195    		for(i=0;i<Global_datas.sn_len;i++)
+0000a0  2400              MOVS     r4,#0
+0000a2  3f80              SUBS     r7,r7,#0x80           ;151
+0000a4  e008              B        |L1.184|
+                  |L1.166|
+;;;196    		{
+;;;197    			
+;;;198    			temp_data = FMC_Read(add);
+0000a6  4628              MOV      r0,r5
+0000a8  f7fffffe          BL       FMC_Read
+;;;199    			add +=4;
+;;;200    			Global_datas.SN[i] = (uint8_t)temp_data;
+0000ac  1939              ADDS     r1,r7,r4
+0000ae  31ff              ADDS     r1,r1,#0xff
+0000b0  3161              ADDS     r1,r1,#0x61
+0000b2  1c64              ADDS     r4,r4,#1
+0000b4  71c8              STRB     r0,[r1,#7]
+0000b6  1d2d              ADDS     r5,r5,#4
+                  |L1.184|
+0000b8  7bf0              LDRB     r0,[r6,#0xf]          ;195  ; Global_datas
+0000ba  42a0              CMP      r0,r4                 ;195
+0000bc  d8f3              BHI      |L1.166|
+0000be  e010              B        |L1.226|
+                  |L1.192|
+;;;201    		}
+;;;202    	}
+;;;203    	else
+;;;204    	{
+;;;205    		p_sn= DEFAULT_SN;
+;;;206    		Global_datas.sn_len = sizeof(DEFAULT_SN);
+0000c0  2014              MOVS     r0,#0x14
+0000c2  73f0              STRB     r0,[r6,#0xf]
+0000c4  4a09              LDR      r2,|L1.236|
+;;;207    		
+;;;208    		for(i=0; i < Global_datas.sn_len;i++)
+0000c6  2000              MOVS     r0,#0
+0000c8  a10f              ADR      r1,|L1.264|
+0000ca  3a80              SUBS     r2,r2,#0x80           ;151
+                  |L1.204|
+;;;209    		{
+;;;210    			Global_datas.SN[i] = *p_sn;
+0000cc  1815              ADDS     r5,r2,r0
+0000ce  35ff              ADDS     r5,r5,#0xff
+0000d0  780b              LDRB     r3,[r1,#0]
+0000d2  3561              ADDS     r5,r5,#0x61
+0000d4  71eb              STRB     r3,[r5,#7]
+0000d6  7bf3              LDRB     r3,[r6,#0xf]          ;208  ; Global_datas
+0000d8  1c40              ADDS     r0,r0,#1              ;208
+0000da  1c49              ADDS     r1,r1,#1              ;208
+0000dc  4283              CMP      r3,r0                 ;208
+0000de  d8f5              BHI      |L1.204|
+;;;211    			p_sn++;
+;;;212    		}
+;;;213    		
+;;;214    		Global_datas.FmData.FmNeedToStore = 1;
+0000e0  7167              STRB     r7,[r4,#5]
+                  |L1.226|
+0000e2  490e              LDR      r1,|L1.284|
+0000e4  2000              MOVS     r0,#0
+0000e6  6008              STR      r0,[r1,#0]
+;;;215    	}
+;;;216    
+;;;217        SYS_LockReg();
+;;;218    
+;;;219    
+;;;220    }
+0000e8  bdf8              POP      {r3-r7,pc}
+;;;221    
                           ENDP
 
-000096  0000              DCW      0x0000
-                  |L1.152|
+0000ea  0000              DCW      0x0000
+                  |L1.236|
                           DCD      Global_datas+0x80
-                  |L1.156|
+                  |L1.240|
                           DCD      0x0003f804
-                  |L1.160|
-0000a0  496e6974          DCB      "Init FM param!\n",0
-0000a4  20464d20
-0000a8  70617261
-0000ac  6d210a00
-                  |L1.176|
+                  |L1.244|
+0000f4  496e6974          DCB      "Init FM param!\n",0
+0000f8  20464d20
+0000fc  70617261
+000100  6d210a00
+                  |L1.260|
                           DCD      0x0000222e
-                  |L1.180|
+                  |L1.264|
+000108  31383637          DCB      "18675205335_kim.wei",0
+00010c  35323035
+000110  3333355f
+000114  6b696d2e
+000118  77656900
+                  |L1.284|
                           DCD      0x50000100
 
                           AREA ||i.DataStore||, CODE, READONLY, ALIGN=2
 
                   DataStore PROC
-;;;83     
-;;;84     void DataStore(void)
+;;;88     
+;;;89     void DataStore(void)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;85     {
-;;;86     	uint32_t i;
-;;;87     	uint32_t add;
-;;;88     	
-;;;89         SYS_UnlockReg();
+;;;90     {
+;;;91     	uint32_t i;
+;;;92     	uint32_t add;
+;;;93     	
+;;;94         SYS_UnlockReg();
 000002  f7fffffe          BL       SYS_UnlockReg
-;;;90     
-;;;91     	add = STATION_TABLE_BASE_ADDR;
-;;;92     	
-;;;93     	FMC_Erase(DATA_FLASH_TEST_BASE);
+;;;95     
+;;;96     	add = STATION_TABLE_BASE_ADDR;
+;;;97     	
+;;;98     	FMC_Erase(DATA_FLASH_TEST_BASE);
 000006  217f              MOVS     r1,#0x7f
 000008  02c9              LSLS     r1,r1,#11
-00000a  4824              LDR      r0,|L2.156|
-00000c  4e22              LDR      r6,|L2.152|
-00000e  2222              MOVS     r2,#0x22              ;91
-000010  60c2              STR      r2,[r0,#0xc]          ;91
-000012  6041              STR      r1,[r0,#4]            ;91
-000014  2101              MOVS     r1,#1                 ;91
-000016  6101              STR      r1,[r0,#0x10]         ;91
+00000a  482f              LDR      r0,|L2.200|
+00000c  4f2d              LDR      r7,|L2.196|
+00000e  2222              MOVS     r2,#0x22              ;96
+000010  60c2              STR      r2,[r0,#0xc]          ;96
+000012  6041              STR      r1,[r0,#4]            ;96
+000014  2101              MOVS     r1,#1                 ;96
+000016  6101              STR      r1,[r0,#0x10]         ;96
                   |L2.24|
-000018  6901              LDR      r1,[r0,#0x10]         ;91
-00001a  2900              CMP      r1,#0                 ;91
+000018  6901              LDR      r1,[r0,#0x10]         ;96
+00001a  2900              CMP      r1,#0                 ;96
 00001c  d1fc              BNE      |L2.24|
-00001e  6801              LDR      r1,[r0,#0]            ;91
-000020  0649              LSLS     r1,r1,#25             ;91
+00001e  6801              LDR      r1,[r0,#0]            ;96
+000020  0649              LSLS     r1,r1,#25             ;96
 000022  d503              BPL      |L2.44|
-000024  6801              LDR      r1,[r0,#0]            ;91
-000026  2240              MOVS     r2,#0x40              ;91
-000028  4311              ORRS     r1,r1,r2              ;91
-00002a  6001              STR      r1,[r0,#0]            ;91
+000024  6801              LDR      r1,[r0,#0]            ;96
+000026  2240              MOVS     r2,#0x40              ;96
+000028  4311              ORRS     r1,r1,r2              ;96
+00002a  6001              STR      r1,[r0,#0]            ;96
                   |L2.44|
-;;;94     
-;;;95     	for(i=0;i<Global_datas.FmData.station_num;i++)
-;;;96     	{
-;;;97     		FMC_Write(add, Global_datas.FmData.station_table[i]);
-00002c  4f1c              LDR      r7,|L2.160|
-00002e  2500              MOVS     r5,#0                 ;95
-000030  463c              MOV      r4,r7                 ;95
-000032  3480              ADDS     r4,r4,#0x80           ;95
+;;;99     
+;;;100    	for(i=0;i<Global_datas.FmData.station_num;i++)
+;;;101    	{
+;;;102    		FMC_Write(add, Global_datas.FmData.station_table[i]);
+00002c  4e27              LDR      r6,|L2.204|
+00002e  2500              MOVS     r5,#0                 ;100
+000030  4634              MOV      r4,r6                 ;100
+000032  3480              ADDS     r4,r4,#0x80           ;100
 000034  e007              B        |L2.70|
                   |L2.54|
 000036  00a8              LSLS     r0,r5,#2
-000038  19c0              ADDS     r0,r0,r7
+000038  1980              ADDS     r0,r0,r6
 00003a  6c81              LDR      r1,[r0,#0x48]
-00003c  4630              MOV      r0,r6
+00003c  4638              MOV      r0,r7
 00003e  f7fffffe          BL       FMC_Write
 000042  1c6d              ADDS     r5,r5,#1
-000044  1d36              ADDS     r6,r6,#4
+000044  1d3f              ADDS     r7,r7,#4
                   |L2.70|
-000046  7920              LDRB     r0,[r4,#4]            ;95  ; Global_datas
-000048  42a8              CMP      r0,r5                 ;95
+000046  7920              LDRB     r0,[r4,#4]            ;100  ; Global_datas
+000048  42a8              CMP      r0,r5                 ;100
 00004a  d8f4              BHI      |L2.54|
-;;;98     		add += 4;
-;;;99     	}
-;;;100    
-;;;101    
-;;;102    	if(IsFreqValid() && IsStationNumValid() && IsCurrentStationNunValid())
+;;;103    		add += 4;
+;;;104    	}
+;;;105    
+;;;106    
+;;;107    	if(IsFreqValid() && IsStationNumValid() && IsCurrentStationNunValid())
 00004c  f7fffffe          BL       IsFreqValid
-;;;103    	{
-;;;104    		FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
-000050  4e11              LDR      r6,|L2.152|
-000052  2500              MOVS     r5,#0
-000054  3e18              SUBS     r6,r6,#0x18
-000056  2800              CMP      r0,#0                 ;102
+;;;108    	{
+;;;109    		FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
+000050  4d1c              LDR      r5,|L2.196|
+000052  3d18              SUBS     r5,r5,#0x18
+;;;110    		FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
+;;;111    		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);
+000054  1f2f              SUBS     r7,r5,#4
+000056  2800              CMP      r0,#0                 ;107
 000058  d009              BEQ      |L2.110|
 00005a  f7fffffe          BL       IsStationNumValid
-00005e  2800              CMP      r0,#0                 ;102
+00005e  2800              CMP      r0,#0                 ;107
 000060  d005              BEQ      |L2.110|
 000062  f7fffffe          BL       IsCurrentStationNunValid
-000066  2800              CMP      r0,#0                 ;102
+000066  2800              CMP      r0,#0                 ;107
 000068  d001              BEQ      |L2.110|
-;;;105    		FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
-;;;106    		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);
-00006a  6c39              LDR      r1,[r7,#0x40]  ; Global_datas
-00006c  e003              B        |L2.118|
+00006a  6c31              LDR      r1,[r6,#0x40]  ; Global_datas
+00006c  e004              B        |L2.120|
                   |L2.110|
-;;;107    	}
-;;;108    	else
-;;;109    	{
-;;;110    		Global_datas.FmData.Frequency = 8750;
-00006e  490d              LDR      r1,|L2.164|
-;;;111    		Global_datas.FmData.station_num =0;
-000070  6439              STR      r1,[r7,#0x40]  ; Global_datas
-000072  7125              STRB     r5,[r4,#4]
-;;;112    		Global_datas.FmData.current_station = 0;
-000074  71a5              STRB     r5,[r4,#6]
-                  |L2.118|
-;;;113    		
-;;;114    		FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
-000076  4630              MOV      r0,r6
-000078  f7fffffe          BL       FMC_Write
-;;;115    		FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
-00007c  207f              MOVS     r0,#0x7f
-00007e  7921              LDRB     r1,[r4,#4]  ; Global_datas
-000080  02c0              LSLS     r0,r0,#11
-000082  f7fffffe          BL       FMC_Write
-;;;116    		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);		
-000086  4804              LDR      r0,|L2.152|
+;;;112    	}
+;;;113    	else
+;;;114    	{
+;;;115    		Global_datas.FmData.Frequency = 8750;
+00006e  4918              LDR      r1,|L2.208|
+;;;116    		Global_datas.FmData.station_num =0;
+000070  2000              MOVS     r0,#0
+000072  6431              STR      r1,[r6,#0x40]  ; Global_datas
+000074  7120              STRB     r0,[r4,#4]
+;;;117    		Global_datas.FmData.current_station = 0;
+000076  71a0              STRB     r0,[r4,#6]
+                  |L2.120|
+;;;118    		
+;;;119    		FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
+000078  4628              MOV      r0,r5
+00007a  f7fffffe          BL       FMC_Write
+;;;120    		FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
+00007e  207f              MOVS     r0,#0x7f
+000080  7921              LDRB     r1,[r4,#4]  ; Global_datas
+000082  02c0              LSLS     r0,r0,#11
+000084  f7fffffe          BL       FMC_Write
+;;;121    		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);		
 000088  79a1              LDRB     r1,[r4,#6]  ; Global_datas
-00008a  381c              SUBS     r0,r0,#0x1c
+00008a  4638              MOV      r0,r7
 00008c  f7fffffe          BL       FMC_Write
-000090  4805              LDR      r0,|L2.168|
-000092  6005              STR      r5,[r0,#0]
-;;;117    	}
-;;;118    
-;;;119        SYS_LockReg();
-;;;120    
-;;;121    
-;;;122    }
-000094  bdf8              POP      {r3-r7,pc}
+;;;122    	}
 ;;;123    
+;;;124    
+;;;125    	add = SN_BASE_ADDR;
+000090  4c0c              LDR      r4,|L2.196|
+;;;126    	FMC_Write(SN_LEN_ADDR, Global_datas.sn_len);
+000092  4f10              LDR      r7,|L2.212|
+000094  3464              ADDS     r4,r4,#0x64           ;125
+000096  7bf9              LDRB     r1,[r7,#0xf]  ; Global_datas
+000098  1f20              SUBS     r0,r4,#4
+00009a  f7fffffe          BL       FMC_Write
+;;;127    	
+;;;128    	for(i=0; i< Global_datas.sn_len; i++ )
+00009e  2500              MOVS     r5,#0
+0000a0  e008              B        |L2.180|
+                  |L2.162|
+;;;129    	{
+;;;130    		FMC_Write(add, Global_datas.SN[i]);
+0000a2  1970              ADDS     r0,r6,r5
+0000a4  30ff              ADDS     r0,r0,#0xff
+0000a6  3061              ADDS     r0,r0,#0x61
+0000a8  79c1              LDRB     r1,[r0,#7]
+0000aa  4620              MOV      r0,r4
+0000ac  f7fffffe          BL       FMC_Write
+0000b0  1d24              ADDS     r4,r4,#4
+0000b2  1c6d              ADDS     r5,r5,#1
+                  |L2.180|
+0000b4  7bf8              LDRB     r0,[r7,#0xf]          ;128  ; Global_datas
+0000b6  42a8              CMP      r0,r5                 ;128
+0000b8  d8f3              BHI      |L2.162|
+0000ba  4907              LDR      r1,|L2.216|
+0000bc  2000              MOVS     r0,#0                 ;128
+0000be  6008              STR      r0,[r1,#0]            ;128
+;;;131    		add += 4;
+;;;132    	}
+;;;133    
+;;;134        SYS_LockReg();
+;;;135    
+;;;136    
+;;;137    }
+0000c0  bdf8              POP      {r3-r7,pc}
+;;;138    
                           ENDP
 
-000096  0000              DCW      0x0000
-                  |L2.152|
+0000c2  0000              DCW      0x0000
+                  |L2.196|
                           DCD      0x0003f820
-                  |L2.156|
+                  |L2.200|
                           DCD      0x5000c000
-                  |L2.160|
+                  |L2.204|
                           DCD      Global_datas
-                  |L2.164|
+                  |L2.208|
                           DCD      0x0000222e
-                  |L2.168|
+                  |L2.212|
+                          DCD      Global_datas+0x180
+                  |L2.216|
                           DCD      0x50000100
 
                           AREA ||i.FMC_Read||, CODE, READONLY, ALIGN=2
@@ -375,40 +498,40 @@
                           AREA ||i.hal_fmc_init||, CODE, READONLY, ALIGN=2
 
                   hal_fmc_init PROC
-;;;63     
-;;;64     void hal_fmc_init(void)
+;;;68     
+;;;69     void hal_fmc_init(void)
 000000  b510              PUSH     {r4,lr}
-;;;65     {
-;;;66         SYS_UnlockReg();
+;;;70     {
+;;;71         SYS_UnlockReg();
 000002  f7fffffe          BL       SYS_UnlockReg
-;;;67     
-;;;68         /* Enable FMC ISP function */
-;;;69         FMC_Open();
+;;;72     
+;;;73         /* Enable FMC ISP function */
+;;;74         FMC_Open();
 000006  f7fffffe          BL       FMC_Open
-;;;70     
-;;;71         /* Enable Data Flash and set base address. */
-;;;72         if (set_data_flash_base(DATA_FLASH_TEST_BASE) < 0)
+;;;75     
+;;;76         /* Enable Data Flash and set base address. */
+;;;77         if (set_data_flash_base(DATA_FLASH_TEST_BASE) < 0)
 00000a  207f              MOVS     r0,#0x7f
 00000c  02c0              LSLS     r0,r0,#11
 00000e  f7fffffe          BL       set_data_flash_base
 000012  2800              CMP      r0,#0
 000014  da02              BGE      |L6.28|
-;;;73         {
-;;;74             printf("Failed to set Data Flash base address!\n");
+;;;78         {
+;;;79             printf("Failed to set Data Flash base address!\n");
 000016  a003              ADR      r0,|L6.36|
 000018  f7fffffe          BL       __2printf
                   |L6.28|
 00001c  490b              LDR      r1,|L6.76|
 00001e  2000              MOVS     r0,#0
 000020  6008              STR      r0,[r1,#0]
-;;;75         }
-;;;76     
-;;;77         /* Lock protected registers */
-;;;78         SYS_LockReg();
-;;;79     
-;;;80     }
-000022  bd10              POP      {r4,pc}
+;;;80         }
 ;;;81     
+;;;82         /* Lock protected registers */
+;;;83         SYS_LockReg();
+;;;84     
+;;;85     }
+000022  bd10              POP      {r4,pc}
+;;;86     
                           ENDP
 
                   |L6.36|
@@ -431,33 +554,33 @@
                           REQUIRE _printf_x
                           REQUIRE _printf_longlong_hex
                   set_data_flash_base PROC
-;;;26     
-;;;27      int  set_data_flash_base(uint32_t u32DFBA)
+;;;31     
+;;;32      int  set_data_flash_base(uint32_t u32DFBA)
 000000  b57c              PUSH     {r2-r6,lr}
-;;;28     {
+;;;33     {
 000002  4604              MOV      r4,r0
-;;;29         uint32_t   au32Config[2];
-;;;30     
-;;;31         /* Read User Configuration 0 & 1 */
-;;;32         if (FMC_ReadConfig(au32Config, 2) < 0)
+;;;34         uint32_t   au32Config[2];
+;;;35     
+;;;36         /* Read User Configuration 0 & 1 */
+;;;37         if (FMC_ReadConfig(au32Config, 2) < 0)
 000004  2102              MOVS     r1,#2
 000006  4668              MOV      r0,sp
 000008  f7fffffe          BL       FMC_ReadConfig
-;;;33         {
-;;;34             printf("\nRead User Config failed!\n");
-;;;35             return -1;
+;;;38         {
+;;;39             printf("\nRead User Config failed!\n");
+;;;40             return -1;
 00000c  2500              MOVS     r5,#0
 00000e  43ed              MVNS     r5,r5
-000010  2800              CMP      r0,#0                 ;32
+000010  2800              CMP      r0,#0                 ;37
 000012  da03              BGE      |L7.28|
 000014  a015              ADR      r0,|L7.108|
 000016  f7fffffe          BL       __2printf
 00001a  e017              B        |L7.76|
                   |L7.28|
-;;;36         }
-;;;37     
-;;;38         /* Check if Data Flash is enabled (CONFIG0[0]) and is expected address (CONFIG1) */
-;;;39         if ((!(au32Config[0] & 0x1)) && (au32Config[1] == u32DFBA))
+;;;41         }
+;;;42     
+;;;43         /* Check if Data Flash is enabled (CONFIG0[0]) and is expected address (CONFIG1) */
+;;;44         if ((!(au32Config[0] & 0x1)) && (au32Config[1] == u32DFBA))
 00001c  9800              LDR      r0,[sp,#0]
 00001e  07c0              LSLS     r0,r0,#31
 000020  d104              BNE      |L7.44|
@@ -465,62 +588,62 @@
 000024  42a0              CMP      r0,r4
 000026  d101              BNE      |L7.44|
                   |L7.40|
-;;;40             return 0;
+;;;45             return 0;
 000028  2000              MOVS     r0,#0
-;;;41     
-;;;42         FMC_ENABLE_CFG_UPDATE();
-;;;43     
-;;;44         au32Config[0] &= ~0x1;         /* CONFIG0[0] = 0 (Enabled) / 1 (Disabled) */
-;;;45         au32Config[1] = u32DFBA;
 ;;;46     
-;;;47         /* Update User Configuration settings. */
-;;;48         if (FMC_WriteConfig(au32Config, 2) < 0)
-;;;49             return -1;
-;;;50     
-;;;51         printf("\nSet Data Flash base as 0x%x.\n", DATA_FLASH_TEST_BASE);
-;;;52     
-;;;53         /* To check if all the debug messages are finished */
-;;;54         while(!IsDebugFifoEmpty());
+;;;47         FMC_ENABLE_CFG_UPDATE();
+;;;48     
+;;;49         au32Config[0] &= ~0x1;         /* CONFIG0[0] = 0 (Enabled) / 1 (Disabled) */
+;;;50         au32Config[1] = u32DFBA;
+;;;51     
+;;;52         /* Update User Configuration settings. */
+;;;53         if (FMC_WriteConfig(au32Config, 2) < 0)
+;;;54             return -1;
 ;;;55     
-;;;56         /* Perform chip reset to make new User Config take effect */
-;;;57         SYS->IPRST0 = SYS_IPRST0_CHIPRST_Msk;
-;;;58         return 0;
-;;;59     }
+;;;56         printf("\nSet Data Flash base as 0x%x.\n", DATA_FLASH_TEST_BASE);
+;;;57     
+;;;58         /* To check if all the debug messages are finished */
+;;;59         while(!IsDebugFifoEmpty());
+;;;60     
+;;;61         /* Perform chip reset to make new User Config take effect */
+;;;62         SYS->IPRST0 = SYS_IPRST0_CHIPRST_Msk;
+;;;63         return 0;
+;;;64     }
 00002a  bd7c              POP      {r2-r6,pc}
                   |L7.44|
 00002c  4816              LDR      r0,|L7.136|
-00002e  6801              LDR      r1,[r0,#0]            ;42
-000030  2210              MOVS     r2,#0x10              ;42
-000032  4311              ORRS     r1,r1,r2              ;42
-000034  6001              STR      r1,[r0,#0]            ;42
-000036  9800              LDR      r0,[sp,#0]            ;44
-000038  2102              MOVS     r1,#2                 ;48
-00003a  0840              LSRS     r0,r0,#1              ;44
-00003c  0040              LSLS     r0,r0,#1              ;44
-00003e  9000              STR      r0,[sp,#0]            ;48
-000040  9401              STR      r4,[sp,#4]            ;48
-000042  4668              MOV      r0,sp                 ;48
+00002e  6801              LDR      r1,[r0,#0]            ;47
+000030  2210              MOVS     r2,#0x10              ;47
+000032  4311              ORRS     r1,r1,r2              ;47
+000034  6001              STR      r1,[r0,#0]            ;47
+000036  9800              LDR      r0,[sp,#0]            ;49
+000038  2102              MOVS     r1,#2                 ;53
+00003a  0840              LSRS     r0,r0,#1              ;49
+00003c  0040              LSLS     r0,r0,#1              ;49
+00003e  9000              STR      r0,[sp,#0]            ;53
+000040  9401              STR      r4,[sp,#4]            ;53
+000042  4668              MOV      r0,sp                 ;53
 000044  f7fffffe          BL       FMC_WriteConfig
-000048  2800              CMP      r0,#0                 ;48
+000048  2800              CMP      r0,#0                 ;53
 00004a  da01              BGE      |L7.80|
                   |L7.76|
-00004c  4628              MOV      r0,r5                 ;49
+00004c  4628              MOV      r0,r5                 ;54
 00004e  bd7c              POP      {r2-r6,pc}
                   |L7.80|
-000050  217f              MOVS     r1,#0x7f              ;51
-000052  02c9              LSLS     r1,r1,#11             ;51
+000050  217f              MOVS     r1,#0x7f              ;56
+000052  02c9              LSLS     r1,r1,#11             ;56
 000054  a00d              ADR      r0,|L7.140|
 000056  f7fffffe          BL       __2printf
                   |L7.90|
 00005a  f7fffffe          BL       IsDebugFifoEmpty
-00005e  2800              CMP      r0,#0                 ;54
+00005e  2800              CMP      r0,#0                 ;59
 000060  d0fb              BEQ      |L7.90|
-000062  2001              MOVS     r0,#1                 ;57
-000064  2105              MOVS     r1,#5                 ;57
-000066  0709              LSLS     r1,r1,#28             ;57
-000068  6088              STR      r0,[r1,#8]            ;57
+000062  2001              MOVS     r0,#1                 ;62
+000064  2105              MOVS     r1,#5                 ;62
+000066  0709              LSLS     r1,r1,#28             ;62
+000068  6088              STR      r0,[r1,#8]            ;62
 00006a  e7dd              B        |L7.40|
-;;;60     
+;;;65     
                           ENDP
 
                   |L7.108|

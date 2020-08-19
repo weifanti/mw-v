@@ -15,6 +15,11 @@
 #define FREQUENCY_ADDR				0x03f808
 
 #define STATION_TABLE_BASE_ADDR     0x03f820
+
+#define SN_LEN_ADDR     		0x03f880
+#define SN_BASE_ADDR     			0x03f884
+
+
 //#define DATA_FLASH_TEST_END         0x4000      /* 16KB */
 //#define TEST_PATTERN                0x5A5A5A5A
 
@@ -116,6 +121,16 @@ void DataStore(void)
 		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);		
 	}
 
+
+	add = SN_BASE_ADDR;
+	FMC_Write(SN_LEN_ADDR, Global_datas.sn_len);
+	
+	for(i=0; i< Global_datas.sn_len; i++ )
+	{
+		FMC_Write(add, Global_datas.SN[i]);
+		add += 4;
+	}
+
     SYS_LockReg();
 
 
@@ -127,6 +142,8 @@ void DataRead(void)
 	uint32_t i;
 	uint32_t temp_data;
 	uint32_t add;
+	uint8_t x = 0, y = 0;
+	uint8_t *p_sn;
 	
     SYS_UnlockReg();
 
@@ -138,6 +155,11 @@ void DataRead(void)
 
 	temp_data = FMC_Read(FREQUENCY_ADDR);
 	Global_datas.FmData.Frequency = (temp_data & 0xffff);	
+
+	
+	temp_data = FMC_Read(SN_LEN_ADDR);
+	Global_datas.sn_len = (temp_data & 0xff);	
+	
 
 	add = STATION_TABLE_BASE_ADDR;
 	
@@ -159,9 +181,37 @@ void DataRead(void)
 		Global_datas.FmData.Frequency = 8750;
 		Global_datas.FmData.station_num = 0;
 		Global_datas.FmData.current_station = 0;
-		FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
-		FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
-		FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);			
+		//FMC_Write(FREQUENCY_ADDR, Global_datas.FmData.Frequency);
+		//FMC_Write(STATION_NUM_ADDR, Global_datas.FmData.station_num);
+		//FMC_Write(CURRENT_STATION_ADDR, Global_datas.FmData.current_station);		
+		Global_datas.FmData.FmNeedToStore = 1;
+	}
+
+	
+	add = SN_BASE_ADDR;
+
+	if(Global_datas.sn_len <= MAX_SN_LEN)
+	{
+		for(i=0;i<Global_datas.sn_len;i++)
+		{
+			
+			temp_data = FMC_Read(add);
+			add +=4;
+			Global_datas.SN[i] = (uint8_t)temp_data;
+		}
+	}
+	else
+	{
+		p_sn= DEFAULT_SN;
+		Global_datas.sn_len = sizeof(DEFAULT_SN);
+		
+		for(i=0; i < Global_datas.sn_len;i++)
+		{
+			Global_datas.SN[i] = *p_sn;
+			p_sn++;
+		}
+		
+		Global_datas.FmData.FmNeedToStore = 1;
 	}
 
     SYS_LockReg();
